@@ -1,0 +1,40 @@
+// :upstream-location: https://raw.githubusercontent.com/syndesisio/syndesis/master
+:upstream-location: ../..
+
+include::{upstream-location}/doc/shared/attributes.adoc[]
+
+:prodname: Fuse Online
+:prodversion: 7.2
+:productpkg: red_hat_fuse
+:version: 7.2
+
+[id='amq-to-rest-api_{context}']
+= Implementing an AMQ to REST API integration
+
+This walkthrough demonstrates customizing and extending {prodname} by adding a custom data operation and adding a custom REST API client connector.
+
+:context: amq2api
+This sample integration connects to a Red Hat AMQ broker to obtain item
+delivery records for a hypothetical enterprise. The integration then executes
+a custom step that operates on the records to identify any
+items that were damaged when they were received. After a simple data mapping,
+the integration connects to
+a REST API to obtain contact information for vendors of
+damaged items.
+
+
+
+include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-amq-connection.adoc[leveloffset=+1, tags=!excludeFori8]
+
+include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-custom-step.adoc[leveloffset=+1, tags=!excludeFori8]
+
+include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-rest-api-connector.adoc[leveloffset=+1, tags=!excludeFori8]
+
+include::{upstream-location}/doc/tutorials/topics/p_amq2api-upload-todo-app-icon.adoc[leveloffset=+1, tags=!excludeFori8]
+
+include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-rest-api-connection.adoc[leveloffset=+1, tags=!excludeFori8]
+
+include::{upstream-location}/doc/tutorials/topics/as_amq2api-create-integration.adoc[leveloffset=+1, tags=!excludeFori8]
+
+include::{upstream-location}/doc/tutorials/topics/p_amq2api-confirm-works.adoc[leveloffset=+1, tags=!excludeFori8]
+
