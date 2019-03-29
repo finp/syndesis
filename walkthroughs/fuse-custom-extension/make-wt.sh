@@ -1,1 +1,1 @@
-./asciidoc-coalescer.rb  -a allow-uri-read ./fuse-custom-extension/source.adoc > ./fuse-custom-extension/walkthrough.adoc
+./asciidoc-coalescer.rb  -a allow-uri-read ./source.adoc > ./walkthrough.adoc

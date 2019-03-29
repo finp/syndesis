@@ -11,7 +11,7 @@ include::{upstream-location}/doc/shared/attributes.adoc[]
 [id='amq-to-rest-api_{context}']
 = Implementing an AMQ to REST API integration
 
-This walkthrough demonstrates customizing and extending {prodname} by adding a custom data operation and adding a custom REST API client connector.
+This walkthrough demonstrates customizing and extending Fuse by adding a custom data operation and adding a custom REST API client connector.
 
 :context: amq2api
 This sample integration connects to a Red Hat AMQ broker to obtain item
@@ -23,18 +23,24 @@ a REST API to obtain contact information for vendors of
 damaged items.
 
 
-
+[time=1]
 include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-amq-connection.adoc[leveloffset=+1, tags=!excludeFori8]
 
+[time=2]
 include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-custom-step.adoc[leveloffset=+1, tags=!excludeFori8]
 
+[time=3]
 include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-rest-api-connector.adoc[leveloffset=+1, tags=!excludeFori8]
 
+[time=4]
 include::{upstream-location}/doc/tutorials/topics/p_amq2api-upload-todo-app-icon.adoc[leveloffset=+1, tags=!excludeFori8]
 
+[time=5]
 include::{upstream-location}/doc/tutorials/topics/p_amq2api-create-rest-api-connection.adoc[leveloffset=+1, tags=!excludeFori8]
 
+[time=6]
 include::{upstream-location}/doc/tutorials/topics/as_amq2api-create-integration.adoc[leveloffset=+1, tags=!excludeFori8]
 
+[time=7]
 include::{upstream-location}/doc/tutorials/topics/p_amq2api-confirm-works.adoc[leveloffset=+1, tags=!excludeFori8]
 
