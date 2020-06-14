@@ -1,7 +1,7 @@
 site:
   title: Docs
   # the 404 page and sitemap files only get generated when the url property is set
-  url: /
+  url: https://pwright.github.io/syndesis/
   start_page: docs::index.adoc
 content:
   sources:
