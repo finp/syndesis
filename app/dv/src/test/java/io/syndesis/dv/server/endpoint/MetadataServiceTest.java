@@ -18,8 +18,8 @@ package io.syndesis.dv.server.endpoint;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.junit.Test;
@@ -31,7 +31,10 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.server.ResponseStatusException;
+import org.teiid.adminapi.AdminException;
 import org.teiid.adminapi.impl.VDBMetaData;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.syndesis.dv.KException;
 import io.syndesis.dv.datasources.DefaultSyndesisDataSource;
@@ -59,7 +62,7 @@ public class MetadataServiceTest {
     private DefaultMetadataInstance metadataInstance;
 
     @Test
-    public void testSourceVdbGeneration() throws Exception {
+    public void testSourceVdbGeneration() throws AdminException, UnsupportedEncodingException {
 //        Map<String, String> properties = new LinkedHashMap<String, String>();
 //        properties.put(TeiidDataSource.DATASOURCE_JNDINAME, "something");
 //        properties.put(TeiidDataSource.DATASOURCE_DRIVERNAME, "type");
@@ -74,7 +77,7 @@ public class MetadataServiceTest {
 
         String s = new String(DefaultMetadataInstance.toBytes(vdb).toByteArray(), "UTF-8");
         assertEquals(
-                "<?xml version=\"1.0\" ?><vdb name=\"vdb\" version=\"1\"><description>Vdb for source Data Source:	source\n"
+                "<?xml version=\"1.0\" ?><vdb name=\"vdb\" version=\"1\"><description>Vdb for source Data Source:\tsource\n"
                         + "Type: \t\th2</description><connection-type>BY_VERSION</connection-type>"
                         + "<property name=\"id\" value=\"someid\"></property><property name=\"async-load\" value=\"true\"></property>"
                         + "<model name=\"source\" type=\"PHYSICAL\" visible=\"true\">"
@@ -90,7 +93,7 @@ public class MetadataServiceTest {
 
         s = new String(DefaultMetadataInstance.toBytes(vdb).toByteArray(), "UTF-8");
         assertEquals(
-                "<?xml version=\"1.0\" ?><vdb name=\"vdb\" version=\"1\"><description>Vdb for source Data Source:	source\n"
+                "<?xml version=\"1.0\" ?><vdb name=\"vdb\" version=\"1\"><description>Vdb for source Data Source:\tsource\n"
                         + "Type: \t\th2</description><connection-type>BY_VERSION</connection-type>"
                         + "<property name=\"id\" value=\"someid\"></property>"
                         + "<model name=\"source\" type=\"PHYSICAL\" visible=\"false\">"
@@ -105,14 +108,9 @@ public class MetadataServiceTest {
     }
 
     @Test
-    public void testGetSchema() throws Exception {
-        List<RestSchemaNode> nodes = null;
-        try {
-            nodes = metadataService.getSchema("source2");
-            fail();
-        } catch (ResponseStatusException e) {
-            //no source yet
-        }
+    public void testGetSchema() throws AdminException {
+        assertThatThrownBy(() -> metadataService.getSourceSchema("source2"))
+            .isInstanceOf(ResponseStatusException.class);
 
         DefaultSyndesisDataSource sds = DataVirtualizationServiceTest.createH2DataSource("source2");
         metadataInstance.registerDataSource(sds);
@@ -121,39 +119,40 @@ public class MetadataServiceTest {
                 "create foreign table tbl (col string) options (\"teiid_rel:fqn\" 'schema=s%20x/t%20bl=bar');"
                 + "create foreign table tbl1 (col string) options (\"teiid_rel:fqn\" 'schema=s%20x/t%20bl=bar1');");
 
-        nodes = metadataService.getSchema("source2");
-        assertEquals("[ {\n" +
-                "  \"children\" : [ {\n" +
-                "    \"children\" : [ ],\n" +
-                "    \"name\" : \"bar\",\n" +
-                "    \"teiidName\" : \"tbl\",\n" +
-                "    \"connectionName\" : \"source2\",\n" +
-                "    \"type\" : \"t bl\",\n" +
-                "    \"queryable\" : true\n" +
-                "  }, {\n" +
-                "    \"children\" : [ ],\n" +
-                "    \"name\" : \"bar1\",\n" +
-                "    \"teiidName\" : \"tbl1\",\n" +
-                "    \"connectionName\" : \"source2\",\n" +
-                "    \"type\" : \"t bl\",\n" +
-                "    \"queryable\" : true\n" +
-                "  } ],\n" +
-                "  \"name\" : \"s x\",\n" +
-                "  \"connectionName\" : \"source2\",\n" +
-                "  \"type\" : \"schema\",\n" +
-                "  \"queryable\" : false\n" +
-                "} ]", JsonMarshaller.marshall(nodes));
-    }
-
-    @Test
-    public void testGetSchemaSingleLevel() throws Exception {
-        List<RestSchemaNode> nodes = null;
-        try {
-            nodes = metadataService.getSchema("source3");
-            fail();
-        } catch (ResponseStatusException e) {
-            //no source yet
+        List<RestSchemaNode> nodes = metadataService.getSourceSchema("source2");
+        assertEquals(
+            "[ {\n" +
+            "  \"children\" : [ {\n" +
+            "    \"children\" : [ {\n" +
+            "      \"children\" : [ ],\n" +
+            "      \"name\" : \"bar\",\n" +
+            "      \"teiidName\" : \"tbl\",\n" +
+            "      \"connectionName\" : \"source2\",\n" +
+            "      \"type\" : \"t bl\",\n" +
+            "      \"queryable\" : true\n" +
+            "    }, {\n" +
+            "      \"children\" : [ ],\n" +
+            "      \"name\" : \"bar1\",\n" +
+            "      \"teiidName\" : \"tbl1\",\n" +
+            "      \"connectionName\" : \"source2\",\n" +
+            "      \"type\" : \"t bl\",\n" +
+            "      \"queryable\" : true\n" +
+            "    } ],\n" +
+            "    \"name\" : \"s x\",\n" +
+            "    \"connectionName\" : \"source2\",\n" +
+            "    \"type\" : \"schema\",\n" +
+            "    \"queryable\" : false\n" +
+            "  } ],\n" +
+            "  \"name\" : \"source2\",\n" +
+            "  \"type\" : \"teiidSource\",\n" +
+            "  \"queryable\" : false\n" +
+            "} ]", JsonMarshaller.marshall(nodes));
         }
+  
+    @Test
+    public void testGetSchemaSingleLevel() throws AdminException {
+        assertThatThrownBy(() -> metadataService.getSourceSchema("source3"))
+            .isInstanceOf(ResponseStatusException.class);
 
         //add the data source, and schema
         DefaultSyndesisDataSource sds = DataVirtualizationServiceTest.createH2DataSource("source3");
@@ -164,26 +163,32 @@ public class MetadataServiceTest {
                 "create foreign table tbl (col string) options (\"teiid_rel:fqn\" 'collection=bar');"
                 + "create foreign table tbl1 (col string) options (\"teiid_rel:fqn\" 'collection=bar1');");
 
-        nodes = metadataService.getSchema("source3");
-        assertEquals("[ {\n" +
-                "  \"children\" : [ ],\n" +
-                "  \"name\" : \"bar\",\n" +
-                "  \"teiidName\" : \"tbl\",\n" +
-                "  \"connectionName\" : \"source3\",\n" +
-                "  \"type\" : \"collection\",\n" +
-                "  \"queryable\" : true\n" +
-                "}, {\n" +
-                "  \"children\" : [ ],\n" +
-                "  \"name\" : \"bar1\",\n" +
-                "  \"teiidName\" : \"tbl1\",\n" +
-                "  \"connectionName\" : \"source3\",\n" +
-                "  \"type\" : \"collection\",\n" +
-                "  \"queryable\" : true\n" +
-                "} ]", JsonMarshaller.marshall(nodes));
+        List<RestSchemaNode> nodes = metadataService.getSourceSchema("source3");
+        assertEquals(
+            "[ {\n" +
+            "  \"children\" : [ {\n" +
+            "    \"children\" : [ ],\n" +
+            "    \"name\" : \"bar\",\n" +
+            "    \"teiidName\" : \"tbl\",\n" +
+            "    \"connectionName\" : \"source3\",\n" +
+            "    \"type\" : \"collection\",\n" +
+            "    \"queryable\" : true\n" +
+            "  }, {\n" +
+            "    \"children\" : [ ],\n" +
+            "    \"name\" : \"bar1\",\n" +
+            "    \"teiidName\" : \"tbl1\",\n" +
+            "    \"connectionName\" : \"source3\",\n" +
+            "    \"type\" : \"collection\",\n" +
+            "    \"queryable\" : true\n" +
+            "  } ],\n" +
+            "  \"name\" : \"source3\",\n" +
+            "  \"type\" : \"teiidSource\",\n" +
+            "  \"queryable\" : false\n" +
+            "} ]", JsonMarshaller.marshall(nodes));
     }
 
     @Test
-    public void testPreviewQuery() throws Exception {
+    public void testPreviewQuery() {
         QueryAttribute kqa = new QueryAttribute();
         kqa.setQuery("select * from myview");
         kqa.setTarget("dv1");
@@ -193,14 +198,10 @@ public class MetadataServiceTest {
         //get rid of the default preview vdb
         metadataInstance.undeployDynamicVdb(EditorService.PREVIEW_VDB);
 
-        try {
-            metadataService.updatePreviewVdb("dv1");
-            fail();
-        } catch (KException e) {
-            //preveiw vdb does not exist
-        }
+        assertThatThrownBy(() -> metadataService.updatePreviewVdb("dv1"))
+            .isInstanceOf(KException.class);
 
-        metadataInstance.deploy(EditorServiceTest.dummyPreviewVdb());
+        metadataInstance.deploy(EditorServiceTest.dummyPreviewVdb(false));
 
         //even with no views, we should still succeed
         TeiidVdb vdb = metadataService.updatePreviewVdb("dv1");
@@ -212,7 +213,7 @@ public class MetadataServiceTest {
     }
 
     @Test
-    public void testRuntimeMetadata() throws Exception {
+    public void testRuntimeMetadata() throws AdminException {
         QueryAttribute kqa = new QueryAttribute();
         kqa.setQuery("select * from myview");
         kqa.setTarget("dv1");
@@ -233,9 +234,10 @@ public class MetadataServiceTest {
         metadataService.refreshPreviewVdb();
 
         RestViewSourceInfo info = metadataService.getRuntimeMetadata("dv1");
-        RestSourceSchema[] schemas = info.getSchemas();
-        assertEquals(2, schemas.length);
-        assertEquals("dv1", schemas[0].getName());
-        assertEquals("source", schemas[1].getName());
+        List<RestSourceSchema> schemas = info.getSchemas();
+        assertEquals(2, schemas.size());
+        assertEquals("dv1", schemas.get(0).getName());
+        assertEquals("source", schemas.get(1).getName());
     }
+
 }

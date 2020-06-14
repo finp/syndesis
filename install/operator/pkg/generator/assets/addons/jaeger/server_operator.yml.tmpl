@@ -1,3 +1,14 @@
+#
+# Don't want to install this operator if we have an operatorhub
+# which can be subscribed to and install the operator instead
+#
+{{- if not .ApiServer.OlmSupport }}
+
+#
+# If client only then platform already has a jaeger installation
+# in which case this operator is not required
+#
+{{- if not .Syndesis.Addons.Jaeger.ClientOnly}}
 - apiVersion: v1
   kind: ServiceAccount
   metadata:
@@ -22,7 +33,7 @@
         serviceAccountName: jaeger-operator
         containers:
         - name: jaeger-operator
-          image: jaegertracing/jaeger-operator:1.15.1
+          image: '{{ .Syndesis.Addons.Jaeger.ImageOperator }}'
           ports:
           - containerPort: 8383
             name: metrics
@@ -42,7 +53,7 @@
           - name: OPERATOR_NAME
             value: "jaeger-operator"
         - name: jaeger-agent
-          image: jaegertracing/jaeger-agent:1.15.1
+          image: '{{ .Syndesis.Addons.Jaeger.ImageAgent }}'
           env:
           - name: POD_NAMESPACE
             valueFrom:
@@ -54,3 +65,6 @@
           - containerPort: 6831
             name: jg-compact-trft
             protocol: UDP
+{{- end}}
+
+{{- end}}

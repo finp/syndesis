@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to FHIR :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-fhir.html">Connecting to FHIR</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to FHIR</h1>
+<div class="paragraph">
+<p>Fast Healthcare Interoperability Resources (FHIR) is a standard
+for exchanging healthcare data. In an integration, you can
+obtain one or more FHIR resources, create or update a
+resource, update one or more fields in a resource, or use a
+transaction to create multiple resources. To do this, add a FHIR
+connection to the middle of a flow or as a simple integration&#8217;s
+finish connection.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} connections to FHIR:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Can communicate with FHIR servers that use basic or bearer token (OAuth) authentication.</p>
+</li>
+<li>
+<p>Can operate on all FHIR resources that comply with FHIR DSTU3.</p>
+</li>
+<li>
+<p>Cannot operate on extensions, which allow for storing custom data in a resource.
+If an extension is in data that is received from a FHIR server, the integration
+silently ignores it.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In an integration that connects to FHIR, in a data mapper step, you can map only
+one level of depth for a FHIR list field. In other words, if a FHIR list contains
+a list then you cannot map the fields in the nested list. To mitigate
+this limitation, {prodname} converts some FHIR resource
+list fields to single-value fields, for example, an address that is in
+a list field might be displayed in the data mapper as a single field.</p>
+</div>
+<div class="paragraph">
+<p>Details for connecting to FHIR are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-fhir-connections_fhir">[creating-fhir-connections_fhir]</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-read_fhir">[adding-fhir-connection-read_fhir]</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-search_fhir">[adding-fhir-connection-search_fhir]</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-create_fhir">[adding-fhir-connection-create_fhir]</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-update_fhir">[adding-fhir-connection-update_fhir]</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-patch_fhir">[adding-fhir-connection-patch_fhir]</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-transaction_fhir">[adding-fhir-connection-transaction_fhir]</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-delete_fhir">[adding-fhir-connection-delete_fhir]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-creating-fhir-connections.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-adding-fhir-connection-read.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-adding-fhir-connection-search.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-adding-fhir-connection-create.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-adding-fhir-connection-update.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-adding-fhir-connection-patch.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-adding-fhir-connection-transaction.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-fhir.adoc - include::../../modules/connecting/proc-adding-fhir-connection-delete.adoc[]</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

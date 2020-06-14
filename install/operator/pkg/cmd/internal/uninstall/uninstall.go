@@ -18,14 +18,13 @@ package uninstall
 
 import (
 	"fmt"
-	"github.com/operator-framework/operator-sdk/pkg/restmapper"
+
 	"github.com/spf13/cobra"
 	"github.com/syndesisio/syndesis/install/operator/pkg/apis"
-	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1alpha1"
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
 	"github.com/syndesisio/syndesis/install/operator/pkg/cmd/internal"
 	"github.com/syndesisio/syndesis/install/operator/pkg/util"
 	"k8s.io/apimachinery/pkg/api/errors"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
@@ -48,15 +47,14 @@ func New(parent *internal.Options) *cobra.Command {
 }
 
 func (o *Uninstall) uninstall() error {
-	sl := &v1alpha1.SyndesisList{}
+	sl := &v1beta1.SyndesisList{}
 	cfg, err := config.GetConfig()
 	if err != nil {
 		return err
 	}
 
 	mgr, err := manager.New(cfg, manager.Options{
-		Namespace:      o.Namespace,
-		MapperProvider: restmapper.NewDynamicRESTMapper,
+		Namespace: o.Namespace,
 	})
 	if err != nil {
 		return err
@@ -66,12 +64,12 @@ func (o *Uninstall) uninstall() error {
 		return err
 	}
 
-	c, err := o.GetClient()
+	c, err := o.ClientTools().RuntimeClient()
 	if err != nil {
 		return err
 	}
 
-	err = c.List(o.Context, &client.ListOptions{}, sl)
+	err = c.List(o.Context, sl)
 	for _, res := range sl.Items {
 		err = c.Delete(o.Context, &res)
 		if err != nil {

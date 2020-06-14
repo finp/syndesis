@@ -18,21 +18,26 @@ package io.syndesis.test.itest.sheets;
 
 import javax.servlet.Filter;
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeTestSupport;
+import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.server.HttpServer;
+import com.consol.citrus.http.server.HttpServerBuilder;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
+import io.syndesis.test.SyndesisTestEnvironment;
 import io.syndesis.test.itest.SyndesisIntegrationTestSupport;
 import io.syndesis.test.itest.sheets.util.GzipServletFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SocketUtils;
 import org.testcontainers.Testcontainers;
+
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
+import static com.consol.citrus.actions.PurgeEndpointAction.Builder.purgeEndpoints;
 
 /**
  * @author Christoph Deppisch
@@ -45,8 +50,13 @@ public class GoogleSheetsTestSupport extends SyndesisIntegrationTestSupport {
         Testcontainers.exposeHostPorts(GOOGLE_SHEETS_SERVER_PORT);
     }
 
+    @Autowired
+    protected DataSource sampleDb;
+
+    @Autowired
+    protected HttpServer googleSheetsApiServer;
+
     @Configuration
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public static class EndpointConfig {
 
         @Bean
@@ -55,24 +65,21 @@ public class GoogleSheetsTestSupport extends SyndesisIntegrationTestSupport {
             filterMap.put("request-caching-filter", new RequestCachingServletFilter());
             filterMap.put("gzip-filter", new GzipServletFilter());
 
-            return CitrusEndpoints.http()
-                    .server()
+            return new HttpServerBuilder()
                     .port(GOOGLE_SHEETS_SERVER_PORT)
                     .autoStart(true)
-                    .timeout(60000L)
+                    .timeout(Duration.ofSeconds(SyndesisTestEnvironment.getDefaultTimeout()).toMillis())
                     .filters(filterMap)
                     .build();
         }
+    }
 
-        @Bean
-        public TestRunnerBeforeTestSupport beforeTest(DataSource sampleDb) {
-            return new TestRunnerBeforeTestSupport() {
-                @Override
-                public void beforeTest(TestRunner runner) {
-                    runner.sql(builder -> builder.dataSource(sampleDb)
-                            .statement("delete from contact"));
-                }
-            };
-        }
+    protected void cleanupDatabase(TestCaseRunner runner) {
+        runner.given(purgeEndpoints()
+                    .endpoint(googleSheetsApiServer));
+
+        runner.given(sql(sampleDb)
+            .dataSource(sampleDb)
+            .statement("delete from contact"));
     }
 }

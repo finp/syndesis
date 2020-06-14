@@ -1,5 +1,4 @@
 import { AutoForm, IFormDefinition } from '@syndesis/auto-form';
-import { ApiConnectorDetailsForm } from '@syndesis/ui';
 import { useContext } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +7,7 @@ import { UIContext } from '../../../app';
 export interface IFormValues {
   name: string;
   description: string;
+  address: string;
   host: string;
   basePath: string;
 }
@@ -16,21 +16,68 @@ export interface IConnectorValues extends IFormValues {
   icon?: string;
 }
 
+export interface IApiConnectorInfoFormChildrenProps {
+  connectorName?: string;
+
+  /**
+   * the form (embedded in the right UI elements)
+   */
+  fields: JSX.Element;
+
+  icon?: string | undefined;
+
+  /**
+   * true if the form is being submitted.
+   * Used to enable/disable the submit button.
+   */
+  isSubmitting: boolean;
+
+  /**
+   * `true` if an image is being uploaded.
+   * Used to enable/disable the submit button.
+   */
+  isUploadingImage: boolean;
+
+  /**
+   * The callback for when an icon file was selected from the file system.
+   * @param event the event whose target contains the file being uploaded
+   */
+  onUploadImage: (event: any) => void;
+
+  /**
+   * The callback fired when submitting the form.
+   * @param e the changed properties
+   * @param actions used to set isSubmitting on the form
+   */
+  handleSubmit: (e?: any) => void;
+
+  /**
+   * the callback to trigger to submit the form.
+   */
+  submitForm(): any;
+}
+
 export interface IApiConnectorInfoFormProps {
   name?: string;
   description?: string;
+  /**
+   * SOAP connectors can specify an `address`,
+   * OpenAPI connectors can specify a `host` and `basePath`
+   */
+  address?: string;
   host?: string;
   basePath?: string;
+
+  /**
+   * We use the `connectorTemplateId` to determine
+   * whether this is an OpenAPI or SOAP connector
+   */
+  connectorTemplateId?: string;
 
   /**
    * The connector icon.
    */
   apiConnectorIcon?: string;
-
-  /**
-   * `true` when the connection details are being edited.
-   */
-  isEditing: boolean;
 
   /**
    * The callback fired when submitting the form.
@@ -39,16 +86,16 @@ export interface IApiConnectorInfoFormProps {
    */
   handleSubmit: (e: IConnectorValues, actions?: any) => void;
 
-  children: (props: {
-    isSubmitting: boolean;
-    isUploadingImage: boolean;
-    submitForm: () => void;
-  }) => React.ReactNode;
+  /**
+   * the render prop that will receive the ready-to-be-rendered form and some
+   * helpers.
+   *
+   * @see [onSubmit]{@link IApiConnectorInfoFormChildrenProps#submitForm}
+   */
+  children(props: IApiConnectorInfoFormChildrenProps): any;
 }
 
-export const ApiConnectorInfoForm: React.FunctionComponent<
-  IApiConnectorInfoFormProps
-> = props => {
+export const ApiConnectorInfoForm: React.FunctionComponent<IApiConnectorInfoFormProps> = props => {
   const { pushNotification } = useContext(UIContext);
   const { t } = useTranslation(['apiClientConnectors', 'shared']);
   const [icon, setIcon] = React.useState<string | undefined>(
@@ -57,6 +104,9 @@ export const ApiConnectorInfoForm: React.FunctionComponent<
   const [isUploadingImage, setIsUploadingImage] = React.useState<boolean>(
     false
   );
+
+  const isSoapConnector =
+    props.connectorTemplateId === 'soap-connector-template';
 
   // tslint:disable: object-literal-sort-keys
   const formDefinition = {
@@ -71,17 +121,27 @@ export const ApiConnectorInfoForm: React.FunctionComponent<
       displayName: t('shared:Description'),
       type: 'textarea',
     },
-    host: {
+  } as IFormDefinition;
+
+  if (isSoapConnector) {
+    formDefinition.address = {
+      defaultValue: '',
+      displayName: t('apiClientConnectors:address'),
+      type: 'string',
+    };
+  } else {
+    formDefinition.host = {
       defaultValue: '',
       displayName: t('apiClientConnectors:Host'),
       type: 'string',
-    },
-    basePath: {
+    };
+
+    formDefinition.basePath = {
       defaultValue: '',
       displayName: t('apiClientConnectors:basePath'),
       type: 'string',
-    },
-  } as IFormDefinition;
+    };
+  }
 
   const onUploadImage = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (event.target.files && event.target.files.length === 1) {
@@ -125,29 +185,25 @@ export const ApiConnectorInfoForm: React.FunctionComponent<
       initialValue={{
         name: props.name || '',
         description: props.description || '',
+        address: props.address || '',
         host: props.host || '',
         basePath: props.basePath || '',
       }}
       onSave={onSave}
     >
-      {({ fields, handleSubmit, isSubmitting, submitForm }) => (
-        <>
-          <ApiConnectorDetailsForm
-            apiConnectorIcon={icon}
-            apiConnectorName={props.name}
-            i18nIconLabel={t('ConnectorIcon')}
-            handleSubmit={handleSubmit}
-            onUploadImage={onUploadImage}
-            isEditing={props.isEditing}
-            fields={fields}
-            footer={props.children({
-              isSubmitting,
-              isUploadingImage,
-              submitForm,
-            })}
-          />
-        </>
-      )}
+      {({ fields, handleSubmit, isSubmitting, submitForm }) => {
+        const connectorName = props.name;
+        return props.children({
+          connectorName,
+          fields,
+          handleSubmit,
+          icon,
+          isUploadingImage,
+          isSubmitting,
+          onUploadImage,
+          submitForm,
+        });
+      }}
     </AutoForm>
   );
 };

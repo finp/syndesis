@@ -3,6 +3,7 @@ import {
   getActionById,
   getConnectionConnector,
   getConnectorActions,
+  WEBHOOK_INCOMING_ACTION_ID,
   WithActionDescriptor,
 } from '@syndesis/api';
 import * as H from '@syndesis/history';
@@ -13,7 +14,7 @@ import {
   IConfigurationProperty,
   IConnectionOverview,
 } from '@syndesis/models';
-import { PageSection, PageSectionLoader } from '@syndesis/ui';
+import { PageLoader, PageSection } from '@syndesis/ui';
 import { WithLoader } from '@syndesis/utils';
 import * as React from 'react';
 import resolvers from '../../../../connections/resolvers';
@@ -71,6 +72,12 @@ export interface IWithConfigurationFormProps {
    */
   initialValue?: { [key: string]: string };
 
+  /**
+   * Boolean value that determines whether or not the Back button is allowed on the
+   * configuration form.
+   */
+  isBackAllowed: boolean;
+
   chooseActionHref: H.LocationDescriptor;
 
   /**
@@ -86,18 +93,17 @@ export interface IWithConfigurationFormProps {
 /**
  * A really specific helper function to apply collected error keys to
  * an error mapping form
- * @param action
+ * @param definition
  * @param errorKeys
  */
-function applyErrorKeysToForm(action: Action, errorKeys: ErrorKey[]) {
-  const definition = {
-    ...action.descriptor!.propertyDefinitionSteps![0],
-  } as any;
-  const errorResponseCodes = definition!.properties!
-    .errorResponseCodes as IConfigurationProperty;
+function applyErrorKeysToForm(
+  definition: IConfigurationProperties,
+  errorKeys: ErrorKey[]
+) {
+  const errorResponseCodes = definition.errorResponseCodes as IConfigurationProperty;
   // TODO compatibility, remove when this property is defined
   if (!errorResponseCodes) {
-    return definition.properties;
+    return definition;
   }
   const extProperties =
     typeof errorResponseCodes.extendedProperties === 'string'
@@ -108,7 +114,7 @@ function applyErrorKeysToForm(action: Action, errorKeys: ErrorKey[]) {
     mapsetKeys: errorKeys,
   });
   return {
-    ...definition.properties,
+    ...definition,
     errorResponseCodes: {
       ...errorResponseCodes,
       extendedProperties: newExtendedProperties,
@@ -123,9 +129,7 @@ function applyErrorKeysToForm(action: Action, errorKeys: ErrorKey[]) {
  * @see [moreConfigurationSteps]{@link IWithConfigurationFormProps#moreConfigurationSteps}
  * @see [values]{@link IWithConfigurationFormProps#values}
  */
-export const WithConfigurationForm: React.FunctionComponent<
-  IWithConfigurationFormProps
-> = props => {
+export const WithConfigurationForm: React.FunctionComponent<IWithConfigurationFormProps> = props => {
   // Use the action configuration that was set on the step, otherwise find it in the connection definition
   const action =
     props.oldAction ||
@@ -133,14 +137,19 @@ export const WithConfigurationForm: React.FunctionComponent<
       getConnectorActions(getConnectionConnector(props.connection)),
       props.actionId
     );
+
+  const isApiProvider = props.actionId === API_PROVIDER_END_ACTION_ID;
+  const isWebHook = props.actionId === WEBHOOK_INCOMING_ACTION_ID;
+
   // The API provider end action gets some special treatment
-  if (props.actionId === API_PROVIDER_END_ACTION_ID) {
-    const definitionOverride = applyErrorKeysToForm(action, props.errorKeys!);
+  if (isApiProvider) {
     return (
       <ConfigurationForm
         action={action}
         descriptor={action.descriptor!}
-        definitionOverride={definitionOverride}
+        definitionCustomizer={definition => {
+          return applyErrorKeysToForm(definition, props.errorKeys!);
+        }}
         {...props}
       >
         <NothingToConfigure
@@ -151,6 +160,7 @@ export const WithConfigurationForm: React.FunctionComponent<
       </ConfigurationForm>
     );
   }
+
   // For all other actions, the descriptor is fetched from the meta service
   return (
     <WithActionDescriptor
@@ -159,33 +169,44 @@ export const WithConfigurationForm: React.FunctionComponent<
       initialValue={action.descriptor}
       configuredProperties={props.initialValue || {}}
     >
-      {({ data, error, errorMessage, loading }) => (
-        <WithLoader
-          error={error}
-          loading={loading}
-          loaderChildren={<PageSectionLoader />}
-          errorChildren={
-            <PageSection>
-              <ActionDescriptorFetchError
-                connectionDetailHref={resolvers.connection.details({
-                  connection: props.connection,
-                })}
-                error={errorMessage!}
-              />
-            </PageSection>
-          }
-        >
-          {() => (
-            <ConfigurationForm action={action} descriptor={data} {...props}>
-              <NothingToConfigure
+      {({ data, error, errorMessage, loading }) => {
+        return (
+          <WithLoader
+            error={error}
+            loading={loading}
+            loaderChildren={<PageLoader />}
+            errorChildren={
+              <PageSection>
+                <ActionDescriptorFetchError
+                  connectionDetailHref={resolvers.connection.details({
+                    connection: props.connection,
+                  })}
+                  error={errorMessage!}
+                />
+              </PageSection>
+            }
+          >
+            {() => (
+              <ConfigurationForm
                 action={action}
+                definitionCustomizer={definition => {
+                  return isWebHook
+                    ? applyErrorKeysToForm(definition, props.errorKeys!)
+                    : definition;
+                }}
                 descriptor={data}
                 {...props}
-              />
-            </ConfigurationForm>
-          )}
-        </WithLoader>
-      )}
+              >
+                <NothingToConfigure
+                  action={action}
+                  descriptor={data}
+                  {...props}
+                />
+              </ConfigurationForm>
+            )}
+          </WithLoader>
+        );
+      }}
     </WithActionDescriptor>
   );
 };

@@ -23,20 +23,31 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.assertj.core.api.Condition;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.stubbing.Answer;
+
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.WithName;
+import io.syndesis.common.model.WithResourceId;
+import io.syndesis.common.model.connection.ConfigurationProperty;
+import io.syndesis.common.model.connection.Connection;
+import io.syndesis.common.model.connection.Connector;
 import io.syndesis.common.model.environment.Environment;
 import io.syndesis.common.model.integration.ContinuousDeliveryEnvironment;
 import io.syndesis.common.model.integration.ContinuousDeliveryImportResults;
@@ -46,6 +57,7 @@ import io.syndesis.common.model.integration.IntegrationDeploymentState;
 import io.syndesis.common.model.integration.IntegrationOverview;
 import io.syndesis.common.model.monitoring.IntegrationDeploymentStateDetails;
 import io.syndesis.server.dao.manager.DataManager;
+import io.syndesis.server.dao.manager.EncryptionComponent;
 import io.syndesis.server.endpoint.monitoring.MonitoringProvider;
 import io.syndesis.server.endpoint.v1.handler.environment.EnvironmentHandler;
 import io.syndesis.server.endpoint.v1.handler.integration.IntegrationDeploymentHandler;
@@ -53,17 +65,13 @@ import io.syndesis.server.endpoint.v1.handler.integration.IntegrationDeploymentH
 import io.syndesis.server.endpoint.v1.handler.integration.IntegrationHandler;
 import io.syndesis.server.endpoint.v1.handler.integration.support.IntegrationSupportHandler;
 
-import org.apache.commons.lang3.RandomStringUtils;
-import org.assertj.core.api.Condition;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -104,14 +112,11 @@ public class PublicApiHandlerTest {
         // null's are not used
         final PublicApiHandler handler = new PublicApiHandler(dataManager, null, null, null, null, environmentHandler, integrationSupportHandler, null);
 
-        try (Response response = handler.exportResources("env", false)) {
+        try (Response response = handler.exportResources("env", false, false)) {
             assertThat(response).isNotNull();
             assertThat(response.getStatusInfo().toEnum()).isEqualTo(Status.OK);
             assertThat(response.getEntity()).isSameAs(someStream);
         }
-
-        verify(dataManager).update(withLastExportedTimestamp(integration1, envId));
-        verify(dataManager).update(withLastExportedTimestamp(integration2, envId));
 
         final Integration integration3 = new Integration.Builder()
             .id("integration3")
@@ -126,6 +131,15 @@ public class PublicApiHandlerTest {
             .get(0);
 
         assertThat(filterFunction.apply(ListResult.of(integration1, integration2, integration3))).isEqualTo(ListResult.of(integration1, integration2));
+
+        try (Response response = handler.exportResources("env", false, true)) {
+            assertThat(response).isNotNull();
+            assertThat(response.getStatusInfo().toEnum()).isEqualTo(Status.OK);
+            assertThat(response.getEntity()).isSameAs(someStream);
+        }
+
+        verify(dataManager, times(2)).update(withLastExportedTimestamp(integration1, envId));
+        verify(dataManager, times(2)).update(withLastExportedTimestamp(integration2, envId));
     }
 
     @Test
@@ -136,26 +150,58 @@ public class PublicApiHandlerTest {
 
         final InputStream givenDataStream = new ByteArrayInputStream(new byte[0]);
 
-        final Environment env = newEnvironment("env");
-        when(dataManager.fetchByPropertyValue(Environment.class, "name", "env")).thenReturn(Optional.of(env));
-
         // too convoluted to use the implementation directly
         final IntegrationSupportHandler supportHandler = mock(IntegrationSupportHandler.class);
 
+        final Connection testConnection = new Connection.Builder()
+            .id("connection-id")
+            .connectorId("connector-id")
+            .name("test-connection").build();
         final Integration integration = new Integration.Builder()
             .id("integration-id")
+            .addConnection(testConnection)
             .build();
+        Map<String, List<WithResourceId>> resultMap = new HashMap<>();
+        resultMap.put("integration-id", Collections.singletonList(integration));
+        resultMap.put("connection-id", Collections.singletonList(testConnection));
         when(supportHandler.importIntegration(securityContext, givenDataStream))
-            .thenReturn(Collections.singletonMap("integration-id", Collections.singletonList(integration)));
+            .thenReturn(resultMap);
+
+        final Environment env = newEnvironment("env");
+        when(dataManager.fetchByPropertyValue(Environment.class, "name", "env")).thenReturn(Optional.of(env));
+        when(dataManager.fetch(Connector.class, "connector-id")).thenReturn(
+            new Connector.Builder()
+                .putProperty("prop", new ConfigurationProperty.Builder().build())
+                .build());
+        when(dataManager.fetchAll(eq(Integration.class), any())).then((Answer<ListResult<Integration>>) invocation -> {
+            final Object[] arguments = invocation.getArguments();
+            ListResult<Integration> result = new ListResult.Builder<Integration>().addItem(integration).build();
+            for (int i = 1; i < arguments.length; i++) {
+                @SuppressWarnings("unchecked")
+                Function<ListResult<Integration>, ListResult<Integration>> operator = (Function<ListResult<Integration>, ListResult<Integration>>) arguments[i];
+                result = operator.apply(result);
+            }
+            return result;
+        });
 
         final EnvironmentHandler environmentHandler = new EnvironmentHandler(dataManager);
         final IntegrationDeploymentHandler deploymentHandler = mock(IntegrationDeploymentHandler.class);
+        final EncryptionComponent encryptionComponent = mock(EncryptionComponent.class);
+        when(encryptionComponent.encryptPropertyValues(any(), any())).thenReturn(Collections.singletonMap("prop", "value"));
+
+        IntegrationHandler integrationHandler = mock(IntegrationHandler.class);
+        when(integrationHandler.getOverview(any())).thenReturn(
+            new IntegrationOverview.Builder().createFrom(integration)
+                .connections(Collections.singletonList(testConnection.builder().putConfiguredProperty("prop", "value").build()))
+                .build());
+
         // null's are not used
-        final PublicApiHandler handler = new PublicApiHandler(null, null, deploymentHandler, null, null, environmentHandler, supportHandler, null);
+        final PublicApiHandler handler = new PublicApiHandler(dataManager, encryptionComponent, deploymentHandler, null, null, environmentHandler, supportHandler, integrationHandler);
 
         final PublicApiHandler.ImportFormDataInput formInput = new PublicApiHandler.ImportFormDataInput();
         formInput.setData(givenDataStream);
         formInput.setProperties(new ByteArrayInputStream("test-connection.prop=value".getBytes(StandardCharsets.UTF_8)));
+        formInput.setRefreshIntegrations(Boolean.TRUE);
         formInput.setEnvironment("env");
         formInput.setDeploy(Boolean.TRUE);
 
@@ -164,7 +210,12 @@ public class PublicApiHandlerTest {
         verify(deploymentHandler).update(securityContext, "integration-id");
 
         assertThat(importResults.getLastImportedAt()).isNotNull();
-        assertThat(importResults.getResults()).containsOnly(integration);
+        assertThat(importResults.getResults().size()).isEqualTo(2);
+
+        // verify the integration connection was refreshed
+        final Integration importedIntegration = (Integration) importResults.getResults().get(0);
+
+        assertThat(importedIntegration.getConnections().get(0).getConfiguredProperties().get("prop")).isEqualTo("value");
     }
 
     @Test
@@ -298,7 +349,7 @@ public class PublicApiHandlerTest {
         when(monitoringProvider.getIntegrationStateDetails("integration-id")).thenReturn(stateDetails);
 
         // null's are not used
-        final PublicApiHandler handler = new PublicApiHandler(dataManager, null, null, null, monitoringProvider, null, null, integrationHandler);
+        final PublicApiHandler handler = new PublicApiHandler(dataManager, null, null, null, monitoringProvider, new EnvironmentHandler(dataManager), null, integrationHandler);
 
         final PublicApiHandler.IntegrationState integrationState = handler.getIntegrationState(newMockSecurityContext(),
             "integration-name");
@@ -373,9 +424,10 @@ public class PublicApiHandlerTest {
             .thenReturn(Optional.of(env2));
         when(dataManager.fetch(Environment.class, env2.getId().get())).thenReturn(env2);
 
+        @SuppressWarnings("JdkObsolete") final Date epoh = new Date(0);
         final ContinuousDeliveryEnvironment existingContinuousDeliveryEntry = new ContinuousDeliveryEnvironment.Builder()
             .environmentId(env1.getId().get())
-            .lastTaggedAt(new Date(0))
+            .lastTaggedAt(epoh)
             .build();
         final Integration integration = new Integration.Builder()
             .putContinuousDeliveryState(env1.getId().get(), existingContinuousDeliveryEntry)
@@ -418,7 +470,7 @@ public class PublicApiHandlerTest {
             .build());
 
         // null's are not used
-        final PublicApiHandler handler = new PublicApiHandler(dataManager, null, deploymentHandler, null, null, null, null, null);
+        final PublicApiHandler handler = new PublicApiHandler(dataManager, null, deploymentHandler, null, null, new EnvironmentHandler(dataManager), null, null);
 
         final IntegrationDeployment deployment = handler.publishIntegration(securityContext, "integration-id");
 
@@ -517,7 +569,7 @@ public class PublicApiHandlerTest {
         final IntegrationDeploymentHandler deploymentHandler = mock(IntegrationDeploymentHandler.class);
 
         // null's are not used
-        final PublicApiHandler handler = new PublicApiHandler(dataManager, null, deploymentHandler, null, null, null, null, null);
+        final PublicApiHandler handler = new PublicApiHandler(dataManager, null, deploymentHandler, null, null, new EnvironmentHandler(dataManager), null, null);
 
         handler.stopIntegration(securityContext, "integration-id");
 

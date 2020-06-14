@@ -17,12 +17,14 @@
 package install
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/syndesisio/syndesis/install/operator/pkg/cmd/internal"
 	"github.com/syndesisio/syndesis/install/operator/pkg/generator"
-	"strings"
-	"testing"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/capabilities"
 )
 
 func TestInstallResourcesRender(t *testing.T) {
@@ -36,8 +38,16 @@ func TestInstallResourcesRender(t *testing.T) {
 
 	for _, f := range files {
 
-		if strings.HasPrefix(f.Name(), "grant_") {
+		if strings.HasPrefix(f.Name(), "grant") {
 			continue // skip these.. Not testing the grant resource rendering..
+		}
+
+		if strings.Compare(f.Name(), "deployment.yml.tmpl") == 0 {
+			continue // skip these.. Not testing the deployment..
+		}
+
+		apiServer := capabilities.ApiServerSpec{
+			OlmSupport: true,
 		}
 
 		o := Install{
@@ -47,9 +57,12 @@ func TestInstallResourcesRender(t *testing.T) {
 			image:      "syndesis-operator",
 			tag:        "latest",
 			devSupport: true,
+			apiServer:  apiServer,
 		}
+
 		resources, err := o.render("./install/" + f.Name())
 		require.NoError(t, err)
-		assert.NotEqual(t, 0, len(resources))
+		assert.NotEqual(t, 0, len(resources), "Failed to render "+f.Name())
+
 	}
 }

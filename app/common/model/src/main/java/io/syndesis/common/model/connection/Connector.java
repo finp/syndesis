@@ -83,11 +83,13 @@ public interface Connector extends WithId<Connector>, WithIdVersioned<Connector>
         return Collections.emptyList();
     }
 
+    Optional<String> getExceptionHandler();
+
     /**
      * Provides a summary of the connector's actions
      * <p>
      * Note:
-     * Excluded from {@link #hashCode()} and {@link #equals(Object)}
+     * Excluded from {@link ImmutableConnector#hashCode()} and {@link ImmutableConnector#equals(Object)}
      *
      * @return the summary of the connector's actions
      */
@@ -98,7 +100,7 @@ public interface Connector extends WithId<Connector>, WithIdVersioned<Connector>
      * Provide number of connections using this connector
      * <p>
      * Note:
-     * Excluded from {@link #hashCode()} and {@link #equals(Object)}
+     * Excluded from {@link ImmutableConnector#hashCode()} and {@link ImmutableConnector#equals(Object)}
      *
      * @return count of integrations
      */

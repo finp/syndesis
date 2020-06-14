@@ -5,16 +5,17 @@ import {
 import { AutoForm, IFormDefinition } from '@syndesis/auto-form';
 import { SchemaNodeInfo, Virtualization } from '@syndesis/models';
 import {
-  CreateViewHeader,
   IViewConfigurationFormValidationResult,
   ViewConfigurationForm,
   ViewCreateLayout,
+  ViewWizardHeader,
 } from '@syndesis/ui';
 import { useRouteData } from '@syndesis/utils';
 import * as React from 'react';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UIContext } from '../../../../app';
+import { PageTitle } from '../../../../shared';
 import resolvers from '../../../resolvers';
 import { generateViewDefinition } from '../../shared/VirtualizationUtils';
 
@@ -121,8 +122,8 @@ export const SelectNamePage: React.FunctionComponent = () => {
         value.name,
         value.description
       );
-      try {
-        await saveViewDefinition(viewDefinition);
+      const saveResult = await saveViewDefinition(viewDefinition);
+      if (!saveResult.hasError) {
         const newView = await getView(
           state.virtualization.name,
           viewDefinition.name
@@ -135,8 +136,8 @@ export const SelectNamePage: React.FunctionComponent = () => {
             viewDefinition: undefined,
           })
         );
-      } catch (error) {
-        const details = error.message ? error.message : '';
+      } else {
+        const details = saveResult.message ? saveResult.message : '';
         pushNotification(
           t('createViewFailed', {
             details,
@@ -184,10 +185,12 @@ export const SelectNamePage: React.FunctionComponent = () => {
       }}
     >
       {({ fields, handleSubmit, isSubmitting, isValid, submitForm }) => (
+      <>
+        <PageTitle title={t('createViewPageTitle')} />
         <ViewCreateLayout
           header={
-            <CreateViewHeader
-              step={2}
+            <ViewWizardHeader
+               step={2}
               cancelHref={resolvers.data.virtualizations.views.root({
                 virtualization: state.virtualization,
               })}
@@ -198,8 +201,8 @@ export const SelectNamePage: React.FunctionComponent = () => {
               isNextDisabled={!isValid}
               isNextLoading={isSubmitting}
               isLastStep={true}
-              i18nChooseTable={t('shared:ChooseTable')}
-              i18nNameYourView={t('shared:NameYourView')}
+              i18nStep1Text={t('shared:ChooseTable')}
+              i18nStep2Text={t('shared:NameYourView')}
               i18nBack={t('shared:Back')}
               i18nDone={t('shared:Done')}
               i18nNext={t('shared:Next')}
@@ -215,6 +218,7 @@ export const SelectNamePage: React.FunctionComponent = () => {
             </ViewConfigurationForm>
           }
         />
+      </>
       )}
     </AutoForm>
   );

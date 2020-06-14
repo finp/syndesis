@@ -1,4 +1,5 @@
 import {
+  MonacoContext,
   useViewDefinition,
   useVirtualization,
   useVirtualizationHelpers,
@@ -18,7 +19,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { UIContext } from '../../../../app';
-import { ApiError } from '../../../../shared';
+import { ApiError, PageTitle } from '../../../../shared';
 import { WithLeaveConfirmation } from '../../../../shared/WithLeaveConfirmation';
 import resolvers from '../../../resolvers';
 import {
@@ -58,6 +59,7 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
   const [sourceTableColumns, setSourceTableColumns] = React.useState<
     TableColumns[]
   >([]);
+  const [sourceInfo, setSourceInfo] = React.useState<any>([]);
   const [viewValid, setViewValid] = React.useState(true);
   const [
     validationMessageVisible,
@@ -68,6 +70,9 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
   >([]);
   const { pushNotification } = useContext(UIContext);
   const { t } = useTranslation(['data', 'shared']);
+  const [validationResultsTitle, setValidationResultsTitle] = React.useState<string>(
+    t('validationResultsTitle')
+  );
   const { params, state, history } = useRouteData<
     IViewEditorSqlRouteParams,
     IViewEditorSqlRouteState
@@ -86,16 +91,20 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
     params.viewDefinitionId,
     state.viewDefinition
   );
-  const [noResultsTitle, setNoResultsTitle] = React.useState(
+  const [viewVersion, setViewVersion] = React.useState(viewDefn.version);
+  const [noResultsTitle, setNoResultsTitle] = React.useState<string>(
     t('preview.resultsTableValidEmptyTitle')
   );
-  const [noResultsMessage, setNoResultsMessage] = React.useState(
+  const [noResultsMessage, setNoResultsMessage] = React.useState<string>(
     t('preview.resultsTableValidEmptyInfo')
   );
   const ddlHasChanges = React.useRef(false);
 
   const handleMetadataLoaded = async (): Promise<void> => {
     if (sourceTableColumns != null && sourceTableColumns.length > 0) {
+      // tslint:disable-next-line:no-console
+      console.log("  VESPage.handleMetadataLoaded() \n\t  virtualization.name = ", virtualization.name);
+      monacoContext.setVirtualization(virtualization.name);
       setMetadataLoaded(true);
     }
   };
@@ -128,6 +137,7 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
       setNoResultsTitle(t('preview.resultsTableInvalidEmptyTitle'));
       setNoResultsMessage(t('preview.resultsTableInvalidEmptyInfo'));
     }
+    setValidationResultsTitle(t('validationResultsTitle'));
     setValidationResults([validationResult]);
     setValidationMessageVisible(!isValid);
     setViewValid(isValid);
@@ -152,26 +162,33 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
       sourcePaths: viewDefn.sourcePaths,
       status: 'ERROR',
       userDefined: true,
+      version: viewVersion,
     };
 
-    try {
-      // Save the View
-      const newView = await saveViewDefinition(view);
-
+    const saveResult = await saveViewDefinition(view);
+    if (!saveResult.hasError) {
+      const newView = saveResult.viewDefinition;
       // Updates view validation state and results
-      updateViewStatusAndResults(newView);
+      updateViewStatusAndResults(newView!);
+      setViewVersion(newView!.version);
 
       setIsSaving(false);
       return true;
-    } catch (error) {
+    } else {
       setIsSaving(false);
-      pushNotification(
-        t('saveViewFailed', {
-          details: error.message ? error.message : '',
-          name: viewDefn.name,
-        }),
-        'error'
-      );
+      const validationResult = {
+        message: saveResult.versionConflict
+          ? t('viewSaveVersionConflictMessage')
+          : t('viewSaveErrorMessage'),
+        type: 'danger',
+      } as IViewEditValidationResult;
+      setNoResultsTitle(t('preview.resultsTableInvalidEmptyTitle'));
+      setNoResultsMessage(t('preview.resultsTableInvalidEmptyInfo'));
+      setValidationResultsTitle(t('viewSaveErrorTitle'));
+      setValidationResults([validationResult]);
+      setValidationMessageVisible(true);
+      setViewValid(false);
+      updateQueryResults(false);
       return false;
     }
   };
@@ -220,7 +237,7 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
       if (isValid) {
         queryResult = await queryVirtualization(
           params.virtualizationId,
-          getPreviewSql(viewDefn),
+          getPreviewSql(viewDefn.name),
           15,
           0
         );
@@ -256,11 +273,14 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
       const loadSourceTableInfo = async () => {
         try {
           const results: ViewSourceInfo = await getSourceInfoForView(
-            virtualization
+            virtualization.name
           );
           setSourceTableColumns(
             generateTableColumns(results as ViewSourceInfo)
           );
+          if (sourceInfo.length === 0) {
+            setSourceInfo(results.schemas);
+          }
         } catch (error) {
           pushNotification(error.message, 'error');
         }
@@ -289,6 +309,8 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
     return ddlHasChanges.current;
   }, [ddlHasChanges]);
 
+  const monacoContext = useContext(MonacoContext);
+
   return (
     <WithLoader
       loading={loading}
@@ -304,6 +326,7 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
         >
           {() => (
             <>
+              <PageTitle title={t('viewEditor.pageTitle')} />
               <Breadcrumb>
                 <Link to={resolvers.dashboard.root()}>{t('shared:Home')}</Link>
                 <Link to={resolvers.data.root()}>{t('shared:Data')}</Link>
@@ -320,21 +343,27 @@ export const ViewEditorSqlPage: React.FunctionComponent = () => {
               </Breadcrumb>
               <DdlEditor
                 viewDdl={viewDefn.ddl ? viewDefn.ddl : ''}
-                i18nCursorColumn={t('cursorColumn')}
-                i18nCursorLine={t('cursorLine')}
-                i18nDdlTextPlaceholder={t('ddlTextPlaceholder')}
+                virtualizationName={virtualization.name}
+                editedViewName={viewDefn.name}
                 i18nDoneLabel={t('shared:Done')}
                 i18nSaveLabel={t('shared:Save')}
                 i18nTitle={t('viewEditor.title')}
-                i18nValidationResultsTitle={t('validationResultsTitle')}
+                i18nLoading={t('shared:Loading')}
+                i18nKababAction={t('metadataTreeKababAction')}
+                i18nColumnActionTooltip={t('metadataColumnTooltip')}
+                previewExpanded={previewExpanded}
+                i18nValidationResultsTitle={validationResultsTitle}
                 showValidationMessage={validationMessageVisible}
                 isSaving={isSaving}
                 sourceTableInfos={sourceTableColumns}
+                sourceInfo={sourceInfo}
                 onCloseValidationMessage={handleHideValidationMessage}
                 onFinish={handleEditFinished}
                 onSave={handleSaveView}
                 setDirty={handleDirtyStateChanged}
                 validationResults={validationResults}
+                didmount={monacoContext.didMountEditor}
+                willMount={monacoContext.willMountEditor}
               />
               <ExpandablePreview
                 i18nEmptyResultsTitle={noResultsTitle}

@@ -17,13 +17,13 @@
 package io.syndesis.test.container.s2i;
 
 import java.nio.file.Path;
-import java.time.Duration;
 
 import io.syndesis.test.SyndesisTestEnvironment;
-import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.images.builder.ImageFromDockerfile;
+import org.testcontainers.images.builder.dockerfile.statement.MultiArgsStatement;
 
 /**
  * Syndesis S2i container that performs assemble step on a give project directory. The project sources are assembled to
@@ -36,18 +36,24 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
  */
 public class SyndesisS2iAssemblyContainer extends GenericContainer<SyndesisS2iAssemblyContainer> {
 
-    private static final String S2I_ASSEMBLE_SCRIPT = "/usr/local/s2i/assemble";
+    static final String S2I_ASSEMBLE_SCRIPT = "/usr/local/s2i/assemble";
     private static final String SRC_DIR = "/tmp/src";
 
     public SyndesisS2iAssemblyContainer(String integrationName, Path projectDir, String imageTag) {
         super(new ImageFromDockerfile(integrationName + "-s2i", true)
-                .withDockerfileFromBuilder(builder -> builder.from(String.format("syndesis/syndesis-s2i:%s", imageTag))
-                        .cmd(S2I_ASSEMBLE_SCRIPT)
-                        .build()));
+            .withFileFromPath(SRC_DIR, projectDir)
+            .withDockerfileFromBuilder(builder -> builder.from(String.format("syndesis/syndesis-s2i:%s", imageTag))
+                .withStatement(new MultiArgsStatement("ADD", SRC_DIR, SRC_DIR))
+                .user("0")
+                .run("chown", "-R", "1000", SRC_DIR)
+                .user("1000")
+                .cmd(S2I_ASSEMBLE_SCRIPT)
+                .build()));
 
-        withFileSystemBind(projectDir.toAbsolutePath().toString(), SRC_DIR, BindMode.READ_WRITE);
+        final WaitStrategy onLogDone = new LogMessageWaitStrategy()
+            .withRegEx(".*\\.\\.\\. done.*\\s")
+            .withStartupTimeout(SyndesisTestEnvironment.getContainerStartupTimeout());
 
-        waitingFor(new LogMessageWaitStrategy().withRegEx(".*\\.\\.\\. done.*\\s")
-                                               .withStartupTimeout(Duration.ofSeconds(SyndesisTestEnvironment.getContainerStartupTimeout())));
+        setWaitStrategy(onLogDone);
     }
 }

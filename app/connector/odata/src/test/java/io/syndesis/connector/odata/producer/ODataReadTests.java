@@ -15,20 +15,16 @@
  */
 package io.syndesis.connector.odata.producer;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import java.util.Map;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.olingo4.Olingo4Endpoint;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestExecutionListeners;
@@ -82,7 +78,7 @@ public class ODataReadTests extends AbstractODataRouteTest {
     }
 
     @Override
-    protected ConnectorAction createConnectorAction() throws Exception {
+    protected ConnectorAction createConnectorAction() {
         ConnectorAction odataAction = new ConnectorAction.Builder()
             .description("Read resource entities from the server subject to keyPredicates")
              .id("io.syndesis:" + Methods.READ.actionIdentifierRoot() + HYPHEN + TO)
@@ -150,17 +146,8 @@ public class ODataReadTests extends AbstractODataRouteTest {
         result.assertIsSatisfied();
 
         String entityJson = extractJsonFromExchgMsg(result, 0, String.class);
-        JSONAssert.assertEquals(testData(TEST_SERVER_DATA_1, AbstractODataReadRouteTest.class), entityJson, JSONCompareMode.LENIENT);
+        assertThatJson(entityJson).isEqualTo(testData(TEST_SERVER_DATA_1, AbstractODataReadRouteTest.class));
         assertEquals(initialResultCount, defaultTestServer.getResultCount());
-
-        //
-        // Check no consumer properties are created on the endpoint
-        // Not applicable & should be stopped by connectorDirection property
-        //
-        Olingo4Endpoint olingo4Endpoint = context.getEndpoint(OLINGO4_READ_TO_ENDPOINT, Olingo4Endpoint.class);
-        assertNotNull(olingo4Endpoint);
-        Map<String, Object> consumerProperties = olingo4Endpoint.getConsumerProperties();
-        assertThat(consumerProperties).isEmpty();
     }
 
     @Test
@@ -197,7 +184,7 @@ public class ODataReadTests extends AbstractODataRouteTest {
         result.assertIsSatisfied();
 
         String entityJson = extractJsonFromExchgMsg(result, 0, String.class);
-        JSONAssert.assertEquals(testData(TEST_SERVER_DATA_2, AbstractODataReadRouteTest.class), entityJson, JSONCompareMode.LENIENT);
+        assertThatJson(entityJson).isEqualTo(testData(TEST_SERVER_DATA_2, AbstractODataReadRouteTest.class));
         assertEquals(initialResultCount, defaultTestServer.getResultCount());
     }
 
@@ -250,7 +237,7 @@ public class ODataReadTests extends AbstractODataRouteTest {
             }
 
             assertNotNull(expectedData);
-            JSONAssert.assertEquals(testData(expectedData, AbstractODataReadRouteTest.class), entityJson, JSONCompareMode.LENIENT);
+            assertThatJson(entityJson).isEqualTo(testData(expectedData, AbstractODataReadRouteTest.class));
             assertEquals(initialResultCount, defaultTestServer.getResultCount());
         }
     }
@@ -286,6 +273,6 @@ public class ODataReadTests extends AbstractODataRouteTest {
         result.assertIsSatisfied();
 
         String entityJson = extractJsonFromExchgMsg(result, 0, String.class);
-        JSONAssert.assertEquals(testData(REF_SERVER_PEOPLE_DATA_KLAX_LOC, AbstractODataReadRouteTest.class), entityJson, JSONCompareMode.LENIENT);
+        assertThatJson(entityJson).isEqualTo(testData(REF_SERVER_PEOPLE_DATA_KLAX_LOC, AbstractODataReadRouteTest.class));
     }
 }

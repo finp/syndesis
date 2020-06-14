@@ -1,6 +1,5 @@
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
-import { withNotes } from '@storybook/addon-notes';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -31,7 +30,6 @@ const viewItems = [
     viewEditPageLink={''}
     i18nCancelText={'Cancel'}
     i18nDelete={text('i18nDelete', deleteText)}
-    i18nDeleteTip={text('i18nDeleteTip1', deleteTip1)}
     i18nDeleteModalMessage={'Do you really want to delete the view?'}
     i18nDeleteModalTitle={'Confirm Delete'}
     i18nEdit={text('i18nEdit', editText)}
@@ -48,7 +46,6 @@ const viewItems = [
     i18nCancelText={'Cancel'}
     viewDescription={text('description', viewDescription2)}
     i18nDelete={text('i18nDelete', deleteText)}
-    i18nDeleteTip={text('i18nDeleteTip2', deleteTip2)}
     i18nDeleteModalMessage={'Do you really want to delete the view?'}
     i18nDeleteModalTitle={'Confirm Delete'}
     i18nEdit={text('i18nEdit', editText)}
@@ -65,7 +62,6 @@ const viewItems = [
     i18nCancelText={'Cancel'}
     viewDescription={''}
     i18nDelete={text('i18nDelete', deleteText)}
-    i18nDeleteTip={text('i18nDeleteTip2', deleteTip2)}
     i18nDeleteModalMessage={'Do you really want to delete the view?'}
     i18nDeleteModalTitle={'Confirm Delete'}
     i18nEdit={text('i18nEdit', editText)}
@@ -148,7 +144,7 @@ stories
 
   .add(
     'no Views',
-    withNotes(noViewsTestNotes)(() => (
+    () => (
       <Router>
         <ViewList
           activeFilters={[]}
@@ -166,8 +162,8 @@ stories
           currentValue={''}
           filterTypes={[]}
           isSortAscending={true}
-          linkCreateViewHRef={action('/data/create')}
-          linkImportViewsHRef={action('/data/import')}
+          linkCreateViewHRef={'/data/create'}
+          linkImportViewsHRef={'/data/import'}
           resultsCount={0}
           sortTypes={[]}
           onUpdateCurrentValue={action('onUpdateCurrentValue')}
@@ -197,12 +193,13 @@ stories
           hasListData={false}
         />
       </Router>
-    ))
+    ),
+    { notes: noViewsTestNotes }
   )
 
   .add(
     'has Views',
-    withNotes(hasViewsTestNotes)(() => (
+    () => (
       <Router>
         <ViewList
           activeFilters={[]}
@@ -220,8 +217,8 @@ stories
           currentValue={''}
           filterTypes={[]}
           isSortAscending={true}
-          linkCreateViewHRef={action('/data/create')}
-          linkImportViewsHRef={action('/data/import')}
+          linkCreateViewHRef={'/data/create'}
+          linkImportViewsHRef={'/data/import'}
           resultsCount={0}
           sortTypes={[]}
           onUpdateCurrentValue={action('onUpdateCurrentValue')}
@@ -254,5 +251,6 @@ stories
           hasListData={true}
         />
       </Router>
-    ))
+    ),
+    { notes: hasViewsTestNotes }
   );

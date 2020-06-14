@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Obtaining messages from Amazon SQS to trigger integration execution :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-amazon-sqs-connection-retrieve.html">Obtaining messages from Amazon SQS to trigger integration execution</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-amazon-sqs-connection-retrieve.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Obtaining messages from Amazon SQS to trigger integration execution</h1>
+<div class="paragraph">
+<p>To start an integration by obtaining messages from an Amazon SQS queue,
+add an Amazon SQS connection as a simple integration&#8217;s start connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon SQS connection that is configured to access
+the queue that you want to obtain messages from.</p>
+</li>
+<li>
+<p>You know the name of the SQS queue that you want the connection to
+obtain messages from.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Amazon SQS connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Poll an Amazon SQS Queue</strong>
+to periodically retrieve messages from an SQS queue.</p>
+</li>
+<li>
+<p>Configure this action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 500 milliseconds as the time
+that elapses between polls. Or, to specify a different polling interval,
+enter a number and select its time unit.</p>
+</li>
+<li>
+<p>In the <strong>Maximum Objects to Retrieve</strong> field, enter the largest number
+of messages
+that one poll operation can obtain. The default is 10.</p>
+<div class="paragraph">
+<p>To have no limit on the number of messages that can be obtained, specify
+<code>0</code> or a negative integer. When <strong>Maximum Objects to Retrieve</strong> is unlimited,
+the poll action obtains all messages in the SQS queue.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Queue Name or Amazon Resource Name</strong> field, specify
+the name of the SQS queue to retrieve messages from, or the queue&#8217;s ARN.
+If a queue with this name does not exist, the connection creates it.
+This is the only required field.</p>
+</li>
+<li>
+<p>Indicate whether you want to
+<strong>Obtain messages and then delete them from the queue</strong>. Obtaining
+messages and then deleting them from the queue is the default behavior.
+Unselect this option only if you want the connection to retrieve
+messages and also leave  them on the queue, which means that
+the messages will be retrieved again.</p>
+</li>
+<li>
+<p>Indicate whether you want to
+<strong>Obtain messages and delete the message if it does make it through a Camel filter</strong>.
+This option is selected by default. Leave it selected when you want to pass
+a retrieved message through a filter to determine whether to delete it
+from the queue. You do not need to unselect
+<strong>Obtain messages and then delete from the queue</strong>. {prodname} ensures the
+correct behavior when you select
+<strong>Obtain messages and delete the message if it does make it through a Camel filter</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears at the beginning of the integration flow.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>If you selected <strong>Obtain messages and delete the message if it does make it through a Camel filter</strong>
+then you need to add a filter step after this SQS connection. The filter
+step does not need to be immediately after the SQS connection. Add all
+connections to the integration, and then add the filter step.
+During execution, if there are messages that pass the filter, {prodname} uses the
+same connection, the SQS start connection, to delete those messages
+from the queue.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

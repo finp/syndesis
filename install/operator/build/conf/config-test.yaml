@@ -1,19 +1,26 @@
+Version: "7.7.0"
 ProductName: syndesis
 AllowLocalHost: false
 Productized: false
 DevSupport: false
 Scheduled: true
 Syndesis:
-    ImageStreamNamespace: ""
     Addons:
         Jaeger:
             Enabled: false
+            Olm:
+                Package: "jaeger"
+                Channel: "stable"
             SamplerType: "const"
             SamplerParam: "0"
+            ImageAgent: "jaegertracing/jaeger-agent:1.13"
+            ImageAllInOne: "jaegertracing/all-in-one:1.13"
+            ImageOperator: "jaegertracing/jaeger-operator:1.13"
         Ops:
             Enabled: false
         Todo:
             Enabled: false
+            Image: "docker.io/centos/php-71-centos7"
         Knative:
             Enabled: false
         DV:
@@ -24,8 +31,11 @@ Syndesis:
         CamelK:
             Enabled: false
             Image: "fabric8/s2i-java:3.0-java8"
-            CamelVersion: "2.23.2.fuse-760011"
-            CamelKRuntime: "0.3.4.fuse-740008"
+            CamelVersion: "3.1.0"
+            CamelKRuntime: "1.1.0"
+        PublicApi:
+            Enabled: true
+            RouteHostname: "mypublichost.com"
     Components:
         Oauth:
             Image: "quay.io/openshift/origin-oauth-proxy:v4.0.0"
@@ -52,7 +62,6 @@ Syndesis:
             Name: "syndesis"
             User: "syndesis"
             URL: "postgresql://syndesis-db:5432/syndesis?sslmode=disable"
-            ImageStreamNamespace: "openshift"
             Image: "postgresql:9.6"
             Exporter:
                 Image: "docker.io/wrouesnel/postgres_exporter:v0.4.7"
@@ -76,3 +85,5 @@ Syndesis:
                     central: "https://repo.maven.apache.org/maven2/"
                     repo-02-redhat-ga: "https://maven.repository.redhat.com/ga/"
                     repo-03-jboss-ea: "https://repository.jboss.org/nexus/content/groups/ea/"
+        AMQ:
+            Image: "registry.access.redhat.com/jboss-amq-6/amq63-openshift:1.3"

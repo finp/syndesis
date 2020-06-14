@@ -1,8 +1,33 @@
+/*
+ * Copyright (C) 2020 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package run
 
 import (
 	"fmt"
 	"runtime"
+
+	"github.com/prometheus/client_golang/prometheus"
+
+	kubemetrics "github.com/operator-framework/operator-sdk/pkg/kube-metrics"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	customMetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
+
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/versions"
+	v1 "k8s.io/api/core/v1"
 
 	"github.com/syndesisio/syndesis/install/operator/pkg"
 
@@ -10,34 +35,47 @@ import (
 	"github.com/operator-framework/operator-sdk/pkg/leader"
 	"github.com/operator-framework/operator-sdk/pkg/log/zap"
 	"github.com/operator-framework/operator-sdk/pkg/metrics"
-	"github.com/operator-framework/operator-sdk/pkg/restmapper"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1alpha1"
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
 	"github.com/syndesisio/syndesis/install/operator/pkg/cmd/internal"
 	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/configuration"
 	"github.com/syndesisio/syndesis/install/operator/pkg/util"
-	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	sdkVersion "github.com/operator-framework/operator-sdk/version"
-	"github.com/syndesisio/syndesis/install/operator/pkg/openshift"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
-
-	_ "k8s.io/client-go/plugin/pkg/client/auth"
-
 	"github.com/syndesisio/syndesis/install/operator/pkg/apis"
 	"github.com/syndesisio/syndesis/install/operator/pkg/controller"
+	"github.com/syndesisio/syndesis/install/operator/pkg/openshift"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"sigs.k8s.io/controller-runtime/pkg/runtime/signals"
+	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 )
 
 var (
-	metricsHost       = "0.0.0.0"
-	metricsPort int32 = 8383
+	metricsHost               = "0.0.0.0"
+	metricsPort         int32 = 8383
+	operatorMetricsPort int32 = 8686
 )
+
+// Custom metrics
+var (
+	operatorVersion = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name:        "syndesis_version_info",
+			Help:        "Syndesis operator information",
+			ConstLabels: prometheus.Labels{"operator_version": pkg.DefaultOperatorTag},
+		},
+	)
+)
+
+func init() {
+	// Register custom metrics with the global prometheus registry
+	customMetrics.Registry.MustRegister(operatorVersion)
+}
+
 var log = logf.Log.WithName("cmd")
 
 func printVersion() {
@@ -46,6 +84,9 @@ func printVersion() {
 	log.Info(fmt.Sprintf("Version of operator-sdk: %v", sdkVersion.Version))
 	log.Info(fmt.Sprintf("Syndesis Operator Version: %s", pkg.DefaultOperatorTag))
 	log.Info(fmt.Sprintf("Syndesis Operator Image: %s", pkg.DefaultOperatorImage))
+	if len(pkg.BuildDateTime) > 0 {
+		log.Info(fmt.Sprintf("Syndesis Build Time: %s", pkg.BuildDateTime))
+	}
 }
 
 func New(parent *internal.Options) *cobra.Command {
@@ -85,21 +126,23 @@ func (o *options) run() error {
 		return err
 	}
 
-	configuration, err := configuration.GetProperties(configuration.TemplateConfig, o.Context, nil, &v1alpha1.Syndesis{})
+	syndesis := &v1beta1.Syndesis{}
+	syndesis.SetNamespace(namespace)
+	config, err := configuration.GetProperties(o.Context, configuration.TemplateConfig, o.ClientTools(), syndesis)
 	if err != nil {
 		return err
 	}
 
-	util.KnownDockerImages[configuration.Syndesis.Components.Server.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.Meta.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.UI.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.S2I.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.Database.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.Oauth.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.Database.Exporter.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.Prometheus.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Components.Upgrade.Image] = true
-	util.KnownDockerImages[configuration.Syndesis.Addons.DV.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.Server.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.Meta.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.UI.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.S2I.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.Database.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.Oauth.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.Database.Exporter.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.Prometheus.Image] = true
+	util.KnownDockerImages[config.Syndesis.Components.Upgrade.Image] = true
+	util.KnownDockerImages[config.Syndesis.Addons.DV.Image] = true
 
 	ctx := o.Context
 
@@ -110,9 +153,8 @@ func (o *options) run() error {
 	}
 
 	// Create a new Cmd to provide shared dependencies and start components
-	mgr, err := manager.New(cfg, manager.Options{
+	mgr, err := manager.New(o.ClientTools().RestConfig(), manager.Options{
 		Namespace:          namespace,
-		MapperProvider:     restmapper.NewDynamicRESTMapper,
 		MetricsBindAddress: fmt.Sprintf("%s:%d", metricsHost, metricsPort),
 	})
 	if err != nil {
@@ -127,22 +169,61 @@ func (o *options) run() error {
 
 	openshift.AddToScheme(mgr.GetScheme())
 
+	cli, err := o.ClientTools().RuntimeClient()
+	if err != nil {
+		return err
+	}
+
+	am, err := versions.APIMigrator(o.Context, cli, namespace)
+	if err != nil {
+		return err
+	}
+
+	if err = am.Migrate(); err != nil {
+		return err
+	}
+
 	// Setup all Controllers
 	if err := controller.AddToManager(mgr); err != nil {
+		return err
+	}
+
+	// Setup metrics. Serves Operator/CustomResource GVKs and generates metrics based on those types
+	installationGVK := []schema.GroupVersionKind{v1beta1.SchemaGroupVersionKind}
+
+	// To generate metrics in other namespaces, add the values below.
+	ns := []string{namespace}
+	// Generate and serve custom resource specific metrics.
+	err = kubemetrics.GenerateAndServeCRMetrics(cfg, ns, installationGVK, metricsHost, operatorMetricsPort)
+	if err != nil {
 		return err
 	}
 
 	// Create Service object to expose the metrics port.
 	servicePorts := []v1.ServicePort{
 		{Port: metricsPort, Name: metrics.OperatorPortName, Protocol: v1.ProtocolTCP, TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: metricsPort}},
+		{Port: operatorMetricsPort, Name: metrics.CRPortName, Protocol: v1.ProtocolTCP, TargetPort: intstr.IntOrString{Type: intstr.Int, IntVal: operatorMetricsPort}},
 	}
-	_, err = metrics.CreateMetricsService(ctx, cfg, servicePorts)
+
+	service, err := metrics.CreateMetricsService(ctx, cfg, servicePorts)
 	if err != nil {
-		log.Info(err.Error())
+		log.Info("Could not create metrics Service", "error", err.Error())
+	}
+
+	services := []*v1.Service{service}
+	_, err = metrics.CreateServiceMonitors(cfg, namespace, services)
+	if err != nil {
+		log.Info("Could not create ServiceMonitor object", "error", err.Error())
+		// If this operator is deployed to a cluster without the prometheus-operator running, it will return
+		// ErrServiceMonitorNotPresent, which can be used to safely skip ServiceMonitor creation.
+		if err == metrics.ErrServiceMonitorNotPresent {
+			log.Info("Install prometheus-operator in your cluster to create ServiceMonitor objects", "error", err.Error())
+		}
 	}
 
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
 		return err
 	}
+
 	return nil
 }

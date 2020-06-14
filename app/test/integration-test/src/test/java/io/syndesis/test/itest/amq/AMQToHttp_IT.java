@@ -19,12 +19,13 @@ package io.syndesis.test.itest.amq;
 import javax.jms.ConnectionFactory;
 import java.time.Duration;
 
+import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.http.server.HttpServer;
+import com.consol.citrus.http.server.HttpServerBuilder;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
+import com.consol.citrus.jms.endpoint.JmsEndpointBuilder;
 import io.syndesis.test.SyndesisTestEnvironment;
 import io.syndesis.test.container.amq.JBossAMQBrokerContainer;
 import io.syndesis.test.container.integration.SyndesisIntegrationRuntimeContainer;
@@ -40,7 +41,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SocketUtils;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+
+import static com.consol.citrus.actions.SendMessageAction.Builder.send;
+import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 /**
  * @author Christoph Deppisch
@@ -74,21 +77,21 @@ public class AMQToHttp_IT extends SyndesisIntegrationTestSupport {
             .customize("$..configuredProperties.baseUrl",
                         String.format("http://%s:%s", GenericContainer.INTERNAL_HOST_HOSTNAME, TODO_SERVER_PORT))
             .build()
-            .withNetwork(amqBrokerContainer.getNetwork())
-            .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(SyndesisTestEnvironment.getContainerStartupTimeout())));
+            .dependsOn(amqBrokerContainer)
+            .withNetwork(amqBrokerContainer.getNetwork());
 
     @Test
     @CitrusTest
-    public void testHttpToAMQ(@CitrusResource TestRunner runner) {
-        runner.send(builder -> builder.endpoint(todoJms)
+    public void testHttpToAMQ(@CitrusResource TestCaseRunner runner) {
+        runner.given(send().endpoint(todoJms)
                 .payload("{\"id\": \"1\", \"name\":\"Learn some #golang\", \"done\": 1}"));
 
-        runner.http(builder -> builder.server(todoApiServer)
+        runner.when(http().server(todoApiServer)
                 .receive()
                 .post()
                 .payload("{\"id\": \"1\", \"task\":\"Learn some #golang\", \"completed\": 1}"));
 
-        runner.http(builder -> builder.server(todoApiServer)
+        runner.then(http().server(todoApiServer)
                 .send()
                 .response(HttpStatus.CREATED));
 
@@ -105,8 +108,7 @@ public class AMQToHttp_IT extends SyndesisIntegrationTestSupport {
 
         @Bean
         public JmsEndpoint todoJms() {
-            return CitrusEndpoints.jms()
-                    .asynchronous()
+            return new JmsEndpointBuilder()
                     .connectionFactory(connectionFactory())
                     .destination("todos")
                     .build();
@@ -114,11 +116,10 @@ public class AMQToHttp_IT extends SyndesisIntegrationTestSupport {
 
         @Bean
         public HttpServer todoApiServer() {
-            return CitrusEndpoints.http()
-                    .server()
+            return new HttpServerBuilder()
                     .port(TODO_SERVER_PORT)
                     .autoStart(true)
-                    .timeout(60000L)
+                    .timeout(Duration.ofSeconds(SyndesisTestEnvironment.getDefaultTimeout()).toMillis())
                     .build();
         }
     }

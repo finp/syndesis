@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Monitoring integrations :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-monitoring-integrations.html">Monitoring integrations</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assemblies/integrating-applications/assembly-monitoring-integrations.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Monitoring integrations</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} provides various ways for you to monitor the execution
+of your integrations. See:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#viewing-integration-history_monitor">Viewing integration history</a></p>
+</li>
+<li>
+<p><a href="#viewing-integration-activity-information_monitor">Viewing information about an integration&#8217;s activity</a></p>
+</li>
+<li>
+<p><a href="#viewing-integration-metrics_monitor">Viewing metrics for a particular integration</a></p>
+</li>
+<li>
+<p><a href="#viewing-system-metrics_monitor">Viewing metrics for a {prodname} environment</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="viewing-integration-history_monitor"><a class="anchor" href="#viewing-integration-history_monitor"></a>Viewing integration history</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} maintains each version of an integration. You can always view a list
+of the versions of each integration.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong> to display a list of the
+integrations in your environment.</p>
+</li>
+<li>
+<p>At the right of the entry for the integration whose versions you want to see,
+click <strong>View</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>In the page that appears, the <strong>History</strong> section lists the versions
+of the integration. The
+<span class="image"><img src="../../../_images/images/tutorials/GreenCircleCheckmark.png" alt="Current Version"></span> icon
+identifies the current version, which is the most recently,
+successfully running version.
+For each version, you can also see the date on which it was last started.</p>
+</div>
+<div class="paragraph">
+<p>To edit, start, or stop a particular version, click the
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span> to the right of the
+version&#8217;s entry. Select the operation that you want to perform.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="viewing-integration-activity-information_monitor"><a class="anchor" href="#viewing-integration-activity-information_monitor"></a>Viewing information about an integration&#8217;s activity</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} provides activity information for each execution of an integration.
+This information is part of the integration&#8217;s log.
+For each step in a flow, {prodname} provides:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The date and time that the step was executed</p>
+</li>
+<li>
+<p>How long it took to execute the step</p>
+</li>
+<li>
+<p>Whether execution was successful</p>
+</li>
+<li>
+<p>The error message if execution was not successful</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>At any time, you can view this information.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>There is or was a running integration for which you want to view activity
+information.</p>
+</li>
+<li>
+<p>This integration has been executed at least once.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>At the right of the entry for the integration for which you want to view activity
+information, click <strong>View</strong>.</p>
+</li>
+<li>
+<p>In the integration&#8217;s summary page, click the <strong>Activity</strong> tab.</p>
+</li>
+<li>
+<p>Optionally, enter date and/or keyword filters to limit the executions
+listed.</p>
+</li>
+<li>
+<p>Click the integration execution for which you want to view activity information.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>To obtain additional information between any two steps, you can
+add a log step to the
+integration. A log step provides information about each message it
+receives and can provide custom text that you specify.
+If you add a log step, then it appears as one of the integration&#8217;s
+steps when you expand the integration execution that you want to view activity
+information for. You view {prodname} information for a log step in the
+same way that you view {prodname} information for any other step. See
+<a href="{LinkSyndesisIntegrationGuide}#add-log-step_manage">Logging information about integration execution</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="viewing-integration-metrics_monitor"><a class="anchor" href="#viewing-integration-metrics_monitor"></a>Viewing metrics for a particular integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} provides the following metrics for each integration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Total Errors</strong> indicates the number of runtime errors that all
+executions of this integration
+encountered during the past 30 days.</p>
+</li>
+<li>
+<p><strong>Last Processed</strong> displays the most recent date and time that this
+integration processed a message. The message might have been successfully
+processed or there might have been an error.</p>
+</li>
+<li>
+<p><strong>Total Messages</strong> is the number of messages that all executions
+of this integration processed in the last 30 days. This includes
+message failures.</p>
+</li>
+<li>
+<p><strong>Uptime</strong> indicates when this integration started running and how long
+it has been running without an error.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>The integration that you want to view metrics for is running or has been
+running.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>At the right of the entry for the integration for which you want to view metrics,
+click <strong>View</strong>.</p>
+</li>
+<li>
+<p>In the integration&#8217;s summary page, click <strong>Metrics</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="viewing-system-metrics_monitor"><a class="anchor" href="#viewing-system-metrics_monitor"></a>Viewing metrics for a {prodname} environment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Metrics for your {prodname} environment appear on the {prodname} home page.</p>
+</div>
+<div class="paragraph">
+<div class="title">Procedure</div>
+<p>In the left panel, click <strong>Home</strong>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>{prodname} updates the following metrics
+every 5 seconds:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The number of integrations that are defined in this environment as
+well as the number of integrations that are running, the number
+of integrations that are stopped, and the number of integrations that
+are pending. {prodname} is either stopping or starting pending integrations.
+A red cross indicates any integrations that
+were running but that encountered an error that suspended execution.</p>
+</li>
+<li>
+<p>The number of connections that are defined in this environment.</p>
+</li>
+<li>
+<p>Total number of messages that have been processed by integrations in
+this environment in
+the last 30 days. This includes messages that were processed by
+integrations that might no longer be running or that might have been
+deleted from this environment.</p>
+</li>
+<li>
+<p>Uptime indicates how long there has been at least one integration that
+is running. The date and time when uptime started appears as well.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Triggering an integration when polling returns a Gmail message :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-gmail-connection-start.html">Triggering an integration when polling returns a Gmail message</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-add-gmail-connection-start.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Triggering an integration when polling returns a Gmail message</h1>
+<div class="paragraph">
+<p>To trigger execution of an integration based on email received by
+a particular Gmail account, add a Gmail connection as the start connection of
+a simple integration. When the integration is running, the Gmail connection checks
+this account for emails at intervals that you control.
+When the connection finds an unread
+email, it passes the email to the next step in the integration and, by default,
+marks the email as <strong>read</strong>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Gmail connection that is authorized to access the Gmail
+account that you want to obtain emails from.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Gmail connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Receive Email</strong> action.</p>
+</li>
+<li>
+<p>To configure the <strong>Receive Email</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 30 seconds or
+specify how often you want the integration to check for new email.</p>
+</li>
+<li>
+<p>Leave the <strong>Labels</strong> field blank to obtain any unread email.
+To obtain only certain emails,
+specify a comma-separated list of labels that are used in the Gmail
+account that the connection is accessing. By default, the integration obtains the
+unread emails that have those labels.</p>
+</li>
+<li>
+<p>Select <strong>Mark as read</strong> to ensure that the connection does not
+return the same email twice. If <strong>Mark as read</strong> is not selected, the
+connection returns emails that are in the account&#8217;s in box, whether or
+not they were previously read. Or, if you specify one or more labels, then
+the integration return emails that have those labels whether or not they
+were already read.</p>
+</li>
+<li>
+<p>In the <strong>Max Results</strong> field, accept the default of <strong>5</strong> or
+indicate the maximum number of emails that the connection
+can return for each poll. If the connection finds more than this number
+of unread emails, then it returns the most recent <strong>Max Results</strong> emails.</p>
+<div class="paragraph">
+<p>When a Gmail connection returns more than one email, the integration
+processes the emails as a batch. In other words, {prodname}
+executes the integration once for the batch.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this Gmail connection as the start connection
+in the integration. The connection appears as the
+first step in the integration flow.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

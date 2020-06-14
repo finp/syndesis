@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding an IRC connection to trigger integration execution upon receiving messages :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-irc-connection-receive.html">Adding an IRC connection to trigger integration execution upon receiving messages</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-irc-connection-receive.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding an IRC connection to trigger integration execution upon receiving messages</h1>
+<div class="paragraph">
+<p>An IRC connection that starts an integration triggers execution of the
+integration when the connection finds private messages that are sent to an
+IRC nickname that you specify.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an IRC connection.</p>
+</li>
+<li>
+<p>You have an IRC nickname for receiving and sending messages.</p>
+</li>
+<li>
+<p>You are creating a simple integration and {prodname} is prompting you to
+choose how you want to start the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click the IRC connection that you want to use to start the integration.</p>
+</li>
+<li>
+<p>Select the <strong>IRC Receive Private Message</strong> action.</p>
+</li>
+<li>
+<p>In the <strong>Channels</strong> field, optionally specify one or more IRC channels
+separated with commas.</p>
+</li>
+<li>
+<p>In the <strong>Nickname</strong> field, specify the IRC nickname that the
+integration uses. For any channels that you specify, this
+nickname joins the channel. During execution, the integration
+retrieves messages that are sent to this nickname and passes them
+to the next step in the integration.</p>
+</li>
+<li>
+<p>In the <strong>NickServ Password</strong> field, if the specified nickname has
+a password, enter it.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection is a simple integration&#8217;s start connection and
+{prodname} prompts you to choose the integration&#8217;s finish connection.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

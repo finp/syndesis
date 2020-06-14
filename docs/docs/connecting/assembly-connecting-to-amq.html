@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to AMQ :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-amq.html">Connecting to AMQ</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assembly-connecting-to-amq.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to AMQ</h1>
+<div class="paragraph">
+<p>In an integration, you can obtain messages from a
+Red Hat AMQ broker or publish messages to
+a Red Hat AMQ broker. Red Hat AMQ uses the OpenWire protocol for communication
+between clients and message brokers. To communicate with the following
+broker types, use the Red Hat AMQ connector to create a connection to the
+broker of interest:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache ActiveMQ broker that does not support AMQP</p>
+</li>
+<li>
+<p>AMQ 6 broker</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To communicate with one of the following broker types,
+<a href="{LinkSyndesisConnectorGuide}#connecting-to-amqp_amqp">use the AMQP connector</a>
+to create a connection to the broker of interest:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache ActiveMQ broker that supports AMQP</p>
+</li>
+<li>
+<p>Apache ActiveMQ Artemis</p>
+</li>
+<li>
+<p>AMQ 7 broker</p>
+</li>
+<li>
+<p>EnMasse, which is an open source messaging platform</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To use the Red Hat AMQ connector, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-amq-connection_amq">[create-amq-connection_amq]</a></p>
+</li>
+<li>
+<p><a href="#adding-amq-connection-start_amq">[adding-amq-connection-start_amq]</a></p>
+</li>
+<li>
+<p><a href="#adding-amq-connection-finish_amq">[adding-amq-connection-finish_amq]</a></p>
+</li>
+<li>
+<p><a href="#adding-amq-connection-middle_amq">[adding-amq-connection-middle_amq]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-amq.adoc - include::../../modules/connecting/proc-create-amq-connection.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-amq.adoc - include::../../modules/connecting/proc-adding-amq-connection-start.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-amq.adoc - include::../../modules/connecting/proc-adding-amq-connection-finish.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-amq.adoc - include::../../modules/connecting/proc-adding-amq-connection-middle.adoc[]</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -15,9 +15,14 @@
  */
 package io.syndesis.server.openshift;
 
+import io.syndesis.common.util.Names;
+import io.syndesis.common.util.SyndesisServerException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,9 +33,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Container;
@@ -60,8 +62,6 @@ import io.fabric8.openshift.api.model.RouteSpec;
 import io.fabric8.openshift.api.model.User;
 import io.fabric8.openshift.api.model.UserBuilder;
 import io.fabric8.openshift.client.NamespacedOpenShiftClient;
-import io.syndesis.common.util.Names;
-import io.syndesis.common.util.SyndesisServerException;
 
 @SuppressWarnings({"PMD.BooleanGetMethodName", "PMD.LocalHomeNamingConvention", "PMD.GodClass"})
 public class OpenShiftServiceImpl implements OpenShiftService {
@@ -69,9 +69,10 @@ public class OpenShiftServiceImpl implements OpenShiftService {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenShiftServiceImpl.class);
 
     private static final String OPENSHIFT_PREFIX = "i-";
-
-    // Labels used for generated objects
-    private static final Map<String, String> INTEGRATION_DEFAULT_LABELS = defaultLabels();
+    public static final String SECRET_VOLUME = "secret-volume";
+    public static final String IMAGE_STREAM_TAG = "ImageStreamTag";
+    public static final String IMAGE_CHANGE = "ImageChange";
+    public static final String MEMORY = "memory";
 
     private final NamespacedOpenShiftClient openShiftClient;
     private final OpenShiftConfigurationProperties config;
@@ -144,7 +145,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
     }
 
     @Override
-    public void scale(String name, Map<String, String> labels, int desiredReplicas, long amount, TimeUnit timeUnit) throws InterruptedException {
+    public void scale(String name, Map<String, String> labels, int desiredReplicas, long amount, TimeUnit timeUnit) {
         String sName = openshiftName(name);
         getDeploymentsByLabel(labels)
             .stream()
@@ -170,7 +171,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
         if (deploymentConfigs.isEmpty()) {
           return false;
         }
-
 
         DeploymentConfig dc = deploymentConfigs.get(0);
         int allReplicas = 0;
@@ -226,7 +226,8 @@ public class OpenShiftServiceImpl implements OpenShiftService {
         openShiftClient.imageStreams().withName(name).createOrReplaceWithNew()
             .withNewMetadata()
                 .withName(name)
-                .addToLabels(INTEGRATION_DEFAULT_LABELS)
+                .addToLabels(INTEGRATION_APP_LABEL, INTEGRATION_APP_LABEL_VALUE)
+                .addToLabels(INTEGRATION_TYPE_LABEL, INTEGRATION_TYPE_LABEL_VALUE)
             .endMetadata()
             .done();
     }
@@ -242,6 +243,10 @@ public class OpenShiftServiceImpl implements OpenShiftService {
         // check if deployment config exists
         final DoneableDeploymentConfig deploymentConfig;
         final DeploymentConfig oldConfig = openShiftClient.deploymentConfigs().withName(name).get();
+        String jaegerCollectorUri = System.getenv("JAEGER_ENDPOINT");
+        if (jaegerCollectorUri == null) {
+            jaegerCollectorUri = "http://syndesis-jaeger-collector:14268/api/traces";
+        }
         if (oldConfig != null) {
             // make sure replicas is set to at least 1 or restore the previous replica count if present
             final PodTemplateSpec oldTemplate = oldConfig.getSpec().getTemplate();
@@ -252,7 +257,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
             // environment variables are stored in a list, so remove duplicates manually before patching
             final EnvVar[] vars = { new EnvVar("LOADER_HOME", config.getIntegrationDataPath(), null),
                     new EnvVar("AB_JMX_EXPORTER_CONFIG", "/tmp/src/prometheus-config.yml", null),
-                    new EnvVar("JAEGER_ENDPOINT", "http://syndesis-jaeger-collector:14268/api/traces", null),
+                    new EnvVar("JAEGER_ENDPOINT", jaegerCollectorUri, null),
                     new EnvVar("JAEGER_TAGS", "integration.version="+deploymentData.getVersion(), null),
                     new EnvVar("JAEGER_SAMPLER_TYPE", "const", null),
                     new EnvVar("JAEGER_SAMPLER_PARAM", "1", null) };
@@ -288,7 +293,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                         .withName(name)
                         .addToAnnotations(deploymentData.getAnnotations())
                         .addToLabels(deploymentData.getLabels())
-                        .addToLabels(INTEGRATION_DEFAULT_LABELS)
                     .endMetadata()
                     .editSpec()
                         // if not set to more than 1, force replicas to 1 to start the integration pod
@@ -299,7 +303,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                             .editMetadata()
                                 .addToLabels(INTEGRATION_NAME_LABEL, name)
                                 .addToLabels(COMPONENT_LABEL, "integration")
-                                .addToLabels(INTEGRATION_DEFAULT_LABELS)
                                 .addToLabels(deploymentData.getLabels())
                                 .addToAnnotations(deploymentData.getAnnotations())
                                 .addToAnnotations("prometheus.io/scrape", "true")
@@ -312,7 +315,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                                     .withName(name)
                                     .withEnv(envVars)
                                     .withPorts( newPorts)
-                                    .editMatchingVolumeMount(v -> "secret-volume".equals(v.getName()))
+                                    .editMatchingVolumeMount(v -> SECRET_VOLUME.equals(v.getName()))
                                         .withMountPath("/deployments/config")
                                         .withReadOnly(false)
                                     .endVolumeMount()
@@ -324,7 +327,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                                             .endHttpGet()
                                             .build())
                                 .endContainer()
-                                .editMatchingVolume(v -> "secret-volume".equals(v.getName()))
+                                .editMatchingVolume(v -> SECRET_VOLUME.equals(v.getName()))
                                     .withNewSecret()
                                         .withSecretName(name)
                                     .endSecret()
@@ -333,13 +336,13 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                         .endTemplate()
                         .withTriggers(
                             new DeploymentTriggerPolicyBuilder()
-                                .withType("ImageChange")
+                                .withType(IMAGE_CHANGE)
                                 .withNewImageChangeParams()
                                 // set automatic to 'true' when not performing the deployments on our own
                                 .withAutomatic(true)
                                 .addToContainerNames(name)
                                 .withNewFrom()
-                                .withKind("ImageStreamTag")
+                                .withKind(IMAGE_STREAM_TAG)
                                 .withName(name + ":" + deploymentData.getVersion())
                                 .endFrom()
                                 .endImageChangeParams()
@@ -354,7 +357,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                         .withName(name)
                         .addToAnnotations(deploymentData.getAnnotations())
                         .addToLabels(deploymentData.getLabels())
-                        .addToLabels(INTEGRATION_DEFAULT_LABELS)
                     .endMetadata()
                     .withNewSpec()
                         .withReplicas(1)
@@ -362,8 +364,8 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                         .withNewStrategy()
                             .withType("Recreate")
                             .withNewResources()
-                            .addToLimits("memory", new Quantity(config.getDeploymentMemoryLimitMi()  + "Mi"))
-                            .addToRequests("memory", new Quantity(config.getDeploymentMemoryRequestMi() +  "Mi"))
+                            .addToLimits(MEMORY, new Quantity(config.getDeploymentMemoryLimitMi()  + "Mi"))
+                            .addToRequests(MEMORY, new Quantity(config.getDeploymentMemoryRequestMi() +  "Mi"))
                             .endResources()
                         .endStrategy()
                         .withRevisionHistoryLimit(0)
@@ -371,7 +373,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                             .withNewMetadata()
                                 .addToLabels(INTEGRATION_NAME_LABEL, name)
                                 .addToLabels(COMPONENT_LABEL, "integration")
-                                .addToLabels(INTEGRATION_DEFAULT_LABELS)
                                 .addToLabels(deploymentData.getLabels())
                                 .addToAnnotations(deploymentData.getAnnotations())
                                 .addToAnnotations("prometheus.io/scrape", "true")
@@ -386,7 +387,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                                     .withEnv(
                                             new EnvVar("LOADER_HOME", config.getIntegrationDataPath(), null),
                                             new EnvVar("AB_JMX_EXPORTER_CONFIG", "/tmp/src/prometheus-config.yml", null),
-                                            new EnvVar("JAEGER_ENDPOINT", "http://syndesis-jaeger-collector:14268/api/traces", null),
+                                            new EnvVar("JAEGER_ENDPOINT", jaegerCollectorUri, null),
                                             new EnvVar("JAEGER_TAGS", "integration.version="+deploymentData.getVersion(), null),
                                             new EnvVar("JAEGER_SAMPLER_TYPE", "const", null),
                                             new EnvVar("JAEGER_SAMPLER_PARAM", "1", null))
@@ -403,7 +404,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                                         .withContainerPort(8081)
                                     .endPort()
                                     .addNewVolumeMount()
-                                        .withName("secret-volume")
+                                        .withName(SECRET_VOLUME)
                                         .withMountPath("/deployments/config")
                                         .withReadOnly(false)
                                     .endVolumeMount()
@@ -416,7 +417,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                                             .build())
                                 .endContainer()
                                 .addNewVolume()
-                                    .withName("secret-volume")
+                                    .withName(SECRET_VOLUME)
                                     .withNewSecret()
                                         .withSecretName(name)
                                     .endSecret()
@@ -424,13 +425,13 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                             .endSpec()
                         .endTemplate()
                         .addNewTrigger()
-                            .withType("ImageChange")
+                            .withType(IMAGE_CHANGE)
                             .withNewImageChangeParams()
                                 // set automatic to 'true' when not performing the deployments on our own
                                 .withAutomatic(true)
                                 .addToContainerNames(name)
                                 .withNewFrom()
-                                .withKind("ImageStreamTag")
+                                .withKind(IMAGE_STREAM_TAG)
                                 .withName(name + ":" + deploymentData.getVersion())
                                 .endFrom()
                             .endImageChangeParams()
@@ -455,7 +456,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                 .withName(name)
                 .addToAnnotations(deploymentData.getAnnotations())
                 .addToLabels(deploymentData.getLabels())
-                .addToLabels(INTEGRATION_DEFAULT_LABELS)
             .endMetadata()
             .withNewSpec()
                 .withRunPolicy("SerialLatestOnly")
@@ -466,7 +466,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                   .withType("Source")
                   .withNewSourceStrategy()
                     .withNewFrom()
-                        .withKind("ImageStreamTag")
+                        .withKind(IMAGE_STREAM_TAG)
                         .withName(builderStreamTag)
                         .withNamespace(imageStreamNamespace)
                     .endFrom()
@@ -482,7 +482,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
                 .endStrategy()
                 .withNewOutput()
                     .withNewTo()
-                    .withKind("ImageStreamTag")
+                    .withKind(IMAGE_STREAM_TAG)
                     .withName(name + ":" + deploymentData.getVersion())
                     .endTo()
                 .endOutput()
@@ -492,7 +492,7 @@ public class OpenShiftServiceImpl implements OpenShiftService {
     }
 
     private boolean removeBuildConfig(String projectName) {
-        return openShiftClient.buildConfigs().withName(projectName).delete();
+        return openShiftClient.buildConfigs().withName(projectName).withPropagationPolicy("Foreground").delete();
     }
 
     private void ensureSecret(String name, DeploymentData deploymentData) {
@@ -632,8 +632,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
 
     /**
      * Checks if Excpetion can be retried and if retries are left.
-     * @param e
-     * @param retries
      */
     private static void checkRetryPolicy(KubernetesClientException e, int retries) {
         if (retries == 0) {
@@ -649,14 +647,6 @@ public class OpenShiftServiceImpl implements OpenShiftService {
 
     protected static String openshiftName(String name) {
         return OPENSHIFT_PREFIX + Names.sanitize(name);
-    }
-
-    static Map<String, String> defaultLabels() {
-        final HashMap<String, String> labels = new HashMap<String, String>();
-        labels.put("syndesis.io/type", "integration");
-        labels.put("syndesis.io/app", "syndesis");
-
-        return Collections.unmodifiableMap(labels);
     }
 
     @Override

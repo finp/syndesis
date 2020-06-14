@@ -26,9 +26,9 @@ public interface TemplateStepPreProcessor extends TemplateStepConstants {
      * with the processing endpoint, eg. ensure 'body' prefix is present on each of
      * the symbols.
      *
-     * @param template
+     * @param template the template
      * @return pre-processed template
-     * @throws exception if processing fails
+     * @throws TemplateProcessingException if processing fails
      */
     String preProcess(String template) throws TemplateProcessingException;
 
@@ -39,8 +39,6 @@ public interface TemplateStepPreProcessor extends TemplateStepConstants {
 
     /**
      * Parameters required for the endpoint
-     *
-     * @return
      */
     Map<String, Object> getUriParams();
 
@@ -51,7 +49,7 @@ public interface TemplateStepPreProcessor extends TemplateStepConstants {
     List<SymbolSyntax> getSymbolSyntaxes();
 
     /**
-     * @param symbol
+     * @param symbol to test
      * @return whether the given symbol is recognised by this pre-processor
      */
     boolean isMySymbol(String symbol);

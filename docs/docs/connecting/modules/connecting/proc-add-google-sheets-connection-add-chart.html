@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding a chart to a sheet :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-google-sheets-connection-add-chart.html">Adding a chart to a sheet</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-add-google-sheets-connection-add-chart.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding a chart to a sheet</h1>
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration,
+you can add a basic chart or a pie chart to a Google Sheets spreadsheet.
+To do this, add a Google Sheets connection to the middle of a flow
+or as a simple integration&#8217;s finish connection. Then add a data mapper
+step just before the connection. In the data mapper step, set
+options that determine the location, properties, and content of the chart.</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} prompts you to configure the <strong>Add charts</strong>
+action, you can leave some or all fields blank. If you leave a field blank,
+you can map a value to that field in the data mapper step that you
+will add just before this connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access
+the Google spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>You have access to the ID for the spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose the finish
+connection for a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Add charts</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Add charts</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter the ID of the spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>Leave the field blank. In the data mapper step that will be just
+before this connection, map the spreadsheet ID from
+a previous connection to this connection. The previous connection must
+access the spreadsheet that you want to add a chart to in this connection.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Chart Title</strong> field, enter a title.</p>
+<div class="paragraph">
+<p>Alternatively, leave the field blank. In the data mapper step that is
+just before this connection, map the chart title from a source field or
+property to the <code>title</code> target field.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Subtitle</strong> field, enter a subtitle.</p>
+<div class="paragraph">
+<p>Alternatively, leave the field blank. In the data mapper step that is
+just before this connection, map the chart subtitle from a source field or
+property to the <code>subtitle</code> target field.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization where you added it.</p>
+</li>
+<li>
+<p>If you want to add any other connections to the flow, add them now.
+Then return to these instructions.</p>
+</li>
+<li>
+<p>In the integration visualization, click the plus sign that is
+just before the connection that adds a chart.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+<div class="paragraph">
+<p>In the data mapper, map source properties, source fields, or source constants to the target
+Google Sheets connection, which is adding a chart. The following instructions
+assume that there is a source field, a source property, or a source constant that contains the
+value that you want to map to each target field.</p>
+</div>
+<div class="paragraph">
+<p>If there is no source for
+the required value, then create a source property
+in the data mapper by clicking the + sign that is to the right of the
+<strong>Properties</strong> folder. In the <strong>Create Property</strong> dialog, give the property
+a name that makes it easy to map to the correct target field, for example,
+specify <strong><code>overlayPosition</code></strong> as the property name. For the property value,
+specify the value that
+you want the connection to use to create the chart. The chart’s overlay
+position field requires A1 notation that identifies a cell. That is,
+it specifies a start position but an end position specification is not
+required, and it is ignored if it is present. For example,
+specify something like <code>D4</code> as the value of the <strong>overlayPosition</strong>
+source property. Save the new property.</p>
+</div>
+<div class="paragraph">
+<p>When you configured the <strong>Add charts</strong> action, you might have specified
+a value for the spreadsheet ID, the chart title, and/or the chart subtitle.
+If you did, then do not map a value to that field.</p>
+</div>
+</li>
+<li>
+<p>To add a chart to a sheet, map source properties, source fields
+or source constants to target fields as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Set the location of the chart by mapping an A1 notation value,
+which identifies a cell, to the <strong>overlayPosition</strong> target field.
+An end position is not required and it is ignored if present.
+The mapped value identifies the cell where Google Sheets places
+the chart. This cell is the upper left corner of the chart display.</p>
+<div class="paragraph">
+<p>If you do not map a value to the <strong>overlayPosition</strong> field,
+and you also do not map a value to the <strong>sheetId</strong> field, which identifies
+the sheet that you want to add the chart to, then the default behavior
+is that Google Sheets creates a new sheet and places the chart in A1.</p>
+</div>
+<div class="paragraph">
+<p>You must map a value to the <strong>overlayPosition</strong> field if you plan to map
+a value to the <strong>sheetId</strong> field.</p>
+</div>
+</li>
+<li>
+<p>Map a source <strong>spreadsheetId</strong> field to the target <strong>spreadsheetId</strong> field.
+The connection uses source data in this spreadsheet to add the chart
+to a sheet in this same spreadsheet. The source data and the chart
+can be in two different sheets in the same spreadsheet but they
+cannot be in two different spreadsheets.</p>
+</li>
+<li>
+<p>Set a chart title by mapping to the target <strong>title</strong> field. The connection inserts
+this string as the title of the chart.</p>
+</li>
+<li>
+<p>Set a chart subtitle by mapping to the target <strong>subtitle</strong> field. The connection inserts
+this string as a chart subtitle.</p>
+</li>
+<li>
+<p>Identify the sheet to add the chart to by mapping an integer to the <strong>sheetId</strong> field.</p>
+<div class="paragraph">
+<p>If you map a value to the <strong>sheetId</strong> field then you must also map a value to the <strong>overlayPosition</strong> field.</p>
+</div>
+<div class="paragraph">
+<p>If you do not map a value to the <strong>sheetId</strong> field and you also do not map a value to
+the <strong>overlayPosition</strong> field, then the connection creates a new sheet and adds
+the chart to the new sheet.</p>
+</div>
+<div class="paragraph">
+<p>If you do not map a value to the <strong>sheetId</strong> field but you do map
+a value to the <strong>overlayPosition</strong> field, then the connection places
+the chart on the sheet identified by the <strong>sourceSheetId</strong> field.
+This is the sheet that provides the data for the chart.</p>
+</div>
+<div class="paragraph">
+<p><code>0</code> identifies the first sheet in the spreadsheet.
+For subsequent sheets, the sheet ID is at the end of the URL when the
+sheet is visible in a browser. For example, at the end of the following
+URL, you can see <code>gid=206589330</code>:</p>
+</div>
+<div class="paragraph">
+<p><code>https://docs.google.com/spreadsheets/d/1pa&#8230;&#8203;ngQbKkM/edit#gid=206589330</code></p>
+</div>
+<div class="paragraph">
+<p>This indicates that the sheet ID is <code>206589330</code> and that is the value
+that you would map to <strong>sheetId</strong>.</p>
+</div>
+</li>
+<li>
+<p>Identify the sheet that provides the data for the chart by mapping
+its integer sheet ID to the target <strong>sourceSheetId</strong> field.
+The default is <code>0</code>, which identifies the first sheet in the spreadsheet.</p>
+<div class="paragraph">
+<p>You can add a basic chart or a pie chart. Follow one of the following
+sets of instructions according to the kind of chart that you want to add.</p>
+</div>
+</li>
+<li>
+<p>To add basic chart, in the target panel, expand the <strong>basicChart</strong> folder
+and map source fields to target fields that are in the <strong>basicChart</strong> folder:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Set the chart type (<code>BAR</code>, <code>LINE</code>, <code>AREA</code>, or <code>COLUMN</code>) by mapping
+to the target <strong>type</strong> field. The default is <code>COLUMN</code>.</p>
+</li>
+<li>
+<p>Set the title for the bottom axis of the chart by mapping to the
+target <strong>axisTitleBottom</strong> field.</p>
+</li>
+<li>
+<p>Set the title for the left axis of the chart by mapping to the
+target <strong>axisTitleLeft</strong> field.</p>
+</li>
+<li>
+<p>Set the high level category of information that the chart shows by
+mapping to the target <strong>domainRange</strong> field.
+This field uses the Google Sheets A1 notation. For example, suppose that the first
+column in a source sheet provides a list of 5 products in <code>A2</code> through <code>A6</code> ,
+and you want the chart to provide some data for each product. In this column,
+the first cell (<code>A1</code>) must contain a label, such as  <code>Products</code>.
+The setting of <strong>domainRange</strong> would be <code>A1:A6</code>. The chart will contain
+the data that is in <code>A2</code> through <code>A6</code>. The chart does not display the label.</p>
+</li>
+<li>
+<p>Identify the location of the source data that the chart shows by mapping to the
+target <strong>dataRange</strong> field. This field uses the Google Sheets A1 notation.
+A chart can provide only one series of data. Continuing with the <strong>domainRange</strong>
+example, suppose that the second column in a source sheet shows the number
+sold for each of the 5 products that are listed in the first column and
+this is the data that you want the chart to show. In this column,
+the first cell (<code>B1</code>) must contain a label, such as  <code>Number Sold</code>.
+The setting of <strong>dataRange</strong> would be <code>B1:B6</code>. The chart will contain
+the data that is in <code>B2</code> through <code>B6</code>. The chart does not display the label.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To add a pie chart, in the target panel, expand the <strong>pieChart</strong> folder
+and map source fields to target fields that are in the <strong>pieChart</strong> folder:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Set the location of the pie chart legend by mapping to the target
+<strong>legendPosition</strong> field. The default is <code>LEFT_LEGEND</code>.
+The value must be <code>BOTTOM_LEGEND</code>, <code>LEFT_LEGEND</code>,
+<code>RIGHT_LEGEND</code>, <code>TOP_LEGEND</code>, or <code>NO_LEGEND</code>.</p>
+</li>
+<li>
+<p>Set the high level category of information that the pie chart shows
+by mapping to the target <strong>domainRange</strong> field.
+This field uses the Google Sheets A1 notation. For example, suppose that the first
+column in a source sheet provides a list of 5 products in <code>A2</code> through <code>A6</code> ,
+and you want the chart to provide some data for each product. In this column,
+the first cell (<code>A1</code>) must contain a label, such as  <code>Products</code>.
+The setting of <strong>domainRange</strong> would be <code>A1:A6</code>. The chart will contain
+the data that is in <code>A2</code> through <code>A6</code>. The chart does not display the label.</p>
+</li>
+<li>
+<p>Identify the location of the source data that the chart shows by
+mapping to the target  <strong>dataRange</strong> field. This field uses the Google Sheets
+A1 notation. A chart can provide only one series of data. Continuing with the <strong>domainRange</strong>
+example, suppose that the second column in a source sheet shows the number
+sold for each of the 5 products that are listed in the first column and
+this is the data that you want the chart to show. In this column,
+the first cell (<code>B1</code>) must contain a label, such as  <code>Number Sold</code>.
+The setting of <strong>dataRange</strong> would be B1:B6. The chart will contain
+the data that is in <code>B2</code> through <code>B6</code>. The chart does not display the label.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

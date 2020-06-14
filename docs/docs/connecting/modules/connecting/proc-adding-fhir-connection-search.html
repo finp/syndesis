@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Querying a FHIR server for resources :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-fhir-connection-search.html">Querying a FHIR server for resources</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-fhir-connection-search.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Querying a FHIR server for resources</h1>
+<div class="paragraph">
+<p>In an integration, you can query a FHIR server to obtain
+instances of a particular FHIR resource that satisfy a query
+that you specify. For example, suppose you want to ensure that all
+patients who are 65 and older received a pneumonia vaccination.
+Specify a query that obtains the resources for patients
+who were born before 1955. To do this,
+add a FHIR connection to the middle of a flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that has the
+resources that you want to obtain.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that has the resources that you want to obtain.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Search</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of resource
+that you want to obtain.</p>
+</li>
+<li>
+<p>In the <strong>Query</strong> field, specify a FHIR query or leave this
+field blank to map the query from a previous step.
+For details about forming a FHIR query, see
+<a href="http://hl7.org/fhir/STU3/search.html">FHIR Release 3 Search</a>.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, this
+connection returns a list of resources that satisfy the query
+that you specified. {prodname} treats this list as a collection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>If you did not specify a query, then add a data mapper step before
+this connection and map the query to this connection.
+To operate on individual returned resources, rather than on the
+returned list collection, after this connection, add a split step
+to the flow.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

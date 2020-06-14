@@ -16,6 +16,20 @@
 
 package io.syndesis.server.endpoint.v1.handler.integration.support;
 
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,31 +47,9 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.StreamingOutput;
-import javax.ws.rs.core.UriInfo;
 
-import io.syndesis.common.util.json.JsonUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.common.model.Dependency;
 import io.syndesis.common.model.Kind;
 import io.syndesis.common.model.ListResult;
@@ -80,6 +72,7 @@ import io.syndesis.common.model.integration.IntegrationOverview;
 import io.syndesis.common.model.integration.Step;
 import io.syndesis.common.model.openapi.OpenApi;
 import io.syndesis.common.util.Names;
+import io.syndesis.common.util.json.JsonUtils;
 import io.syndesis.integration.api.IntegrationProjectGenerator;
 import io.syndesis.integration.api.IntegrationResourceManager;
 import io.syndesis.server.dao.file.FileDataManager;
@@ -94,11 +87,17 @@ import io.syndesis.server.jsondb.dao.JsonDbDao;
 import io.syndesis.server.jsondb.dao.Migrator;
 import io.syndesis.server.jsondb.impl.MemorySqlJsonDB;
 import io.syndesis.server.jsondb.impl.SqlJsonDB;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static org.springframework.util.StreamUtils.nonClosing;
 
 @Path("/integration-support")
-@Api(value = "integration-support")
+@Tag(name = "integration-support")
 @Component
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.GodClass", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity", "PMD.CyclomaticComplexity" })
 public class IntegrationSupportHandler {
@@ -108,9 +107,6 @@ public class IntegrationSupportHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntegrationSupportHandler.class);
     private static final String IMPORTED_SUFFIX = "-imported-";
-
-    private static final BiFunction<Extension, String, Extension> RENAME_EXTENSION = (e, n) -> new Extension.Builder().createFrom(e).name(n).build();
-    private static final BiFunction<Connection, String, Connection> RENAME_CONNECTION = (c, n) -> new Connection.Builder().createFrom(c).name(n).build();
 
     private final Migrator migrator;
     private final SqlJsonDB jsondb;
@@ -156,8 +152,11 @@ public class IntegrationSupportHandler {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value = "/overviews")
-    public ListResult<IntegrationOverview> getOverviews(@Context  UriInfo uriInfo) {
-        return integrationHandler.list(uriInfo);
+    public ListResult<IntegrationOverview> getOverviews(
+        @Parameter(required = false, description = "Page number to return") @QueryParam("page") @DefaultValue("1") int page,
+        @Parameter(required = false, description = "Number of records per page") @QueryParam("per_page") @DefaultValue("20") int perPage
+    ) {
+        return integrationHandler.list(page, perPage);
     }
 
     @POST
@@ -171,7 +170,7 @@ public class IntegrationSupportHandler {
     @GET
     @Path("/export.zip")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public StreamingOutput export(@NotNull @QueryParam("id") @ApiParam(required = true) List<String> requestedIds) throws IOException {
+    public StreamingOutput export(@NotNull @QueryParam("id") @Parameter(required = true) List<String> requestedIds) throws IOException {
 
         List<String> ids = requestedIds;
         if ( ids ==null || ids.isEmpty() ) {
@@ -403,7 +402,7 @@ public class IntegrationSupportHandler {
             public Class<Connection> getType() {
                 return Connection.class;
             }
-        }, RENAME_CONNECTION, renamedIds, result);
+        }, IntegrationSupportHandler::renameConnection, renamedIds, result);
 
         // remove hidden external secrets from imported connections
         final List<WithResourceId> connections = result.get("connections");
@@ -463,7 +462,7 @@ public class IntegrationSupportHandler {
 
     private void importExtensions(JsonDbDao<Extension> extensionDao, Map<String, String> replacedIds,
                                   Map<String, String> renamedIds, Map<String, List<WithResourceId>> result) {
-        importModels(extensionDao, RENAME_EXTENSION, renamedIds, result, (e, i) -> {
+        importModels(extensionDao, IntegrationSupportHandler::renameExtension, renamedIds, result, (e, i) -> {
 
             boolean doImport = false;
 
@@ -558,17 +557,17 @@ public class IntegrationSupportHandler {
         builder.flows(integration.getFlows().stream()
             .map(flow -> flow.builder()
                 .connections(flow.getConnections().stream()
-                    .map(c -> renameIfNeeded(c, renamedIds, RENAME_CONNECTION))
+                    .map(c -> renameIfNeeded(c, renamedIds, IntegrationSupportHandler::renameConnection))
                     .collect(Collectors.toList()))
                 .steps(flow.getSteps().stream()
                     .map(s -> new Step.Builder().createFrom(s)
                             // step connections
-                            .connection(s.getConnection().map(c -> renameIfNeeded(c, renamedIds, RENAME_CONNECTION)))
+                            .connection(s.getConnection().map(c -> renameIfNeeded(c, renamedIds, IntegrationSupportHandler::renameConnection)))
                             // step extensions
                             .extension(s.getExtension().map(e -> {
                                 final String existingId = replacedIds.get(e.getId().get());
                                 return existingId != null ? dataManager.fetch(Extension.class, existingId) :
-                                        renameIfNeeded(e, renamedIds, RENAME_EXTENSION);
+                                        renameIfNeeded(e, renamedIds, IntegrationSupportHandler::renameExtension);
                             }))
                             .build())
                     .collect(Collectors.toList()))
@@ -674,4 +673,11 @@ public class IntegrationSupportHandler {
         os.closeEntry();
     }
 
+    private static Extension renameExtension(final Extension extension, final String newName) {
+        return new Extension.Builder().createFrom(extension).name(newName).build();
+    }
+
+    private static Connection renameConnection(final Connection connection, final String newName) {
+        return new Connection.Builder().createFrom(connection).name(newName).build();
+    }
 }

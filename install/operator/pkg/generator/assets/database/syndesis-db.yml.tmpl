@@ -185,10 +185,11 @@
     volumeName: {{.Syndesis.Components.Database.Resources.VolumeName}}
 {{end}}
 {{- if .Syndesis.Components.Database.Resources.VolumeLabels}}
-    matchLabels:
-    {{- range $key, $value := .Syndesis.Components.Database.Resources.VolumeLabels}}
-      {{ $key }}: {{ $value }}
-    {{- end }}
+    selector:
+      matchLabels:
+      {{- range $key, $value := .Syndesis.Components.Database.Resources.VolumeLabels}}
+        {{ $key }}: {{ $value }}
+      {{- end }}
 {{- end}}
 
 - apiVersion: apps.openshift.io/v1
@@ -231,7 +232,11 @@
             value: {{.Syndesis.Components.Database.Name}}
           - name: POSTGRESQL_SAMPLEDB_PASSWORD
             value: {{.Syndesis.Components.Database.SampledbPassword}}
-          image: ' '
+{{- if .DatabaseNeedsUpgrade}}
+          - name: POSTGRESQL_UPGRADE
+            value: copy
+{{- end}}
+          image: '{{ .Syndesis.Components.Database.Image }}'
           imagePullPolicy: IfNotPresent
           lifecycle:
             postStart:
@@ -240,6 +245,12 @@
                 - /bin/sh
                 - -c
                 - /var/lib/pgsql/sampledb/postStart.sh
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - '-c'
+                  - 'PGDATA=/var/lib/pgsql/data/userdata pg_ctl stop --mode fast'
           livenessProbe:
             initialDelaySeconds: 60
             tcpSocket:
@@ -315,12 +326,3 @@
           name: syndesis-db-conf
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - postgresql
-        from:
-          kind: ImageStreamTag
-          name: {{.Syndesis.Components.Database.Image}}
-          namespace: {{.Syndesis.Components.Database.ImageStreamNamespace}}
-      type: ImageChange

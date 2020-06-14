@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to FHIR :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-fhir.html">Connecting to FHIR</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-fhir.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to FHIR</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Fast Healthcare Interoperability Resources (FHIR) is a standard
+for exchanging healthcare data. In an integration, you can
+obtain one or more FHIR resources, create or update a
+resource, update one or more fields in a resource, or use a
+transaction to create multiple resources. To do this, add a FHIR
+connection to the middle of a flow or as a simple integration&#8217;s
+finish connection.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} connections to FHIR:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Can communicate with FHIR servers that use basic or bearer token (OAuth) authentication.</p>
+</li>
+<li>
+<p>Can operate on all FHIR resources that comply with FHIR DSTU3.</p>
+</li>
+<li>
+<p>Cannot operate on extensions, which allow for storing custom data in a resource.
+If an extension is in data that is received from a FHIR server, the integration
+silently ignores it.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In an integration that connects to FHIR, in a data mapper step, you can map only
+one level of depth for a FHIR list field. In other words, if a FHIR list contains
+a list then you cannot map the fields in the nested list. To mitigate
+this limitation, {prodname} converts some FHIR resource
+list fields to single-value fields, for example, an address that is in
+a list field might be displayed in the data mapper as a single field.</p>
+</div>
+<div class="paragraph">
+<p>Details for connecting to FHIR are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-fhir-connections_fhir">Creating a connection to a FHIR server</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-read_fhir">Obtaining a resource from a FHIR server</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-search_fhir">Querying a FHIR server for resources</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-create_fhir">Creating a resource on a FHIR server</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-update_fhir">Updating all fields in a resource on a FHIR server</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-patch_fhir">Updating specified fields in a resource on a FHIR server</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-transaction_fhir">Creating resources of different types on a FHIR server</a></p>
+</li>
+<li>
+<p><a href="#adding-fhir-connection-delete_fhir">Deleting a resource from a FHIR server</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-fhir-connections_fhir"><a class="anchor" href="#creating-fhir-connections_fhir"></a>Creating a connection to a FHIR server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to operate on FHIR resources,
+create a connection to a FHIR server and then add that connection to
+the middle of a flow or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="paragraph">
+<p>A FHIR connection cannot be the start connection of a simple
+integration. However, you can start a simple integration with a timer
+that periodically triggers a FHIR connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You must know the URL for the FHIR server that you want to connect to.</p>
+</li>
+<li>
+<p>You must have authorization credentials for accessing the FHIR server.
+You should obtain these from the FHIR server administrator.
+Rarely, a FHIR server does not require authentication and you can
+create a connection without specifying credentials. For example,
+a public FHIR server or a FHIR server in a private network might
+not require authentication.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+connectors.</p>
+</li>
+<li>
+<p>Click the <strong>FHIR</strong> connector and configure the connection as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>FHIR version</strong> field, accept <strong>DSTU3</strong>, which is required.</p>
+</li>
+<li>
+<p>In the <strong>FHIR server URL</strong> field, enter the URL for the FHIR server
+that you want to access. While creating an integration, you might
+accept the default test server <code>http://fhirtest.uhn.ca/baseDstu3</code>.</p>
+</li>
+<li>
+<p>In the <strong>FHIR server username</strong> field, enter your username. This
+is required by FHIR servers that use basic authentication.</p>
+</li>
+<li>
+<p>In the <strong>FHIR server password</strong> field, enter your password, which
+is also required by FHIR servers that use basic authentication.</p>
+</li>
+<li>
+<p>In the <strong>FHIR server bearer token</strong> field, enter your token.
+This is required by FHIR servers that use OAuth authentication.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, revise the input
+parameters and try again.</p>
+</li>
+<li>
+<p>If validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, you might enter <code>FHIR West</code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you
+entered the example name, you would
+see that <strong>FHIR West</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-fhir-connection-read_fhir"><a class="anchor" href="#adding-fhir-connection-read_fhir"></a>Obtaining a resource from a FHIR server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can obtain one resource that is of the type
+that you specify. To do this, add a FHIR connection
+to the middle of a flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that has the resource
+that you want to obtain.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that can access the resource that you want to obtain.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Read</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of resource that you
+want to obtain.</p>
+</li>
+<li>
+<p>In the <strong>Contained Resource Types</strong> field, if the resource type
+that you want contains other resource types, select
+them. Use the <strong>Ctrl</strong> key if you need to select more than one.</p>
+<div class="paragraph">
+<p>Identifying contained resource types lets the data mapper display
+the fields that are in the contained resources. If you do not specify
+a contained resource type then you cannot map from any fields that are
+in the contained resource. There is no harm in selecting a resource
+that is not actually contained.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Resource Id</strong> field, enter the ID of the resource that you want.
+Or, leave this field blank if you
+plan to map it from an earlier step that is in the flow.</p>
+</li>
+<li>
+<p>In the <strong>Resource version</strong> field, optionally specify a version ID
+for the resource. Leave this field blank to obtain
+the most recent version of the resource or to map the version ID of
+the resource that you want to obtain from a previous step.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, this
+connection returns one resource.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>To map a value to the <strong>Resource Id</strong> field or the <strong>Resource version</strong> field, add a data mapper step
+before this connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-fhir-connection-search_fhir"><a class="anchor" href="#adding-fhir-connection-search_fhir"></a>Querying a FHIR server for resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can query a FHIR server to obtain
+instances of a particular FHIR resource that satisfy a query
+that you specify. For example, suppose you want to ensure that all
+patients who are 65 and older received a pneumonia vaccination.
+Specify a query that obtains the resources for patients
+who were born before 1955. To do this,
+add a FHIR connection to the middle of a flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that has the
+resources that you want to obtain.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that has the resources that you want to obtain.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Search</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of resource
+that you want to obtain.</p>
+</li>
+<li>
+<p>In the <strong>Query</strong> field, specify a FHIR query or leave this
+field blank to map the query from a previous step.
+For details about forming a FHIR query, see
+<a href="http://hl7.org/fhir/STU3/search.html">FHIR Release 3 Search</a>.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, this
+connection returns a list of resources that satisfy the query
+that you specified. {prodname} treats this list as a collection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>If you did not specify a query, then add a data mapper step before
+this connection and map the query to this connection.
+To operate on individual returned resources, rather than on the
+returned list collection, after this connection, add a split step
+to the flow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-fhir-connection-create_fhir"><a class="anchor" href="#adding-fhir-connection-create_fhir"></a>Creating a resource on a FHIR server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can create and add a resource to a FHIR server.
+When you configure the connection&#8217;s <strong>Create</strong> action, you specify the
+type of the resource that you want to create.
+For example, you might want to add a new patient resource to a FHIR server.
+To create a resource,
+add a FHIR connection to the middle of a flow, or as a simple
+integration&#8217;s finish connection.</p>
+</div>
+<div class="paragraph">
+<p>To populate the values in the new resource, add a data mapper
+step to the flow just before the FHIR connection that you are
+adding in this procedure. It is expected that the previous steps
+in the flow provide the data that you want the new resource to
+contain. Map fields in the previous steps to fields in the target
+resource that this FHIR connection is creating. The new resource
+contains only the fields that you map to.</p>
+</div>
+<div class="paragraph">
+<p>When a connection performs the <strong>Create</strong> action to create a new resource on a FHIR server,
+the new resource has an automatically-generated FHIR resource ID.
+If you want to specify the resource
+ID for a new resource, instead of selecting the <strong>Create</strong> action choose the
+<a href="#adding-fhir-connection-update_fhir"><strong>Update</strong> action</a> for the connection to perform.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that you want to add
+a resource to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to add a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection to the server that you want to add a resource to.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Create</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of resource
+that you want to create.</p>
+</li>
+<li>
+<p>In the <strong>Contained Resource Types</strong> field, if the resource type
+that you want to create contains other resource types, select
+them. Use the <strong>Ctrl</strong> key if you need to select more than one.</p>
+<div class="paragraph">
+<p>Identifying contained resource types lets the data mapper display
+the fields that are in the contained resources. If you do not specify
+a contained resource type then you cannot map to or from any fields that are
+in the contained resource. There is no harm in selecting a resource
+that is not actually contained.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, the connection
+creates a new resource on the FHIR server.
+The connection returns a <strong>MethodOutcome</strong> resource that includes
+an <code>id.idPart</code> field. This field contains the new resource’s
+resource ID, which you might want to map to a
+subsequent step in the flow.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>If this flow needs additional steps to obtain the data that you want
+the new resource to contain, add them before this FHIR connection.
+After those steps are in place,
+add a data mapper step to the flow just before the FHIR connection
+that creates a new resource. In the data mapper step, map to the
+fields in the resource to be created.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+Without a data mapper step just
+before a FHIR connection that creates a new resource, the connection
+tries to create an empty resource. Depending on the FHIR server configuration,
+this might or might not work.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-fhir-connection-update_fhir"><a class="anchor" href="#adding-fhir-connection-update_fhir"></a>Updating all fields in a resource on a FHIR server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can update a resource that is on a FHIR server.
+To provide the updated values, add a data mapper step to the flow just before
+a FHIR connection that updates a resource. It is expected that previous
+steps in the flow provide the data that you want the updated resource
+to contain. Map fields in the previous steps to fields in the target
+resource that this FHIR connection updates.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+The updated resource contains only the fields that you map to.
+In other words, in addition to mapping the fields whose values are
+changing, you must map the fields that you want to be in the resource
+and whose values are not changing. If you do not map a particular
+resource field then the connection deletes that field from the
+updated resource.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Be sure to map the resource ID from a previous step to the resource ID
+in this connection. This is the only resource field that the connection
+does not change. If the FHIR server does not already have a resource
+that has the resource ID for the resource to be updated, then the connection
+creates a new resource with that resource ID. This is the only way to add
+a new resource that has a resource ID that you choose.</p>
+</div>
+<div class="paragraph">
+<p>To update or create a resource, add a FHIR connection to the middle
+of a flow, or as a simple integration’s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server on which you want to
+update or create a resource.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to  add a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that you want to use
+to update a resource on a FHIR server.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Update</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of resource
+that you want to update or create.</p>
+</li>
+<li>
+<p>In the <strong>Contained Resource Types</strong> field, if the resource type
+that you want to update or create contains other resource types, select
+them. Use the <strong>Ctrl</strong> key if you need to select more than one.</p>
+<div class="paragraph">
+<p>Identifying contained resource types lets the data mapper display the fields
+that are in the contained resources. If you do not specify a contained resource
+type then you cannot map to or from any fields that are in the contained
+resource. There is no harm in selecting a resource that is not actually contained.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+<li>
+<p>If this flow needs additional steps to obtain the data that you want the
+updated resource to contain, add them before this FHIR connection.</p>
+</li>
+<li>
+<p>In the integration visualization, click the plus sign that is
+before the FHIR connection that updates a resource.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>In the data mapper:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Map a resource ID to the target resource ID. This is the only way
+to specify the resource ID for a new resource.</p>
+</li>
+<li>
+<p>Map to each resource field that you want the updated or new
+resource to contain. Be sure to map fields whose values are not
+changing, as well as fields whose values need to be updated.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the data mapper step to the flow.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, the connection
+updates or creates a resource on the FHIR server and returns a
+<strong>MethodOutcome</strong> resource that includes an <code>id.idPart</code> field.
+This field contains the updated/created resource&#8217;s ID,
+which you might want to map
+to a subsequent step in the flow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-fhir-connection-patch_fhir"><a class="anchor" href="#adding-fhir-connection-patch_fhir"></a>Updating specified fields in a resource on a FHIR server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can update individual fields in
+a resource that is on a FHIR server.
+To do this, add a FHIR connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that has the
+resource that you want to update.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that you want to use
+to update the resource.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Patch</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of the
+resource whose fields you want to update.</p>
+</li>
+<li>
+<p>In the <strong>Number of Operations</strong> field, specify the number of fields
+that you want to update.</p>
+</li>
+<li>
+<p>Leave the <strong>Resource id</strong> field blank if you want to map the value
+from a previous step in the flow, which is typically what you want
+to do. Otherwise, specify the resource
+ID of the resource whose fields you want to update.</p>
+</li>
+<li>
+<p>Specify a JSON patch that describes the updates.
+The JSON patch must have the format described in
+<a href="http://jsonpatch.com/">What is a JSON Patch?</a>.</p>
+<div class="paragraph">
+<p><strong>Examples of patches for a <code>Patient</code> resource</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Set the <code>active</code> field to <code>true</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"replace", "path":"/active", "value": true }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace the value of the <code>name</code> field, which is an array of the patient’s names.
+In this example, the patient has one name. If the patient had more than one
+name, a similarly formatted patch could replace all of the patient’s names:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"replace", "path":"/name", "value": [{"given": ["Bob"]}] }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace the given name of a patient:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"replace", "path":"/name/0/given/0", "value": "John" }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add another name to a patient before the first name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"add", "path":"/name/0", "value": {"given": ["Anthony"]} }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For some updates, you must specify the JSON patch when you
+configure the <strong>Patch</strong> action. For example, if you want to copy the
+value of a resource field to another field. For other updates,
+you can leave the <strong>JSON Patch</strong> field blank and instead map values
+that define each update.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+<li>
+<p>If you did not specify a JSON patch and/or a resource ID, then
+add a data mapper step:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign that is
+before the FHIR connection that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+<div class="paragraph">
+<p>The <strong>Target</strong> panel displays a numbered folder for each field
+that you want to update. When you configured the <strong>Patch</strong> action,
+you specified how many fields to update. The data mapper
+displays this number of folders in the <strong>Target</strong> panel. For example,
+if you specified 3 as the number of fields to update, you would see
+three target folders with the labels <code>1</code>, <code>2</code>, and <code>3</code>.</p>
+</div>
+</li>
+<li>
+<p>For each field that you want to update, map to the fields
+in one target folder:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>In the <strong>Target</strong> panel, expand a folder to display three fields
+for <code>op</code>, <code>path</code>, and <code>value</code>.</p>
+</li>
+<li>
+<p>Map a source field, constant, or property to the target
+<code>path</code> field. The path identifies the resource field
+that you want to update. In a path value, a number indicates the
+index of a list field, and a slash leads to a child field. For
+example, map this path <code>/name/1/given/1/value</code> to update the value
+of the given name field.</p>
+</li>
+<li>
+<p>Accept the default update operation, which replaces the current value
+of the field, or map a source field, constant, or property to the
+<code>op</code> field to indicate how you want to update the field.
+For details about possible operations, see
+<a href="ttp://jsonpatch.com/#operations">JSON patch operations</a>.</p>
+</li>
+<li>
+<p>If you are updating a field to have a new value, then map a
+source field, constant, or property to the target <code>value</code>.
+This is the new value that you want the field to contain.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If you did not specify a resource ID when you configured the
+<strong>Patch</strong> action, then map the resource ID to the target <strong>id</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the data mapper step to the flow.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution,
+the connection updates the specified resource field(s)
+and returns a <strong>MethodOutcome</strong> resource that includes
+an <code>id.idPart</code> field. This field contains
+the ID of the resource that was updated.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-fhir-connection-transaction_fhir"><a class="anchor" href="#adding-fhir-connection-transaction_fhir"></a>Creating resources of different types on a FHIR server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can create two or more resources on a
+FHIR server and each resource can be of a different type.
+For example, you can add a new patient resource and a new provider
+resource in one connection to a FHIR server. To do this,
+add a FHIR connection to the middle of a flow, or as a
+simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that you want to
+add resources to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a
+finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that you want to use
+to create and add new resources to a FHIR server.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Transaction</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Included Resource Types</strong> field, select the
+resource types that this connection creates.
+Use the <strong>Ctrl</strong> key to select multiple resource types.
+The connection creates one resource of each type that you select.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+<li>
+<p>To populate fields in the new resources, add
+a data mapper step before this connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign
+that is before the connection that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>In the data mapper, map source fields to the target
+resource fields. The new resources contain only the
+target fields that you map to.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the data mapper step to the flow.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, the connection
+adds all resources to the FHIR server or, if there is an error,
+the connection does not add any resources to the FHIR server. A successful
+action returns a transaction resource, which contains the resource ID
+for each new resource. You can map these resource IDs to subsequent
+steps in the flow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-fhir-connection-delete_fhir"><a class="anchor" href="#adding-fhir-connection-delete_fhir"></a>Deleting a resource from a FHIR server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can delete a resource from a FHIR server.
+To do this, add a FHIR connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that has the resource
+that you want to delete.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to select a
+finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that you want to use
+to delete the resource.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Delete</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type
+of resource that you want to delete.</p>
+</li>
+<li>
+<p>In the <strong>Resource Id</strong> field, specify the resource ID of
+the resource that you want to delete or leave this field blank if you
+plan to map the resource ID from an earlier step in the integration.</p>
+</li>
+<li>
+<p>In the <strong>Resource version</strong> field, optionally specify a version ID
+for the resource. Leave this field blank to delete
+the most recent version of the resource or to map the version ID of
+the resource that you want to delete from a previous step.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.
+.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, the connection
+deletes the specified resource on the FHIR server and returns a
+<strong>MethodOutcome</strong> resource that includes an <code>id.idPart</code> field.
+This field contains the resource ID for the deleted resource.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>To map a value to the <strong>Resource Id</strong> field or the <strong>Resource version</strong> field, add a data mapper step
+before this connection.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

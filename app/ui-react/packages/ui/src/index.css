@@ -1,10 +1,6 @@
-/* pf3 modules */
-@import url('~patternfly/dist/css/patternfly.css');
-@import url('~patternfly/dist/css/patternfly-additions.css');
-@import url('~patternfly-react/dist/css/patternfly-react.css');
-
 /* pf4 base styles */
 /* @import url('~@patternfly/react-core/dist/styles/base.css'); */
+@import url('~@fortawesome/fontawesome-free/css/all.css');
 @import url('~@patternfly/patternfly/patternfly-variables.css');
 @import url('~@patternfly/patternfly/patternfly-shield-noninheritable.css');
 @import url('~@patternfly/patternfly/patternfly-common.css');
@@ -14,6 +10,7 @@
 @import url('~@patternfly/patternfly/layouts/Split/split.css');
 @import url('~@patternfly/patternfly/utilities/Display/display.css');
 @import url('~@patternfly/patternfly/patternfly-fonts.css');
+@import url('~@rh-uxd/integration-core/dist/styles/core.css');
 
 :root {
   --pf-global--FontSize--md: var(--pf-global--FontSize--sm);
@@ -218,4 +215,12 @@ body {
   padding-bottom: var(--pf-global--spacer--md);
   background-color: #fafafa;
   border-top: 1px solid #d1d1d1;
+}
+
+button.pf-c-context-selector__toggle > .pf-c-context-selector__toggle-text {
+  font-size: var(--pf-global--spacer--md);
+}
+
+.pf-c-context-selector__menu {
+  font-size: var(--pf-global--spacer--md);
 }

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to AMQP :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-amqp.html">Connecting to AMQP</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assembly-connecting-to-amqp.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to AMQP</h1>
+<div class="paragraph">
+<p>In an integration, you can obtain messages from or publish messages
+to an Advanced Message Queue Protocol (AMQP) broker. AMQP defines communication
+between clients and message brokers. To communicate with the following
+broker types, use the AMQP connector to create a connection to the
+broker of interest:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache ActiveMQ broker that supports AMQP</p>
+</li>
+<li>
+<p>Apache ActiveMQ Artemis</p>
+</li>
+<li>
+<p>AMQ 7 broker</p>
+</li>
+<li>
+<p>EnMasse, which is an open source messaging platform</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To communicate with one of the following broker types,
+<a href="{LinkSyndesisConnectorGuide}#connecting-to-amq_amq">use the Red Hat AMQ connector</a>
+to create a connection to the broker of interest:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache ActiveMQ broker that does not support AMQP</p>
+</li>
+<li>
+<p>AMQ 6 broker</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is possible to use the AMQP connector to create a connection to an
+Apache ActiveMQ broker that does not support AMQP or to an AMQ 6 broker.
+Doing this requires transport configuration in the broker.
+For information about configuring the broker, see
+<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_a-mq/6.3/html/managing_and_monitoring_a_broker/fmqadmintransportconnectors">Red Hat JBoss A-MQ Managing and Monitoring Brokers, Adding Client Connection Points</a>.
+For information about the configuration values to specify, see
+<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_a-mq/6.3/html-single/connection_reference/index#AMQP">Red Hat JBoss A-MQ Connection Reference, Advanced Message Queuing Protocol (AMQP)</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To use the AMQP connector, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-amqp-connection_amqp">[create-amqp-connection_amqp]</a></p>
+</li>
+<li>
+<p><a href="#adding-amqp-connection-start_amqp">[adding-amqp-connection-start_amqp]</a></p>
+</li>
+<li>
+<p><a href="#adding-amqp-connection-middle_amqp">[adding-amqp-connection-middle_amqp]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-amqp.adoc - include::../../modules/connecting/proc-create-amqp-connection.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-amqp.adoc - include::../../modules/connecting/proc-adding-amqp-connection-start.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-amqp.adoc - include::../../modules/connecting/proc-adding-amqp-connection-middle.adoc[]</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Updating an issue on a Jira server :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-jira-connection-update-issue.html">Updating an issue on a Jira server</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-jira-connection-update-issue.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Updating an issue on a Jira server</h1>
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration,
+you can connect to a Jira server to update an issue.
+The connection can update one or more issue fields. If the issue
+being updated already has a value for a field, the connection
+replaces that value with any value you specify for the connection
+or that you map to a connection field. For example, if the
+issue already has a description, and you specify text in the
+<strong>Description</strong> field when you configure the <strong>Update Issue</strong> action,
+the connection replaces the description that was there with this
+new description.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Jira connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose
+a simple integration&#8217;s finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add a Jira connection. Skip this step if you are adding
+a simple integration&#8217;s finish connection.</p>
+</li>
+<li>
+<p>Click the Jira connection that you want the integration to use
+to connect to the Jira server.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Update Issue</strong>.</p>
+</li>
+<li>
+<p>Configure the action. The only required field is
+<strong>Issue Key</strong>. For the optional fields, you can enter values now, or,
+after you add this connection
+to an integration, you can add a data mapper step before this connection.
+In the data mapper step, map fields from previous steps to the optional
+fields in this connection.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Optionally, in the <strong>Assignee</strong> field, enter the Jira user name
+for the person that you want to assign this issue to.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Components</strong> field, enter the name of one or
+more components. Separate multiple names with commas. A Jira
+administrator defines the components that you can specify.</p>
+</li>
+<li>
+<p>In the <strong>Issue Key</strong> field, enter the Jira identifier for the issue
+that you want the connection to update.
+Examples of issue keys: <code>GATE-1234</code>, <code>Ent-239</code>.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Priority ID or name</strong> field, enter a priority
+for the new issue. A Jira administrator defines the priority values
+that you can enter.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Summary</strong> field, enter a brief statement about the issue.</p>
+</li>
+<li>
+<p>In the <strong>Issue type ID or name</strong> field, enter a value that describes
+the type of the issue. For example, this is often something like <code>Story</code>, <code>Epic</code>,
+<code>Chore</code>, or <code>Bug</code>.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Description</strong> field, enter any information about this
+issue that it is helpful to capture.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

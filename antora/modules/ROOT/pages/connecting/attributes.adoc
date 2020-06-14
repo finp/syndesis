@@ -1,0 +1,1 @@
+/home/pwright/repos/doc-test/syndesis/doc/connecting/../shared/attributes.adoc

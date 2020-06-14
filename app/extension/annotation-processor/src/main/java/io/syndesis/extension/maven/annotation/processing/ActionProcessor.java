@@ -46,6 +46,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.errorprone.annotations.FormatMethod;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressWarnings("PMD.GodClass")
@@ -154,8 +156,6 @@ public class ActionProcessor extends AbstractProcessor {
 
     /**
      * Explicitly add properties that elude reflection implicit strategy
-     * @param element
-     * @param root
      */
     private boolean augmentProperties(ObjectNode root, TypeElement element) throws InvocationTargetException, IllegalAccessException {
         final Elements elements = processingEnv.getElementUtils();
@@ -214,8 +214,6 @@ public class ActionProcessor extends AbstractProcessor {
 
     /**
      * Explicitly add properties that elude reflection implicit strategy
-     * @param root
-     * @param element
      */
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
     private void augmentProperties(ObjectNode root, ExecutableElement element) {
@@ -231,8 +229,6 @@ public class ActionProcessor extends AbstractProcessor {
 
     /**
      * Add action properties to the global properties.
-     * @param root
-     * @param element
      */
     private void addActionProperties(ObjectNode root, Element element) throws InvocationTargetException, IllegalAccessException {
 
@@ -353,7 +349,7 @@ public class ActionProcessor extends AbstractProcessor {
         } else if (element instanceof ExecutableElement) {
             classElement = (TypeElement)element.getEnclosingElement();
         } else {
-            warning("Unsupported element kind: " + element.getKind());
+            warning("Unsupported element kind: %s", element.getKind());
             return null;
         }
 
@@ -362,7 +358,7 @@ public class ActionProcessor extends AbstractProcessor {
         final Annotation annotation = element.getAnnotation(annotationClass);
 
         if (annotation == null) {
-            error("Annotation SyndesisExtensionAction not found processing element " + element);
+            error("Annotation SyndesisExtensionAction not found processing element: %s", element);
         }
 
         final String actionId = (String)annotationClass.getMethod("id").invoke(annotation);
@@ -386,7 +382,7 @@ public class ActionProcessor extends AbstractProcessor {
             try {
                 result = new File(uri.getPath());
             } catch (Exception e) {
-                warning("Cannot convert output directory resource URI to a file " + e);
+                warning("Cannot convert output directory resource URI to a file %s,", e.getMessage());
             }
         }
         if (result == null) {
@@ -410,10 +406,12 @@ public class ActionProcessor extends AbstractProcessor {
         }
     }
 
+    @FormatMethod
     private void warning(String format, Object... args) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format(format, args));
     }
 
+    @FormatMethod
     private void error(String format, Object... args) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format(format, args));
     }
@@ -424,7 +422,7 @@ public class ActionProcessor extends AbstractProcessor {
             Class<? extends Annotation> ret = (Class) Class.forName(name);
             return ret;
         } catch (ClassNotFoundException e) {
-            error("Unable to find Class " +  name + " on Classpath");
+            error("Unable to find Class %s on Classpath", name);
         }
 
         return null;
@@ -436,7 +434,7 @@ public class ActionProcessor extends AbstractProcessor {
             Class<? extends Annotation> ret = (Class) Class.forName(name);
             return ret;
         } catch (ClassNotFoundException e) {
-            warning("Unable to find Class " +  name + " on Classpath");
+            warning("Unable to find Class %s on Classpath", name);
         }
 
         return null;

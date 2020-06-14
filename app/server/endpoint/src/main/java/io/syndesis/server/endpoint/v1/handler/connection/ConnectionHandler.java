@@ -15,12 +15,6 @@
  */
 package io.syndesis.server.endpoint.v1.handler.connection;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -34,10 +28,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.common.model.Kind;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.bulletin.ConnectionBulletinBoard;
@@ -49,11 +48,13 @@ import io.syndesis.server.credential.CredentialFlowState;
 import io.syndesis.server.credential.Credentials;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.dao.manager.EncryptionComponent;
+import io.syndesis.server.endpoint.util.PaginationFilter;
 import io.syndesis.server.endpoint.v1.handler.BaseHandler;
 import io.syndesis.server.endpoint.v1.operations.Creator;
 import io.syndesis.server.endpoint.v1.operations.Deleter;
 import io.syndesis.server.endpoint.v1.operations.Getter;
 import io.syndesis.server.endpoint.v1.operations.Lister;
+import io.syndesis.server.endpoint.v1.operations.PaginationOptionsFromQueryParams;
 import io.syndesis.server.endpoint.v1.operations.Updater;
 import io.syndesis.server.endpoint.v1.operations.Validating;
 import io.syndesis.server.endpoint.v1.state.ClientSideState;
@@ -62,7 +63,7 @@ import io.syndesis.server.verifier.MetadataConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Path("/connections")
-@Api(value = "connections")
+@Tag(name = "connections")
 @Component
 public class ConnectionHandler
         extends BaseHandler
@@ -98,9 +99,12 @@ public class ConnectionHandler
     }
 
     @Override
-    public ListResult<ConnectionOverview> list(@Context UriInfo uriInfo) {
-        final DataManager dataManager = getDataManager();
-        final ListResult<Connection> connectionResults = fetchAll(Connection.class, uriInfo);
+    public ListResult<ConnectionOverview> list(int page, int perPage) {
+        DataManager dataManager = getDataManager();
+        final ListResult<Connection> connectionResults = dataManager.fetchAll(
+            Connection.class,
+            new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage))
+        );
         final List<Connection> connections = connectionResults.getItems();
         final List<ConnectionOverview> overviews = new ArrayList<>(connectionResults.getTotalCount());
 
@@ -143,6 +147,7 @@ public class ConnectionHandler
     }
 
     @Override
+    @SuppressWarnings("JdkObsolete")
     public Connection create(@Context SecurityContext sec, final Connection connection) {
         final Date rightNow = new Date();
 
@@ -201,6 +206,7 @@ public class ConnectionHandler
     }
 
     @Override
+    @SuppressWarnings("JdkObsolete")
     public void update(final String id, final Connection connection) {
         // Lets make sure we store encrypt secrets.
         Map<String, String> configuredProperties = connection.getConfiguredProperties();
@@ -220,14 +226,14 @@ public class ConnectionHandler
     }
 
     @Path("/{id}/actions")
-    public ConnectionActionHandler metadata(@NotNull @PathParam("id") @ApiParam(required = true, example = "my-connection") final String connectionId) {
+    public ConnectionActionHandler metadata(@NotNull @PathParam("id") @Parameter(required = true, example = "my-connection") final String connectionId) {
         return new ConnectionActionHandler(get(connectionId), config, encryptionComponent);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value = "/{id}/bulletins")
-    public ConnectionBulletinBoard getBulletins(@NotNull @PathParam("id") @ApiParam(required = true) String id) {
+    public ConnectionBulletinBoard getBulletins(@NotNull @PathParam("id") @Parameter(required = true) String id) {
         ConnectionBulletinBoard result = getDataManager().fetch(ConnectionBulletinBoard.class, id);
         if( result == null ) {
             result = new ConnectionBulletinBoard.Builder().build();

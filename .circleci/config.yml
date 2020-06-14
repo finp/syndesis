@@ -70,10 +70,11 @@ push_images: &push_images
         for image in ${IMAGES_TO_PUSH} ; do
           docker push syndesis/${image}:latest | cat -
         done
-      elif [ -n "${CIRCLE_PR_NUMBER}" ]; then
+      elif [ -n "${CI_PULL_REQUEST}" ]; then
         for image in ${IMAGES_TO_PUSH} ; do
-          docker tag syndesis/${image}:latest syndesis/${image}:${CIRCLE_PR_NUMBER}-${CIRCLE_SHA1}
-          docker save syndesis/${image}:${CIRCLE_PR_NUMBER}-${CIRCLE_SHA1} | gzip > ${CIRCLE_WORKING_DIRECTORY}/${image}.tar.gz
+          PR_NUMBER=${CI_PULL_REQUEST/*\/}
+          docker tag syndesis/${image}:latest syndesis/${image}:${PR_NUMBER}-${CIRCLE_SHA1}
+          docker save syndesis/${image}:${PR_NUMBER}-${CIRCLE_SHA1} | gzip > ${CIRCLE_WORKING_DIRECTORY}/${image}.tar.gz
         done
       elif [[ "${CIRCLE_TAG}" =~ ^[0-9]+(\.[0-9]+){2} ]]; then
         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
@@ -96,7 +97,7 @@ quay_transfer: &quay_transfer
   run:
     name: Trigger image transfer to quay.io
     command: |
-      if [ -n "${CIRCLE_PR_NUMBER}" ]; then
+      if [ -n "${CI_PULL_REQUEST}" ]; then
         curl -vs "https://ci.fabric8.io/generic-webhook-trigger/invoke?token=syndesis-circleci-to-quay&build_number=$CIRCLE_BUILD_NUM"
       else
         echo "Skip transfer to quay.io for non PR build"
@@ -106,9 +107,10 @@ jobs:
   ui:
     <<: *job_defaults
     environment:
+      <<: *common_env
       DOCKER_IMAGES: syndesis-ui
       CHROME_BIN: "/usr/bin/google-chrome"
-      <<: *common_env
+      MAVEN_OPTS: -Xmx128m
     steps:
       - setup_remote_docker
       - checkout
@@ -118,13 +120,12 @@ jobs:
           key: syndesis-yarn-ui-v2-{{ checksum "app/ui-react/yarn.lock" }}
       - run:
           name: Build UI
+          no_output_timeout: 20m
           command: |
-            apt-get update -y
-            apt-get install -y --force-yes libxss1 patch apt-transport-https
             echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
             apt-get update -y
-            apt-get install -y --force-yes --no-install-recommends  google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto ttf-freefont
+            apt-get install -y --force-yes libxss1 patch apt-transport-https google-chrome-stable
             ./tools/bin/syndesis build --batch-mode --module ui-react --docker | tee build_log.txt
       - save_cache:
           key: syndesis-yarn-ui-v2-{{ checksum "app/ui-react/yarn.lock" }}
@@ -160,7 +161,7 @@ jobs:
         name: Build Circle CI App
         command: |
           # 105563335 is GH project id, but it's not exposed as an env variable.
-          PUBLIC_URL="https://$CIRCLE_BUILD_NUM-105563335-gh.circle-artifacts.com/0/home/circleci/src/app/ui-react/doc/app" yarn build
+          PUBLIC_URL="https://$CIRCLE_BUILD_NUM-105563335-gh.circle-artifacts.com/0/doc/app" yarn build
           cp -a syndesis/build doc/app
           cp syndesis/config.staging.json doc/app/config.json
     - run:
@@ -360,6 +361,13 @@ jobs:
           path: /workspace/junit
       - store_artifacts:
           path: build_log.txt
+      - run:
+          name: Collect Extension Maven plugin integration test results
+          when: always
+          command: |
+            find ./app/extension/maven-plugin/target/it/ -type f -name build.log -exec sh -c 'DEST="/workspace/extension-maven-plugin-tests/$(basename $(dirname {}))" && mkdir -p $DEST && cp "{}" "$DEST/build.log"' \;
+      - store_artifacts:
+          path: /workspace/extension-maven-plugin-tests
       - <<: *persist_m2_workspace
       - save_cache:
           key: syndesis-mvn-extension-{{ checksum "app/extension/pom.xml" }}
@@ -498,7 +506,7 @@ jobs:
   operator:
     working_directory: /home/circleci/project
     docker:
-      - image: circleci/golang:1.12.5
+      - image: circleci/golang:1.13.6
     environment:
       DOCKER_IMAGES: syndesis-operator
       GOPROXY: https://proxy.golang.org
@@ -564,7 +572,7 @@ jobs:
             mkdir -p ~/integrations/
             mkdir -p ~/junit/
             mkdir -p ~/logs/
-            ./tools/bin/syndesis integration-test --output /home/circleci/integrations | tee ~/logs/test_log.txt
+            ./tools/bin/syndesis integration-test --output /home/circleci/integrations --default-timeout 180 | tee ~/logs/test_log.txt
             cp ./app/test/integration-test/target/integration-runtime.log ~/logs/
       - run:
           name: Collect test results
@@ -636,21 +644,6 @@ jobs:
           paths:
             - ~/.m2
 
-  doc:
-    docker:
-      - image: syndesis/builder-doc
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "d8:49:be:71:ed:d9:d3:dc:7a:dd:35:ac:81:30:c5:d8"
-      - run:
-          name: Generate docs
-          command: |
-            git config --global user.email "circleci@syndesis.io"
-            git config --global user.name "CircleCI"
-            ./tools/bin/syndesis doc --local --html --pdf --gh-pages
-
 workflows:
   version: 2
   syndesis:
@@ -659,14 +652,12 @@ workflows:
           filters:
             branches:
               only: system-test
-      - doc:
-          filters:
-            branches:
-              only: master
       - license-check:
           <<: *ignore_cherry_pick_branches
       - ui-doc:
           <<: *ignore_cherry_pick_branches
+          requires:
+            - ui
       - ui:
           <<: *ignore_cherry_pick_branches
       - common:
@@ -836,6 +827,12 @@ workflows:
           requires:
             - connector-support
       - connector:
+          name: connector-soap
+          module: soap
+          <<: *ignore_cherry_pick_branches
+          requires:
+            - connector-support
+      - connector:
           name: connector-sql
           module: sql
           <<: *ignore_cherry_pick_branches
@@ -907,6 +904,13 @@ workflows:
           <<: *ignore_cherry_pick_branches
           requires:
             - connector-support
+      - connector:
+          name: connector-debezium
+          module: debezium
+          <<: *ignore_cherry_pick_branches
+          requires:
+            - connector-support
+            - connector-kafka
       - connector-catalog:
           <<: *ignore_cherry_pick_branches
           requires:
@@ -935,6 +939,7 @@ workflows:
             - connector-salesforce
             - connector-sftp
             - connector-slack
+            - connector-soap
             - connector-sql
             - connector-telegram
             - connector-timer
@@ -947,6 +952,7 @@ workflows:
             - connector-knative
             - connector-flow
             - connector-mongodb
+            - connector-debezium
       - meta:
           <<: *ignore_cherry_pick_branches
           requires:

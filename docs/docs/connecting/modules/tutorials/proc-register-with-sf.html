@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Registering {prodname} as a Salesforce client application :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-register-with-sf.html">Registering {prodname} as a Salesforce client application</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/tutorials/proc-register-with-sf.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Registering {prodname} as a Salesforce client application</h1>
+<div class="paragraph">
+<p>In an integration, to connect to Salesforce, the first thing you must do is
+register your {prodname} environment as a client application
+that can access Salesforce.
+This lets you create any number of integrations that connect
+to Salesforce. In other words, you need to register a particular
+{prodname} environment with Salesforce only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Salesforce client application. However, while each Salesforce
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You are logged in to {prodname}.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL,
+click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your {prodname} environment to the clipboard.
+You will need this URL toward the end of this procedure.</p>
+</li>
+<li>
+<p>Click the <strong>Salesforce</strong> entry
+to display the <strong>Client ID</strong> and <strong>Client Secret</strong> fields.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, log in to your Salesforce account and
+follow the steps below to create a connected app.
+These instructions assume that you are
+using the Salesforce Classic user interface. To switch from the
+Salesforce Lightning Experience interface, click your profile icon and select
+<strong>Switch to Salesforce Classic</strong>.
+For additional information, see the Salesforce documentation for
+<a href="https://help.salesforce.com/articleView?id=connected_app_create.htm">Create a Connected App</a>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In Salesforce, in the upper right, click <strong>Setup</strong>.</p>
+</li>
+<li>
+<p>In the left panel, select <strong>Build</strong> &gt; <strong>Create</strong> &gt; <strong>Apps</strong>.</p>
+</li>
+<li>
+<p>Scroll down to <strong>Connected Apps</strong> and click <strong>New</strong>.</p>
+</li>
+<li>
+<p>Enter the required information and then select <strong>Enable OAuth Settings</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Callback URL</strong> field, paste your
+{prodname} URL, which you copied at the beginning of this procedure.
+For example:
+<code>https://app-proj912876.7b63.{prodnameinurl}.openshiftapps.com/api/v1/credentials/callback</code>.</p>
+</li>
+<li>
+<p>For <strong>OAuth Scopes</strong>, add:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Access and manage your data (api)</strong></p>
+</li>
+<li>
+<p><strong>Allow access to your unique identifier (openid)</strong></p>
+</li>
+<li>
+<p><strong>Perform requests on your behalf at any time (refresh_token, offline_accesss)</strong></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Select <strong>Configure ID token</strong> and then <strong>Include Standard Claims</strong>.</p>
+</li>
+<li>
+<p>Scroll down and click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Scroll up to see that Salesforce indicates a short wait:
+<span class="image"><img src="../../../_images/images/tutorials/SF-message-to-wait-a-few-minutes.png" alt="SF message to wait a few minutes" title="Short Wait"></span></p>
+</li>
+<li>
+<p>Click <strong>Continue</strong>.</p>
+</li>
+<li>
+<p>Copy the consumer key that Salesforce provides.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the
+Salesforce-provided
+consumer key into the {prodname} Salesforce <strong>Client ID</strong> field.</p>
+</li>
+<li>
+<p>Return to Salesforce and copy the consumer secret that Salesforce provides.</p>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the
+Salesforce-provided consumer secret into the {prodname} Salesforce
+<strong>Client Secret</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Salesforce</strong> entry to collapse it.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

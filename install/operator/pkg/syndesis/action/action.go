@@ -4,14 +4,15 @@ import (
 	"context"
 
 	"github.com/go-logr/logr"
-	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1alpha1"
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/clienttools"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
 
 const (
@@ -25,43 +26,43 @@ type Client struct {
 }
 
 type baseAction struct {
-	log    logr.Logger
-	client client.Client
-	scheme *runtime.Scheme
-	api    kubernetes.Interface
-	mgr    manager.Manager
+	log         logr.Logger
+	clientTools *clienttools.ClientTools
+	scheme      *runtime.Scheme
+	mgr         manager.Manager
 }
 
 var actionLog = logf.Log.WithName("action")
 
+// SyndesisOperatorAction an action that will be executed by the operator
 type SyndesisOperatorAction interface {
-	CanExecute(syndesis *v1alpha1.Syndesis) bool
-	Execute(ctx context.Context, syndesis *v1alpha1.Syndesis) error
+	CanExecute(syndesis *v1beta1.Syndesis) bool
+	Execute(ctx context.Context, syndesis *v1beta1.Syndesis) error
 }
 
-func NewOperatorActions(mgr manager.Manager, api kubernetes.Interface) []SyndesisOperatorAction {
+// NewOperatorActions gives the default set of actions operator will perform
+func NewOperatorActions(mgr manager.Manager, clientTools *clienttools.ClientTools) []SyndesisOperatorAction {
 	return []SyndesisOperatorAction{
-		newCheckUpdatesAction(mgr, api),
-		newInitializeAction(mgr, api),
-		newInstallAction(mgr, api),
-		newBackupAction(mgr, api),
-		newStartupAction(mgr, api),
-		newUpgradeAction(mgr, api),
-		newUpgradeBackoffAction(mgr, api),
+		newCheckUpdatesAction(mgr, clientTools),
+		newUpgradeAction(mgr, clientTools),
+		newUpgradeBackoffAction(mgr, clientTools),
+		newInitializeAction(mgr, clientTools),
+		newInstallAction(mgr, clientTools),
+		newBackupAction(mgr, clientTools),
+		newStartupAction(mgr, clientTools),
 	}
 }
 
-func newBaseAction(mgr manager.Manager, api kubernetes.Interface, typeS string) baseAction {
+func newBaseAction(mgr manager.Manager, clientTools *clienttools.ClientTools, typeS string) baseAction {
 	return baseAction{
 		actionLog.WithValues("type", typeS),
-		mgr.GetClient(),
+		clientTools,
 		mgr.GetScheme(),
-		api,
 		mgr,
 	}
 }
 
-func syndesisPhaseIs(syndesis *v1alpha1.Syndesis, statuses ...v1alpha1.SyndesisPhase) bool {
+func syndesisPhaseIs(syndesis *v1beta1.Syndesis, statuses ...v1beta1.SyndesisPhase) bool {
 	if syndesis == nil {
 		return false
 	}
@@ -76,19 +77,23 @@ func syndesisPhaseIs(syndesis *v1alpha1.Syndesis, statuses ...v1alpha1.SyndesisP
 }
 
 func createOrReplaceForce(ctx context.Context, client client.Client, res runtime.Object, force bool) error {
-	if err := client.Create(ctx, res); err != nil && k8serrors.IsAlreadyExists(err) {
-		if force || canResourceBeReplaced(res) {
-			err = client.Delete(ctx, res)
-			if err != nil {
-				return err
-			}
-			return client.Create(ctx, res)
-		} else {
-			return nil
-		}
-	} else {
+	err := client.Create(ctx, res)
+	if err == nil {
+		return nil
+	}
+
+	if !k8serrors.IsAlreadyExists(err) {
 		return err
 	}
+
+	if force || canResourceBeReplaced(res) {
+		if err := client.Delete(ctx, res); err != nil {
+			return err
+		}
+		return client.Create(ctx, res)
+	}
+
+	return nil
 }
 
 func canResourceBeReplaced(res runtime.Object) bool {

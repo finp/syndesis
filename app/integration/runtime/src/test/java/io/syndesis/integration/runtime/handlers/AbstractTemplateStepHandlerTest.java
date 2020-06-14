@@ -22,6 +22,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static io.syndesis.common.util.StringConstants.CLOSE_BRACKET;
+import static io.syndesis.common.util.StringConstants.EMPTY_STRING;
+import static io.syndesis.common.util.StringConstants.NEW_LINE;
+import static io.syndesis.common.util.StringConstants.OPEN_BRACKET;
+import static io.syndesis.integration.runtime.IntegrationTestSupport.data;
+import static io.syndesis.integration.runtime.IntegrationTestSupport.dataPair;
+import static io.syndesis.integration.runtime.IntegrationTestSupport.dumpRoutes;
+import static io.syndesis.integration.runtime.IntegrationTestSupport.newIntegration;
+import static io.syndesis.integration.runtime.IntegrationTestSupport.newIntegrationRouteBuilder;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertTrue;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.syndesis.common.model.DataShape;
 import io.syndesis.common.model.DataShapeKinds;
 import io.syndesis.common.model.Dependency;
@@ -35,7 +51,6 @@ import io.syndesis.common.model.integration.Step;
 import io.syndesis.common.model.integration.StepKind;
 import io.syndesis.common.model.integration.step.template.TemplateStepLanguage;
 import io.syndesis.common.model.integration.step.template.TemplateStepLanguage.SymbolSyntax;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -47,39 +62,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import static io.syndesis.common.util.StringConstants.CLOSE_BRACKET;
-import static io.syndesis.common.util.StringConstants.EMPTY_STRING;
-import static io.syndesis.common.util.StringConstants.NEW_LINE;
-import static io.syndesis.common.util.StringConstants.OPEN_BRACKET;
-import static io.syndesis.integration.runtime.IntegrationTestSupport.data;
-import static io.syndesis.integration.runtime.IntegrationTestSupport.dataPair;
-import static io.syndesis.integration.runtime.IntegrationTestSupport.dumpRoutes;
-import static io.syndesis.integration.runtime.IntegrationTestSupport.newIntegration;
-import static io.syndesis.integration.runtime.IntegrationTestSupport.newIntegrationRouteBuilder;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
-
 public abstract class AbstractTemplateStepHandlerTest {
 
     private final DirectEndpoint directEndpoint = new DirectEndpoint();
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    protected CamelContext context;
+    protected DefaultCamelContext context;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         context = new DefaultCamelContext();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         context.stop();
         context = null;
     }
@@ -255,7 +252,7 @@ public abstract class AbstractTemplateStepHandlerTest {
         testTemplate(symbols, template, testMessages, expectedMessages);
      }
 
-    protected void testTemplateStepNoSpacesInSymbolAllowed(Symbol[] symbols) throws Exception {
+    protected void testTemplateStepNoSpacesInSymbolAllowed(Symbol[] symbols) {
         String template = EMPTY_STRING +
             "At " + symbols[0] + ", " + symbols[1] + NEW_LINE +
             "stated submitted the following message:" + NEW_LINE +

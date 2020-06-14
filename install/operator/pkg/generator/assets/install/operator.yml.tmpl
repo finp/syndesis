@@ -8,7 +8,7 @@
       syndesis.io/type: operator
       syndesis.io/component: syndesis-operator
 - kind: RoleBinding
-  apiVersion: rbac.authorization.k8s.io/v1beta1
+  apiVersion: rbac.authorization.k8s.io/v1
   metadata:
     name: syndesis-operator:install
     labels:
@@ -21,8 +21,28 @@
     name: syndesis-operator
   roleRef:
     kind: Role
-    name: syndesis-operator
+    name: {{ .Role }}
     apiGroup: rbac.authorization.k8s.io
+
+{{- if .ApiServer.OlmSupport }}
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/component: syndesis-operator
+      syndesis.io/type: operator
+    name: syndesis-operator:install-olm
+  subjects:
+  - kind: ServiceAccount
+    name: syndesis-operator
+    namespace: {{ .Namespace }}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: {{ .Role }}-olm
+{{- end }}
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -67,6 +87,7 @@
     template:
       metadata:
         labels:
+          name: syndesis-operator
           syndesis.io/app: syndesis
           syndesis.io/type: operator
           syndesis.io/component: syndesis-operator
@@ -92,6 +113,22 @@
             value: "syndesis-operator"
           - name: DEV_SUPPORT
             value: "{{.DevSupport}}"
+          volumeMounts:
+          - name: syndesis-operator-data
+            mountPath: /data
+        initContainers:
+        - command:
+          - bash
+          - -c
+          - "postgres -V > /data/postgresql.txt"
+          image: '{{.DatabaseImage}}'
+          name: postgres-version
+          volumeMounts:
+          - name: syndesis-operator-data
+            mountPath: /data
+        volumes:
+        - name: syndesis-operator-data
+          emptyDir: {}
     triggers:
     - imageChangeParams:
         automatic: true
@@ -99,6 +136,10 @@
         - syndesis-operator
         from:
           kind: ImageStreamTag
+          {{- if .DevSupport}}
+          name: syndesis-operator:latest
+          {{else}}
           name: syndesis-operator:{{.Tag}}
+          {{- end}}
       type: ImageChange
     - type: ConfigChange

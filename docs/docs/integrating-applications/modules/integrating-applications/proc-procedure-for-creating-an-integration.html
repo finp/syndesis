@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>General procedure for creating a simple integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-procedure-for-creating-an-integration.html">General procedure for creating a simple integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-procedure-for-creating-an-integration.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">General procedure for creating a simple integration</h1>
+<div class="paragraph">
+<p>{prodname} guides you through the procedure for creating a simple integration.
+It prompts you to choose the start connection, the finish connection,
+optional middle connections, and other steps. When your integration is
+complete, you can publish it so that it is running or you can save
+it for publication at a later time.</p>
+</div>
+<div class="paragraph">
+<p>To learn about the procedure for creating an API provider integration, see
+<a href="#create-api-provider-integration_api-provider">[create-api-provider-integration_api-provider]</a>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have a plan for what the steps in the integration will be.</p>
+</li>
+<li>
+<p>You created a connection to each application or service that you
+want to connect to in this integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel in {prodname}, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>Choose and configure the start connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the connection that you want
+to use to start the integration. When this integration is running,
+{prodname} will connect to this application and obtain data that you want
+the integration to operate on.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the action you want this connection
+to perform. The available actions vary for each connection.</p>
+</li>
+<li>
+<p>On the page for configuring the action, enter values in the fields.</p>
+</li>
+<li>
+<p>Optionally, if the connection requires data type specification,
+{prodname} prompts you to click
+<strong>Next</strong> to specify the input and/or output type of the action.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the start connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>As an alternative to connecting to an application, a start connection can
+be a timer that triggers integration execution at intervals that you specify
+or it can be a webhook that accepts HTTP requests.</p>
+</div>
+<div class="paragraph">
+<p>+
+After you choose and configure the start connection, {prodname}
+prompts you to choose the finish connection.</p>
+</div>
+</li>
+<li>
+<p>Choose and configure the finish connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the connection you want
+to use to complete the integration. When this integration is running,
+{prodname} will connect to this application with the data that the integration
+has been operating on.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the action you want this connection
+to perform. The available actions vary for each connection.</p>
+</li>
+<li>
+<p>On the page for configuring the action, enter values in the fields.</p>
+</li>
+<li>
+<p>Optionally, if the connection requires data type specification,
+{prodname} prompts you to click
+<strong>Next</strong> to specify the input and/or output type of the action.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the finish connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>As an alternative to connecting to an application, a finish connection can
+send information to the integration&#8217;s log about the messages that the
+integration processed. To do this, select <strong>Log</strong> when {prodname} prompts
+you to choose the finish connection.</p>
+</div>
+</li>
+<li>
+<p>Optionally, add one or more connections between the start connection and
+the finish connection. For each connection, choose its action and enter
+any required configuration details.</p>
+</li>
+<li>
+<p>Optionally, add one or more steps that operate on integration
+data between connections. See
+<a href="{LinkSyndesisIntegrationGuide}#about-adding-steps_create">About adding steps between connections</a>.</p>
+</li>
+<li>
+<p>In the integration visualization, look for any
+<span class="image"><img src="../../../_images/images/tutorials/WarningIcon.png" alt="Warning"></span> icons. These
+warnings indicate that a data mapper step is needed before
+this connection. Add the required data mapper steps.</p>
+</li>
+<li>
+<p>When the integration contains all needed steps,
+click <strong>Save</strong> or <strong>Publish</strong> according to whether you want
+to start running the integration.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter a name that distinguishes this
+integration from any other integrations.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Description</strong> field, enter a description, for example, you can
+indicate what this integration does.</p>
+</li>
+<li>
+<p>Optionally, from the list of library extensions that you have imported, you can select one or more library extensions to associate with the integration. Note that you must have already imported a library <code>.jar</code> file as a {prodname} extension if you want it to appear in this list so that you can select it.</p>
+<div class="paragraph">
+<p>For more information about library extensions, see <a href="{LinkSyndesisIntegrationGuide}#develop-library-extensions_extensions">How to develop library extensions</a>.</p>
+</div>
+</li>
+<li>
+<p>If you are ready to start running the integration, click <strong>Save and publish</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the integration summary. You
+can see that {prodname} is in the process of publishing it. It may take
+a few moments for the status of the integration to become <strong>Running</strong>.</p>
+</div>
+<div class="paragraph">
+<p>If you do not want to publish the integration, click <strong>Save</strong>. {prodname}
+saves the integration and displays its flow visualization. You can
+continue editing it. Or, in the breadcrumbs at the top of the page,
+click <strong>Integrations</strong> to display the list of integrations.
+If you saved but did not publish the integration, then
+<strong>Stopped</strong> appears on the integration&#8217;s entry.</p>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

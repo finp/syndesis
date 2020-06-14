@@ -17,14 +17,16 @@
 package io.syndesis.test.itest.sql;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collections;
 
+import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeTestSupport;
 import com.consol.citrus.http.server.HttpServer;
+import com.consol.citrus.http.server.HttpServerBuilder;
+import io.syndesis.test.SyndesisTestEnvironment;
 import io.syndesis.test.container.integration.SyndesisIntegrationRuntimeContainer;
 import io.syndesis.test.itest.SyndesisIntegrationTestSupport;
 import org.junit.ClassRule;
@@ -37,6 +39,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SocketUtils;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
+
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
+import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 /**
  * @author Christoph Deppisch
@@ -72,26 +77,30 @@ public class DBToHttp_IT extends SyndesisIntegrationTestSupport {
 
     @Test
     @CitrusTest
-    public void testDBToHttp(@CitrusResource TestRunner runner) {
-        runner.sql(builder -> builder.dataSource(sampleDb)
+    public void testDBToHttp(@CitrusResource TestCaseRunner runner) {
+        cleanupDatabase(runner);
+
+        runner.given(sql(sampleDb)
                 .statements(Arrays.asList("insert into contact (first_name, last_name, company) values ('Joe','Jackson','Red Hat')",
                                           "insert into contact (first_name, last_name, company) values ('Joanne','Jackson','Red Hat')")));
 
-        runner.http(builder -> builder.server(httpTestServer)
+        runner.when(http().server(httpTestServer)
                 .receive()
                 .put()
+                .selector(Collections.singletonMap("jsonPath:$.contact", "@startsWith(Joanne)@"))
                 .payload("{\"contact\":\"Joanne Jackson Red Hat\"}"));
 
-        runner.http(builder -> builder.server(httpTestServer)
+        runner.then(http().server(httpTestServer)
                 .send()
                 .response(HttpStatus.OK));
 
-        runner.http(builder -> builder.server(httpTestServer)
+        runner.then(http().server(httpTestServer)
                 .receive()
                 .put()
+                .selector(Collections.singletonMap("jsonPath:$.contact", "@startsWith(Joe)@"))
                 .payload("{\"contact\":\"Joe Jackson Red Hat\"}"));
 
-        runner.http(builder -> builder.server(httpTestServer)
+        runner.then(http().server(httpTestServer)
                 .send()
                 .response(HttpStatus.OK));
     }
@@ -101,25 +110,17 @@ public class DBToHttp_IT extends SyndesisIntegrationTestSupport {
 
         @Bean
         public HttpServer httpTestServer() {
-            return CitrusEndpoints.http()
-                    .server()
+            return new HttpServerBuilder()
                     .port(HTTP_TEST_SERVER_PORT)
                     .autoStart(true)
-                    .timeout(60000L)
+                    .timeout(Duration.ofSeconds(SyndesisTestEnvironment.getDefaultTimeout()).toMillis())
                     .build();
-        }
-
-        @Bean
-        public TestRunnerBeforeTestSupport beforeTest(DataSource sampleDb) {
-            return new TestRunnerBeforeTestSupport() {
-                @Override
-                public void beforeTest(TestRunner runner) {
-                    runner.sql(builder -> builder.dataSource(sampleDb)
-                            .statement("delete from contact"));
-                }
-            };
         }
     }
 
-
+    private void cleanupDatabase(TestCaseRunner runner) {
+        runner.given(sql(sampleDb)
+            .dataSource(sampleDb)
+            .statement("delete from contact"));
+    }
 }

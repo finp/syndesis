@@ -26,8 +26,45 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1alpha1"
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/capabilities"
 )
+
+func Test_GetAddons(t *testing.T) {
+	config := getConfigLiteral()
+	addons := GetAddonsInfo(*config)
+
+	assert.True(t, len(addons) > 0)
+
+	for _, addon := range addons {
+		switch addon.Name() {
+		case "jaeger":
+			assert.Equal(t, config.Syndesis.Addons.Jaeger.Name(), addon.Name())
+			assert.Equal(t, config.Syndesis.Addons.Jaeger.Enabled, addon.IsEnabled())
+			assert.Equal(t, config.Syndesis.Addons.Jaeger.Olm, *addon.GetOlmSpec())
+		case "ops":
+			assert.Equal(t, config.Syndesis.Addons.Ops.Name(), addon.Name())
+			assert.Equal(t, config.Syndesis.Addons.Ops.Enabled, addon.IsEnabled())
+		case "dv":
+			assert.Equal(t, config.Syndesis.Addons.DV.Name(), addon.Name())
+			assert.Equal(t, config.Syndesis.Addons.DV.Enabled, addon.IsEnabled())
+		case "camelk":
+			assert.Equal(t, config.Syndesis.Addons.CamelK.Name(), addon.Name())
+			assert.Equal(t, config.Syndesis.Addons.CamelK.Enabled, addon.IsEnabled())
+		case "knative":
+			assert.Equal(t, config.Syndesis.Addons.Knative.Name(), addon.Name())
+			assert.Equal(t, config.Syndesis.Addons.Knative.Enabled, addon.IsEnabled())
+		case "todo":
+			assert.Equal(t, config.Syndesis.Addons.Todo.Name(), addon.Name())
+			assert.Equal(t, config.Syndesis.Addons.Todo.Enabled, addon.IsEnabled())
+		case "publicApi":
+			assert.Equal(t, config.Syndesis.Addons.PublicAPI.Name(), addon.Name())
+			assert.Equal(t, config.Syndesis.Addons.PublicAPI.Enabled, addon.IsEnabled())
+		default:
+			t.Errorf("addon name %s not recognised", addon.Name())
+		}
+	}
+}
 
 func Test_loadFromFile(t *testing.T) {
 	type args struct {
@@ -76,14 +113,21 @@ func Test_setConfigFromEnv(t *testing.T) {
 				Productized: true,
 				ProductName: "something",
 				DevSupport:  true,
+				ApiServer: capabilities.ApiServerSpec{
+					Version:          "1.16",
+					Routes:           true,
+					ImageStreams:     true,
+					EmbeddedProvider: true,
+				},
 				Syndesis: SyndesisConfig{
 					RouteHostname: "route",
 					Addons: AddonsSpec{
 						DV: DvConfiguration{
-							Enabled: true,
-							Image:   "DV_IMAGE",
+							AddonConfiguration: AddonConfiguration{Enabled: true},
+							Image:              "DV_IMAGE",
 						},
 						CamelK: CamelKConfiguration{Image: "CAMELK_IMAGE"},
+						Todo:   TodoConfiguration{Image: "TODO_IMAGE"},
 					},
 					Components: ComponentsSpec{
 						Oauth:      OauthConfiguration{Image: "OAUTH_IMAGE"},
@@ -93,7 +137,7 @@ func Test_setConfigFromEnv(t *testing.T) {
 						Upgrade:    UpgradeConfiguration{Image: "UPGRADE_IMAGE"},
 						Meta:       MetaConfiguration{Image: "META_IMAGE"},
 						Database: DatabaseConfiguration{
-							Image: "DATABASE_IMAGE", ImageStreamNamespace: "DATABASE_NAMESPACE",
+							Image:    "DATABASE_IMAGE",
 							Exporter: ExporterConfiguration{Image: "PSQL_EXPORTER_IMAGE"},
 							Resources: ResourcesWithPersistentVolume{
 								VolumeAccessMode:   "ReadWriteOnce",
@@ -107,6 +151,7 @@ func Test_setConfigFromEnv(t *testing.T) {
 								TestSupport: false,
 							},
 						},
+						AMQ: AMQConfiguration{Image: "AMQ_IMAGE"},
 					},
 				},
 			},
@@ -114,12 +159,18 @@ func Test_setConfigFromEnv(t *testing.T) {
 				Productized: true,
 				ProductName: "something",
 				DevSupport:  true,
+				ApiServer: capabilities.ApiServerSpec{
+					Version:          "1.16",
+					Routes:           true,
+					ImageStreams:     true,
+					EmbeddedProvider: true,
+				},
 				Syndesis: SyndesisConfig{
 					RouteHostname: "route",
 					Addons: AddonsSpec{
 						DV: DvConfiguration{
-							Enabled: true,
-							Image:   "docker.io/teiid/syndesis-dv:latest",
+							AddonConfiguration: AddonConfiguration{Enabled: true},
+							Image:              "docker.io/teiid/syndesis-dv:latest",
 						},
 					},
 					Components: ComponentsSpec{
@@ -130,7 +181,6 @@ func Test_setConfigFromEnv(t *testing.T) {
 						Upgrade:    UpgradeConfiguration{Image: "docker.io/syndesis/syndesis-upgrade:latest"},
 						Meta:       MetaConfiguration{Image: "docker.io/syndesis/syndesis-meta:latest"},
 						Database: DatabaseConfiguration{
-							Image: "postgresql:9.6", ImageStreamNamespace: "openshift",
 							Exporter: ExporterConfiguration{Image: "docker.io/wrouesnel/postgres_exporter:v0.4.7"},
 							Resources: ResourcesWithPersistentVolume{
 								VolumeAccessMode:   "ReadWriteMany",
@@ -143,14 +193,14 @@ func Test_setConfigFromEnv(t *testing.T) {
 				},
 			},
 			env: map[string]string{
-				"PSQL_IMAGE": "PSQL_IMAGE", "S2I_IMAGE": "S2I_IMAGE", "OPERATOR_IMAGE": "OPERATOR_IMAGE",
-				"UI_IMAGE": "UI_IMAGE", "SERVER_IMAGE": "SERVER_IMAGE", "META_IMAGE": "META_IMAGE",
-				"DV_IMAGE": "DV_IMAGE", "OAUTH_IMAGE": "OAUTH_IMAGE", "PROMETHEUS_IMAGE": "PROMETHEUS_IMAGE",
-				"UPGRADE_IMAGE": "UPGRADE_IMAGE", "DATABASE_NAMESPACE": "DATABASE_NAMESPACE", "DATABASE_IMAGE": "DATABASE_IMAGE",
-				"PSQL_EXPORTER_IMAGE": "PSQL_EXPORTER_IMAGE", "DEV_SUPPORT": "true", "TEST_SUPPORT": "false",
-				"INTEGRATION_LIMIT": "30", "DEPLOY_INTEGRATIONS": "true", "CAMELK_IMAGE": "CAMELK_IMAGE",
+				"RELATED_PSQL": "PSQL_IMAGE", "RELATED_IMAGE_S2I": "S2I_IMAGE", "RELATED_IMAGE_OPERATOR": "OPERATOR_IMAGE",
+				"RELATED_IMAGE_UI": "UI_IMAGE", "RELATED_IMAGE_SERVER": "SERVER_IMAGE", "RELATED_IMAGE_META": "META_IMAGE",
+				"RELATED_IMAGE_DV": "DV_IMAGE", "RELATED_IMAGE_OAUTH": "OAUTH_IMAGE", "RELATED_IMAGE_PROMETHEUS": "PROMETHEUS_IMAGE",
+				"RELATED_IMAGE_UPGRADE": "UPGRADE_IMAGE", "DATABASE_NAMESPACE": "DATABASE_NAMESPACE", "RELATED_IMAGE_DATABASE": "DATABASE_IMAGE",
+				"RELATED_IMAGE_PSQL_EXPORTER": "PSQL_EXPORTER_IMAGE", "DEV_SUPPORT": "true", "TEST_SUPPORT": "false",
+				"INTEGRATION_LIMIT": "30", "DEPLOY_INTEGRATIONS": "true", "RELATED_IMAGE_CAMELK": "CAMELK_IMAGE",
 				"DATABASE_VOLUME_NAME": "nfs0002", "DATABASE_STORAGE_CLASS": "nfs-storage-class1",
-				"DATABASE_VOLUME_ACCESS_MODE": "ReadWriteOnce",
+				"DATABASE_VOLUME_ACCESS_MODE": "ReadWriteOnce", "RELATED_IMAGE_TODO": "TODO_IMAGE", "RELATED_IMAGE_AMQ": "AMQ_IMAGE",
 			},
 			wantErr: false,
 		},
@@ -177,7 +227,7 @@ func Test_setConfigFromEnv(t *testing.T) {
 				t.Errorf("loadFromFile() got = %v, want %v", tt.conf, tt.want)
 			}
 
-			for k, _ := range tt.env {
+			for k := range tt.env {
 				os.Unsetenv(k)
 			}
 		})
@@ -186,7 +236,7 @@ func Test_setConfigFromEnv(t *testing.T) {
 
 func Test_setSyndesisFromCustomResource(t *testing.T) {
 	type args struct {
-		syndesis *v1alpha1.Syndesis
+		syndesis *v1beta1.Syndesis
 	}
 	tests := []struct {
 		name       string
@@ -196,26 +246,32 @@ func Test_setSyndesisFromCustomResource(t *testing.T) {
 	}{
 		{
 			name:       "When using an empty syndesis custom resource, the config values from template should remain",
-			args:       args{syndesis: &v1alpha1.Syndesis{}},
+			args:       args{syndesis: &v1beta1.Syndesis{}},
 			wantConfig: getConfigLiteral(),
 			wantErr:    false,
 		},
 		{
 			name: "When using a syndesis custom resource with values, those values should replace the template values",
-			args: args{syndesis: &v1alpha1.Syndesis{
-				Spec: v1alpha1.SyndesisSpec{
-					ImageStreamNamespace: "ImageStreamNamespace",
-					Addons: v1alpha1.AddonsSpec{
-						Jaeger: v1alpha1.JaegerConfiguration{
-							Enabled:      true,
-							SamplerType:  "const",
-							SamplerParam: "0",
+			args: args{syndesis: &v1beta1.Syndesis{
+				Spec: v1beta1.SyndesisSpec{
+					Addons: v1beta1.AddonsSpec{
+						Jaeger: v1beta1.JaegerConfiguration{
+							Enabled:       true,
+							SamplerType:   "const",
+							SamplerParam:  "0",
+							ImageAgent:    "jaegertracing/jaeger-agent:1.13",
+							ImageAllInOne: "jaegertracing/all-in-one:1.13",
+							ImageOperator: "jaegertracing/jaeger-operator:1.13",
 						},
-						Todo: v1alpha1.AddonSpec{Enabled: true},
-						DV: v1alpha1.DvConfiguration{
+						Todo: v1beta1.AddonSpec{Enabled: true},
+						DV: v1beta1.DvConfiguration{
 							Enabled: true,
 						},
-						CamelK: v1alpha1.AddonSpec{Enabled: true},
+						CamelK: v1beta1.AddonSpec{Enabled: true},
+						PublicAPI: v1beta1.PublicAPIConfiguration{
+							Enabled:       true,
+							RouteHostname: "mypublichost.com",
+						},
 					},
 				},
 			}},
@@ -223,23 +279,41 @@ func Test_setSyndesisFromCustomResource(t *testing.T) {
 				Syndesis: SyndesisConfig{
 					Addons: AddonsSpec{
 						Jaeger: JaegerConfiguration{
-							Enabled:      true,
-							SamplerType:  "const",
-							SamplerParam: "0",
+							Enabled: true,
+							Olm: OlmSpec{
+								Package: "jaeger",
+								Channel: "stable",
+							},
+							SamplerType:   "const",
+							SamplerParam:  "0",
+							ImageAgent:    "jaegertracing/jaeger-agent:1.13",
+							ImageAllInOne: "jaegertracing/all-in-one:1.13",
+							ImageOperator: "jaegertracing/jaeger-operator:1.13",
 						},
-						Ops:     AddonConfiguration{Enabled: false},
-						Todo:    AddonConfiguration{Enabled: true},
-						Knative: AddonConfiguration{Enabled: false},
+						Ops: OpsConfiguration{
+							AddonConfiguration: AddonConfiguration{Enabled: false},
+						},
+						Todo: TodoConfiguration{
+							AddonConfiguration: AddonConfiguration{Enabled: true},
+							Image:              "docker.io/centos/php-71-centos7",
+						},
+						Knative: KnativeConfiguration{
+							AddonConfiguration: AddonConfiguration{Enabled: false},
+						},
 						DV: DvConfiguration{
-							Enabled:   true,
-							Resources: Resources{Memory: "1024Mi"},
-							Image:     "docker.io/teiid/syndesis-dv:latest",
+							AddonConfiguration: AddonConfiguration{Enabled: true},
+							Resources:          Resources{Memory: "1024Mi"},
+							Image:              "docker.io/teiid/syndesis-dv:latest",
 						},
 						CamelK: CamelKConfiguration{
-							Enabled:       true,
-							Image:         "fabric8/s2i-java:3.0-java8",
-							CamelVersion:  "2.23.2.fuse-760011",
-							CamelKRuntime: "0.3.4.fuse-740008",
+							AddonConfiguration: AddonConfiguration{Enabled: true},
+							Image:              "fabric8/s2i-java:3.0-java8",
+							CamelVersion:       "3.1.0",
+							CamelKRuntime:      "1.1.0",
+						},
+						PublicAPI: PublicAPIConfiguration{
+							AddonConfiguration: AddonConfiguration{Enabled: true},
+							RouteHostname:      "mypublichost.com",
 						},
 					},
 				},
@@ -314,42 +388,68 @@ func Test_generatePasswords(t *testing.T) {
 // but without using the loadFromFile function
 func getConfigLiteral() *Config {
 	return &Config{
+		Version:                    "7.7.0",
 		ProductName:                "syndesis",
 		AllowLocalHost:             false,
 		Productized:                false,
 		DevSupport:                 false,
 		Scheduled:                  true,
-		ImageStreamNamespace:       "",
 		PrometheusRules:            "",
 		OpenShiftProject:           "",
 		OpenShiftOauthClientSecret: "",
-		OpenShiftConsoleUrl:        "",
+		OpenShiftConsoleURL:        "",
 		Syndesis: SyndesisConfig{
 			RouteHostname: "",
+			SHA:           false,
 			Addons: AddonsSpec{
 				Jaeger: JaegerConfiguration{
-					Enabled:      false,
-					SamplerType:  "const",
-					SamplerParam: "0",
+					Enabled: false,
+					Olm: OlmSpec{
+						Package: "jaeger",
+						Channel: "stable",
+					},
+					SamplerType:   "const",
+					SamplerParam:  "0",
+					ImageAgent:    "jaegertracing/jaeger-agent:1.13",
+					ImageAllInOne: "jaegertracing/all-in-one:1.13",
+					ImageOperator: "jaegertracing/jaeger-operator:1.13",
 				},
-				Ops:  AddonConfiguration{Enabled: false},
-				Todo: AddonConfiguration{Enabled: false},
+				Ops: OpsConfiguration{
+					AddonConfiguration: AddonConfiguration{Enabled: false},
+				},
+				Todo: TodoConfiguration{
+					AddonConfiguration: AddonConfiguration{Enabled: false},
+					Image:              "docker.io/centos/php-71-centos7",
+				},
+				Knative: KnativeConfiguration{
+					AddonConfiguration: AddonConfiguration{Enabled: false},
+				},
 				DV: DvConfiguration{
-					Enabled:   false,
-					Image:     "docker.io/teiid/syndesis-dv:latest",
-					Resources: Resources{Memory: "1024Mi"},
+					AddonConfiguration: AddonConfiguration{Enabled: false},
+					Image:              "docker.io/teiid/syndesis-dv:latest",
+					Resources:          Resources{Memory: "1024Mi"},
 				},
 				CamelK: CamelKConfiguration{
-					Enabled:       false,
-					CamelVersion:  "2.23.2.fuse-760011",
-					CamelKRuntime: "0.3.4.fuse-740008",
-					Image:         "fabric8/s2i-java:3.0-java8",
+					AddonConfiguration: AddonConfiguration{Enabled: false},
+					CamelVersion:       "3.1.0",
+					CamelKRuntime:      "1.1.0",
+					Image:              "fabric8/s2i-java:3.0-java8",
+				},
+				PublicAPI: PublicAPIConfiguration{
+					AddonConfiguration: AddonConfiguration{Enabled: true},
+					RouteHostname:      "mypublichost.com",
 				},
 			},
 			Components: ComponentsSpec{
-				Oauth: OauthConfiguration{Image: "quay.io/openshift/origin-oauth-proxy:v4.0.0"},
-				UI:    UIConfiguration{Image: "docker.io/syndesis/syndesis-ui:latest"},
-				S2I:   S2IConfiguration{Image: "docker.io/syndesis/syndesis-s2i:latest"},
+				Oauth: OauthConfiguration{
+					Image: "quay.io/openshift/origin-oauth-proxy:v4.0.0",
+				},
+				UI: UIConfiguration{
+					Image: "docker.io/syndesis/syndesis-ui:latest",
+				},
+				S2I: S2IConfiguration{
+					Image: "docker.io/syndesis/syndesis-s2i:latest",
+				},
 				Server: ServerConfiguration{
 					Image:     "docker.io/syndesis/syndesis-server:latest",
 					Resources: Resources{Memory: "800Mi"},
@@ -374,16 +474,17 @@ func getConfigLiteral() *Config {
 					},
 				},
 				Database: DatabaseConfiguration{
-					ImageStreamNamespace: "openshift",
-					Image:                "postgresql:9.6",
-					User:                 "syndesis",
-					Name:                 "syndesis",
-					URL:                  "postgresql://syndesis-db:5432/syndesis?sslmode=disable",
-					Exporter:             ExporterConfiguration{Image: "docker.io/wrouesnel/postgres_exporter:v0.4.7"},
+					Image: "postgresql:9.6",
+					User:  "syndesis",
+					Name:  "syndesis",
+					URL:   "postgresql://syndesis-db:5432/syndesis?sslmode=disable",
+					Exporter: ExporterConfiguration{
+						Image: "docker.io/wrouesnel/postgres_exporter:v0.4.7",
+					},
 					Resources: ResourcesWithPersistentVolume{
 						Memory:           "255Mi",
 						VolumeCapacity:   "1Gi",
-						VolumeAccessMode: string(v1alpha1.ReadWriteOnce),
+						VolumeAccessMode: string(v1beta1.ReadWriteOnce),
 					},
 				},
 				Prometheus: PrometheusConfiguration{
@@ -396,6 +497,9 @@ func getConfigLiteral() *Config {
 				Upgrade: UpgradeConfiguration{
 					Image:     "docker.io/syndesis/syndesis-upgrade:latest",
 					Resources: VolumeOnlyResources{VolumeCapacity: "1Gi"},
+				},
+				AMQ: AMQConfiguration{
+					Image: "registry.access.redhat.com/jboss-amq-6/amq63-openshift:1.3",
 				},
 			},
 		},
@@ -430,7 +534,7 @@ func Test_setBoolFromEnv(t *testing.T) {
 				t.Errorf("setBoolFromEnv() = %v, want %v", got, tt.want)
 			}
 
-			for k, _ := range tt.env {
+			for k := range tt.env {
 				os.Unsetenv(k)
 			}
 		})
@@ -441,7 +545,7 @@ func TestConfig_SetRoute(t *testing.T) {
 	type args struct {
 		ctx      context.Context
 		client   client.Client
-		syndesis *v1alpha1.Syndesis
+		syndesis *v1beta1.Syndesis
 	}
 	tests := []struct {
 		name    string
@@ -474,7 +578,7 @@ func TestConfig_SetRoute(t *testing.T) {
 			}
 			assert.Equal(t, config.Syndesis.RouteHostname, tt.want)
 
-			for k, _ := range tt.env {
+			for k := range tt.env {
 				os.Unsetenv(k)
 			}
 		})
@@ -505,7 +609,7 @@ func Test_setIntFromEnv(t *testing.T) {
 				t.Errorf("setIntFromEnv() = %v, want %v", got, tt.want)
 			}
 
-			for k, _ := range tt.env {
+			for k := range tt.env {
 				os.Unsetenv(k)
 			}
 		})

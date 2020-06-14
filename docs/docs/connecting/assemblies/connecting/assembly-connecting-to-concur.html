@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to SAP Concur :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-concur.html">Connecting to SAP Concur</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-concur.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to SAP Concur</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>SAP Concur manages business expenses, travel, and invoices.
+In an integration, you can connect to SAP Concur and perform
+any one of a large variety of SAP Concur actions.
+For example, suppose that you store project codes in a SQL database and
+you need the same project codes in SAP Concur so that expenses can be
+associated with projects. You can create an integration that
+connects to your SQL database and runs a stored procedure that obtains
+any new project codes. The integration can then connect to SAP Concur and
+upload the new project codes to the appropriate list.</p>
+</div>
+<div class="paragraph">
+<p>See the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#user-roles-for-connecting-to-concur_concur">User roles for connecting to SAP Concur</a></p>
+</li>
+<li>
+<p><a href="#obtain-concur-oauth-credentials-implementation_concur">How to Obtain SAP Concur implementation site OAuth credentials</a></p>
+</li>
+<li>
+<p><a href="#obtain-concur-oauth-credentials-production_concur">How to obtain SAP Concur production site OAuth credentials</a></p>
+</li>
+<li>
+<p><a href="#configure-concur-connector_concur">Configuring the SAP Concur connector</a></p>
+</li>
+<li>
+<p><a href="#create-concur-connection_concur">Creating a SAP Concur connection</a></p>
+</li>
+<li>
+<p><a href="#add-concur-connection_concur">Adding a SAP Concur connection to an integration</a></p>
+</li>
+<li>
+<p><a href="#identify-concur-fields-for-mapping_concur">Example of mapping integration data fields to SAP Concur fields</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user-roles-for-connecting-to-concur_concur"><a class="anchor" href="#user-roles-for-connecting-to-concur_concur"></a>User roles for connecting to SAP Concur</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SAP Concur has an implementation site for development work and a production
+site for live use. The implementation site simulates
+the production site. This lets you create and refine an integration
+before you use it in production with the live SAP Concur site.</p>
+</div>
+<div class="paragraph">
+<p>At any one time, a {prodname} environment can connect to the SAP Concur implementation site
+or the SAP Concur production site. In other words, a particular
+{prodname} environment does not support connections to both SAP Concur
+sites at the same time. Each {prodname} environment requires its own
+credentials for accessing each SAP Concur site and the credentials for
+the implementation site are different from the credentials for the
+production site.</p>
+</div>
+<div class="paragraph">
+<p>Consequently, the expectation is that someone in a system administrator-like
+role would do the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Obtain two sets of OAuth credentials from SAP Concur:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>One set for access to the SAP Concur implementation site</p>
+</li>
+<li>
+<p>Another set for access to the SAP Concur production site</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Configure the SAP Concur connector for access to the appropriate SAP Concur site.</p>
+</li>
+<li>
+<p>Create a SAP Concur connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A business user can then create an integration that uses the
+SAP Concur connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="obtain-concur-oauth-credentials-implementation_concur"><a class="anchor" href="#obtain-concur-oauth-credentials-implementation_concur"></a>How to Obtain SAP Concur implementation site OAuth credentials</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To obtain credentials for accessing the SAP Concur implementation site,
+contact SAP Concur directly and tell them:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You want to register {prodname} as a new app that is authorized to
+access the SAP Concur implementation site.</p>
+</li>
+<li>
+<p>You want a new set of OAuth credentials for their implementation site.</p>
+</li>
+<li>
+<p>The credentials must include the <code>LIST</code> scope.</p>
+</li>
+<li>
+<p>Optionally, to obtain permission to perform actions other than
+the list actions, ask for other
+<a href="https://developer.concur.com/api-reference/authentication/scopes.html">scopes</a>.</p>
+</li>
+<li>
+<p>The OAuth grant type for these credentials should be
+<code>Authorization Grant Flow</code>.</p>
+<div class="paragraph">
+<p>To use a REST client, such as Postman, to send a request to
+the SAP Concur implementation site, you need credentials with
+an OAuth grant type of <code>Password</code>.</p>
+</div>
+</li>
+<li>
+<p>The {prodname} callback URL for the environment that that you
+want credentials for, which is something like this:</p>
+<div class="paragraph">
+<p><code>https://syndesis.my-minishift.syndesis.io/api/v1/credentials/callback</code></p>
+</div>
+<div class="paragraph">
+<p>In this URL, <code>syndesis.my-minishift.syndesis.io</code> matches the OpenShift
+route to your {prodname} environment.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The response from SAP Concur should provide:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A username and password for logging in to the SAP Concur implementation
+site.</p>
+</li>
+<li>
+<p>Client ID and client secret values that you will specify in the
+{prodname} development environment <strong>Settings</strong> page to configure the
+{prodname} SAP Concur connector.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="obtain-concur-oauth-credentials-production_concur"><a class="anchor" href="#obtain-concur-oauth-credentials-production_concur"></a>How to obtain SAP Concur production site OAuth credentials</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To obtain OAuth credentials that authorize {prodname} to access
+the SAP Concur production site, go to the
+<a href="https://developer.concur.com/api-reference/authentication/getting-started.html">SAP Concur Developer Center Getting Started</a>
+page and follow the instructions there.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-concur-connector_concur"><a class="anchor" href="#configure-concur-connector_concur"></a>Configuring the SAP Concur connector</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To connect to SAP Concur in an integration, you must configure the
+{prodname} SAP Concur connector. You can then use the connector
+to create a connection to SAP Concur.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You know whether you want to configure the SAP Concur connector to
+access the SAP Concur implementation site or the SAP Concur
+production site.</p>
+</li>
+<li>
+<p>You obtained OAuth credentials that authorize your {prodname}
+environment to access the appropriate SAP Concur site.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, expand the <strong>SAP Concur</strong> entry.</p>
+</li>
+<li>
+<p>In the <strong>Client ID</strong> field, enter the client ID that you received from
+SAP Concur.</p>
+</li>
+<li>
+<p>In the <strong>Client Secret</strong> field, enter the client secret that you received
+from SAP Concur.</p>
+<div class="paragraph">
+<p>{prodname} populates the other fields.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+<div class="paragraph">
+<p>{prodname} immediately tries to validate the configuration.
+If validation is not successful, correct the input values and try again.
+If validation is successful, you can create a SAP Concur connection,
+which you can add to an integration.</p>
+</div>
+</li>
+<li>
+<p>Click the <strong>SAP Concur</strong> entry to collapse it.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>Create a SAP Concur connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-concur-connection_concur"><a class="anchor" href="#create-concur-connection_concur"></a>Creating a SAP Concur connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To connect to SAP Concur in an integration, you must first create a SAP
+Concur connection, which you can then add to any number of integrations.
+When you create a SAP Concur connection, you authorize the connection to access
+SAP Concur with the login credentials that you enter when you create
+the connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>In the {prodname} environment in which you are creating the connection,
+you must have configured the SAP Concur connector.</p>
+</li>
+<li>
+<p>You should know whether the connector is configured for access to the
+SAP Concur implementation site or the SAP Concur production site.</p>
+</li>
+<li>
+<p>You must have a user name and password for logging in to the SAP
+Concur site for which the SAP Concur connector is configured.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors. A connector is a template that
+you use to create one or more connections.</p>
+</li>
+<li>
+<p>Click the <strong>SAP Concur</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Configure Connection</strong> page, click <strong>Connect SAP Concur</strong>,
+which takes you to the SAP Concur site for which the connector is
+configured.</p>
+<div class="paragraph">
+<p>If <strong>Connect SAP Concur</strong> does not appear, then the SAP Concur
+connector in your {prodname} environment
+is not configured.  See
+<a href="{LinkSyndesisConnectorGuide}#configure-concur-connector_concur">Configuring the SAP Concur connector</a>.</p>
+</div>
+<div class="paragraph">
+<p>If <code>redirect_uri is improper or not previously registered</code> appears, then
+the SAP Concur connector configuration is incorrect.
+Return to the {prodname} <strong>Settings</strong> page
+to update and validate the connector configuration.</p>
+</div>
+</li>
+<li>
+<p>On the SAP Concur OAuth site:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Enter the email address for the SAP Concur account that you want
+this connection to use to access SAP Concur.</p>
+</li>
+<li>
+<p>Ensure that <strong>Username</strong> is selected.</p>
+</li>
+<li>
+<p>Click <strong>Continue</strong>.</p>
+</li>
+<li>
+<p>Enter the SAP Concur password associated with the email address.</p>
+</li>
+<li>
+<p>Click <strong>Sign In</strong>, which returns you to {prodname}.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the {prodname} <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>SAP Concur Test1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample SAP Concur connection to the implementation site.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>SAP Concur Test1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-concur-connection_concur"><a class="anchor" href="#add-concur-connection_concur"></a>Adding a SAP Concur connection to an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can add a SAP Concur connection to the middle of a flow or
+as the finish connection in a simple integration.
+A connection to SAP Concur can perform any one of 85 actions.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a SAP Concur connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>{prodname} is prompting you to add to the integration, or to choose the
+finish connection in a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the SAP Concur
+connection that you want to add to the flow. When the integration
+uses the connection that you select, {prodname}
+uses the credentials defined in that connection to connect to SAP Concur.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform.  Each
+SAP Concur connection that you add to a flow performs only the action
+you choose.</p>
+<div class="paragraph">
+<p>For details about SAP Concur actions, visit the
+<a href="https://developer.concur.com/api-explorer/">SAP Concur developer center</a>
+and expand <strong>v3.0</strong>.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="identify-concur-fields-for-mapping_concur"><a class="anchor" href="#identify-concur-fields-for-mapping_concur"></a>Example of mapping integration data fields to SAP Concur fields</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In most integrations, you need to add a data mapping step before a
+connection to SAP Concur. In the data mapping step, you map data fields
+that are available from previous integration steps to SAP Concur action
+parameters. In the data mapper, the <strong>Target</strong> panel displays the
+SAP Concur parameters for the action that you selected when you added
+the SAP Concur connection to the integration.</p>
+</div>
+<div class="paragraph">
+<p>Suppose that an integration starts by executing a SQL stored procedure
+that obtains new project codes. The integration finishes by adding
+new project codes to SAP Concur.
+The following procedure provides an example of a data mapper step before
+the SAP Concur connection. The integration visualization displays
+and {prodname} is prompting you to add to the integration.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the integration visualization, click the plus sign that is
+before the SAP Concur finish connection.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>. When the data fields
+appear, the <strong>Sources</strong> panel on the left displays the fields that are
+available from the database connection. In this example, the
+source fields include <code>concur-list-id</code> and <code>project-code</code>.
+The <strong>Target</strong> panel on the right displays the SAP Concur <code>id</code> and
+<code>content</code> parameters for the update list action, which the connection
+performs.</p>
+</li>
+<li>
+<p>Map the <code>concur-list-id</code> source field to the <code>id</code> target field.</p>
+</li>
+<li>
+<p>Map the <code>project-code</code> source field to the <code>content</code> target field.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step to the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

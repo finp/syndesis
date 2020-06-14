@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Amazon Web Services :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-aws.html">Connecting to Amazon Web Services</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-aws.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Amazon Web Services</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A {prodname} integration can connect to the following Amazon web services:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>DynamoDB</p>
+</li>
+<li>
+<p>Simple Notification Service (SNS)</p>
+</li>
+<li>
+<p>Simple Queue Service (SQS)</p>
+</li>
+<li>
+<p>Simple Storage Service (S3)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You must obtain AWS credentials before you can create a connection
+to an Amazon web service. For details, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#obtaining-aws-credentials_aws">Obtaining AWS credentials for creating connections to Amazon services</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-amazon-dynamodb_aws">Connecting to Amazon DynamoDB</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-amazon-sns_aws">Connecting to Amazon Simple Notification Service (SNS)</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-amazon-sqs_aws">Connecting to Amazon Simple Queue Service (SQS)</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-amazon-s3_aws">Connecting to Amazon Simple Storage Service (S3)</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="obtaining-aws-credentials_aws"><a class="anchor" href="#obtaining-aws-credentials_aws"></a>Obtaining AWS credentials for creating connections to Amazon services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create a connection to an Amazon service, you must have an access
+key that is associated with an AWS account. This is the AWS account
+that created, or will create, the resource that you want the
+{prodname} connection to access. The resource can be an S3 bucket,
+an SNS topic, or an SQS queue.</p>
+</div>
+<div class="paragraph">
+<p>An AWS access key has two parts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Amazon access key ID</p>
+</li>
+<li>
+<p>Amazon secret access key</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>AWS uses access keys to authenticate requests from a {prodname}
+connection. There is plenty of AWS documentation about creating and managing
+access keys. If you already created an AWS Identity and Access Management (IAM)
+user and captured the access key associated with that user, you can specify
+those values to create a {prodname} connection to S3, SNS, or SQS.</p>
+</div>
+<div class="paragraph">
+<p>If you need to obtain an access key, the procedure below is one way to
+do it.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Login credentials for the AWS account that created the
+resource that you want a connection to access.</p>
+</li>
+<li>
+<p>Or, login credentials for the AWS account that you want
+the connection to use to create a new resource.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Go to <a href="https://aws.amazon.com/" class="bare">https://aws.amazon.com/</a> and sign in to the console.</p>
+</li>
+<li>
+<p>In the console, in the upper right, click the down arrow next to
+the user name and click <strong>My Security Credentials</strong>.</p>
+</li>
+<li>
+<p>In the popup dialog, click <strong>Get Started with IAM Users</strong>.</p>
+<div class="paragraph">
+<p>If a popup with this button does not appear, then on the left, click <strong>Users</strong>.</p>
+</div>
+</li>
+<li>
+<p>Add a user:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click <strong>Add User</strong></p>
+</li>
+<li>
+<p>Enter a user name and select <strong>Programmatic Access</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Next: Permissions</strong>.</p>
+</li>
+<li>
+<p>Respond to the prompts for adding the new user to a group.</p>
+</li>
+<li>
+<p>Click <strong>Next: Tags</strong>.</p>
+</li>
+<li>
+<p>Skip adding tags and click <strong>Next: Review</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create User</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Download .csv</strong> to obtain a local copy of the access key. The
+downloaded file contains the access key ID and the secret access key,
+which you must specify to create a connection to an Amazon service.</p>
+</li>
+<li>
+<p>Click <strong>Close</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html">Managing Access Keys for IAM Users</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html">IAM Best Practices</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-amazon-dynamodb_aws"><a class="anchor" href="#connecting-to-amazon-dynamodb_aws"></a>Connecting to Amazon DynamoDB</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An integration can retrieve data from an Amazon DynamoDB table, add
+data to a DynamoDB table, or remove data from a DynamoDB
+table. To do this, create an Amazon DynamoDB
+connection and then add that connection to an integration flow.</p>
+</div>
+<div class="paragraph">
+<p>For details, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-dynamodb-connections_dynamodb">Creating Amazon DynamoDB connections</a></p>
+</li>
+<li>
+<p><a href="#adding-dynamodb-connection-query_dynamodb">Obtaining data from an Amazon DynamoDB table</a></p>
+</li>
+<li>
+<p><a href="#adding-dynamodb-connection-put_dynamodb">Adding data to an Amazon DynamoDB table</a></p>
+</li>
+<li>
+<p><a href="#adding-dynamodb-connection-remove_dynamodb">Removing data from an Amazon DynamoDB table</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="create-dynamodb-connections_dynamodb"><a class="anchor" href="#create-dynamodb-connections_dynamodb"></a>Creating Amazon DynamoDB connections</h3>
+<div class="paragraph">
+<p>You must create an Amazon DynamoDB connection before you can
+connect to Amazon DynamoDB in an integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You must have an AWS access key. See
+<a href="{LinkSyndesisConnectorGuide}#obtaining-aws-credentials_aws">Obtaining AWS credentials for creating connections to Amazon services</a>.</p>
+</li>
+<li>
+<p>You must know which AWS region contains the DynamoDB table that
+you want the connection to access.</p>
+</li>
+<li>
+<p>You must know the name of the DynamoDB table that you want the
+connection to access. This table must exist when an integration
+connects to DynamoDB.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Amazon DynamoDB</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Access Key</strong> field, enter an Amazon access key ID that is
+part of a user access key in the AWS account that manages
+the DynamoDB table that you want the connection to access.</p>
+</li>
+<li>
+<p>In the <strong>Secret Key</strong> field, enter the Amazon secret access key for the
+Amazon access key ID that you specified.</p>
+</li>
+<li>
+<p>In the <strong>Region</strong> field, select the AWS region in which the DynamoDB table resides.</p>
+</li>
+<li>
+<p>In the <strong>Table Name</strong> field, enter the name of
+the DynamoDB table that you want this connection to access.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether or not
+validation is successful. If validation fails, revise the configuration
+details as needed and try again.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code>DynamoDB West</code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample DynamoDB connection
+that accesses sales data in the western region.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>DynamoDB West</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>When {prodname} is prompting you to add to an integration, it
+displays the DynamoDB connection that you just created.
+This connection always and only accesses the DynamoDB table
+that you specified when you created the connection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-dynamodb-connection-query_dynamodb"><a class="anchor" href="#adding-dynamodb-connection-query_dynamodb"></a>Obtaining data from an Amazon DynamoDB table</h3>
+<div class="paragraph">
+<p>In an integration flow, to obtain an item from an Amazon DynamoDB table,
+add an Amazon DynamoDB connection to the middle of the flow.</p>
+</div>
+<div class="paragraph">
+<p>A DynamoDB connection cannot start a simple integration. If you want
+to periodically obtain data from a DynamoDB table, start a simple integration
+with a timer followed by a DynamoDB connection that queries a table.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon DynamoDB connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the plus sign where you want
+to add an Amazon DynamoDB connection.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Amazon DynamoDB connection that
+is configured to access that table that you want to obtain data from.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Query</strong> action.</p>
+</li>
+<li>
+<p>In the <strong>Filter</strong> field, specify JSON notation that identifies the key attribute(s)
+for the item that the connection should return. You can specify input
+parameters with <code>:#</code>. For example, to obtain an item that has two key attributes,
+the specification might be something like this:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{"key1":":#PARAM1", "key2":":#PARAM2"}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Optional. In the <strong>Attributes to query</strong> field, enter a comma-separated list of
+the attribute names that contain the data that you want the connection to return.
+For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>key1,key2,attribute3,attribute4,attribute5</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you do not specify attributes, the query returns the key attribute(s).</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The integration now has a DynamoDB connection that obtains data. At runtime,
+the connection returns a JSON instance document that contains the result
+of the query.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>If you specified placeholder parameters in the <strong>Filter</strong> field, add a data
+mapper step before this connection. In the data mapper step, map source fields
+to the target placeholder fields in the DynamoDB connection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-dynamodb-connection-put_dynamodb"><a class="anchor" href="#adding-dynamodb-connection-put_dynamodb"></a>Adding data to an Amazon DynamoDB table</h3>
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration, a
+DynamoDB connection can add an item to a DynamoDB table.
+To do this, add a DynamoDB connection
+to the middle of a flow or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In this release, a DynamoDB connection cannot update an item in a DynamoDB table.
+This is expected to change in a future release.
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon DynamoDB connection.</p>
+</li>
+<li>
+<p>You are creating or editing a simple integration and {prodname} is prompting you
+to add to the integration or to choose the finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Amazon DynamoDB connection that
+is configured to access the table that you want to add to.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Put Item</strong>.</p>
+</li>
+<li>
+<p>In the <strong>JSON definition of the element</strong> field, enter JSON notation
+that defines the table item to be added. You must specify
+the item&#8217;s key attribute(s). Input parameter placeholders prefixed
+with <code>:#</code> are allowed. Be sure to specify
+all attributes/values that you want to store.
+In the following example, <code>userID</code> is the key:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{"userID":"aslan","attr1":"some-value","attr2":"another-value"}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization at the location
+you added it. During execution, the connection adds the defined JSON
+item to the DynamoDB table that the connection is configured to access.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>If you specified placeholder parameters in the JSON definition of the item, add a data
+mapper step before this connection. In the data mapper step, map source fields
+to the target placeholder fields in the DynamoDB connection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-dynamodb-connection-remove_dynamodb"><a class="anchor" href="#adding-dynamodb-connection-remove_dynamodb"></a>Removing data from an Amazon DynamoDB table</h3>
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration, a
+DynamoDB connection can remove an item from a DynamoDB table.
+To do this, add a DynamoDB connection
+to the middle of a flow or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon DynamoDB connection.</p>
+</li>
+<li>
+<p>You are creating or editing a simple integration and {prodname} is prompting you
+to add to the integration or to choose the finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Amazon DynamoDB connection that
+is configured to access the table that contains the item that you want to remove.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Remove Item</strong>.</p>
+</li>
+<li>
+<p>In the <strong>JSON filter of the element</strong> field, enter JSON notation that
+identifies the item that you want to remove. You must specify the
+item&#8217;s key attribute(s). Input parameters prefixed with <code>:#</code> are allowed.
+In the following example input, <code>userID</code> is a key attribute:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{"userID":"aslan"}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the flow visualization
+where you added it.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>If you specified placeholder parameters in the <strong>JSON filter of the element</strong> field, add a data
+mapper step before this connection. In the data mapper step, map a source field to each
+target placeholder field in the DynamoDB connection.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-amazon-sns_aws"><a class="anchor" href="#connecting-to-amazon-sns_aws"></a>Connecting to Amazon Simple Notification Service (SNS)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An integration can send a message to an AWS Simple Notification Service
+topic. To do this, create an AWS SNS
+connection and then add that connection to an integration flow or
+as the finish connection for a simple integration.
+For details, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-amazon-sns-connections_sns">Creating Amazon SNS connections</a></p>
+</li>
+<li>
+<p><a href="#adding-amazon-sns-connection-send_sns">Sending messages to Amazon SNS</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="creating-amazon-sns-connections_sns"><a class="anchor" href="#creating-amazon-sns-connections_sns"></a>Creating Amazon SNS connections</h3>
+<div class="paragraph">
+<p>You must create an Amazon SNS connection before you can add an
+Amazon SNS connection to an integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>AWS access key. See <a href="{LinkSyndesisConnectorGuide}#obtaining-aws-credentials_aws">Obtaining AWS credentials</a>.</p>
+</li>
+<li>
+<p>You must know the region in which the SNS topic is located.
+This is the topic that you want the SNS connection that
+you are creating to send a message to.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Amazon SNS</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Access Key</strong> field, enter an Amazon access key ID that is
+part of a user access key in the AWS account that manages
+the topic that you want the connection to send a message to.</p>
+<div class="paragraph">
+<p>If the topic that you want the connection to
+access does not already exist then when {prodname} tries to start running the
+integration, it uses the AWS account associated with this access key to
+create the topic. However, if the topic already exists in some other
+AWS account, then the connection cannot create the topic and the
+integration cannot start.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Secret Key</strong> field, enter the Amazon secret access key for the
+Amazon access key ID that you specified.</p>
+</li>
+<li>
+<p>In the <strong>Region</strong> field, select the AWS region in which the topic resides.
+If the connection creates the topic, then it creates it in the
+selected region.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether or not
+validation is successful. If validation fails, revise the configuration
+details as needed and try again.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code>SNS North</code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample SNS connection
+that sends messages to our north region topic.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>SNS North</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-amazon-sns-connection-send_sns"><a class="anchor" href="#adding-amazon-sns-connection-send_sns"></a>Sending messages to Amazon SNS</h3>
+<div class="paragraph">
+<p>To send a message to an Amazon SNS topic, add an Amazon SNS connection
+to the middle of a flow or as the finish connection in a simple
+integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon SNS connection.</p>
+</li>
+<li>
+<p>{prodname} is prompting you to add to the integration, or to add the
+finish connection to a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Amazon SNS connection that
+you want to use to send a message.</p>
+</li>
+<li>
+<p>Click the <strong>Send Object</strong> action.</p>
+</li>
+<li>
+<p>In the <strong>Topic Name or Amazon Resource Name</strong> field, enter the name of
+the SNS topic to send a message to or enter the topics&#8217;s Amazon Resource Name (ARN).</p>
+<div class="paragraph">
+<p>If the SNS topic does not already exist
+in either the AWS account that the connection is authorized to access,
+or in any other AWS account, the connection creates the topic in the
+AWS account that the connection is configured to access.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration flow where you added it.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-amazon-sqs_aws"><a class="anchor" href="#connecting-to-amazon-sqs_aws"></a>Connecting to Amazon Simple Queue Service (SQS)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An integration can retrieve messages from an Amazon SQS queue or
+send messages to an Amazon SQS queue. To do this, create an Amazon SQS
+connection and then add that connection to an integration flow.
+For details, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-amazon-sqs-connections_sqs">Creating Amazon SQS connections</a></p>
+</li>
+<li>
+<p><a href="#adding-amazon-sqs-connection-retrieve_sqs">Obtaining messages from Amazon SQS to trigger integration execution</a></p>
+</li>
+<li>
+<p><a href="#adding-amazon-sqs-connection-send_sqs">Sending messages to an Amazon SQS queue</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="creating-amazon-sqs-connections_sqs"><a class="anchor" href="#creating-amazon-sqs-connections_sqs"></a>Creating Amazon SQS connections</h3>
+<div class="paragraph">
+<p>You must create an Amazon SQS connection before you can add an
+Amazon SQS connection to an integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>AWS access key. See <a href="{LinkSyndesisConnectorGuide}#obtaining-aws-credentials_aws">Obtaining AWS credentials</a>.</p>
+</li>
+<li>
+<p>You must know the region in which the SQS queue is located.
+This is the queue that you want the SQS connection that
+you are creating to send messages to or retrieve messages from.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Amazon SQS</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Access Key</strong> field, enter an Amazon access key ID that is
+part of a user access key in the AWS account that manages
+the queue that you want the connection to access.</p>
+<div class="paragraph">
+<p>If the queue that you want the connection to
+access does not already exist then when {prodname} tries to start running the
+integration, it uses the AWS account associated with this access key to
+create the queue. However, if the queue already exists in some other
+AWS account, then the connection cannot create the queue and the
+integration cannot start.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Secret Key</strong> field, enter the Amazon secret access key for the
+Amazon access key ID that you specified.</p>
+</li>
+<li>
+<p>In the <strong>Region</strong> field, select the AWS region in which the queue resides.
+If the connection creates the queue, then it creates it in the
+selected region.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether or not
+validation is successful. If validation fails, revise the configuration
+details as needed and try again.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code>SQS South</code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample SQS connection
+that sends messages to our southern region queue.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>SQS South</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-amazon-sqs-connection-retrieve_sqs"><a class="anchor" href="#adding-amazon-sqs-connection-retrieve_sqs"></a>Obtaining messages from Amazon SQS to trigger integration execution</h3>
+<div class="paragraph">
+<p>To start an integration by obtaining messages from an Amazon SQS queue,
+add an Amazon SQS connection as a simple integration&#8217;s start connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon SQS connection that is configured to access
+the queue that you want to obtain messages from.</p>
+</li>
+<li>
+<p>You know the name of the SQS queue that you want the connection to
+obtain messages from.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Amazon SQS connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Poll an Amazon SQS Queue</strong>
+to periodically retrieve messages from an SQS queue.</p>
+</li>
+<li>
+<p>Configure this action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 500 milliseconds as the time
+that elapses between polls. Or, to specify a different polling interval,
+enter a number and select its time unit.</p>
+</li>
+<li>
+<p>In the <strong>Maximum Objects to Retrieve</strong> field, enter the largest number
+of messages
+that one poll operation can obtain. The default is 10.</p>
+<div class="paragraph">
+<p>To have no limit on the number of messages that can be obtained, specify
+<code>0</code> or a negative integer. When <strong>Maximum Objects to Retrieve</strong> is unlimited,
+the poll action obtains all messages in the SQS queue.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Queue Name or Amazon Resource Name</strong> field, specify
+the name of the SQS queue to retrieve messages from, or the queue&#8217;s ARN.
+If a queue with this name does not exist, the connection creates it.
+This is the only required field.</p>
+</li>
+<li>
+<p>Indicate whether you want to
+<strong>Obtain messages and then delete them from the queue</strong>. Obtaining
+messages and then deleting them from the queue is the default behavior.
+Unselect this option only if you want the connection to retrieve
+messages and also leave  them on the queue, which means that
+the messages will be retrieved again.</p>
+</li>
+<li>
+<p>Indicate whether you want to
+<strong>Obtain messages and delete the message if it does make it through a Camel filter</strong>.
+This option is selected by default. Leave it selected when you want to pass
+a retrieved message through a filter to determine whether to delete it
+from the queue. You do not need to unselect
+<strong>Obtain messages and then delete from the queue</strong>. {prodname} ensures the
+correct behavior when you select
+<strong>Obtain messages and delete the message if it does make it through a Camel filter</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears at the beginning of the integration flow.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>If you selected <strong>Obtain messages and delete the message if it does make it through a Camel filter</strong>
+then you need to add a filter step after this SQS connection. The filter
+step does not need to be immediately after the SQS connection. Add all
+connections to the integration, and then add the filter step.
+During execution, if there are messages that pass the filter, {prodname} uses the
+same connection, the SQS start connection, to delete those messages
+from the queue.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-amazon-sqs-connection-send_sqs"><a class="anchor" href="#adding-amazon-sqs-connection-send_sqs"></a>Sending messages to an Amazon SQS queue</h3>
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration,
+you can send messages to an Amazon SQS queue.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon SQS connection that is configured to access
+the queue that you want to send messages to.</p>
+</li>
+<li>
+<p>You know the name of the SQS queue that you want the connection to
+send messages to.</p>
+</li>
+<li>
+<p>{prodname} is prompting you to add to the integration, or to choose the finish
+connection for a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Amazon SQS connection that you want to use to send messages.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Send Object</strong> sends one message to the queue.</p>
+</li>
+<li>
+<p><strong>Send Batch Object</strong> sends a batch of messages to the queue.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Message group ID strategy</strong> field, for a first-in, first-out (FIFO)
+queue, accept <code>ConstantMessageGroupIdStrategy</code> or click in the field and
+select a different strategy.</p>
+<div class="paragraph">
+<p>The setting of this parameter has no effect on simple queues.
+The message group ID identifies the group that a message belongs to.
+Messages that belong to the same message group are always processed
+one by one, in a strict order relative to the message group. The
+message group ID strategy determines how the connection assigns
+a group ID to a message. The options are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ConstantMessageGroupIdStrategy</code>&#8201;&#8212;&#8201;The connection uses a constant
+to group messages.</p>
+</li>
+<li>
+<p><code>ExchangeIdMessageGroupIdStrategy</code>&#8201;&#8212;&#8201;The connection uses the
+exchange ID, which is in each message, to group messages.</p>
+</li>
+<li>
+<p><code>PropertyValueMessageGroupIdStrategy</code>&#8201;&#8212;&#8201;The connection uses the
+value of an internal property to group messages.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>FIFO queues are designed to ensure that the order in which messages
+are sent and received is strictly preserved and that each message
+is processed exactly once. A FIFO queue name has <code>.fifo</code> as a suffix.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Message deduplication ID strategy</strong> field, for a FIFO queue,
+accept <code>NullMessageDeduplicationIdStrategy</code> or click in the field
+to select <code>ExchangeIdMessageDeduplicationIdStrategy</code>.</p>
+<div class="paragraph">
+<p>The setting of this parameter has no effect on simple queues. For a FIFO queue,
+the connection uses the selected strategy to ensure that it does not send
+duplicate messages to the queue.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NullMessageDeduplicationIdStrategy</code> uses the message body as the
+deduplication element. In other words, the connection compares message
+bodies to identify duplicate messages.</p>
+</li>
+<li>
+<p><code>ExchangeIdMessageDeduplicationIdStrategy</code> uses the message&#8217;s exchange
+ID as the deduplication element. In other words, the connection compares
+exchange IDs to identify duplicate messages.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Queue Name or Amazon Resource Name</strong> field, enter the
+name of the queue to send messages to. If the queue does not exist,
+the connection creates it.</p>
+</li>
+<li>
+<p>In the <strong>Delay</strong> field, accept the default, which is 0 for no delay.
+Or, to add a delay, specify a number. The integration waits this number
+of seconds before sending messages. This is useful when the message
+consumers might not be immediately ready for the messages that the
+connection is sending.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration flow where you added it.</p>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagededuplicationid-property.html">Using the Amazon Message Deduplication ID</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagegroupid-property.html">Using the Amazon SQS Message Group ID</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-amazon-s3_aws"><a class="anchor" href="#connecting-to-amazon-s3_aws"></a>Connecting to Amazon Simple Storage Service (S3)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An integration can retrieve data from an Amazon S3 bucket or copy data into
+an Amazon S3 bucket. To do this, create an Amazon S3
+connection and then add that connection to an integration flow.
+For details, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-s3-connection_s3">Creating Amazon S3 connections</a></p>
+</li>
+<li>
+<p><a href="#adding-s3-connection-start_s3">Obtaining data from Amazon S3 to trigger integration execution</a></p>
+</li>
+<li>
+<p><a href="#adding-s3-connection-finish_s3">Adding data to Amazon S3 to finish an integration</a></p>
+</li>
+<li>
+<p><a href="#adding-s3-connection-middle_s3">Adding data to Amazon S3 in the middle of an integration</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="create-s3-connection_s3"><a class="anchor" href="#create-s3-connection_s3"></a>Creating Amazon S3 connections</h3>
+<div class="paragraph">
+<p>You must create an Amazon S3 connection before you can add an
+Amazon S3 connection to an integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>AWS access key. See <a href="{LinkSyndesisConnectorGuide}#obtaining-aws-credentials_aws">Obtaining AWS credentials</a>.</p>
+</li>
+<li>
+<p>If the bucket that you want the connection to access already exists,
+you must know:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The region that the bucket is in.</p>
+</li>
+<li>
+<p>The bucket&#8217;s name or Amazon Resource Name (ARN).</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Amazon S3</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Access Key</strong> field, enter an Amazon access key ID that is
+part of a user access key in the AWS account that manages
+the bucket that you want the connection to access.</p>
+<div class="paragraph">
+<p>If the bucket that you want the connection to
+access does not already exist then when {prodname} tries to start running the
+integration, it uses the AWS account associated with this access key to
+create the bucket. However, if the bucket already exists in some other
+AWS account, then the connection cannot create the bucket and the
+integration cannot start.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Secret Key</strong> field, enter the Amazon secret access key for the
+Amazon access key ID that you specified.</p>
+</li>
+<li>
+<p>In the <strong>Region</strong> field, select the AWS region in which the bucket resides.
+If the connection creates the bucket, then it creates it in the
+selected region.</p>
+</li>
+<li>
+<p>In the <strong>Bucket Name or Amazon Resource Name</strong> field, enter the name of
+the bucket that you want this connection to access or enter the bucket&#8217;s ARN.</p>
+<div class="paragraph">
+<p>If the bucket you specify does not yet exist then the connection
+tries to create a bucket with the name that you specify.
+Because S3 allows a bucket to be used as a URL that can be accessed publicly,
+the bucket name that you specify must be globally unique. Also, it must meet
+<a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html">S3 bucket naming requirements</a>.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether or not
+validation is successful. If validation fails, revise the configuration
+details as needed and try again.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code>Obtain S3 Data</code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample S3 connection
+that obtains data from a northeast bucket.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Obtain S3 Data</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-s3-connection-start_s3"><a class="anchor" href="#adding-s3-connection-start_s3"></a>Obtaining data from Amazon S3 to trigger integration execution</h3>
+<div class="paragraph">
+<p>To start an integration by obtaining data from an Amazon S3 bucket,
+add an Amazon S3 connection as a simple integration&#8217;s start connection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You created an Amazon S3 connection.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Amazon S3 connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the action that you
+want the connection to perform:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Get Object</strong> obtains a file from the bucket that the connection
+accesses. In the <strong>File Name</strong> field, enter the name of the file that you want
+to obtain. If the specified file is not in the bucket, it is a runtime error.</p>
+</li>
+<li>
+<p><strong>Poll an Amazon S3 Bucket</strong> periodically obtains files from the bucket that the
+connection accesses. To configure this action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 500 milliseconds as the time
+that elapses between polls. Or, to specify a different polling interval,
+enter a number and select its time unit.</p>
+</li>
+<li>
+<p>In the <strong>Maximum Objects to Retrieve</strong> field, enter the largest number of files
+that one poll operation can obtain. The default is 10.</p>
+<div class="paragraph">
+<p>To have no limit on the number of files that can be obtained, specify
+<code>0</code> or a negative integer. When <strong>Maximum Objects to Retrieve</strong> is unlimited,
+the poll action obtains all files in the bucket.</p>
+</div>
+<div class="paragraph">
+<p>If the bucket contains more than the specified maximum number of files
+then the action obtains the files that were most recently
+modified or created.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Prefix</strong> field, optionally specify a regular expression
+that evaluates to a string. If you specify a
+prefix then this action retrieves a file
+only when its name starts with that string.</p>
+</li>
+<li>
+<p>Indicate whether you want to
+<strong>Obtain files and then delete them from the bucket</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>After you configure the action, click <strong>Next</strong> to specify the action&#8217;s output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The integration now has a start connection and {prodname} is prompting
+you to choose the finish connection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-s3-connection-finish_s3"><a class="anchor" href="#adding-s3-connection-finish_s3"></a>Adding data to Amazon S3 to finish an integration</h3>
+<div class="paragraph">
+<p>To finish an integration by copying data to Amazon S3,
+add an Amazon S3 connection as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon S3 connection.</p>
+</li>
+<li>
+<p>You are creating or editing a simple integration and {prodname} is prompting you
+to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Choose a  connection</strong> page, click the Amazon S3 connection that
+you want to use to finish the integration.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Copy Object</strong> adds one or more objects to the bucket.</p>
+<div class="paragraph">
+<p>To add one file to the bucket, you can enter its name in the <strong>File Name</strong> field.</p>
+</div>
+<div class="paragraph">
+<p>To add multiple files to the bucket, do not specify a file name.
+In this case, the action adds all objects that it
+obtains from the previous integration step(s).</p>
+</div>
+<div class="paragraph">
+<p>If you used the poll action
+to obtain multiple files and you specify a file name then the <strong>Copy Object</strong>
+action adds only the last file that was received from the poll action.</p>
+</div>
+</li>
+<li>
+<p><strong>Delete Object</strong> deletes an object from the bucket. In the
+<strong>File Name</strong> field, specify the name of the object that you want to delete.
+If the specified file is not in the bucket, the integration continues
+with no error.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>After you configure the chosen action, click <strong>Next</strong> to specify
+the action&#8217;s input type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears at the end of the integration visualization.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-s3-connection-middle_s3"><a class="anchor" href="#adding-s3-connection-middle_s3"></a>Adding data to Amazon S3 in the middle of an integration</h3>
+<div class="paragraph">
+<p>In the middle of an integration, to add data to Amazon S3,
+add an Amazon S3 connection to the middle of a flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You created an Amazon S3 connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the plus sign where you want
+to add an Amazon S3 connection.</p>
+</li>
+<li>
+<p>Click the Amazon S3 connection that you want to use in the middle
+of a flow.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Copy Object</strong> adds one or more objects to the bucket.</p>
+<div class="paragraph">
+<p>To add one file to the bucket, you can enter its name in the <strong>File Name</strong> field.</p>
+</div>
+<div class="paragraph">
+<p>To add multiple files to the bucket, do not specify a file name.
+In this case, the action adds all objects that it
+obtains from the previous integration step(s).</p>
+</div>
+<div class="paragraph">
+<p>If you used the poll action
+to obtain multiple files and you specify a file name then the <strong>Copy Object</strong>
+action adds only the last file that was received from the poll action.</p>
+</div>
+</li>
+<li>
+<p><strong>Delete Object</strong> deletes an object from the bucket. In the
+<strong>File Name</strong> field, specify the name of the object that you want to delete.
+If the specified file is not in the bucket, the integration continues
+with no error.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>After you configure the chosen action, click <strong>Next</strong> to specify
+the action&#8217;s input type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the flow visualization
+where you added it.</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

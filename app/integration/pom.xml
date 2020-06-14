@@ -31,6 +31,12 @@
 
   <name>Integration</name>
 
+  <properties>
+    <!-- Overwrite for Camel 3 -->
+    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
+    <spring.version>5.2.3.RELEASE</spring.version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <!-- project modules -->
@@ -52,18 +58,6 @@
 
     </dependencies>
   </dependencyManagement>
-
-  <profiles>
-    <profile>
-      <id>doclint-java8-disable</id>
-      <activation>
-        <jdk>[1.8,)</jdk>
-      </activation>
-      <properties>
-        <javadoc.opts>-Xdoclint:none</javadoc.opts>
-      </properties>
-    </profile>
-  </profiles>
 
   <modules>
     <module>support/camel-acme</module>

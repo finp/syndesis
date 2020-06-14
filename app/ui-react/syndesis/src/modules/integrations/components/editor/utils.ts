@@ -25,6 +25,7 @@ import {
 } from '@syndesis/api';
 import * as H from '@syndesis/history';
 import {
+  Action,
   Connection,
   ConnectionOverview,
   ConnectorAction,
@@ -32,7 +33,6 @@ import {
   ErrorKey,
   ExtendedActionDescriptor,
   Extension,
-  Flow,
   IConnectionOverview,
   Step,
   StepKind,
@@ -98,6 +98,8 @@ export function toUIStep(step: Step | StepKind): IUIStep {
     case ENDPOINT:
     case CONNECTOR:
       // this step is a Connection step
+      const connectionName =
+        step.name || step.connection!.name || step.connection!.connector!.name;
       return {
         ...step,
         description:
@@ -112,7 +114,7 @@ export function toUIStep(step: Step | StepKind): IUIStep {
           ...(step.connection!.metadata || {}),
           ...(step.metadata || {}),
         },
-        name: step.name || step.connection!.connector!.name!,
+        name: connectionName,
         outputDataShape,
         properties:
           step.action &&
@@ -121,8 +123,7 @@ export function toUIStep(step: Step | StepKind): IUIStep {
           step.action.descriptor.propertyDefinitionSteps.length &&
           step.action.descriptor.propertyDefinitionSteps[0].properties,
         title:
-          `${(step.connection && step.connection.name) || '<unknown>'}` +
-          step.action
+          `${connectionName} ` + step.action
             ? ` - ${(step.action && step.action.name) || '<unknown>'}`
             : '',
         uiStepKind,
@@ -223,7 +224,8 @@ export function toUIIntegrationStepCollection(
           step.stepKind === CHOICE &&
           !isActionOutputShapeless(step.action.descriptor)
         ) {
-          shouldAddDefaultFlow = typeof step.configuredProperties!.default === 'undefined'
+          shouldAddDefaultFlow =
+            typeof step.configuredProperties!.default === 'undefined';
         }
       }
     }
@@ -321,42 +323,39 @@ export function mergeConnectionsSources(
         stepKind: ENDPOINT,
       } as StepKind)
     ),
-    ...extensions.reduce(
-      (extentionsByAction, extension) => {
-        (extension.actions || []).forEach(a => {
-          let properties = {};
-          if (
-            a.descriptor &&
-            Array.isArray(a.descriptor.propertyDefinitionSteps)
-          ) {
-            properties = a.descriptor.propertyDefinitionSteps.reduce(
-              (acc, current) => {
-                return { ...acc, ...current.properties };
-              },
-              {}
-            );
-          }
-          if (a.actionType === 'step') {
-            extentionsByAction.push(
-              toUIStep({
-                action: a,
-                configuredProperties: undefined,
-                description: a.description || '',
-                extension,
-                icon: extension.icon,
-                metadata: (extension.metadata as { [name: string]: any }) || {},
-                name: a.name,
-                properties,
-                stepKind: EXTENSION,
-                title: a.name,
-              } as StepKind)
-            );
-          }
-        });
-        return extentionsByAction;
-      },
-      [] as IUIStep[]
-    ),
+    ...extensions.reduce((extentionsByAction, extension) => {
+      (extension.actions || []).forEach(a => {
+        let properties = {};
+        if (
+          a.descriptor &&
+          Array.isArray(a.descriptor.propertyDefinitionSteps)
+        ) {
+          properties = a.descriptor.propertyDefinitionSteps.reduce(
+            (acc, current) => {
+              return { ...acc, ...current.properties };
+            },
+            {}
+          );
+        }
+        if (a.actionType === 'step') {
+          extentionsByAction.push(
+            toUIStep({
+              action: a,
+              configuredProperties: undefined,
+              description: a.description || '',
+              extension,
+              icon: extension.icon,
+              metadata: (extension.metadata as { [name: string]: any }) || {},
+              name: a.name,
+              properties,
+              stepKind: EXTENSION,
+              title: a.name,
+            } as StepKind)
+          );
+        }
+      });
+      return extentionsByAction;
+    }, [] as IUIStep[]),
     ...steps.map(s => toUIStep(s)),
   ]
     .filter(s => !!s.uiStepKind) // this should never happen
@@ -446,18 +445,25 @@ export function filterStepsByPosition(
 
 /**
  * Filters connections based on the supplied position in the step array and their
- * visibility status
+ * visibility status.  Set isAdding to false in cases where the position is a
+ * special case like the start/finish step in a flow and should be excluded
+ * from the calculation
  * @param steps
  * @param position
  * @param flowSteps
+ * @param isAdding
  */
 export function visibleStepsByPosition(
   steps: StepKind[],
   position: number,
-  flowSteps: Step[]
+  flowSteps: Step[],
+  isAdding: boolean
 ) {
   const previousSteps = getPreviousSteps(flowSteps, position);
-  const subsequentSteps = getSubsequentSteps(flowSteps, position - 1);
+  const subsequentSteps = getSubsequentSteps(
+    flowSteps,
+    position - (isAdding ? 1 : 0)
+  );
   return filterStepsByPosition(
     steps,
     position,
@@ -478,16 +484,23 @@ export function visibleStepsByPosition(
   });
 }
 
+const errorKeysWithDuplicates = (collectedErrors: any[]) => {
+  return [].concat(...(collectedErrors as any)) as ErrorKey[];
+};
+
+const uniqueErrorArray = (arrayParam: any[]) => {
+  return Array.from(new Set(arrayParam.map(err => err.name)));
+};
+
 /**
- * Builds an array of error keys for a flow using all steps before the supplied position
- * @param flow
+ * Returns the actions array for a flow using all steps before the supplied position
+ * @param flowSteps
  * @param position
  */
-export function collectErrorKeys(flow: Flow, position: number) {
+export function actionsFromFlow(flowSteps: Step[], position: number) {
   // We want all previous steps and this step
-  const previousSteps = getPreviousSteps(flow.steps!, position + 1);
-  // Gather up all possible standardized errors in the flow
-  const collectedErrors = previousSteps
+  const previousSteps = getPreviousSteps(flowSteps, position + 1);
+  return previousSteps
     .filter(s => typeof s.action !== 'undefined')
     .filter(s => s.action!.descriptor !== 'undefined')
     .filter(
@@ -495,19 +508,20 @@ export function collectErrorKeys(flow: Flow, position: number) {
         typeof (s.action!.descriptor! as ExtendedActionDescriptor)
           .standardizedErrors !== 'undefined'
     )
-    .map(
-      s =>
-        (s.action!.descriptor! as ExtendedActionDescriptor).standardizedErrors!
-    );
-  const standardizedErrorsWithDuplicates = [].concat(
-    ...(collectedErrors as any)
-  ) as ErrorKey[];
-  const uniqueErrors = Array.from(
-    new Set(standardizedErrorsWithDuplicates.map(err => err.name))
+    .map(s => s.action!);
+}
+
+export function collectErrorKeysFromActions(actions: Action[]) {
+  const collectedErrors = actions.map(
+    a => (a.descriptor! as ExtendedActionDescriptor).standardizedErrors!
   );
+
+  const standardizedErrors = errorKeysWithDuplicates(collectedErrors);
+  const uniqueErrors = uniqueErrorArray(standardizedErrors);
+
   return uniqueErrors
     .map(uniqueError =>
-      standardizedErrorsWithDuplicates.find(err => err.name === uniqueError!)
+      standardizedErrors.find(err => err.name === uniqueError!)
     )
     .map(err => localizeErrorKey(err!));
 }

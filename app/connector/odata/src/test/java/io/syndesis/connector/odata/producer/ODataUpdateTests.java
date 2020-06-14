@@ -49,8 +49,6 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestExecutionListeners;
@@ -70,6 +68,8 @@ import io.syndesis.connector.odata.AbstractODataRouteTest;
 import io.syndesis.connector.odata.component.ODataComponentFactory;
 import io.syndesis.connector.odata.customizer.ODataPatchCustomizer;
 import io.syndesis.connector.support.util.PropertyBuilder;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 @DirtiesContext
 @RunWith(SpringRunner.class)
@@ -134,7 +134,7 @@ public class ODataUpdateTests extends AbstractODataRouteTest {
     }
 
     @Override
-    protected ConnectorAction createConnectorAction() throws Exception {
+    protected ConnectorAction createConnectorAction() {
         ConnectorAction odataAction = new ConnectorAction.Builder()
             .description("Patch resource entity in resource on the server")
              .id("io.syndesis:odata-patch-connector")
@@ -219,7 +219,7 @@ public class ODataUpdateTests extends AbstractODataRouteTest {
 
         String status = extractJsonFromExchgMsg(result, 0);
         String expected = createResponseJson(HttpStatusCode.NO_CONTENT);
-        JSONAssert.assertEquals(expected, status, JSONCompareMode.LENIENT);
+        assertThatJson(status).isEqualTo(expected);
 
         assertEquals(initialResultCount, defaultTestServer.getResultCount());
 
@@ -286,7 +286,7 @@ public class ODataUpdateTests extends AbstractODataRouteTest {
 
             String status = extractJsonFromExchgMsg(result, i);
             String expected = createResponseJson(HttpStatusCode.NO_CONTENT);
-            JSONAssert.assertEquals(expected, status, JSONCompareMode.LENIENT);
+            assertThatJson(status).isEqualTo(expected);
 
             assertEquals(initialResultCount, defaultTestServer.getResultCount());
 
@@ -394,8 +394,6 @@ public class ODataUpdateTests extends AbstractODataRouteTest {
     /**
      * Tests alternative key predicate that is a string value
      * @see https://github.com/syndesisio/syndesis/issues/5241
-     *
-     * @throws Exception
      */
     @Test
     public void testPatchODataRouteOnRefServer() throws Exception {
@@ -444,7 +442,7 @@ public class ODataUpdateTests extends AbstractODataRouteTest {
 
             String status = extractJsonFromExchgMsg(result, 0);
             String expected = createResponseJson(HttpStatusCode.NO_CONTENT);
-            JSONAssert.assertEquals(expected, status, JSONCompareMode.LENIENT);
+            assertThatJson(status).isEqualTo(expected);
 
             String newName = queryProperty(refServiceURI, resourcePath, keyPredicate, nameProperty);
             assertEquals(newMiddleName, newName);

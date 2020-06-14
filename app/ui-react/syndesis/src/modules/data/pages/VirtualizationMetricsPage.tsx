@@ -7,11 +7,15 @@ import {
 import { useRouteData } from '@syndesis/utils';
 import { WithLoader } from '@syndesis/utils';
 import {
-  toShortDateAndTimeString,
   toUptimeDurationString,
 } from '@syndesis/utils';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageTitle } from '../../../shared';
+import {
+  VirtualizationActionId,
+} from '../shared/VirtualizationActionContainer';
+import { getShortDateAndTimeDisplay } from '../shared/VirtualizationUtils';
 import {
   IVirtualizationEditorPageRouteParams,
   IVirtualizationEditorPageRouteState,
@@ -58,22 +62,16 @@ export const VirtualizationMetricsPage: React.FunctionComponent = () => {
     return toUptimeDurationString(duration);
   };
 
-  /**
-   * Get the date and time display
-   * @param utcTimestamp the utc timestamp string
-   * @returns the Date and time display
-   */
-  const getDateAndTimeDisplay = (utcTimestamp: string): string => {
-    const numericTimestamp = Date.parse(utcTimestamp);
-    return toShortDateAndTimeString(numericTimestamp);
-  };
-
   return (
     <VirtualizationEditorPage
       routeParams={params}
       routeState={state}
       virtualization={virtualization}
+      items={[VirtualizationActionId.Stop, VirtualizationActionId.Delete]}
+      actions={[VirtualizationActionId.Publish]}
+      publishActionCustomProps={{ as: 'default' }}
     >
+      <PageTitle title={t('metricsPageTitle')} />
       <PageSection>
         <WithLoader
           error={error !== false}
@@ -87,7 +85,7 @@ export const VirtualizationMetricsPage: React.FunctionComponent = () => {
           }
         >
           {() => {
-            return virtualization.publishedState === 'RUNNING' ? (
+            return virtualization.deployedState === 'RUNNING' ? (
               <DvMetricsContainer
                 resultSetCacheProps={{
                   a11yInfoCloseButton: t('metricsCacheHitRatioA11yInfoClose'),
@@ -120,7 +118,7 @@ export const VirtualizationMetricsPage: React.FunctionComponent = () => {
                 uptimeProps={{
                   i18nNoData: t('metricsNoDataAvailable'),
                   i18nSinceMessage: t('metricsUptimeSince', {
-                    sinceTime: getDateAndTimeDisplay(metrics.startedAt),
+                    sinceTime: getShortDateAndTimeDisplay(Date.parse(metrics.startedAt)),
                   }),
                   i18nTitle: t('metricsUptimeTitle'),
                   i18nUptime: getUptimeDisplay(metrics.startedAt),

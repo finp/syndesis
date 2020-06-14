@@ -16,31 +16,28 @@
 
 package io.syndesis.dv.openshift;
 
-import static org.junit.Assert.*;
-
-import java.util.concurrent.Callable;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import io.syndesis.dv.datasources.DefaultSyndesisDataSource;
-import io.syndesis.dv.metadata.MetadataInstance;
-import io.syndesis.dv.server.DvConfigurationProperties;
-
 import org.mockito.Mockito;
 
 import io.syndesis.dv.RepositoryManager;
+import io.syndesis.dv.datasources.DefaultSyndesisDataSource;
+import io.syndesis.dv.metadata.MetadataInstance;
+import io.syndesis.dv.server.DvConfigurationProperties;
 
 public class TeiidOpenShiftClientTest {
 
     static abstract class MockRepositoryManager implements RepositoryManager {
 
         @Override
-        public <T> T runInTransaction(boolean rollbackOnly,
-                Callable<T> callable) throws Exception {
-            return callable.call();
+        public <T> T runInTransaction(boolean rollbackOnly, Task<T> task) {
+            return task.call();
         }
     }
 
-    @Test public void testSetKomodoName() throws Exception {
+    @Test public void testSetTeiidName() {
         MetadataInstance metadata = Mockito.mock(MetadataInstance.class);
 
         RepositoryManager mock = Mockito.mock(MockRepositoryManager.class);
@@ -50,15 +47,15 @@ public class TeiidOpenShiftClientTest {
 
         DefaultSyndesisDataSource dsd = new DefaultSyndesisDataSource();
 
-        String name = client.getUniqueKomodoName(dsd, "sys");
+        String name = client.getUniqueTeiidName(dsd, "sys");
 
         assertTrue(name.startsWith("sys_"));
 
-        name = client.getUniqueKomodoName(dsd, "View");
+        name = client.getUniqueTeiidName(dsd, "View");
 
         assertEquals("View", name);
 
-        name = client.getUniqueKomodoName(dsd, "?syS.");
+        name = client.getUniqueTeiidName(dsd, "?syS.");
 
         assertTrue(name.startsWith("syS_"));
     }

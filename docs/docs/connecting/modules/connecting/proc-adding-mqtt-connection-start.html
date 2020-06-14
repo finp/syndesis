@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Obtaining a message from an MQTT broker to trigger integration execution :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-mqtt-connection-start.html">Obtaining a message from an MQTT broker to trigger integration execution</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-mqtt-connection-start.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Obtaining a message from an MQTT broker to trigger integration execution</h1>
+<div class="paragraph">
+<p>To trigger execution of an integration based on receiving a message
+from an MQTT broker, add an MQTT connection as the start connection. When
+the integration is running, the MQTT connection continuously watches for messages
+on the MQTT queue or topic that you specify. When the connection finds a
+message, it passes it to the next step in the integration. An MQTT
+connection handles one message at a time.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You created an MQTT connection.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the MQTT connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Subscribe</strong> action
+to receive messages from the queue or topic that you specify.</p>
+</li>
+<li>
+<p>In the <strong>MQTT queue/topic name</strong> field, enter the name of the queue or topic
+to subscribe to in order to receive data.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The integration now has a start connection and {prodname} is
+prompting you to choose the finish connection.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -403,7 +403,7 @@ public class EMailReadRouteTest extends AbstractEmailServerTest implements Route
         }
         assertNotNull(mailEndpoint);
 
-        Map<String, Object> consumerProperties = mailEndpoint.getConsumerProperties();
+        Map<String, Object> consumerProperties = mailEndpoint.getSchedulerProperties();
         assertNotNull(consumerProperties);
         assertTrue(consumerProperties.size() > 0);
         assertEquals(delayValue, consumerProperties.get(DELAY));
@@ -412,8 +412,6 @@ public class EMailReadRouteTest extends AbstractEmailServerTest implements Route
     /**
      * Receive will parse and strip the html from the message
      * and just leave the plain text.
-     *
-     * @throws Exception
      */
     @Test
     public void testImapMessageHTMLToPlainText() throws Exception {

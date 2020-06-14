@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Accessing a database in the middle or to complete an integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-db-connection-finish-middle.html">Accessing a database in the middle or to complete an integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-db-connection-finish-middle.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Accessing a database in the middle or to complete an integration</h1>
+<div class="paragraph">
+<p>In an integration, you can access a database in the
+middle of a flow or to finish a simple integration. To do this, add
+a database connection to the middle of a flow or as a simple
+integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a database connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the database connection for the database that you want to access.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Invoke SQL</strong> operates on data by executing the
+SQL statement you specify.</p>
+</li>
+<li>
+<p><strong>Invoke stored procedure</strong> operates on data by invoking
+the stored procedure that you specify or select.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If you selected <strong>Invoke SQL</strong>, in the <strong>SQL Statement</strong> field:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For a middle connection, enter a SQL <code>SELECT</code> statement that obtains
+one or more records or enter a SQL <code>INSERT</code>, <code>UPDATE</code>, or
+<code>DELETE</code> statement that
+operates on one or more records.
+The database table that contains the data must already exist.</p>
+</li>
+<li>
+<p>For a finish connection, enter a SQL <code>INSERT</code>, <code>UPDATE</code> or
+<code>DELETE</code> statement to
+operate on one or more records.</p>
+</li>
+<li>
+<p>In the <strong>Batch update</strong> field, accept <strong>No</strong>, which is the default,
+or select <strong>Yes</strong>.</p>
+<div class="paragraph">
+<p>The setting of <strong>Batch update</strong> affects connection behavior when the
+input to this action is a collection, and the SQL statement inserts,
+deletes, or updates records. The default behavior (<strong>Batch update</strong> is <strong>No</strong>)
+is that the connection accepts only individual objects and executes the
+SQL statement once for each object. When <strong>Batch update</strong> is <strong>Yes</strong>,
+the connection accepts a collection as the input to the action.
+The connection executes the SQL statement once and uses all collection
+items as input to a batch update operation.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you selected <strong>Invoke stored procedure</strong>, in the
+<strong>Procedure name</strong> field, select or enter the name of the stored procedure to
+invoke to operate on the data of interest. The stored procedure you specify must
+already exist. The database administrator should have created any stored
+procedures you need to use in an integration.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} tries to validate the connection, which includes
+checking that a specified SQL query is syntactically correct and
+confirming that the query or stored procedure target data exists. If
+verification is successful then {prodname} adds the connection to
+the flow. If verification fails then {prodname} displays a message
+about the problem. Update your input as needed and try again.</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p><a href="{LinkSyndesisConnectorGuide}about-parameter-placeholders-and-values_db">About parameter placeholders and values in SQL statements that update data</a>.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

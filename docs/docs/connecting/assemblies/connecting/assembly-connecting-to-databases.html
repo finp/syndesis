@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to SQL databases :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-databases.html">Connecting to SQL databases</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-databases.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to SQL databases</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can connect to any of the following types of SQL
+databases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache Derby</p>
+</li>
+<li>
+<p>MySQL</p>
+</li>
+<li>
+<p>PostgreSQL</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Create a connection to the database that you want to access in an integration.
+Then create an integration and add that database connection to the
+integration.</p>
+</div>
+<div class="paragraph">
+<p>To connect to other types of databases, you must upload a JDBC driver for
+that database.</p>
+</div>
+<div class="paragraph">
+<p>See the following topics for details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-database-connection_db">Creating a database connection</a></p>
+</li>
+<li>
+<p><a href="#how-to-specify-the-schema-in-a-database-connection_db">How to specify the schema in a database connection</a></p>
+</li>
+<li>
+<p><a href="#adding-db-connection-start_db">Obtaining database records to trigger integration execution</a></p>
+</li>
+<li>
+<p><a href="#about-parameter-placeholders-and-values_db">About parameter placeholders and values in SQL statements that update data</a></p>
+</li>
+<li>
+<p><a href="#adding-db-connection-finish-middle_db">Accessing a database in the middle or to complete an integration</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-proprietary-databases_db">Connecting to proprietary databases</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-database-connection_db"><a class="anchor" href="#create-database-connection_db"></a>Creating a database connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You create a separate connection for each database that you want to
+connect to in an integration. You can use the same connection in
+multiple integrations.</p>
+</div>
+<div class="paragraph">
+<p>A database connection operates on a database table that you specify or
+invokes a stored procedure that you specify.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>The database table or the stored procedure must exist when an integration
+connects to the database.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Ensure that the JDBC driver for the database that you want to connect to
+is on your classpath. If you uploaded a JDBC driver library extension to
+connect to a proprietary database, then the upload process puts the driver
+on your classpath. See
+<a href="{LinkSyndesisIntegrationGuide}#creating-jdbc-driver-library-extensions_extensions">Creating JDBC driver library extensions</a>.</p>
+</li>
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Database</strong> connector.</p>
+</li>
+<li>
+<p>Configure the connection by entering:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Connection URL</strong> field, enter the JDBC URL for the database that you want
+to connect to. For example, enter <code><strong>jdbc:postgresql://ignite-db1234/sampledb</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Username</strong> field, enter the name of the account that you want to use
+to access the database. Ensure that the specified password and user name
+are for the same account.</p>
+</li>
+<li>
+<p>In the <strong>Password</strong> field, enter the password associated with the
+user account you want to use to access the database.</p>
+</li>
+<li>
+<p>In the <strong>Schema</strong> field, enter the name of the schema for the database.
+How you specify the database schema varies for each type of database.
+Details are in the next section:
+<a href="{LinkSyndesisConnectorGuide}#how-to-specify-the-schema-in-a-database-connection_db">How to specify the schema in a database connection</a>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, revise the configuration
+details as needed and try again.</p>
+</li>
+<li>
+<p>If validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>PostgreSQL DB 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample PostgreSQL connection
+that uses my login credentials.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>PostgreSQL DB 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-specify-the-schema-in-a-database-connection_db"><a class="anchor" href="#how-to-specify-the-schema-in-a-database-connection_db"></a>How to specify the schema in a database connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In {prodname}, when you create a database connection, the user interface
+prompts you to specify the database’s schema. How you specify the
+schema varies for each database. The table below shows what each database
+requires.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Database</th>
+<th class="tableblock halign-left valign-top">Example connection configuration</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Derby</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:derby:memory:testdb;create=true</code><br>
+<strong>Username</strong>: <code>sa</code><br>
+<strong>Password</strong>: any value<br>
+<strong>Schema</strong>: <code>sample</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For testing purposes only. The default username is <code>sa</code> and the password can
+be anything but you must enter a value.
+In this example configuration, the connection uses the <code>sample</code> schema, which is like
+a namespace. For example, you can reference the <code>mytable</code> table with <code>sample.mytable</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MS SQLServer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:sqlserver://localhost:1433/sampledb</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>: <code>sampledb</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Upload the driver by using the
+<a href="{LinkSyndesisIntegrationGuide}#creating-jdbc-driver-library-extensions_extensions">extension mechanism</a>.
+Then create a connection. Connection verification fails if you have
+not already uploaded the driver. You must specify the same schema at the end of
+the connection URL and in the <strong>Schema</strong> field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MySQL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>sql-connector.url=jdbc:mysql://mysql-host:3307/test?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MySQL does not support schemas. When you create a connection to
+a MySQL database,  leave the <strong>Schema</strong> field blank. MySQL expects all
+configuration in the connection (JDBC) URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Oracle DB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:oracle:thin:@10.192.212.255:1521:xe</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use the {prodname}
+<a href="{LinkSyndesisIntegrationGuide}#creating-jdbc-driver-library-extensions_extensions">extension mechanism</a>.
+to upload an Oracle database driver.
+Then create the connection. Connection verification fails if the driver has
+not been uploaded.<br>
+The schema is the database name. You must have permission to access this
+database instance, which is referred to as a schema in Oracle terminology.
+Leave the <strong>Schema</strong> field blank. In the <strong>Connection</strong> field,
+you must reference the Oracle system identifier (SID) of this database
+instance (<code>xe</code> in this example).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PostgreSQL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:postgresql://syndesis-db:5432/sampledb</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>: <code>sampledb</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">You must specify the database in the connection (JDBC) URL. T
+If you want to use a schema you must specify it in the <strong>Schema</strong> field.
+A query can refer to a table in the form
+<em>database.schema.table</em>. When a reference specifies only
+a table name, the connection first searches the schema that you specify
+when you configure the connection. If the table is not found,
+then the connection searches public resources for the specified table.
+For more details, see
+<a href="https://www.postgresql.org/docs/9.1/ddl-schemas.html">PostgreSQL schema documentation</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Teiid</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:teiid:&lt;vdb-name&gt;@mm://localhost:31000</code><br>
+<strong>Username</strong>: any value<br>
+<strong>Password</strong>: any value<br>
+<strong>Schema</strong>:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The virtual database must have already been created, for example by using
+the
+<a href="{LinkIntegrationData}#creating-vdbs">Data Virtualization</a>
+feature. In the connection URL, replace <code>&lt;vdb-name&gt;</code>
+with the name of the virtual database. No security has been implemented yet
+for connections to Teiid.
+Specify any value in the <strong>Username</strong> and <strong>Password</strong> fields. Leave the <strong>Schema</strong> field blank.
+The driver is already available in {prodname}.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-db-connection-start_db"><a class="anchor" href="#adding-db-connection-start_db"></a>Obtaining database records to trigger integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration based on the result of invoking a SQL
+statement or a SQL stored procedure, choose a database connection as the
+integration&#8217;s start connection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You created a database connection.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the
+database connection that you want to use to start an integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Periodic SQL invocation</strong> obtains data by periodically invoking the
+SQL statement that you specify.</p>
+</li>
+<li>
+<p><strong>Periodic stored procedure invocation</strong> obtains data by periodically invoking
+the stored procedure that you specify or select.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If you selected <strong>Periodic SQL invocation</strong>, in the <strong>Query</strong> field,
+enter a SQL <code>SELECT</code> statement or some other standard SQL statement that
+obtains one or more records. For
+example: <code><strong>SELECT * from my_db_table</strong></code>.
+The database table that contains the data you want must already exist.</p>
+<div class="paragraph">
+<p>If you selected <strong>Periodic stored procedure invocation</strong>, in the
+<strong>Procedure name</strong> field, select or enter the stored procedure to
+invoke to obtain the data of interest. The stored procedure you specify must
+already exist. The database administrator should have created any stored
+procedures you need to use in an integration.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Period</strong> field, enter an integer and indicate whether the unit is
+milliseconds, seconds,
+minutes, hours, or days. For example, if you specify <code>5 minutes</code> then
+the connection invokes the specified statement or stored procedure every
+five minutes.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Limitations on the use of SQL extensions</div>
+<p>SQL statements that you enter in the <strong>Query</strong> field must be standard SQL constructs.
+{prodname} does not recognize or parse SQL extensions such as Procedural Language/PostgreSQL (PL/pgSQL)
+or Oracle Procedural Language Extensions to SQL (PL/SQL).
+However, you can use SQL extensions within stored procedures.</p>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} tries to validate the connection, which includes
+checking that a specified SQL statement is syntactically correct and
+confirming that the statement or stored procedure target data exists. If
+verification is successful then {prodname} adds the start connection to
+the integration. If verification fails then {prodname} displays a message
+about the problem. Update your input as needed and try again.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="about-parameter-placeholders-and-values_db"><a class="anchor" href="#about-parameter-placeholders-and-values_db"></a>About parameter placeholders and values in SQL statements that update data</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A database connection that is in the middle of a flow, or
+that finishes a simple integration, can execute a SQL statement
+that updates data. When you add a database connection to an integration,
+you can specify placeholder parameters in the SQL statement to be
+executed. During execution, the connection can perform a batch update
+when the input parameter values are in a collection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Specifying parameters in SQL statements</div>
+<p>When you create or edit an integration and you add a
+connection that updates a database, you can specify placeholder
+parameters in the SQL statement that the connection executes at
+runtime or there can be placeholders in the stored procedure
+that will be executed at runtime. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>INSERT INTO TODO(task, completed) VALUES(:#param_1, :#param_2)
+DELETE FROM TODO WHERE task LIKE :#param_3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To specify the values of these placeholders, add a data mapping step
+to the flow before the database connection. In the data mapping
+step, map the appropriate source data fields to the target data
+fields, for example, map source data to the <code>:#param_1</code>, <code>:#param_2</code>, and
+<code>:#param_3</code> target fields. See
+<a href="{LinkSyndesisIntegrationGuide}#add-data-mapping-step_create">Adding a data mapper step</a>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Batch update with a collection of parameter values</div>
+<p>At runtime, when a database connection executes a SQL statement that
+inserts, deletes, or updates data, the SQL statement being executed often
+specifies one or more
+placeholder parameters, for example, <code>:#task</code>. When it does,
+the input to the connection can be a single set of parameters
+or a collection of parameter sets, where each element in a set
+defines a value for the corresponding placeholder parameter.</p>
+</div>
+<div class="paragraph">
+<p>The input to the database connection comes from an earlier
+connection in the flow, for example, an HTTP request (Webhook)
+or a request sent to the REST API service for an API provider
+integration. When the input is a collection,
+the connection uses batch mode to update the table.
+For example, consider this SQL statement:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>insert into todo (task) values (:#task)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the input collection contains 3 values, the connection inserts
+three records, one for each value. Now consider a SQL statement
+with two placeholder parameters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>insert into todo (task, completed) values (:#task, :#completed)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the input to the connection that executes this SQL statement,
+a data shape specification could specify a single element, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{"task": "write some docs", "completed": 0}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or it could specify a collection, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{"task": "write doc", "completed": 1},
+ {"task": "publish doc", "completed": 0}]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With a collection as input, the connection executes the insert operation
+once for each set of parameter values. In this example, the connection
+adds two records to the table, one for each set of parameter values.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-db-connection-finish-middle_db"><a class="anchor" href="#adding-db-connection-finish-middle_db"></a>Accessing a database in the middle or to complete an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can access a database in the
+middle of a flow or to finish a simple integration. To do this, add
+a database connection to the middle of a flow or as a simple
+integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a database connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the database connection for the database that you want to access.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Invoke SQL</strong> operates on data by executing the
+SQL statement you specify.</p>
+</li>
+<li>
+<p><strong>Invoke stored procedure</strong> operates on data by invoking
+the stored procedure that you specify or select.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If you selected <strong>Invoke SQL</strong>, in the <strong>SQL Statement</strong> field:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For a middle connection, enter a SQL <code>SELECT</code> statement that obtains
+one or more records or enter a SQL <code>INSERT</code>, <code>UPDATE</code>, or
+<code>DELETE</code> statement that
+operates on one or more records.
+The database table that contains the data must already exist.</p>
+</li>
+<li>
+<p>For a finish connection, enter a SQL <code>INSERT</code>, <code>UPDATE</code> or
+<code>DELETE</code> statement to
+operate on one or more records.</p>
+</li>
+<li>
+<p>In the <strong>Batch update</strong> field, accept <strong>No</strong>, which is the default,
+or select <strong>Yes</strong>.</p>
+<div class="paragraph">
+<p>The setting of <strong>Batch update</strong> affects connection behavior when the
+input to this action is a collection, and the SQL statement inserts,
+deletes, or updates records. The default behavior (<strong>Batch update</strong> is <strong>No</strong>)
+is that the connection accepts only individual objects and executes the
+SQL statement once for each object. When <strong>Batch update</strong> is <strong>Yes</strong>,
+the connection accepts a collection as the input to the action.
+The connection executes the SQL statement once and uses all collection
+items as input to a batch update operation.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you selected <strong>Invoke stored procedure</strong>, in the
+<strong>Procedure name</strong> field, select or enter the name of the stored procedure to
+invoke to operate on the data of interest. The stored procedure you specify must
+already exist. The database administrator should have created any stored
+procedures you need to use in an integration.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} tries to validate the connection, which includes
+checking that a specified SQL query is syntactically correct and
+confirming that the query or stored procedure target data exists. If
+verification is successful then {prodname} adds the connection to
+the flow. If verification fails then {prodname} displays a message
+about the problem. Update your input as needed and try again.</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p><a href="{LinkSyndesisConnectorGuide}about-parameter-placeholders-and-values_db">About parameter placeholders and values in SQL statements that update data</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-proprietary-databases_db"><a class="anchor" href="#connecting-to-proprietary-databases_db"></a>Connecting to proprietary databases</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To connect to a proprietary SQL database, the main tasks that must be
+accomplished are as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A developer creates a library extension that contains the JDBC driver
+for the database that you want to access in an integration. See
+<a href="{LinkSyndesisIntegrationGuide}#creating-jdbc-driver-library-extensions_extensions">Creating JDBC driver library extensions</a>.</p>
+</li>
+<li>
+<p>The developer provides a <code>.jar</code> file that contains the library extension.</p>
+</li>
+<li>
+<p>You upload that <code>.jar</code> file to {prodname}. See
+<a href="{LinkSyndesisIntegrationGuide}#making-extensions-available_add-extension">Making extensions available</a>.</p>
+</li>
+<li>
+<p>You create a connection to your database by selecting the
+{prodname} <strong>Database</strong> connector and specifying the connection URL
+for your database. See
+<a href="{LinkSyndesisConnectorGuide}#create-database-connection_db">Creating a database connection</a>.</p>
+</li>
+<li>
+<p>In an integration, you add the connection to your database.
+See
+<a href="{LinkSyndesisConnectorGuide}#adding-db-connection-start_db">Starting an integration by accessing a database</a> or
+<a href="{LinkSyndesisConnectorGuide}#adding-db-connection-finish-middle_db">Accessing a database in the middle or to complete an integration</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

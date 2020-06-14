@@ -1,16 +1,18 @@
 ## Syndesis
 
+[![Latest Release](https://img.shields.io/github/v/release/syndesisio/syndesis)](https://github.com/syndesisio/syndesis/releases/latest)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.syndesis/syndesis-parent/badge.svg?style=flat-square)](https://search.maven.org/search?q=g:io.syndesis)
 [![CircleCI](https://circleci.com/gh/syndesisio/syndesis/tree/master.svg?style=svg)](https://circleci.com/gh/syndesisio/syndesis/tree/master)
 [![Gitter](https://badges.gitter.im/syndesisio/community.svg)](https://gitter.im/syndesisio/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Google Groups](https://img.shields.io/badge/Google%20Groups-Syndesis-blue)](https://groups.google.com/forum/#!forum/syndesis)
 
 A flexible and customizable, open source platform that provides core integration capabilities as a service.
 
-All developer related documentation can be found at the [Syndesis Developer Handbook](https://doc.syndesis.io).
+All developer related documentation can be found at the [Development QuickStart](https://syndesis.io/docs/development_quickstart/), read indepth about the tooling to help with development in the [`syndesis` CLI](https://syndesis.io/docs/cli/syndesis/) documentation.
 
 ### Quickstart
 
-* To get started quickly please install [Minishift](https://www.openshift.org/minishift/) first.
+* To get started quickly please install [Minishift](https://www.okd.io/minishift/) first.
 * Clone this repository and enter it:
 
 ```

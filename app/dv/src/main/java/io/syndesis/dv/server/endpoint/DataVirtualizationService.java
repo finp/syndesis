@@ -17,14 +17,56 @@ package io.syndesis.dv.server.endpoint;
 
 import static io.syndesis.dv.server.Messages.Error.DATASERVICE_SERVICE_SERVICE_NAME_ERROR;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.syndesis.dv.KException;
+import io.syndesis.dv.StringConstants;
+import io.syndesis.dv.metadata.TeiidDataSource;
+import io.syndesis.dv.metadata.TeiidVdb;
+import io.syndesis.dv.model.DataVirtualization;
+import io.syndesis.dv.model.Edition;
+import io.syndesis.dv.model.SourceSchema;
+import io.syndesis.dv.model.TablePrivileges;
+import io.syndesis.dv.model.ViewDefinition;
+import io.syndesis.dv.model.export.v1.DataVirtualizationV1Adapter;
+import io.syndesis.dv.model.export.v1.SourceV1;
+import io.syndesis.dv.model.export.v1.TablePrivilegeV1Adapter;
+import io.syndesis.dv.model.export.v1.ViewDefinitionV1Adapter;
+import io.syndesis.dv.openshift.BuildStatus;
+import io.syndesis.dv.openshift.BuildStatus.RouteStatus;
+import io.syndesis.dv.openshift.BuildStatus.Status;
+import io.syndesis.dv.openshift.DeploymentStatus;
+import io.syndesis.dv.openshift.ProtocolType;
+import io.syndesis.dv.openshift.PublishConfiguration;
+import io.syndesis.dv.openshift.SyndesisHttpClient;
+import io.syndesis.dv.openshift.TeiidOpenShiftClient;
+import io.syndesis.dv.openshift.VirtualizationStatus;
+import io.syndesis.dv.server.DvService;
+import io.syndesis.dv.server.Messages;
+import io.syndesis.dv.server.SSOConfigurationProperties;
+import io.syndesis.dv.server.V1Constants;
+import io.syndesis.dv.server.endpoint.RoleInfo.Operation;
+import io.syndesis.dv.utils.PathUtils;
+import io.syndesis.dv.utils.StringNameValidator;
+import io.syndesis.dv.utils.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +75,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
 import javax.xml.stream.XMLStreamException;
-
 import org.apache.http.message.BasicHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -49,6 +89,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,44 +106,6 @@ import org.teiid.metadata.Schema;
 import org.teiid.metadata.Table;
 import org.teiid.util.FullyQualifiedName;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.syndesis.dv.KException;
-import io.syndesis.dv.StringConstants;
-import io.syndesis.dv.metadata.TeiidDataSource;
-import io.syndesis.dv.metadata.TeiidVdb;
-import io.syndesis.dv.model.DataVirtualization;
-import io.syndesis.dv.model.Edition;
-import io.syndesis.dv.model.SourceSchema;
-import io.syndesis.dv.model.ViewDefinition;
-import io.syndesis.dv.model.export.v1.DataVirtualizationV1Adapter;
-import io.syndesis.dv.model.export.v1.SourceV1;
-import io.syndesis.dv.model.export.v1.ViewDefinitionV1Adapter;
-import io.syndesis.dv.openshift.BuildStatus;
-import io.syndesis.dv.openshift.BuildStatus.RouteStatus;
-import io.syndesis.dv.openshift.BuildStatus.Status;
-import io.syndesis.dv.openshift.ProtocolType;
-import io.syndesis.dv.openshift.PublishConfiguration;
-import io.syndesis.dv.openshift.SyndesisHttpClient;
-import io.syndesis.dv.openshift.TeiidOpenShiftClient;
-import io.syndesis.dv.server.DvService;
-import io.syndesis.dv.server.Messages;
-import io.syndesis.dv.server.V1Constants;
-import io.syndesis.dv.utils.PathUtils;
-import io.syndesis.dv.utils.StringNameValidator;
-import io.syndesis.dv.utils.StringUtils;
-
 /**
  * A REST service for obtaining virtualization information.
  */
@@ -110,6 +113,7 @@ import io.syndesis.dv.utils.StringUtils;
 @RequestMapping(value = V1Constants.APP_PATH
         + StringConstants.FS + V1Constants.VIRTUALIZATIONS_SEGMENT)
 @Api(tags = { V1Constants.VIRTUALIZATIONS_SEGMENT })
+@SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.GodClass"}) // TODO refactor
 public final class DataVirtualizationService extends DvService {
 
     private static final String DV_JSON = "dv.json"; //$NON-NLS-1$
@@ -121,9 +125,10 @@ public final class DataVirtualizationService extends DvService {
      * Since we'll add the dv- prefix, we don't char what it starts with,
      * but we're still required to end with a letter/number
      */
-    Pattern DATAVIRTUALIZATION_PATTERN = Pattern.compile("[-a-z0-9]*[a-z0-9]", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+    private static final Pattern DATAVIRTUALIZATION_PATTERN = Pattern.compile("[-a-z0-9]*[a-z0-9]", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
     private static final StringNameValidator VALIDATOR = new StringNameValidator();
+    public static final String AN_ERROR_HAS_OCCURRED = "An error has occurred.";
 
     @Autowired
     private TeiidOpenShiftClient openshiftClient;
@@ -134,16 +139,18 @@ public final class DataVirtualizationService extends DvService {
     @Autowired
     private EditorService utilService;
 
+    @Autowired
+    private SSOConfigurationProperties ssoConfigurationProperties;
+
     /**
      * Get the virtualizations from the repository
      * @return a JSON document representing all the virtualizations
-     * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET, produces= { MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Return the collection of data services",
         response = RestDataVirtualization.class, responseContainer = "List")
-    @ApiResponses(value = { @ApiResponse(code = 403, message = "An error has occurred.") })
-    public List<RestDataVirtualization> getDataVirtualizations() throws Exception {
+    @ApiResponses(value = { @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
+    public List<RestDataVirtualization> getDataVirtualizations() {
 
         Iterable<? extends DataVirtualization> virtualizations = repositoryManager.runInTransaction(true, ()->{
             return getWorkspaceManager().findDataVirtualizations();
@@ -157,39 +164,57 @@ public final class DataVirtualizationService extends DvService {
         return entities;
     }
 
-    private RestDataVirtualization createRestDataVirtualization(final DataVirtualization virtualization) throws KException {
+    private RestDataVirtualization createRestDataVirtualization(final DataVirtualization virtualization) {
         RestDataVirtualization entity = new RestDataVirtualization(virtualization);
-        // Set published status of virtualization
-        BuildStatus status = this.openshiftClient.getVirtualizationStatus(virtualization.getName());
-        if (status != null) {
-            entity.setPublishedState(status.getStatus().name());
-            entity.setPublishPodName(status.getPublishPodName());
-            entity.setPodNamespace(status.getNamespace());
-            entity.setOdataHostName(getOdataHost(status));
-            entity.setUsedBy(status.getUsedBy());
-            entity.setPublishedRevision(status.getDeploymentVersion());
-        }
-        entity.setEmpty(this.getWorkspaceManager().findViewDefinitionsNames(virtualization.getName()).isEmpty());
 
+        //working state
+        entity.setEmpty(this.getWorkspaceManager().findViewDefinitionsNames(virtualization.getName()).isEmpty());
         entity.setEditionCount(this.getWorkspaceManager().getEditionCount(virtualization.getName()));
+        entity.setSecured(this.getWorkspaceManager().hasRoles(virtualization.getName()));
+
+        // Set published status of virtualization
+        VirtualizationStatus status = this.openshiftClient.getVirtualizationStatus(virtualization.getName());
+        if (status != null) { //can be null for unit tests
+            BuildStatus buildStatus = status.getBuildStatus();
+            DeploymentStatus deploymentStatus = status.getDeploymentStatus();
+
+            //publish/build state
+            entity.setPublishPodName(buildStatus.getPublishPodName());
+            entity.setPodNamespace(buildStatus.getNamespace());
+            entity.setPublishedRevision(buildStatus.getVersion());
+
+            if (buildStatus.getStatus() == Status.COMPLETE) {
+                entity.setPublishedState(deploymentStatus.getStatus().name());
+                entity.setPublishedMessage(deploymentStatus.getStatusMessage());
+            } else {
+                entity.setPublishedState(buildStatus.getStatus().name());
+                entity.setPublishedMessage(buildStatus.getStatusMessage());
+            }
+
+            //deployment state
+            entity.setOdataHostName(getOdataHost(deploymentStatus));
+            entity.setUsedBy(deploymentStatus.getUsedBy());
+            entity.setDeployedRevision(deploymentStatus.getVersion());
+            entity.setDeployedState(deploymentStatus.getStatus().name());
+            entity.setDeployedMessage(deploymentStatus.getStatusMessage());
+        }
+
         return entity;
     }
 
     /**
      * @param virtualization the name of the virtualization being retrieved (cannot be empty)
      * @return the JSON representation of the virtualization (never <code>null</code>)
-     * @throws Exception
      */
     @RequestMapping(value = V1Constants.VIRTUALIZATION_PLACEHOLDER, method = RequestMethod.GET, produces = {
             MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Find virtualization by name", response = RestDataVirtualization.class)
     @ApiResponses(value = { @ApiResponse(code = 404, message = "No virtualization could be found with name"),
             @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
     public RestDataVirtualization getDataVirtualization(
             @ApiParam(value = "name of the virtualization to be fetched - ignoring case",
-            required = true) final @PathVariable(VIRTUALIZATION) String virtualization)
-            throws Exception {
+            required = true) final @PathVariable(VIRTUALIZATION) String virtualization) {
 
         DataVirtualization dv = repositoryManager.runInTransaction(true, () -> {
              return getWorkspaceManager().findDataVirtualizationByNameIgnoreCase(virtualization);
@@ -216,23 +241,21 @@ public final class DataVirtualizationService extends DvService {
             throw notFound( virtualization );
         }
 
-        RestDataVirtualization restDv = createRestDataVirtualization(dv);
-        return restDv;
+        return createRestDataVirtualization(dv);
     }
 
     /**
      * Create a new virtualization in the repository
-     *
-     * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST,
             produces= { MediaType.APPLICATION_JSON_VALUE },
             consumes = { MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Create a virtualization")
     @ApiResponses(value = { @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
+    @SuppressWarnings("PMD.PreserveStackTrace") // no way to preserve
     public ResponseEntity<String> createDataVirtualization(
-            @ApiParam(required = true) @RequestBody final RestDataVirtualization restDataVirtualization) throws Exception {
+            @ApiParam(required = true) @RequestBody final RestDataVirtualization restDataVirtualization) {
 
         final String restName = restDataVirtualization.getName();
         // Error if the name is missing from the supplied json body
@@ -252,7 +275,7 @@ public final class DataVirtualizationService extends DvService {
                 dv.setDescription(restDataVirtualization.getDescription());
                 return ResponseEntity.ok(restName + " Successfully created"); //$NON-NLS-1$
             });
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException ignored) {
             throw error(HttpStatus.CONFLICT, Messages.Error.DATASERVICE_SERVICE_CREATE_ALREADY_EXISTS);
         }
     }
@@ -262,14 +285,13 @@ public final class DataVirtualizationService extends DvService {
      *
      * @param virtualization the name of the virtualization to remove (cannot be <code>null</code>)
      * @return a JSON document representing the results of the removal
-     * @throws Exception
      */
     @RequestMapping(value = V1Constants.VIRTUALIZATION_PLACEHOLDER, method = RequestMethod.DELETE, produces = {
             MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Delete a virtualization")
     @ApiResponses(value = { @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
-            @ApiResponse(code = 403, message = "An error has occurred.") })
-    public StatusObject deleteDataVirtualization(@ApiParam(value = "Name of the virtualization to be deleted", required = true) final @PathVariable(VIRTUALIZATION) String virtualization) throws Exception {
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
+    public StatusObject deleteDataVirtualization(@ApiParam(value = "Name of the virtualization to be deleted", required = true) final @PathVariable(VIRTUALIZATION) String virtualization) {
 
         StatusObject kso = repositoryManager.runInTransaction(false, ()->{
             // Delete the virtualization. The view definitions will cascade
@@ -293,7 +315,7 @@ public final class DataVirtualizationService extends DvService {
         return kso;
     }
 
-    private String getValidationMessage(final String virtualization) {
+    private static String getValidationMessage(final String virtualization) {
         final String errorMsg = VALIDATOR.checkValidName(virtualization);
 
         if (errorMsg != null) {
@@ -319,7 +341,7 @@ public final class DataVirtualizationService extends DvService {
             + V1Constants.TEIID_SOURCE_PLACEHOLDER, method = RequestMethod.PUT, produces = { MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Import views from a given source", response = StatusObject.class)
     @ApiResponses(value = { @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
     public StatusObject importViews(@ApiParam(value = "Name of the virtualization", required = true)
             final @PathVariable(V1Constants.VIRTUALIZATION)
             String virtualization,
@@ -330,23 +352,21 @@ public final class DataVirtualizationService extends DvService {
 
             @ApiParam(value = "Import Payload", required = true)
             @RequestBody
-            final ImportPayload importPayload) throws Exception {
+            final ImportPayload importPayload) {
 
-        StatusObject kso = repositoryManager.runInTransaction(false, () -> {
+        return repositoryManager.runInTransaction(false, () -> {
             DataVirtualization dataservice = getWorkspaceManager().findDataVirtualization(virtualization);
             if (dataservice == null) {
                 throw notFound( virtualization );
             }
 
-            Schema s = metadataService.findSchema(teiidSourceName);
+            Schema s = metadataService.findConnectionSchema(teiidSourceName);
 
             if (s == null) {
                 throw notFound( teiidSourceName );
             }
 
             ServiceVdbGenerator serviceVdbGenerator = new ServiceVdbGenerator(metadataService);
-
-            StatusObject result = new StatusObject("Import Status"); //$NON-NLS-1$
 
             List<ViewDefinition> toSave = new ArrayList<>();
             for (String name : importPayload.getTables()) {
@@ -382,6 +402,7 @@ public final class DataVirtualizationService extends DvService {
                 toSave.add(viewDefn);
             }
 
+            StatusObject result = new StatusObject("Import Status"); //$NON-NLS-1$
             for (ViewDefinition vd : getWorkspaceManager().saveAllViewDefinitions(toSave)) {
                 result.addAttribute(vd.getName(), vd.getId());
             }
@@ -390,26 +411,21 @@ public final class DataVirtualizationService extends DvService {
 
             return result;
         });
-
-        return kso;
     }
 
     /**
-     * Get OData hostname from the buildStatus
-     * @param buildStatus the BuildStatus
+     * Get OData hostname from the deployment status
      * @return the odata hostname
      */
-    private String getOdataHost(final BuildStatus buildStatus) {
+    private static String getOdataHost(final DeploymentStatus status) {
         String odataHost = null;
-        if(buildStatus != null) {
-            List<RouteStatus> routeStatuses = buildStatus.getRoutes();
-            if(!routeStatuses.isEmpty()) {
-                // Find Odata route if it exists
-                for(RouteStatus routeStatus: routeStatuses) {
-                    if(routeStatus.getProtocol() == ProtocolType.ODATA) {
-                        odataHost = routeStatus.getHost();
-                        break;
-                    }
+        List<RouteStatus> routeStatuses = status.getRoutes();
+        if(!routeStatuses.isEmpty()) {
+            // Find Odata route if it exists
+            for(RouteStatus routeStatus: routeStatuses) {
+                if(routeStatus.getProtocol() == ProtocolType.ODATA) {
+                    odataHost = routeStatus.getHost();
+                    break;
                 }
             }
         }
@@ -420,16 +436,15 @@ public final class DataVirtualizationService extends DvService {
      * Update the specified virtualization from the repository
      * @param virtualization the virtualization name (cannot be empty)
      * @return a JSON representation of the new connection (never <code>null</code>)
-     * @throws Exception
      */
-    @RequestMapping(value = FS + V1Constants.VIRTUALIZATION_PLACEHOLDER, method = RequestMethod.PUT, produces = {
+    @RequestMapping(value = StringConstants.FS + V1Constants.VIRTUALIZATION_PLACEHOLDER, method = RequestMethod.PUT, produces = {
             MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Update data service")
-    @ApiResponses(value = { @ApiResponse(code = 400, message = "An error has occurred.") })
+    @ApiResponses(value = { @ApiResponse(code = 400, message = AN_ERROR_HAS_OCCURRED) })
     public StatusObject updateDataVirtualization(
             @ApiParam(value = "Name of the data service", required = true)
             final @PathVariable(V1Constants.VIRTUALIZATION) String virtualization,
-            @ApiParam(required = true) @RequestBody final RestDataVirtualization restDataVirtualization) throws Exception {
+            @ApiParam(required = true) @RequestBody final RestDataVirtualization restDataVirtualization) {
 
         final String restName = restDataVirtualization.getName();
         // Error if the name is missing from the supplied json body
@@ -460,23 +475,20 @@ public final class DataVirtualizationService extends DvService {
 
     /**
      * Export the virtualization to a zip file
-     * @param virtualization
-     * @return
-     * @throws Exception
      */
-    @RequestMapping(value = {VIRTUALIZATION_PLACEHOLDER + FS + "export",
-            VIRTUALIZATION_PLACEHOLDER + FS + "export" + FS + REVISION_PLACEHOLDER}, method = RequestMethod.GET, produces = {
+    @RequestMapping(value = {VIRTUALIZATION_PLACEHOLDER + StringConstants.FS + "export",
+            VIRTUALIZATION_PLACEHOLDER + StringConstants.FS + "export" + StringConstants.FS + REVISION_PLACEHOLDER}, method = RequestMethod.GET, produces = {
             MediaType.MULTIPART_FORM_DATA_VALUE })
     @ApiOperation(value = "Export virtualization by name.  Without a revision number, the current working state is exported.", response = RestDataVirtualization.class)
     @ApiResponses(value = { @ApiResponse(code = 404, message = "No virtualization could be found with name"),
             @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
     public ResponseEntity<StreamingResponseBody> exportDataVirtualization(
             @ApiParam(value = "name of the virtualization",
             required = true) final @PathVariable(VIRTUALIZATION) String virtualization,
             @ApiParam(value = "revision number",
             required = false) final @PathVariable(required = false, name = REVISION) Long revision)
-            throws Exception {
+            {
 
         StreamingResponseBody result = repositoryManager.runInTransaction(true, () -> {
             DataVirtualization dv = getWorkspaceManager().findDataVirtualization(virtualization);
@@ -494,10 +506,9 @@ public final class DataVirtualizationService extends DvService {
                 byte[] bytes = repositoryManager.findEditionExport(e);
                 Assertion.isNotNull(bytes);
 
-                StreamingResponseBody stream = out -> {
+                return out -> {
                     out.write(bytes);
                 };
-                return stream;
             }
 
             return createExportStream(dv, null, null);
@@ -511,13 +522,9 @@ public final class DataVirtualizationService extends DvService {
 
     /**
      * Create an export of the current workspace.  Optionally including the full vdb.
-     * @param dv
-     * @param theVdb
-     * @return
-     * @throws KException
      */
     private StreamingResponseBody createExportStream(DataVirtualization dv, VDBMetaData theVdb, Long revision)
-            throws KException {
+            {
         DataVirtualizationV1Adapter adapter = new DataVirtualizationV1Adapter(dv);
 
         List<? extends ViewDefinition> views = getWorkspaceManager().findViewDefinitions(dv.getName());
@@ -541,9 +548,14 @@ public final class DataVirtualizationService extends DvService {
             }
         }
 
+        List<TablePrivileges> tablePrivileges = getWorkspaceManager().findAllTablePrivileges(dv.getName());
+        for (TablePrivileges privileges : tablePrivileges) {
+            adapter.getTablePriveleges().add(new TablePrivilegeV1Adapter(privileges));
+        }
+
         adapter.setSources(new ArrayList<>(sources.values()));
 
-        StreamingResponseBody stream = out -> {
+        return out -> {
             ZipOutputStream zos = new ZipOutputStream(out);
 
             JsonFactory jsonFactory = new JsonFactory();
@@ -555,8 +567,8 @@ public final class DataVirtualizationService extends DvService {
             zos.closeEntry();
 
             zos.putNextEntry(new ZipEntry("dv-info.json")); //$NON-NLS-1$
-            String json = String.format("{\"exportVersion\":%s,\n" //$NON-NLS-1$
-                    + "\"revision\":%s,\n" //$NON-NLS-1$
+            String json = String.format("{\"exportVersion\":%s,%n" //$NON-NLS-1$
+                    + "\"revision\":%s,%n" //$NON-NLS-1$
                     + "\"entityVersion\":%s}", 1, //$NON-NLS-1$
                     revision == null ? "\"draft\"" : revision, dv.getVersion()); //$NON-NLS-1$
             zos.write(json.getBytes("UTF-8")); //$NON-NLS-1$
@@ -565,7 +577,7 @@ public final class DataVirtualizationService extends DvService {
             if (theVdb != null) {
                 zos.putNextEntry(new ZipEntry(DV_VDB_XML));
                 try {
-                    VDBMetadataParser.marshell(theVdb, zos);
+                    VDBMetadataParser.marshall(theVdb, zos);
                 } catch (XMLStreamException e) {
                     throw new IOException(e);
                 }
@@ -575,29 +587,23 @@ public final class DataVirtualizationService extends DvService {
 
             zos.close();
         };
-
-        return stream;
     }
 
     /**
      * Import a virtualization from a zip file
-     * @param virtualization
-     * @param file
-     * @return
-     * @throws Exception
      */
     @PostMapping()
     @ApiOperation(value = "Import a single data virtualization", response = StatusObject.class)
     public StatusObject importDataVirtualization(@ApiParam(value = "name of the virtualization")
             @RequestParam(name="virtualization", required=false) String virtualization,
-            @RequestParam("file") MultipartFile file) throws Exception {
+            @RequestParam("file") MultipartFile file) throws IOException {
 
         return importDataVirtualization(virtualization, file, true);
     }
 
+    @SuppressWarnings({"PMD.NPathComplexity", "PMD.PreserveStackTrace"}) // TODO refactor
     private StatusObject importDataVirtualization(String virtualization,
-            InputStreamSource file, boolean createVirtualization) throws IOException, JsonParseException,
-            JsonMappingException, Exception {
+            InputStreamSource file, boolean createVirtualization) throws IOException {
         final DataVirtualizationV1Adapter dv;
         try (InputStream is = file.getInputStream();) {
             ZipInputStream zis = new ZipInputStream(is);
@@ -615,20 +621,13 @@ public final class DataVirtualizationService extends DvService {
             dv = mapper.readValue(zis, DataVirtualizationV1Adapter.class);
         }
 
+        final String dvName;
         DataVirtualization toImport = dv.getEntity();
         if (virtualization == null) {
-            virtualization = toImport.getName();
+            dvName = toImport.getName();
         } else {
+            dvName = virtualization;
             toImport.setName(virtualization);
-        }
-
-        //TODO: validate the uuid or assign a new one
-        //for now we just assign new to all objects
-
-        for (ViewDefinitionV1Adapter adapter : dv.getViews()) {
-            ViewDefinition entity = adapter.getEntity();
-            entity.setId(null);
-            entity.setDataVirtualizationName(virtualization);
         }
 
         try {
@@ -645,11 +644,7 @@ public final class DataVirtualizationService extends DvService {
                             status.addAttribute(source.getName(), "no syndesis connection can be found"); //$NON-NLS-1$
                         }
                     } else {
-                        if (tds.getSyndesisId().equals(source.getSourceId())) {
-                            //presumably everything checks out
-                            //however it seems like syndesis connection ids are simply sequential,
-                            //so they may not be consistent across environments
-                        } else {
+                        if (!tds.getSyndesisId().equals(source.getSourceId())) {
                             status.addAttribute(source.getName(), "a syndesis connection with the same name exists, but the ids do not match"); //$NON-NLS-1$
                         }
                     }
@@ -667,9 +662,23 @@ public final class DataVirtualizationService extends DvService {
                     existing.setDescription(dv.getDescription());
                 }
 
+                Map<String, String> viewMap = new HashMap<String, String>();
+
+                //TODO: validate the uuid or assign a new one
+                //for now we just assign new to all objects
                 for (ViewDefinitionV1Adapter adapter : dv.getViews()) {
                     ViewDefinition vd = adapter.getEntity();
-                    utilService.upsertViewEditorState(vd);
+                    String oldId = vd.getId();
+                    vd.setId(null);
+                    vd.setDataVirtualizationName(dvName);
+                    String newId = utilService.upsertViewEditorState(vd).getId();
+                    viewMap.put(oldId, newId);
+                }
+
+                for (TablePrivilegeV1Adapter adapter : dv.getTablePriveleges()) {
+                    String id = viewMap.get(adapter.getViewDefinitionId());
+                    TablePrivileges privileges = repositoryManager.createTablePrivileges(id, adapter.getRole());
+                    privileges.setGrantPrivileges(adapter.getGrantPrivileges());
                 }
 
                 if (existing != null) {
@@ -685,9 +694,8 @@ public final class DataVirtualizationService extends DvService {
     /**
      * Get all view editor states from the user's profile
      * @return a JSON document representing the view editor states in the user profile (never <code>null</code>)
-     * @throws Exception
      */
-    @RequestMapping( value = V1Constants.VIRTUALIZATION_PLACEHOLDER + FS + VIEWS_SEGMENT, method = RequestMethod.GET, produces = {
+    @RequestMapping( value = V1Constants.VIRTUALIZATION_PLACEHOLDER + StringConstants.FS + VIEWS_SEGMENT, method = RequestMethod.GET, produces = {
             MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Returns the view listings",
     response = ViewDefinition.class)
@@ -698,7 +706,7 @@ public final class DataVirtualizationService extends DvService {
     } )
     public List<ViewListing> getViewList(
             @ApiParam(value = "Name of the virtualization", required = true)
-            final @PathVariable(VIRTUALIZATION) String virtualization) throws Exception {
+            final @PathVariable(VIRTUALIZATION) String virtualization) {
         // find view editor states
         return repositoryManager.runInTransaction(true, ()->{
 
@@ -712,8 +720,7 @@ public final class DataVirtualizationService extends DvService {
     }
 
     private List<ViewListing> createViewList(final String virtualization,
-            final List<? extends ViewDefinition> viewEditorStates)
-            throws Exception {
+            final List<? extends ViewDefinition> viewEditorStates) {
         TeiidVdb vdb = null;
 
         ArrayList<ViewListing> result = new ArrayList<>();
@@ -731,12 +738,13 @@ public final class DataVirtualizationService extends DvService {
             } else {
                 listing.setValid(false);
             }
+            listing.setTablePrivileges(repositoryManager.findTablePrivileges(viewEditorState.getId()));
             result.add(listing);
         }
         return result;
     }
 
-    @RequestMapping( value = V1Constants.VIRTUALIZATION_PLACEHOLDER + FS + VIEWS_SEGMENT + FS + VIEW_PLACEHOLDER, method = RequestMethod.GET, produces = {
+    @RequestMapping( value = V1Constants.VIRTUALIZATION_PLACEHOLDER + StringConstants.FS + VIEWS_SEGMENT + StringConstants.FS + VIEW_PLACEHOLDER, method = RequestMethod.GET, produces = {
             MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Returns the view listing with the given name",
     response = ViewDefinition.class)
@@ -749,7 +757,7 @@ public final class DataVirtualizationService extends DvService {
                                       @ApiParam(value = "Name of the virtualization", required = true)
                                       final @PathVariable(VIRTUALIZATION) String virtualization,
                                       @ApiParam(value = "Name of the view - not case sensitive", required = true)
-                                      final @PathVariable(VIEW_NAME) String viewName ) throws Exception {
+                                      final @PathVariable(VIEW_NAME) String viewName ) {
 
         final String errorMsg = VALIDATOR.checkValidName( viewName );
 
@@ -775,13 +783,12 @@ public final class DataVirtualizationService extends DvService {
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "No virtualization could be found with name"),
         @ApiResponse(code = 406, message = "Only JSON returned by this operation"),
-        @ApiResponse(code = 403, message = "An error has occurred.")
+        @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED)
     })
     public BuildStatus deletePublishedVirtualization(
             @ApiParam(value = "Name of the virtualization")
-            final @PathVariable(value = "virtualization", required = true) String virtualization) throws KException{
-        BuildStatus status = this.openshiftClient.deleteVirtualization(virtualization);
-        return status;
+            final @PathVariable(value = "virtualization", required = true) String virtualization){
+        return this.openshiftClient.deleteVirtualization(virtualization);
     }
 
     @RequestMapping(value = V1Constants.PUBLISH, method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -789,17 +796,18 @@ public final class DataVirtualizationService extends DvService {
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "No Dataservice could be found with name"),
         @ApiResponse(code = 406, message = "Only JSON returned by this operation"),
-        @ApiResponse(code = 403, message = "An error has occurred.")
+        @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED)
     })
+    @SuppressWarnings("PMD.NPathComplexity") // TODO refactor
     public StatusObject publishVirtualization(
-            @ApiParam(value = "JSON properties:<br>" + OPEN_PRE_TAG + OPEN_BRACE + BR + NBSP
-                    + "\"name\":      \"Name of the Dataservice\"" + BR
-                    + "\"cpu-units\": \"(optional) Number of CPU units to allocate. 100 is 0.1 CPU (default 500)\"" + BR
-                    + "\"memory\":    \"(optional) Amount memory to allocate in MB (default 1024)\"" + BR
-                    + "\"disk-size\": \"(optional) Amount disk allocated in GB (default 20)\"" + BR
-                    + "\"enable-odata\": \"(optional) Enable OData interface. true|false (default true)\"" + BR
-                    + CLOSE_BRACE
-                    + CLOSE_PRE_TAG) @RequestBody(required = true) final PublishRequestPayload payload) throws Exception {
+            @ApiParam(value = "JSON properties:<br>" + StringConstants.OPEN_PRE_TAG + StringConstants.OPEN_BRACE + StringConstants.BR + StringConstants.NBSP
+                    + "\"name\":      \"Name of the Dataservice\"" + StringConstants.BR
+                    + "\"cpu-units\": \"(optional) Number of CPU units to allocate. 100 is 0.1 CPU (default 500)\"" + StringConstants.BR
+                    + "\"memory\":    \"(optional) Amount memory to allocate in MB (default 1024)\"" + StringConstants.BR
+                    + "\"disk-size\": \"(optional) Amount disk allocated in GB (default 20)\"" + StringConstants.BR
+                    + "\"enable-odata\": \"(optional) Enable OData interface. true|false (default true)\"" + StringConstants.BR
+                    + StringConstants.CLOSE_BRACE
+                    + StringConstants.CLOSE_PRE_TAG) @RequestBody(required = true) final PublishRequestPayload payload) {
         //
         // Error if there is no name attribute defined
         //
@@ -808,6 +816,7 @@ public final class DataVirtualizationService extends DvService {
         }
 
         PublishConfiguration config = new PublishConfiguration();
+        //for now everyone uses the same
 
         StatusObject status = new StatusObject();
         repositoryManager.runInTransaction(false, ()-> {
@@ -840,20 +849,26 @@ public final class DataVirtualizationService extends DvService {
 
             status.addAttribute("Publishing", "Operation initiated");  //$NON-NLS-1$//$NON-NLS-2$
 
+            List<TablePrivileges> tablePrivileges = repositoryManager.findAllTablePrivileges(dataservice.getName());
+
             //use the preview vdb to build the needed metadata
-            VDBMetaData theVdb = new ServiceVdbGenerator(metadataService).createServiceVdb(dataservice.getName(), vdb, editorStates);
+            VDBMetaData theVdb = new ServiceVdbGenerator(metadataService).createServiceVdb(dataservice.getName(), vdb, editorStates, tablePrivileges);
 
             //create a new published edition with the saved workspace state
             Edition edition = repositoryManager.createEdition(dataservice.getName());
 
             StreamingResponseBody stream = createExportStream(dataservice, theVdb, edition.getRevision());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            stream.writeTo(baos);
-            repositoryManager.saveEditionExport(edition, baos.toByteArray());
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                stream.writeTo(baos);
+                repositoryManager.saveEditionExport(edition, baos.toByteArray());
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
 
             dataservice.setModified(false); //once we've published, we're not modified
 
-            updatePublishConfiguration(payload, config, theVdb, edition);
+            config.setVDB(theVdb);
+            config.setPublishedRevision(edition.getRevision());
 
             status.addAttribute(REVISION, String.valueOf(edition.getRevision()));
             //
@@ -871,7 +886,18 @@ public final class DataVirtualizationService extends DvService {
     }
 
     private void submitPublish(PublishConfiguration config, StatusObject status)
-            throws KException {
+            {
+        if (config.isSecurityEnabled()) {
+            if (ssoConfigurationProperties.getAuthServerUrl() == null) {
+                //error
+                status.addAttribute("Build Status", BuildStatus.Status.FAILED.name()); //$NON-NLS-1$
+                status.addAttribute("Build Status Message", "Virtualization is configured for SSO integration, but SSO is not configured"); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            config.setSsoConfigurationProperties(ssoConfigurationProperties);
+        }
+
+
         BuildStatus buildStatus = openshiftClient.publishVirtualization(config);
 
         status.addAttribute("OpenShift Name", buildStatus.getOpenShiftName()); //$NON-NLS-1$
@@ -879,31 +905,19 @@ public final class DataVirtualizationService extends DvService {
         status.addAttribute("Build Status Message", buildStatus.getStatusMessage()); //$NON-NLS-1$
     }
 
-    private void updatePublishConfiguration(final PublishRequestPayload payload,
-            PublishConfiguration config, VDBMetaData theVdb, Edition edition) {
-        // the properties in this class can be exposed for user input
-        config.setVDB(theVdb);
-        config.setEnableOData(payload.getEnableOdata());
-        config.setContainerDiskSize(payload.getDiskSize());
-        config.setContainerMemorySize(payload.getMemory());
-        config.setCpuUnits(payload.getCpuUnits());
-        config.setPublishedRevision(edition.getRevision());
-    }
-
     /**
      * Get the editions from the repository
      * @return a JSON document representing all the editions
-     * @throws Exception
      */
-    @GetMapping(value = V1Constants.PUBLISH + FS
+    @GetMapping(value = V1Constants.PUBLISH + StringConstants.FS
             + VIRTUALIZATION_PLACEHOLDER, produces = {
                     MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Return the collection of editions", response = Edition.class, responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
     public List<Edition> getEditions(
             @ApiParam(value = "Name of the virtualization", required = true) final @PathVariable(VIRTUALIZATION) String virtualization)
-            throws Exception {
+            {
         return repositoryManager.runInTransaction(false, () -> {
             return repositoryManager
                     .findEditions(virtualization);
@@ -912,23 +926,19 @@ public final class DataVirtualizationService extends DvService {
 
     /**
      * Get a single edition
-     * @param virtualization
-     * @param revision
-     * @return
-     * @throws Exception
      *
      * TODO: there's not yet more detail here than what is in the list
      */
-    @GetMapping(value = V1Constants.PUBLISH + FS + VIRTUALIZATION_PLACEHOLDER
-            + FS + REVISION_PLACEHOLDER, produces = {
+    @GetMapping(value = V1Constants.PUBLISH + StringConstants.FS + VIRTUALIZATION_PLACEHOLDER
+            + StringConstants.FS + REVISION_PLACEHOLDER, produces = {
                     MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Return an edition", response = Edition.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
     public Edition getEdition(
             @ApiParam(value = "Name of the virtualization", required = true) final @PathVariable(VIRTUALIZATION) String virtualization,
             @ApiParam(value = "Revision number", required = true) final @PathVariable(REVISION) long revision)
-            throws Exception {
+            {
         return repositoryManager.runInTransaction(false, () -> {
             Edition e = repositoryManager.findEdition(virtualization, revision);
 
@@ -942,21 +952,17 @@ public final class DataVirtualizationService extends DvService {
 
     /**
      * Start (re-publish) the given revision
-     * @param virtualization
-     * @param revision
-     * @return
-     * @throws Exception
      */
-    @PostMapping(value = V1Constants.PUBLISH + FS + VIRTUALIZATION_PLACEHOLDER
-            + FS + REVISION_PLACEHOLDER + FS + START, produces = {
+    @PostMapping(value = V1Constants.PUBLISH + StringConstants.FS + VIRTUALIZATION_PLACEHOLDER
+            + StringConstants.FS + REVISION_PLACEHOLDER + StringConstants.FS + START, produces = {
                     MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Start an edition", response = StatusObject.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
     public StatusObject startEdition(
             @ApiParam(value = "Name of the virtualization to be deleted", required = true) final @PathVariable(VIRTUALIZATION) String virtualization,
             @ApiParam(value = "Revision number", required = true) final @PathVariable(REVISION) long revision)
-            throws Exception {
+            {
          PublishConfiguration publishConfig = repositoryManager.runInTransaction(true, () -> {
             Edition e = repositoryManager.findEdition(virtualization, revision);
 
@@ -967,21 +973,25 @@ public final class DataVirtualizationService extends DvService {
             byte[] bytes = repositoryManager.findEditionExport(e);
             Assertion.isNotNull(bytes);
 
-            ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(bytes));
+            final VDBMetaData theVdb;
+            try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(bytes))) {
 
-            ZipEntry ze = zis.getNextEntry();
-            while (ze != null && !ze.getName().equals(DV_VDB_XML)) {
-                ze = zis.getNextEntry();
+                ZipEntry ze = zis.getNextEntry();
+                while (ze != null && !ze.getName().equals(DV_VDB_XML)) {
+                    ze = zis.getNextEntry();
+                }
+                Assertion.isNotNull(ze);
+
+                theVdb = VDBMetadataParser.unmarshall(zis);
+            } catch (IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            } catch (XMLStreamException xse) {
+                throw new IllegalArgumentException("Unable to unmarshall VDB meta data", xse);
             }
-            Assertion.isNotNull(ze);
 
-            VDBMetaData theVdb = VDBMetadataParser.unmarshell(zis);
-
-            PublishRequestPayload payload = new PublishRequestPayload();
             PublishConfiguration config = new PublishConfiguration();
-            payload.setName(virtualization);
-
-            updatePublishConfiguration(payload, config, theVdb, e);
+            config.setVDB(theVdb);
+            config.setPublishedRevision(e.getRevision());
             return config;
         });
         StatusObject status = new StatusObject();
@@ -989,16 +999,15 @@ public final class DataVirtualizationService extends DvService {
         return status;
     }
 
-    @PostMapping(value = V1Constants.PUBLISH + FS + VIRTUALIZATION_PLACEHOLDER
-            + FS + REVISION_PLACEHOLDER + FS + REVERT, produces = {
+    @PostMapping(value = V1Constants.PUBLISH + StringConstants.FS + VIRTUALIZATION_PLACEHOLDER
+            + StringConstants.FS + REVISION_PLACEHOLDER + StringConstants.FS + REVERT, produces = {
                     MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Revert to an edition", response = StatusObject.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403, message = "An error has occurred.") })
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
     public StatusObject revertToEdition(
             @ApiParam(value = "Name of the virtualization to be deleted", required = true) final @PathVariable(VIRTUALIZATION) String virtualization,
-            @ApiParam(value = "Revision number", required = true) final @PathVariable(REVISION) long revision)
-            throws Exception {
+            @ApiParam(value = "Revision number", required = true) final @PathVariable(REVISION) long revision) {
         return repositoryManager.runInTransaction(false, () -> {
             Edition e = repositoryManager.findEdition(virtualization, revision);
 
@@ -1009,82 +1018,163 @@ public final class DataVirtualizationService extends DvService {
             byte[] bytes = repositoryManager.findEditionExport(e);
             Assertion.isNotNull(bytes);
 
-            return importDataVirtualization(virtualization, new ByteArrayResource(bytes), false);
+            try {
+                return importDataVirtualization(virtualization, new ByteArrayResource(bytes), false);
+            } catch (IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
         });
     }
 
     /**
      * Get the published virtualization metrics
-     * @param virtualization
-     * @return
-     * @throws Exception
      */
-    @RequestMapping(value = {VIRTUALIZATION_PLACEHOLDER + FS + "metrics"}, method = RequestMethod.GET, produces = {
+    @RequestMapping(value = {VIRTUALIZATION_PLACEHOLDER + StringConstants.FS + "metrics"}, method = RequestMethod.GET, produces = {
             MediaType.APPLICATION_JSON_VALUE })
     @ApiOperation(value = "Get the current metric values for the given virtualization.  Assumes only a single running pod.", response = PodMetrics.class)
     @ApiResponses(value = { @ApiResponse(code = 404, message = "No virtualization could be found with name"),
             @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
-            @ApiResponse(code = 403, message = "An error has occurred."),
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED),
             @ApiResponse(code = 503, message = "Metrics are not available")})
     public PodMetrics getPublishedVirtualizationMetrics(
             @ApiParam(value = "name of the virtualization",
-            required = true) final @PathVariable(VIRTUALIZATION) String virtualization)
-            throws Exception {
+            required = true) final @PathVariable(VIRTUALIZATION) String virtualization) throws IOException
+            {
 
-        BuildStatus status = this.openshiftClient.getVirtualizationStatus(virtualization);
+        VirtualizationStatus status = this.openshiftClient.getVirtualizationStatus(virtualization);
+        BuildStatus buildStatus = status.getBuildStatus();
 
-        if (status == null) {
+        if (buildStatus.getStatus() == Status.NOTFOUND) {
             throw notFound(virtualization);
         }
 
-        if (status.getStatus() != Status.RUNNING) {
+        DeploymentStatus deploymentStatus = status.getDeploymentStatus();
+        if (deploymentStatus.getStatus() != DeploymentStatus.Status.RUNNING) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         PodMetrics metrics = new PodMetrics();
 
-        String startedAt = this.openshiftClient.getPodStartedAt(status.getNamespace(), status.getOpenShiftName());
+        String startedAt = this.openshiftClient.getPodStartedAt(buildStatus.getNamespace(), buildStatus.getOpenShiftName());
         metrics.setStartedAt(startedAt);
 
-        String baseUrl = String.format("http://%s:%s/jolokia/read/", status.getOpenShiftName(), ProtocolType.JOLOKIA.getTargetPort()); //$NON-NLS-1$
+        String baseUrl = String.format("http://%s:%s/jolokia/read/", buildStatus.getOpenShiftName(), ProtocolType.JOLOKIA.getTargetPort()); //$NON-NLS-1$
 
         String auth = "jolokia:jolokia"; //$NON-NLS-1$
         String authValue = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.ISO_8859_1)); //$NON-NLS-1$
         BasicHeader authHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, authValue);
 
         try (SyndesisHttpClient client = new SyndesisHttpClient()){
-        try (InputStream response = client.executeGET(baseUrl + "org.teiid:type=Runtime/Sessions", authHeader);) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response);
-            JsonNode value = root.withArray("value");
-            if (value != null) {
-                int sessionCount = value.size();
-                metrics.setSessions(sessionCount);
+            try (InputStream response = client.executeGET(baseUrl + "org.teiid:type=Runtime/Sessions", authHeader);) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readTree(response);
+                JsonNode value = root.withArray("value");
+                if (value != null) {
+                    int sessionCount = value.size();
+                    metrics.setSessions(sessionCount);
+                }
             }
-        }
 
-        try (InputStream response = client.executeGET(baseUrl + "org.teiid:type=Runtime/TotalRequestsProcessed", authHeader);) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response);
-            JsonNode value = root.get("value");
-            if (value != null) {
-                long requestCount = value.asLong();
-                metrics.setRequestCount(requestCount);
+            try (InputStream response = client.executeGET(baseUrl + "org.teiid:type=Runtime/TotalRequestsProcessed", authHeader);) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readTree(response);
+                JsonNode value = root.get("value");
+                if (value != null) {
+                    long requestCount = value.asLong();
+                    metrics.setRequestCount(requestCount);
+                }
             }
-        }
 
-        try (InputStream response = client.executeGET(baseUrl + "org.teiid:type=Cache,name=ResultSet/HitRatio", authHeader);) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response);
-            JsonNode value = root.get("value");
-            if (value != null) {
-                double hitRatio = value.asDouble();
-                metrics.setResultSetCacheHitRatio(hitRatio);
+            try (InputStream response = client.executeGET(baseUrl + "org.teiid:type=Cache,name=ResultSet/HitRatio", authHeader);) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readTree(response);
+                JsonNode value = root.get("value");
+                if (value != null) {
+                    double hitRatio = value.asDouble();
+                    metrics.setResultSetCacheHitRatio(hitRatio);
+                }
             }
-        }
         }
 
         return metrics;
+    }
+
+    @GetMapping(value = {
+            VIRTUALIZATION_PLACEHOLDER + StringConstants.FS + ROLES }, produces = {
+                    MediaType.APPLICATION_JSON_VALUE })
+    @ApiOperation(value = "Return all role information for the given virtualization", response = RoleInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
+    public RoleInfo getRoles(
+            @ApiParam(value = "name of the virtualization", required = true) final @PathVariable(VIRTUALIZATION) String virtualization)
+            {
+        List<TablePrivileges> privileges = repositoryManager
+                .runInTransaction(false, () -> {
+                    return repositoryManager
+                            .findAllTablePrivileges(virtualization);
+                });
+        // we're using a parent container for if / when procedure and schema
+        // level and
+        // other such information is added.
+        RoleInfo result = new RoleInfo();
+        result.setTablePrivileges(privileges);
+        return result;
+    }
+
+    @PutMapping(value = {
+            VIRTUALIZATION_PLACEHOLDER + StringConstants.FS + ROLES }, produces = {
+                    MediaType.APPLICATION_JSON_VALUE })
+    @ApiOperation(value = "Apply the role changes to the given virtualization")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Only JSON is returned by this operation"),
+            @ApiResponse(code = 403, message = AN_ERROR_HAS_OCCURRED) })
+    public void applyRoles(
+            @ApiParam(value = "name of the virtualization", required = true) final @PathVariable(VIRTUALIZATION) String virtualization,
+            @ApiParam(value = "role info", required = true) final @RequestBody RoleInfo roleInfo)
+            {
+
+        repositoryManager.runInTransaction(false, () -> {
+            RoleInfo.Operation op = roleInfo.getOperation();
+            for (TablePrivileges tablePrivileges : roleInfo
+                    .getTablePrivileges()) {
+                if (tablePrivileges.getRoleName() == null) {
+                    if (op != Operation.REVOKE) {
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Can only revoke / clear across all roles"); //$NON-NLS-1$
+                    }
+                    repositoryManager.deleteTablePrivileges(tablePrivileges.getViewDefinitionIds());
+                    continue;
+                }
+                for (String viewId : tablePrivileges.getViewDefinitionIds()) {
+                    TablePrivileges existing = repositoryManager
+                            .findTablePrivileges(viewId,
+                                    tablePrivileges.getRoleName());
+                    switch (op) {
+                    case GRANT:
+                        if (existing == null) {
+                            existing = repositoryManager.createTablePrivileges(
+                                    viewId, tablePrivileges.getRoleName());
+                        }
+                        existing.getGrantPrivileges()
+                                .addAll(tablePrivileges.getGrantPrivileges());
+                        break;
+                    case REVOKE:
+                        if (existing != null) {
+                            existing.getGrantPrivileges().removeAll(
+                                    tablePrivileges.getGrantPrivileges());
+                            if (existing.getGrantPrivileges().isEmpty()) {
+                                repositoryManager.deleteTablePrivileges(existing);
+                            }
+                        } // else currently not implemented
+                          // there are no schema level permissions to remove from
+                        break;
+                    default:
+                        throw new AssertionError();
+                    }
+                }
+            }
+            return null;
+        });
     }
 
 }

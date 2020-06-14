@@ -1,7 +1,4 @@
-import { Bullseye } from '@patternfly/react-core';
-import { action } from '@storybook/addon-actions';
 import { boolean, text } from '@storybook/addon-knobs';
-import { withNotes } from '@storybook/addon-notes';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -21,20 +18,11 @@ const viewOData = 'View OData';
 const editTip = 'Edit ' + virtualizationName + ' virtualization';
 const draftText = 'Draft';
 const publishedText = 'Published';
-const confirmDeleteTitle = 'Delete Virtualization';
-const confirmDeleteMessage =
-  'This will permanently delete the Virtualization.  Proceed with the delete?';
-const confirmStopTitle = 'Stop Virtualization';
-const confirmStopMessage =
-  'This Virtualization has been published.  Please stop the Virtualization first.';
-const cancelText = 'Cancel';
-const deleteText = 'Delete';
-const stopText = 'Stop';
-const publishText = 'Publish';
-const publishInProgressText = 'publish in progress...';
-const stopInProgressText = 'stop in progress...';
 const publishLogUrl = 'testUrl';
 const publishLogUrlText = 'View Logs';
+const popoverHeading = 'Data permission is applied';
+const popover= 'This virtual database has one or more data permissions set.';
+const virtualizationActions: JSX.Element = <div>VirtActions</div>;
 
 const publishedVirtualizationNotes =
   '- Verify the custom virtualization icon is showing on the left\n' +
@@ -50,15 +38,6 @@ const publishedVirtualizationNotes =
   '- Verify the edit button tooltip is "' +
   editTip +
   '"\n' +
-  '- Verify the published button is labeled "' +
-  publishedText +
-  '"\n' +
-  '- Verify the dropdown menu contains "' +
-  deleteText +
-  '"\n' +
-  '- Verify the dropdown menu contains "' +
-  stopText +
-  '"\n' +
   '[ ACTION ] Select KNOBS tab and delete all text in the icon area\n' +
   '-- >  Verify the custom virtualization icon changes to the default' +
   '\n' +
@@ -69,93 +48,69 @@ const publishedVirtualizationNotes =
   publishedText +
   '" button label was changed to "' +
   draftText +
-  '"\n' +
-  '-- >  Verify the dropdown menu contains "' +
-  publishText +
   '"\n';
 
 stories
   .add(
     'sample virtualization item',
-    withNotes(publishedVirtualizationNotes)(() => (
+    () => (
       <Router>
-        <Bullseye>
           <VirtualizationListItem
+            dropdownActions={virtualizationActions}
             isProgressWithLink={true}
-            i18nDeleteInProgressText={'Deleting...'}
-            i18nPublishInProgressText={publishInProgressText}
-            i18nStopInProgressText={stopInProgressText}
             i18nPublishState={'Unpublishing...'}
+            i18nPublishStateMessage={'The virtualization is stopping'}
             labelType={'default'}
             publishingStepText={'Building'}
-            hasViews={true}
             virtualizationName={virtualizationName}
             virtualizationDescription={virtualizationDescription}
-            i18nCancelText={cancelText}
-            i18nDelete={deleteText}
-            i18nDeleteModalMessage={confirmDeleteMessage}
-            i18nDeleteModalTitle={confirmDeleteTitle}
             icon={text('icon', virtualizationIconData)}
             i18nEdit={editText}
             i18nViewODataUrlText={viewOData}
             i18nEditTip={editTip}
             i18nInUseText={'The virtualization is in use by an integration.'}
-            i18nStop={stopText}
-            i18nPublish={publishText}
             i18nPublishLogUrlText={publishLogUrlText}
-            i18nStopModalMessage={confirmStopMessage}
-            i18nStopModalTitle={confirmStopTitle}
             modified={boolean('modified', false)}
             detailsPageLink={'/details/page/link'}
-            onDelete={action(deleteText)}
-            onStop={action(stopText)}
-            onPublish={action(publishText)}
             currentPublishedState={'BUILDING'}
             publishingLogUrl={text('publishLogUrl', publishLogUrl)}
+            i18nLockPopoverHeading={popoverHeading}
+            i18nLockPopover={popover}
+            i18nSecuredText={'Secured'}
             usedBy={['stuff']}
+            secured={true}
           />
-        </Bullseye>
       </Router>
-    ))
+    ),
+    { notes: publishedVirtualizationNotes }
   )
 
   .add('virtualization item with odata', () => (
     <Router>
-      <Bullseye>
         <VirtualizationListItem
+          dropdownActions={virtualizationActions}
           isProgressWithLink={false}
-          i18nDeleteInProgressText={'Deleting...'}
-          i18nPublishInProgressText={publishInProgressText}
-          i18nStopInProgressText={stopInProgressText}
           i18nPublishState={publishedText}
+          i18nPublishStateMessage={'The virtualization is running'}
           labelType={'primary'}
-          hasViews={true}
           virtualizationName={virtualizationName}
           virtualizationDescription={virtualizationDescription}
-          i18nCancelText={cancelText}
-          i18nDelete={deleteText}
-          i18nDeleteModalMessage={confirmDeleteMessage}
-          i18nDeleteModalTitle={confirmDeleteTitle}
           icon={text('icon', virtualizationIconData)}
           odataUrl={'http://redhat.com'}
           i18nEdit={editText}
           i18nViewODataUrlText={viewOData}
           i18nEditTip={editTip}
           i18nInUseText={'The virtualization is not in use by an integration.'}
-          i18nStop={stopText}
-          i18nPublish={publishText}
           i18nPublishLogUrlText={publishLogUrlText}
-          i18nStopModalMessage={confirmStopMessage}
-          i18nStopModalTitle={confirmStopTitle}
           modified={boolean('modified', false)}
           detailsPageLink={'/details/page/link'}
-          onDelete={action(deleteText)}
-          onStop={action(stopText)}
-          onPublish={action(publishText)}
           currentPublishedState={'RUNNING'}
           publishingLogUrl={text('publishLogUrl', publishLogUrl)}
+          i18nLockPopoverHeading={popoverHeading}
+          i18nLockPopover={popover}
+          i18nSecuredText={'Secured'}
           usedBy={[]}
+          secured={true}
         />
-      </Bullseye>
     </Router>
   ));

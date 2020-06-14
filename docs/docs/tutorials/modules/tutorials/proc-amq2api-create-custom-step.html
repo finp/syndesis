@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Making a custom step available :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-amq2api-create-custom-step.html">Making a custom step available</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/tutorials/modules/tutorials/proc-amq2api-create-custom-step.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Making a custom step available</h1>
+<div class="paragraph">
+<p>{prodname} provides a number of steps that operate on
+integration data between connections. If {prodname} does not provide a
+between-connections step that meets your need,
+a developer can code an extension that defines one or more
+custom steps that operate on data between connections.
+The developer gives you a <code>.jar</code> file that contains the extension.
+You then upload the extension in {prodname} to make the custom step(s)
+available for use in integrations.</p>
+</div>
+<div class="paragraph">
+<p>The AMQ to REST API sample integration uses a custom step that
+operates on data between connections to
+identify items that were damaged when they were received.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a new browser tab, go to
+<a href="https://github.com/syndesisio/fuse-online-sample-extension/releases" class="bare">https://github.com/syndesisio/fuse-online-sample-extension/releases</a>.</p>
+</li>
+<li>
+<p>Download the extension’s <code>.jar</code> file.</p>
+</li>
+<li>
+<p>In {prodname}, in the left panel, click <strong>Customizations</strong> &gt; <strong>Extensions</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Import Extension</strong>.</p>
+</li>
+<li>
+<p>Click in the dotted-line box and select the downloaded <code>.jar</code> file that
+contains the extension.
+{prodname} validates the file, extracts and displays the extension&#8217;s
+ID, name, description, and type, and lists <strong>Damage Reporter</strong> as the custom step
+that the extension defines.</p>
+</li>
+<li>
+<p>Click <strong>Import Extension</strong>. {prodname} makes the custom step available and displays
+the list of extensions that have been imported.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional resources</div>
+<p>For information about coding an extension and creating its <code>.jar</code> file, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="{LinkToolingUserGuide}#FuseOnlineExtension">{NameOfToolingUserGuide} - Use Fuse tooling to develop an extension.</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#developing-extensions_custom">{NameOfSyndesisIntegrationGuide} - Manually code an extension.</a></p>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -18,12 +18,14 @@ package grant
 
 import (
 	"fmt"
+
 	"github.com/operator-framework/operator-sdk/pkg/log/zap"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/syndesisio/syndesis/install/operator/pkg"
+
 	"github.com/syndesisio/syndesis/install/operator/pkg/cmd/internal"
 	"github.com/syndesisio/syndesis/install/operator/pkg/generator"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/capabilities"
 	"github.com/syndesisio/syndesis/install/operator/pkg/util"
 )
 
@@ -31,10 +33,11 @@ const RoleName = "syndesis-installer"
 
 type Grant struct {
 	*internal.Options
-	Role    string
-	Kind    string
-	User    string
-	cluster bool
+	Role      string
+	Kind      string
+	User      string
+	cluster   bool
+	ApiServer capabilities.ApiServerSpec
 }
 
 func New(parent *internal.Options) *cobra.Command {
@@ -48,21 +51,28 @@ func New(parent *internal.Options) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().BoolVarP(&o.cluster, "cluster", "", false, "add the permission for all projects in the cluster(requires cluster admin privileges)")
-	cmd.PersistentFlags().StringVarP(&o.User, "user", "u", pkg.DefaultOperatorImage, "add permissions for the given User")
+	cmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "add permissions for the given User")
 	cmd.PersistentFlags().AddFlagSet(zap.FlagSet())
 	cmd.PersistentFlags().AddFlagSet(util.FlagSet)
-	cmd.MarkFlagRequired("user")
+	cobra.MarkFlagRequired(cmd.PersistentFlags(), "user")
 
 	return &cmd
 }
 
 func (o *Grant) grant() error {
+
+	apiServer, err := capabilities.ApiCapabilities(o.ClientTools())
+	if err != nil {
+		return err
+	}
+
+	o.ApiServer = *apiServer
 	o.Role = RoleName
 
-	grp := "./install/grant_cluster_role.yml.tmpl"
+	grp := "./install/grant/grant_cluster_role.yml.tmpl"
 	o.Kind = "ClusterRole"
 	if o.cluster == false {
-		grp = "./install/grant_role.yml.tmpl"
+		grp = "./install/grant/grant_role.yml.tmpl"
 		o.Kind = "Role"
 	}
 
@@ -75,9 +85,41 @@ func (o *Grant) grant() error {
 	if err != nil {
 		return err
 	}
-
 	resources = append(resources, gr...)
-	client, err := o.GetClient()
+
+	//
+	// Create & bind the cluster role for reading
+	// operation-lifecycle-manager artifacts if they are available
+	// If not available then resources will be empty
+	//
+	olm, err := generator.Render("./install/olm_cluster_role.yml.tmpl", o)
+	if err != nil {
+		return err
+	}
+	resources = append(resources, olm...)
+
+	grolm, err := generator.Render("./install/grant/grant_olm_cluster_role.yml.tmpl", o)
+	if err != nil {
+		return err
+	}
+	resources = append(resources, grolm...)
+
+	//
+	// Will only render anything if there is NOT olm support
+	//
+	jaegerRole, err := generator.Render("./install/grant/grant_jaeger_cluster_role.yml.tmpl", o)
+	if err != nil {
+		return err
+	}
+	resources = append(resources, jaegerRole...)
+
+	pubRole, err := generator.Render("./install/grant/grant_public_api_cluster_role.yml.tmpl", o)
+	if err != nil {
+		return err
+	}
+	resources = append(resources, pubRole...)
+
+	client, err := o.ClientTools().RuntimeClient()
 	for _, res := range resources {
 		res.SetNamespace(o.Namespace)
 

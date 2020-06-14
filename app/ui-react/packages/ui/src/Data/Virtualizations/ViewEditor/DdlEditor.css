@@ -1,7 +1,36 @@
 .ddl-editor {
-  min-height: 300px;
+  height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.ddl-editor_tree_comp{
+  --pf-c-page__main-section--PaddingRight: 5px;
+}
+
+.ddl-editor_comp{
+  --pf-c-page__main-section--PaddingLeft: 5px;
+}
+
+.ddl-editor_metatree_table{
+  overflow-y: auto;
+}
+
+.ddl-editor_metatree_table_collapsed{
+  max-height: 400px;
+}
+
+.ddl-editor_metatree_table_expanded{
+  max-height: -moz-available;          /* WebKit-based browsers will ignore this. */
+  max-height: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+}
+
+.ddl-editor_metatree_table > .pf-c-table tr > *{
+  padding: 1px 2px !important;
+}
+
+.ddl-editor_metatree_table .pf-c-table{
+  --pf-c-table__expandable-row--before--BackgroundColor: none !important;
 }
 
 .ddl-editor__button {
@@ -17,10 +46,7 @@
   padding-bottom: 10px;
 }
 
-.ddl-editor__card-body,
-.ddl-editor .text-editor,
-.ddl-editor .react-codemirror2,
-.ddl-editor .CodeMirror{
+.ddl-editor__card-body {
   height: 100%;
 }
 

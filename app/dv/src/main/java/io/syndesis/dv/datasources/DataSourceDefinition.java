@@ -21,17 +21,18 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import javax.sql.DataSource;
 
-import io.syndesis.dv.metadata.TeiidDataSource;
-import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
 import com.zaxxer.hikari.HikariDataSource;
+
+import io.syndesis.dv.metadata.TeiidDataSource;
+import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
 
 /**
  * Service catalog based Data Services that are available
  */
 public abstract class DataSourceDefinition {
-    private static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+    private static final ScheduledThreadPoolExecutor EXECUTOR = new ScheduledThreadPoolExecutor(1);
 
     /**
      * Returns the type of the database. Matches with the translator name
@@ -53,7 +54,6 @@ public abstract class DataSourceDefinition {
     /**
      * Check to see if the properties given match to the Data Source definition, using which
      * connection can be made.
-     * @param properties
      * @return true if the properties match
      */
     public boolean isTypeOf(Map<String, String> properties, String type) {
@@ -62,8 +62,6 @@ public abstract class DataSourceDefinition {
 
     /**
      * create data source for the given Syndesis Data source
-     * @param deploymentName
-     * @param scd
      * @return {@link TeiidDataSource}
      */
     public TeiidDataSourceImpl createDatasource(String deploymentName, DefaultSyndesisDataSource scd) {
@@ -76,13 +74,19 @@ public abstract class DataSourceDefinition {
             ((HikariDataSource)ds).setMaximumPoolSize(10);
             ((HikariDataSource)ds).setMinimumIdle(0);
             ((HikariDataSource)ds).setIdleTimeout(60000);
-            ((HikariDataSource)ds).setScheduledExecutor(executor);
+            ((HikariDataSource)ds).setScheduledExecutor(EXECUTOR);
         }
         Map<String, String> importProperties = new HashMap<String, String>();
         Map<String, String> translatorProperties = new HashMap<String, String>();
 
         if (scd.getProperty("schema") != null) {
             importProperties.put("importer.schemaName", scd.getProperty("schema"));
+            importProperties.put("importer.UseFullSchemaName", "false");
+        } else {
+            //either we need to try the import and possibly fail,
+            //or just start off with this as true and include the
+            //the source schema names. for now this is simpler
+            importProperties.put("importer.UseFullSchemaName", "true");
         }
         importProperties.put("importer.TableTypes", "TABLE,VIEW");
         importProperties.put("importer.UseQualifiedName", "true");

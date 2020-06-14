@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Twitter :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-twitter.html">Connecting to Twitter</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-twitter.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Twitter</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>To connect to Twitter in an integration, the main steps are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#register-with-twitter_twitter">Registering {prodname} as a Twitter client application</a></p>
+</li>
+<li>
+<p><a href="#create-twitter-connection_twitter">Creating a Twitter connection</a></p>
+</li>
+<li>
+<p><a href="#adding-twitter-connection-start_twitter">Adding a Twitter connection to trigger integration execution</a></p>
+</li>
+<li>
+<p><a href="#adding-twitter-connection-finish-middle_twitter">Adding a Twitter connection that sends a direct message</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You need a Twitter developer account to authorize access from your
+{prodname} environment to Twitter. If you do not already have a Twitter
+developer account,
+go to <a href="https://apps.twitter.com" class="bare">https://apps.twitter.com</a>, sign in to Twitter, and click
+<strong>Apply for a developer account</strong>. Obtaining the developer account is
+quick when you provide a professional email address,
+such as <code>me@redhat.com</code> rather than a personal address such as <code>you@gmail.com</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="register-with-twitter_twitter"><a class="anchor" href="#register-with-twitter_twitter"></a>Registering {prodname} as a Twitter client application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to connect to Twitter, the first thing you must do is
+register your {prodname} environment as a client application
+that can access Twitter.
+This lets you create any number of integrations that connect
+to Twitter. In other words, you need to register a particular
+{prodname} environment with Twitter only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Twitter client application. However, while each Twitter
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You are logged in to {prodname}.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL, click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your installation of {prodname} to the clipboard.
+You will need this URL later in this procedure.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> entry
+to display the <strong>Consumer API Key</strong> and <strong>Consumer API Secret Key</strong> fields.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, go to your
+<a href="https://developer.twitter.com/apps">Twitter developer account</a>, sign in if you
+need to, and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the upper right, next to the name of your developer project, click the
+down caret and click <strong>Apps</strong>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Create an app</strong>.</p>
+</li>
+<li>
+<p>In the <strong>App name</strong> field, enter a name such as <strong>My {prodname} Client</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Application description</strong> field, enter a tip such as
+<strong>For leveraging tweets</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Website URL</strong> field, paste the URL that you copied at the beginning
+of this procedure and remove <code>api/v1/credentials/callback</code> from the end
+of the URL.</p>
+</li>
+<li>
+<p>Select <strong>Enable Sign in with Twitter</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Callback URLs</strong> field, paste the URL again. It should be
+something like this:
+<code>https://app-proj912876.7b63.{prodnameinurl}.openshiftapps.com/api/v1/credentials/callback</code>.</p>
+<div class="paragraph">
+<p>You can skip the next few fields.</p>
+</div>
+</li>
+<li>
+<p><strong>Tell us how this app will be used</strong> requires a 100-character description.
+For convenience, you can copy and paste:
+<code>This is a demo application so that I can evaluate how to integrate Twitter
+with my enterprise applications.</code></p>
+</li>
+<li>
+<p>Click <strong>Create</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create</strong> again to confirm that you reviewed the developer terms.</p>
+</li>
+<li>
+<p>At the top of the page for the app you just created, click
+the <strong>Keys and tokens</strong> tab.</p>
+</li>
+<li>
+<p>Copy the consumer API key.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the Twitter
+consumer API key into the {prodname} Twitter <strong>Consumer API Key</strong> field.</p>
+</li>
+<li>
+<p>Return to the Twitter <strong>Keys and tokens</strong> tab and copy the consumer API secret key.</p>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the Twitter
+consumer API secret key into the {prodname} Twitter
+<strong>Consumer API Secret Key</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> entry to collapse it.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-twitter-connection_twitter"><a class="anchor" href="#create-twitter-connection_twitter"></a>Creating a Twitter connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create an integration that obtains data from Twitter, you
+must first create a Twitter connection.
+After you create a Twitter connection, you can use it in any number of
+integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are logged in to {prodname}.</p>
+</li>
+<li>
+<p>{prodname} is open in a web browser.</p>
+</li>
+<li>
+<p>You registered your {prodname} environment as an application
+that can access Twitter.</p>
+</li>
+<li>
+<p>You added the Twitter consumer API key and consumer API secret key that you received
+after registration to the {prodname} <strong>Settings</strong> page.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors. A connector is a template that
+you use to create one or more connections.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> connector.</p>
+</li>
+<li>
+<p>Click <strong>Connect Twitter</strong> to display a Twitter authorization page.
+You might need to log in to Twitter before you see the authorization page.</p>
+<div class="paragraph">
+<p>If <strong>Connect Twitter</strong> does not appear, then your {prodname} environment
+is not registered as a Twitter client application. See
+<a href="{LinkSyndesisConnectorGuide}#register-with-twitter_twitter">Registering {prodname} as a Twitter client application</a>.
+When you try to create a Twitter connection and your {prodname} environment
+is not registered as a Twitter client application, then {prodname} displays
+multiple fields that prompt for authorization information. While you can
+create a Twitter connection by entering values in these fields,
+it is not recommended.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Authorize app</strong> to return to {prodname}.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Twitter Connect 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Twitter connection
+that uses my Twitter login credentials.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Twitter Connect 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-twitter-connection-start_twitter"><a class="anchor" href="#adding-twitter-connection-start_twitter"></a>Adding a Twitter connection to trigger integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a simple integration, the start connection can be a Twitter
+connection that triggers execution of the integration when
+it finds certain tweets or direct messages.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Twitter connection.</p>
+</li>
+<li>
+<p>You are creating or editing a simple integration and {prodname} is
+prompting you to choose the start connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click the Twitter
+connection that starts the integration. When the integration
+uses the selected connection to connect to Twitter, {prodname} uses the
+credentials defined in that connection.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform.
+A Twitter connection that you add to an integration performs only
+the action that you choose:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Mention</strong> monitors Twitter for tweets that contain the Twitter
+handle for the Twitter account that the connection is authorized to access.
+Upon finding such a tweet, the connection returns it to {prodname}, which triggers
+execution of the integration.</p>
+</li>
+<li>
+<p><strong>Retrieve</strong> periodically polls Twitter for direct messages sent
+to the Twitter account that the Twitter connection is authorized
+to access. Upon finding such messages, the connection returns them to {prodname},
+which triggers execution of the integration.</p>
+</li>
+<li>
+<p><strong>Search</strong>  periodically polls Twitter for tweets that match criteria
+that you specify. Upon finding such tweets, the connection returns them
+to {prodname}, which triggers execution of the integration.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Configure the action that you selected:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Mention</strong> does not require any configuration.</p>
+</li>
+<li>
+<p><strong>Retrieve</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Count</strong> has a default of 100 and you should not need to change
+this value, which affects internal behavior. However, do not set
+this value to less than 50 because doing so might decrease performance.</p>
+<div class="paragraph">
+<p>The <strong>Retrieve</strong> action always returns all previously unreturned
+direct messages received in the last 30 days. If you do not select
+<strong>Ignore direct messages previously found</strong>, then the <strong>Retrieve</strong> action
+returns all messages that have been received in the last 30 days.</p>
+</div>
+</li>
+<li>
+<p><strong>Delay</strong> is the period of time between polls. Twitter enforces
+rate limits, so you should not poll too often. The default
+interval is 5 seconds.</p>
+</li>
+<li>
+<p><strong>Ignore direct messages previously found</strong> returns only new
+messages when selected.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Search</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Delay</strong> is the period of time between polls. Twitter enforces
+rate limits, so you should not poll too often. The default
+interval is 5 seconds.</p>
+</li>
+<li>
+<p><strong>Ignore tweets previously found</strong> returns only new
+tweets when selected.</p>
+</li>
+<li>
+<p><strong>Query</strong> is a Twitter-formatted search expression that specifies
+the tweets that you want the connection to return. The following
+table provides examples of what you can enter. More details are in this
+<a href="https://developer.twitter.com/en/docs/tweets/rules-and-filtering/overview/standard-operators.html">Twitter document for search operators</a>.</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Results</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>My Product</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain both <code>My</code> and <code>Product</code>,
+but not necessarily <code>My Product</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"My Product”</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain an instance of <code>My Product</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>My OR Product</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain an instance of <code>My</code> or <code>Product</code> or
+an instance of each one.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>My -Product</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain an instance of <code>My</code> and do not contain
+an instance of <code>Product</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#MyProduct</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain the <code>MyProduct</code> hashtag.</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The integration now has a start connection and {prodname} is
+prompting you to choose the finish connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-twitter-connection-finish-middle_twitter"><a class="anchor" href="#adding-twitter-connection-finish-middle_twitter"></a>Adding a Twitter connection that sends a direct message</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration, you can
+add a Twitter connection that sends a direct message to a Twitter
+user. A direct message is a private message that goes to
+only the specified user.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Twitter connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is
+prompting you to add to the integration. Or, for a simple integration,
+{prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add a Twitter connection.</p>
+</li>
+<li>
+<p>Click the Twitter
+connection that you want to add to the integration. When the integration
+uses the selected connection to connect to Twitter, {prodname} uses the
+credentials defined in that connection.</p>
+</li>
+<li>
+<p>Select the <strong>Send</strong> action.</p>
+</li>
+<li>
+<p>In the <strong>Default Message</strong> field, enter the message that you want the
+connection to send when a data mapper step does not map
+the direct message content from a previous step to this Twitter connection.
+While you must enter a message when you configure this Twitter connection,
+a message that you map from a previous step has precedence over the
+message that you specify here.</p>
+</li>
+<li>
+<p>In the <strong>User</strong> field, enter the Twitter handle of the user who you want
+to send a direct message to. For example, both <strong>Aslan</strong> and <strong>@Aslan</strong> are correct.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the middle or at the end of
+an integration visualization.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

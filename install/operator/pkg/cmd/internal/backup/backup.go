@@ -17,11 +17,17 @@
 package backup
 
 import (
+	"errors"
+
 	"github.com/operator-framework/operator-sdk/pkg/log/zap"
 	"github.com/spf13/cobra"
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis"
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
 	"github.com/syndesisio/syndesis/install/operator/pkg/cmd/internal"
 	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/backup"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/configuration"
 	"github.com/syndesisio/syndesis/install/operator/pkg/util"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
 
 type Backup struct {
@@ -29,7 +35,7 @@ type Backup struct {
 	backupDir string
 }
 
-func New(parent *internal.Options) *cobra.Command {
+func NewBackup(parent *internal.Options) *cobra.Command {
 	o := Backup{Options: parent}
 	cmd := cobra.Command{
 		Use:   "backup",
@@ -38,21 +44,55 @@ func New(parent *internal.Options) *cobra.Command {
 			util.ExitOnError(o.Run())
 		},
 	}
+	cmd.PersistentFlags().StringVarP(&configuration.TemplateConfig, "operator-config", "", "/conf/config.yaml", "Path to the operator configuration file.")
 	cmd.Flags().StringVar(&o.backupDir, "backup", "backup", "The directory to store the back up in")
 	cmd.PersistentFlags().AddFlagSet(zap.FlagSet())
 	cmd.PersistentFlags().AddFlagSet(util.FlagSet)
 	return &cmd
 }
 
-func (o *Backup) Run() error {
-	b := backup.Backup{
+func (o *Backup) prepare() (*v1beta1.Syndesis, error) {
+	mgr, err := manager.New(o.ClientTools().RestConfig(), manager.Options{
 		Namespace: o.Namespace,
-		BackupDir: o.backupDir,
-		Context:   o.Context,
-		Client:    o.Client,
-		Delete:    false,
-		LocalOnly: true,
+	})
+	if err != nil {
+		return nil, err
 	}
+
+	if err := apis.AddToScheme(mgr.GetScheme()); err != nil {
+		return nil, err
+	}
+
+	cl, err := o.ClientTools().RuntimeClient()
+	if err != nil {
+		return nil, err
+	}
+
+	syndesis, err := v1beta1.InstalledSyndesis(o.Context, cl, o.Namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	if syndesis == nil {
+		return nil, errors.New("No syndesis has been installed to backup its database")
+	}
+
+	return syndesis, nil
+}
+
+func (o *Backup) Run() error {
+	syndesis, err := o.prepare()
+	if err != nil {
+		return err
+	}
+
+	b, err := backup.NewBackup(o.Context, o.ClientTools(), syndesis, o.backupDir)
+	if err != nil {
+		return err
+	}
+
+	// Only backup to local location
+	b.SetLocalOnly(true)
 
 	return b.Run()
 }

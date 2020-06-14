@@ -15,23 +15,6 @@
  */
 package io.syndesis.server.endpoint.v1.handler.tests;
 
-import java.sql.DatabaseMetaData;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import io.fabric8.openshift.api.model.DeploymentConfig;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.ModelData;
 import io.syndesis.common.model.WithId;
@@ -45,6 +28,24 @@ import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import io.fabric8.openshift.api.model.DeploymentConfig;
 
 @Path("/test-support")
 @org.springframework.stereotype.Component
@@ -86,6 +87,7 @@ public class TestSupportHandler {
         deleteAllDBEntities();
         startControllers();
         dataMgr.resetDeploymentData();
+
         LOG.warn("user {} reset the DB", user);
     }
 

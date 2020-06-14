@@ -15,13 +15,6 @@
  */
 package io.syndesis.server.endpoint.v1.handler.extension;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -29,6 +22,7 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,14 +33,21 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.stereotype.Component;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.common.model.Dependency;
 import io.syndesis.common.model.Kind;
 import io.syndesis.common.model.ListResult;
@@ -65,32 +66,34 @@ import io.syndesis.extension.converter.BinaryExtensionAnalyzer;
 import io.syndesis.integration.api.IntegrationResourceManager;
 import io.syndesis.server.api.generator.util.IconGenerator;
 import io.syndesis.server.dao.file.FileDAO;
+import io.syndesis.server.dao.file.FileDataManager;
 import io.syndesis.server.dao.manager.DataManager;
-import io.syndesis.server.endpoint.util.FilterOptionsParser;
 import io.syndesis.server.endpoint.util.PaginationFilter;
-import io.syndesis.server.endpoint.util.ReflectiveFilterer;
-import io.syndesis.server.endpoint.util.ReflectiveSorter;
 import io.syndesis.server.endpoint.v1.SyndesisRestException;
 import io.syndesis.server.endpoint.v1.handler.BaseHandler;
 import io.syndesis.server.endpoint.v1.operations.Deleter;
 import io.syndesis.server.endpoint.v1.operations.Getter;
-import io.syndesis.server.endpoint.v1.operations.Lister;
 import io.syndesis.server.endpoint.v1.operations.PaginationOptionsFromQueryParams;
-import io.syndesis.server.endpoint.v1.operations.SortOptionsFromQueryParams;
+import io.syndesis.server.endpoint.v1.util.PredicateFilter;
+import okio.BufferedSink;
+import okio.Okio;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.stereotype.Component;
 
 @Path("/extensions")
-@Api(value = "extensions")
+@Tag(name = "extensions")
 @Component
 @ConditionalOnBean(FileDAO.class)
-public class ExtensionHandler extends BaseHandler implements Lister<Extension>, Getter<Extension>, Deleter<Extension> {
+@SuppressWarnings("PMD.GodClass")
+public class ExtensionHandler extends BaseHandler implements Getter<Extension>, Deleter<Extension> {
 
     private final FileDAO fileStore;
-
     private final ExtensionActivator extensionActivator;
-
     private final Validator validator;
-
     private final IntegrationResourceManager integrationResourceManager;
+    private final FileDataManager extensionDataManager;
 
     public ExtensionHandler(final DataManager dataMgr,
                             final FileDAO fileStore,
@@ -103,6 +106,7 @@ public class ExtensionHandler extends BaseHandler implements Lister<Extension>, 
         this.extensionActivator = extensionActivator;
         this.validator = validator;
         this.integrationResourceManager = integrationResourceManager;
+        this.extensionDataManager = new FileDataManager(getDataManager(), fileStore);
     }
 
     @Override
@@ -117,7 +121,7 @@ public class ExtensionHandler extends BaseHandler implements Lister<Extension>, 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @SuppressWarnings("PMD.CyclomaticComplexity")
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "JdkObsolete"})
     public Extension upload(MultipartFormDataInput dataInput, @Context SecurityContext sec, @QueryParam("updatedId") String updatedId) {
         Date rightNow = new Date();
         String id = KeyGenerator.createKey();
@@ -196,12 +200,8 @@ public class ExtensionHandler extends BaseHandler implements Lister<Extension>, 
     @POST
     @Path("/{id}/validation")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "All blocking validations pass", responseContainer = "Set",
-            response = Violation.class),
-        @ApiResponse(code = 400, message = "Found violations in validation", responseContainer = "Set",
-            response = Violation.class)
-    })
+    @ApiResponse(responseCode = "200", description = "All blocking validations pass", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Violation.class))))
+    @ApiResponse(responseCode = "400", description = "Found violations in validation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Violation.class))))
     public Set<Violation> validate(@NotNull @PathParam("id") final String extensionId) {
         Extension extension = getDataManager().fetch(Extension.class, extensionId);
         return doValidate(extension);
@@ -211,23 +211,16 @@ public class ExtensionHandler extends BaseHandler implements Lister<Extension>, 
     @Path(value = "/validation")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "All blocking validations pass", responseContainer = "Set",
-            response = Violation.class),
-        @ApiResponse(code = 400, message = "Found violations in validation", responseContainer = "Set",
-            response = Violation.class)
-    })
+    @ApiResponse(responseCode = "200", description = "All blocking validations pass", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Violation.class))))
+    @ApiResponse(responseCode = "400", description = "Found violations in validation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Violation.class))))
     public Set<Violation> validate(@NotNull final Extension extension) {
         return doValidate(extension);
     }
 
     @POST
     @Path(value = "/{id}/install")
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "Installed"),
-        @ApiResponse(code = 400, message = "Found violations in validation", responseContainer = "Set",
-            response = Violation.class)
-    })
+    @ApiResponse(responseCode = "200", description = "Installed", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Violation.class))))
+    @ApiResponse(responseCode = "400", description = "Found violations in validation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Violation.class))))
     public void install(@NotNull @PathParam("id") final String id) {
         Extension extension = getDataManager().fetch(Extension.class, id);
         doValidate(extension);
@@ -242,21 +235,45 @@ public class ExtensionHandler extends BaseHandler implements Lister<Extension>, 
         return integrations(extension);
     }
 
-    @Override
-    public ListResult<Extension> list(UriInfo uriInfo) {
-        // Defaulting to display only Installed extensions
-        String query = uriInfo.getQueryParameters().getFirst("query");
-        if (query == null) {
-            query = "status=" + Extension.Status.Installed;
-        }
-
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public ListResult<Extension> list(
+        @Parameter(required = false, description = "Page number to return") @QueryParam("page") @DefaultValue("1") int page,
+        @Parameter(required = false, description = "Number of records per page") @QueryParam("per_page") @DefaultValue("20") int perPage,
+        @Parameter(required = false, description = "Status of extension you want to filter") @QueryParam("status") @DefaultValue("Installed") Extension.Status status,
+        @Parameter(required = false, description = "Type of extension you want to filter") @QueryParam("extensionType") Extension.Type extensionType
+    ) {
         return getDataManager().fetchAll(
             Extension.class,
-            new ReflectiveFilterer<>(Extension.class, FilterOptionsParser.fromString(query)),
-            new ReflectiveSorter<>(Extension.class, new SortOptionsFromQueryParams(uriInfo)),
-            new PaginationFilter<>(new PaginationOptionsFromQueryParams(uriInfo))
+            new PredicateFilter<>(extension -> extension.getStatus().isPresent() && extension.getStatus().get().equals(status)),
+            new PredicateFilter<>(
+                extension -> extensionType == null || extension.getExtensionType().equals(extensionType)
+            ),
+            new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage))
         );
     }
+
+    @GET
+    @Path("/{id}/stepIcon")
+    public Response getStepIcon(@NotNull @PathParam("id") final String id) {
+        Extension extension = getDataManager().fetch(Extension.class, id);
+        String extensionIconVal = extension.getIcon();
+        if (extensionIconVal.startsWith("extension:")) {
+            String iconFile = extensionIconVal.substring(10);
+            Optional<InputStream> extensionIcon = extensionDataManager.getExtensionIcon(extension.getExtensionId(), iconFile);
+
+            if (extensionIcon.isPresent()) {
+                final StreamingOutput streamingOutput = (out) -> {
+                    try (BufferedSink sink = Okio.buffer(Okio.sink(out)); InputStream iconStream = extensionIcon.get()) {
+                        sink.writeAll(Okio.source(iconStream));
+                    }
+                };
+                return Response.ok(streamingOutput, extensionDataManager.getExtensionIconMediaType(iconFile)).build();
+            }
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
 
     // ===============================================================
 

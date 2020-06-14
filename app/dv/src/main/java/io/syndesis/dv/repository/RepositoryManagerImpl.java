@@ -17,7 +17,7 @@
 package io.syndesis.dv.repository;
 
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -32,13 +32,14 @@ import io.syndesis.dv.RepositoryManager;
 import io.syndesis.dv.model.DataVirtualization;
 import io.syndesis.dv.model.Edition;
 import io.syndesis.dv.model.SourceSchema;
+import io.syndesis.dv.model.TablePrivileges;
 import io.syndesis.dv.model.ViewDefinition;
 import io.syndesis.dv.utils.KLog;
 
 @Component
 public class RepositoryManagerImpl implements RepositoryManager {
 
-    private static DefaultTransactionDefinition NEW_TRANSACTION_DEFINITION = new DefaultTransactionDefinition();
+    private static final DefaultTransactionDefinition NEW_TRANSACTION_DEFINITION = new DefaultTransactionDefinition();
     static {
         NEW_TRANSACTION_DEFINITION.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     }
@@ -54,24 +55,29 @@ public class RepositoryManagerImpl implements RepositoryManager {
     @Autowired
     private EditionRepository editionRepository;
     @Autowired
+    private TablePrivilegesRepository tablePrivilegesRepository;
+    @Autowired
     private PlatformTransactionManager platformTransactionManager;
 
     @Override
-    public <T> T runInTransaction(boolean rollbackOnly, Callable<T> callable) throws Exception {
+    @SuppressWarnings({"Finally", "PMD.DoNotThrowExceptionInFinally"})
+    public <T> T runInTransaction(boolean rollbackOnly, Task<T> callable) {
         TransactionStatus transactionStatus = platformTransactionManager.getTransaction(NEW_TRANSACTION_DEFINITION);
+
+        boolean shouldRollback = rollbackOnly;
         if (transactionStatus.isNewTransaction()) {
             if (rollbackOnly) {
                 transactionStatus.setRollbackOnly();
             }
         } else {
             //there is a surrounding txn, so we can't set the rollback only flag
-            rollbackOnly = false;
+            shouldRollback = false;
         }
         String txnName = null;
         if (LOGGER.isDebugEnabled()) {
             StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
             txnName = stackTraceElements[2].getMethodName();
-            LOGGER.debug( "createTransaction:created '%s', rollbackOnly = '%b'", txnName, rollbackOnly ); //$NON-NLS-1$
+            LOGGER.debug( "createTransaction:created '%s', rollbackOnly = '%b'", txnName, shouldRollback ); //$NON-NLS-1$
         }
         try {
             return callable.call();
@@ -89,18 +95,15 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public io.syndesis.dv.model.SourceSchema findSchemaBySourceId(String id) {
+    public SourceSchema findSchemaBySourceId(String id) {
         return this.schemaRepository.findBySourceId(id);
     }
 
     @Override
     public boolean deleteSchemaBySourceId(String sourceid) {
         try {
-            if (this.schemaRepository.deleteBySourceId(sourceid) == 0) {
-                return false;
-            }
-            return true;
-        } catch (EmptyResultDataAccessException e) {
+            return this.schemaRepository.deleteBySourceId(sourceid) != 0;
+        } catch (EmptyResultDataAccessException ignored) {
             return false;
         }
     }
@@ -115,13 +118,13 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public List<String> findAllSchemaNames() {
-        return dataVirtualizationRepository.findNamesByTypeLike("s"); //$NON-NLS-1$
+    public List<String> findAllSourceIds() {
+        return schemaRepository.findAllSourceIds();
     }
 
     @Override
     public boolean isNameInUse(String name) {
-        return dataVirtualizationRepository.countByUpperName(name.toUpperCase()) > 0;
+        return dataVirtualizationRepository.countByUpperName(name.toUpperCase(Locale.US)) > 0;
     }
 
     @Override
@@ -158,7 +161,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
 
     @Override
     public boolean deleteDataVirtualization(String serviceName) {
-        io.syndesis.dv.model.DataVirtualization dv = this.dataVirtualizationRepository.findByName(serviceName);
+        DataVirtualization dv = this.dataVirtualizationRepository.findByName(serviceName);
         if (dv == null) {
             return false;
         }
@@ -173,8 +176,8 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public io.syndesis.dv.model.ViewDefinition createViewDefiniton(String dvName, String viewName) {
-        io.syndesis.dv.model.ViewDefinition viewEditorState = new io.syndesis.dv.model.ViewDefinition(dvName, viewName);
+    public ViewDefinition createViewDefiniton(String dvName, String viewName) {
+        ViewDefinition viewEditorState = new ViewDefinition(dvName, viewName);
         return this.viewDefinitionRepository.save(viewEditorState);
     }
 
@@ -184,7 +187,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public List<io.syndesis.dv.model.ViewDefinition> findViewDefinitions(String dvName) {
+    public List<ViewDefinition> findViewDefinitions(String dvName) {
         return this.viewDefinitionRepository.findAllByDataVirtualizationName(dvName);
     }
 
@@ -200,7 +203,7 @@ public class RepositoryManagerImpl implements RepositoryManager {
     }
 
     @Override
-    public io.syndesis.dv.model.ViewDefinition findViewDefinition(String id) {
+    public ViewDefinition findViewDefinition(String id) {
         return this.viewDefinitionRepository.findById(id).orElse(null);
     }
 
@@ -251,4 +254,49 @@ public class RepositoryManagerImpl implements RepositoryManager {
     public Long deleteViewDefinitions(String virtualization) {
         return this.viewDefinitionRepository.deleteByDataVirtualizationName(virtualization);
     }
+
+    @Override
+    public List<String> findRoleNames() {
+        return this.tablePrivilegesRepository.findRoleNames();
+    }
+
+    @Override
+    public boolean hasRoles(String name) {
+        return tablePrivilegesRepository.countByVirtualizationName(name) > 0;
+    }
+
+    @Override
+    public List<TablePrivileges> findAllTablePrivileges(String virtualization) {
+        return tablePrivilegesRepository.findAllByVirtualizationName(virtualization);
+    }
+
+    @Override
+    public TablePrivileges createTablePrivileges(String viewId, String roleName) {
+        TablePrivileges tp = new TablePrivileges();
+        tp.setViewDefinitionId(viewId);
+        tp.setRoleName(roleName);
+        return this.tablePrivilegesRepository.save(tp);
+    }
+
+    @Override
+    public TablePrivileges findTablePrivileges(String viewId,
+            String role) {
+        return tablePrivilegesRepository.findTablePrivilegesByViewDefinitionIdAndRoleName(viewId, role);
+    }
+
+    @Override
+    public List<TablePrivileges> findTablePrivileges(String viewId) {
+        return tablePrivilegesRepository.findTablePrivilegesByViewDefinitionId(viewId);
+    }
+
+    @Override
+    public void deleteTablePrivileges(List<String> viewIds) {
+        tablePrivilegesRepository.deleteByViewDefinitionIdIn(viewIds);
+    }
+
+    @Override
+    public void deleteTablePrivileges(TablePrivileges existing) {
+        tablePrivilegesRepository.delete(existing);
+    }
+
 }

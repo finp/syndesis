@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,6 +44,8 @@ import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
 
 public final class SalesforceMetadataRetrieval extends ComponentMetadataRetrieval {
+
+    public static final String SALESFORCE = "Salesforce ";
 
     @Override
     public RuntimeException handle(final Exception e) {
@@ -102,13 +103,13 @@ public final class SalesforceMetadataRetrieval extends ComponentMetadataRetrieva
                     enrichedProperties, //
                     new DataShape.Builder().kind(DataShapeKinds.JSON_SCHEMA)//
                         .type(inputOutputSchema.getTitle())//
-                        .name("Salesforce " + objectName)//
-                        .description("Salesforce " + objectName)//
+                        .name(SALESFORCE + objectName)//
+                        .description(SALESFORCE + objectName)//
                         .specification(specification).build(), //
                     new DataShape.Builder().kind(DataShapeKinds.JSON_SCHEMA)//
                         .type(inputOutputSchema.getTitle())//
-                        .name("Salesforce " + objectName)//
-                        .description("Salesforce " + objectName)//
+                        .name(SALESFORCE + objectName)//
+                        .description(SALESFORCE + objectName)//
                         .specification(specification).build());
             } catch (final JsonProcessingException e) {
                 throw new IllegalStateException(e);
@@ -142,7 +143,7 @@ public final class SalesforceMetadataRetrieval extends ComponentMetadataRetrieva
         return schema;
     }
 
-    static PropertyPair createFieldPairPropertyFromSchemaEntry(final Entry<String, JsonSchema> e) {
+    static PropertyPair createFieldPairPropertyFromSchemaEntry(final Map.Entry<String, JsonSchema> e) {
         return new PropertyPair(e.getKey(), ((SimpleTypeSchema) e.getValue()).getTitle());
     }
 

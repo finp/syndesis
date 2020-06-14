@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Sending an email from a Gmail account :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-gmail-connection-finish-middle.html">Sending an email from a Gmail account</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-add-gmail-connection-finish-middle.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Sending an email from a Gmail account</h1>
+<div class="paragraph">
+<p>In an integration, you can send an email from a Gmail account either
+in the middle of a flow or to finish a simple integration.
+To do this, add a Gmail connection to the middle of a flow or as
+a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Gmail connection.</p>
+</li>
+<li>
+<p>You are familiar with the
+<a href="{LinkSyndesisConnectorGuide}#alternative-for-populating-email-to-send_gmail">alternatives for populating an email to send</a>
+and you have a plan for populating such emails.</p>
+</li>
+<li>
+<p>{prodname} is prompting you to add to the integration or to choose the finish
+connection for a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Gmail connection that you want to use
+to send an email.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Send Email</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Configure Send Email</strong> page, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Leave all fields blank if you plan to add a data mapper step
+just before this connection and you plan to map integration data
+to the <strong>Send Email</strong> fields.</p>
+</li>
+<li>
+<p>Enter information in one or more of the following <strong>Send Email</strong> fields.
+Separate multiple email addresses with a comma.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>Email To</strong></p>
+</li>
+<li>
+<p><strong>Email Subject</strong></p>
+</li>
+<li>
+<p><strong>Email Text</strong></p>
+</li>
+<li>
+<p><strong>Email cc</strong></p>
+</li>
+<li>
+<p><strong>Email bcc</strong></p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Leave some fields blank and enter information in some fields.</p>
+<div class="paragraph">
+<p>If you plan to add a data mapper step just before this Gmail connection,
+and you want to map integration data to some email fields, leave those fields
+blank in the action configuration. Enter values in other action fields as needed.</p>
+</div>
+<div class="paragraph">
+<p>A value that you specify in a <strong>Send Email</strong> action configuration field
+has precedence over a value that is mapped from a previous step.</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration flow where you added it.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>If you plan to add a data mapper step
+before this connection, first add any other connections that you plan to add
+to this flow. Then add the data mapper step.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

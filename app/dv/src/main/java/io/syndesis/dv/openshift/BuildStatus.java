@@ -15,28 +15,46 @@
  */
 package io.syndesis.dv.openshift;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+/**
+ * This class pulls double duty.  It's a status, but it's also the state holder
+ * for the build / deployment tracking state machine.  The instance of
+ * DeploymentStatus here is only for tracking the deployment of this build
+ * - not the general deployment state.
+ */
 @JsonSerialize(as = BuildStatus.class)
 @JsonInclude(Include.NON_NULL)
 public class BuildStatus {
+
+    private volatile Status status = Status.NOTFOUND;
+    @JsonIgnore
+    private volatile PublishConfiguration publishConfiguration;
+    private volatile String name;
+    private volatile String namespace;
+    @JsonIgnore
+    private volatile String publishPodName;
+    private volatile long lastUpdated;
+    private volatile String statusMessage;
+
+    private final String openShiftName;
+    private String dataVirtualizationName;
+    private Long version;
+
+    @JsonIgnore
+    private final DeploymentStatus deploymentStatus = new DeploymentStatus();
 
     public enum Status {
         NOTFOUND,
         SUBMITTED,
         CONFIGURING,
         BUILDING,
-        DEPLOYING,
-        RUNNING,
         FAILED,
         CANCELLED,
+        COMPLETE,
         DELETE_SUBMITTED,
         DELETE_REQUEUE,
         DELETE_DONE
@@ -107,23 +125,6 @@ public class BuildStatus {
         }
     }
 
-    private volatile Status status = Status.NOTFOUND;
-    @JsonIgnore
-    private volatile PublishConfiguration publishConfiguration;
-    private volatile String name;
-    private volatile String deploymentName;
-    private volatile String namespace;
-    @JsonIgnore
-    private volatile String publishPodName;
-    private volatile long lastUpdated = 0L;
-    private volatile String statusMessage;
-    private List<RouteStatus> routes = null;
-    private List<String> usedBy = Collections.emptyList();
-
-    private String openShiftName;
-    private String dataVirtualizationName;
-    private Long deploymentVersion;
-
     public BuildStatus(String openShiftName) {
         this.openShiftName = openShiftName;
     }
@@ -142,14 +143,6 @@ public class BuildStatus {
 
     public void setName(String buildName) {
         this.name = buildName;
-    }
-
-    public String getDeploymentName() {
-        return deploymentName;
-    }
-
-    public void setDeploymentName(String deploymentName) {
-        this.deploymentName = deploymentName;
     }
 
     public String getNamespace() {
@@ -192,27 +185,6 @@ public class BuildStatus {
         this.status = status;
     }
 
-    public List<RouteStatus> getRoutes() {
-        if (this.routes == null) {
-            return Collections.emptyList();
-        }
-        return this.routes;
-    }
-
-    public void addRoute(RouteStatus route) {
-        if (route == null) {
-            return;
-        }
-        if (this.routes == null) {
-            this.routes = new ArrayList<RouteStatus>();
-        }
-        this.routes.add(route);
-    }
-
-    public void setRoutes(List<RouteStatus> routes) {
-        this.routes = routes;
-    }
-
     public String getOpenShiftName() {
         return openShiftName;
     }
@@ -225,19 +197,15 @@ public class BuildStatus {
         this.dataVirtualizationName = dataVirtualizationName;
     }
 
-    public List<String> getUsedBy() {
-        return usedBy;
+    public Long getVersion() {
+        return this.version;
     }
 
-    public void setUsedBy(List<String> usedBy) {
-        this.usedBy = usedBy;
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
-    public Long getDeploymentVersion() {
-        return this.deploymentVersion;
-    }
-
-    public void setDeploymentVersion(Long deploymentVersion) {
-        this.deploymentVersion = deploymentVersion;
+    DeploymentStatus getDeploymentStatus() {
+        return deploymentStatus;
     }
 }

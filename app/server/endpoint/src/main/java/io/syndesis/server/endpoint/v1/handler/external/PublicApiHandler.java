@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
@@ -50,8 +51,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.syndesis.common.model.Kind;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.WithId;
@@ -77,7 +80,7 @@ import io.syndesis.server.endpoint.v1.handler.integration.IntegrationDeploymentH
 import io.syndesis.server.endpoint.v1.handler.integration.IntegrationHandler;
 import io.syndesis.server.endpoint.v1.handler.integration.support.IntegrationSupportHandler;
 
-@Api("public-api")
+@Tag(name = "public-api")
 @Path("/public")
 @Component
 @ConditionalOnProperty(value = "features.public-api.enabled", havingValue = "true")
@@ -119,7 +122,7 @@ public class PublicApiHandler {
     @GET
     @Path("environments")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReleaseEnvironments(@QueryParam("withUses") @ApiParam boolean withUses) {
+    public Response getReleaseEnvironments(@QueryParam("withUses") @Parameter boolean withUses) {
         return environmentHandler.getReleaseEnvironments(withUses);
     }
 
@@ -128,7 +131,7 @@ public class PublicApiHandler {
      */
     @POST
     @Path("environments/{env}")
-    public void addNewEnvironment(@NotNull @PathParam("env") @ApiParam(required = true) String environment) {
+    public void addNewEnvironment(@NotNull @PathParam("env") @Parameter(required = true) String environment) {
         environmentHandler.addNewEnvironment(environment);
     }
 
@@ -137,7 +140,7 @@ public class PublicApiHandler {
      */
     @DELETE
     @Path("environments/{env}")
-    public void deleteEnvironment(@NotNull @PathParam("env") @ApiParam(required = true) String environment) {
+    public void deleteEnvironment(@NotNull @PathParam("env") @Parameter(required = true) String environment) {
         environmentHandler.deleteEnvironment(environment);
     }
 
@@ -147,8 +150,8 @@ public class PublicApiHandler {
     @PUT
     @Path("environments/{env}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void renameEnvironment(@NotNull @PathParam("env") @ApiParam(required = true) String environment,
-        @NotNull @ApiParam(required = true) String newEnvironment) {
+    public void renameEnvironment(@NotNull @PathParam("env") @Parameter(required = true) String environment,
+        @NotNull @Parameter(required = true) String newEnvironment) {
         environmentHandler.renameEnvironment(environment, newEnvironment);
     }
 
@@ -158,7 +161,7 @@ public class PublicApiHandler {
     @GET
     @Path("integrations/{id}/tags")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, ContinuousDeliveryEnvironment> getReleaseTags(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId) {
+    public Map<String, ContinuousDeliveryEnvironment> getReleaseTags(@NotNull @PathParam("id") @Parameter(required = true) String integrationId) {
         return environmentHandler.getReleaseTags(integrationId);
     }
 
@@ -167,8 +170,8 @@ public class PublicApiHandler {
      */
     @DELETE
     @Path("integrations/{id}/tags/{env}")
-    public void deleteReleaseTag(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId,
-        @NotNull @PathParam("env") @ApiParam(required = true) String environment) {
+    public void deleteReleaseTag(@NotNull @PathParam("id") @Parameter(required = true) String integrationId,
+        @NotNull @PathParam("env") @Parameter(required = true) String environment) {
         environmentHandler.deleteReleaseTag(integrationId, environment);
     }
 
@@ -180,8 +183,8 @@ public class PublicApiHandler {
     @Path("integrations/{id}/tags")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, ContinuousDeliveryEnvironment> putTagsForRelease(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId,
-        @NotNull @ApiParam(required = true) List<String> environments) {
+    public Map<String, ContinuousDeliveryEnvironment> putTagsForRelease(@NotNull @PathParam("id") @Parameter(required = true) String integrationId,
+        @NotNull @Parameter(required = true) List<String> environments) {
         return environmentHandler.putTagsForRelease(integrationId, environments);
     }
 
@@ -192,8 +195,8 @@ public class PublicApiHandler {
     @Path("integrations/{id}/tags")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, ContinuousDeliveryEnvironment> patchTagsForRelease(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId,
-        @NotNull @ApiParam(required = true) List<String> environments) {
+    public Map<String, ContinuousDeliveryEnvironment> patchTagsForRelease(@NotNull @PathParam("id") @Parameter(required = true) String integrationId,
+        @NotNull @Parameter(required = true) List<String> environments) {
         return environmentHandler.patchTagsForRelease(integrationId, environments);
     }
 
@@ -203,8 +206,10 @@ public class PublicApiHandler {
     @GET
     @Path("integrations/{env}/export.zip")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response exportResources(@NotNull @PathParam("env") @ApiParam(required = true) String environment,
-        @QueryParam("all") @ApiParam boolean exportAll) throws IOException {
+    @SuppressWarnings("JdkObsolete")
+    public Response exportResources(@NotNull @PathParam("env") @Parameter(required = true) String environment,
+                                    @QueryParam("all") @Parameter boolean exportAll,
+                                    @QueryParam("ignoreTimestamp") @Parameter boolean ignoreTimestamp) throws IOException {
 
         // validate environment
         EnvironmentHandler.validateEnvironment("environment", environment);
@@ -220,7 +225,7 @@ public class PublicApiHandler {
             integrations = dataMgr.fetchAll(Integration.class);
 
             // tag all integrations for export
-            Date taggedAt = new Date();
+            @SuppressWarnings("JdkObsolete") Date taggedAt = new Date();
             integrations.getItems().forEach(i -> {
                 final HashMap<String, ContinuousDeliveryEnvironment> state = new HashMap<>(i.getContinuousDeliveryState());
                 EnvironmentHandler.createOrUpdateTag(state, envId, taggedAt);
@@ -233,10 +238,10 @@ public class PublicApiHandler {
             // export integrations freshly tagged or tagged after last export
             integrations = dataMgr.fetchAll(Integration.class, listResult -> listResult.getItems().stream().filter(i -> {
 
-                boolean result = false;
+                boolean result = ignoreTimestamp;
                 final Map<String, ContinuousDeliveryEnvironment> map = i.getContinuousDeliveryState();
                 final ContinuousDeliveryEnvironment cdEnv = map.get(envId);
-                if (cdEnv != null) {
+                if (!ignoreTimestamp && cdEnv != null) {
                     final Date taggedAt = cdEnv.getLastTaggedAt();
                     final Date exportedAt = cdEnv.getLastExportedAt().orElse(null);
                     result = exportedAt == null || exportedAt.before(taggedAt);
@@ -256,7 +261,7 @@ public class PublicApiHandler {
             return Response.status(Response.Status.NO_CONTENT.getStatusCode(), "No integrations to export").build();
         }
 
-        final Date exportedAt = new Date();
+        @SuppressWarnings("JdkObsolete") final Date exportedAt = new Date();
         final StreamingOutput output = handler.export(ids);
 
         // update lastExportedAt
@@ -279,8 +284,9 @@ public class PublicApiHandler {
     @Path("integrations")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE") // https://github.com/spotbugs/spotbugs/issues/259
     public ContinuousDeliveryImportResults importResources(@Context SecurityContext sec,
-        @NotNull @MultipartForm @ApiParam(required = true) ImportFormDataInput formInput) {
+        @NotNull @MultipartForm @Parameter(required = true) ImportFormDataInput formInput) {
 
         if (formInput == null) {
             throw new ClientErrorException("Multipart request is empty", Response.Status.BAD_REQUEST);
@@ -299,7 +305,7 @@ public class PublicApiHandler {
             }
 
             // importedAt date to be updated in all imported integrations
-            final Date lastImportedAt = new Date();
+            @SuppressWarnings("JdkObsolete") final Date lastImportedAt = new Date();
 
             final Map<String, List<WithResourceId>> resources = handler.importIntegration(sec, importFile);
             final List<WithResourceId> results = new ArrayList<>();
@@ -321,7 +327,7 @@ public class PublicApiHandler {
                 connections.forEach(c -> {
                     final Map<String, String> values = params.get(c.getName());
                     if (values != null) {
-                        updateConnection(c, values, lastImportedAt);
+                        updateConnection(c, values, formInput.getRefreshIntegrations(), lastImportedAt, results);
                     }
                 });
             }
@@ -349,13 +355,16 @@ public class PublicApiHandler {
     @Path("connections/{id}/properties")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public ConnectionOverview configureConnection(@Context SecurityContext sec, @NotNull @PathParam("id") @ApiParam(required = true) String connectionId,
-        @NotNull @ApiParam(required = true) Map<String, String> properties) {
+    public ConnectionOverview configureConnection(@Context SecurityContext sec,
+                                                  @NotNull @PathParam("id") @Parameter(required = true) String connectionId,
+                                                  @NotNull @QueryParam("refreshIntegrations") @Parameter Boolean refeshIntegrations,
+                                                  @NotNull @Parameter(required = true) Map<String, String> properties) {
 
         validateParam("connectionId", connectionId);
         final Connection connection = getResource(Connection.class, connectionId, WithResourceId::hasId);
 
-        updateConnection(connection, properties);
+        @SuppressWarnings("JdkObsolete") Date  now = new Date();
+        updateConnection(connection, properties, refeshIntegrations, now, null);
         return connectionHandler.get(connection.getId().get());
     }
 
@@ -366,7 +375,7 @@ public class PublicApiHandler {
     @Path("integrations/{id}/state")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public IntegrationState getIntegrationState(@Context SecurityContext sec, @NotNull @PathParam("id") @ApiParam(required = true) String integrationId) {
+    public IntegrationState getIntegrationState(@Context SecurityContext sec, @NotNull @PathParam("id") @Parameter(required = true) String integrationId) {
         final Integration integration = getIntegration(integrationId);
         final IntegrationOverview integrationOverview = this.integrationHandler.get(integration.getId().get());
         return new IntegrationState(integrationOverview.getCurrentState(), monitoringProvider.getIntegrationStateDetails(integration.getId().get()));
@@ -379,7 +388,7 @@ public class PublicApiHandler {
     @Path("integrations/{id}/deployments")
     @Produces(MediaType.APPLICATION_JSON)
     public IntegrationDeployment publishIntegration(@Context final SecurityContext sec,
-        @NotNull @PathParam("id") @ApiParam(required = true) final String integrationId) {
+        @NotNull @PathParam("id") @Parameter(required = true) final String integrationId) {
         return publishIntegration(sec, getIntegration(integrationId));
     }
 
@@ -389,7 +398,7 @@ public class PublicApiHandler {
     @PUT
     @Path("integrations/{id}/deployments/stop")
     @Produces(MediaType.APPLICATION_JSON)
-    public void stopIntegration(@Context final SecurityContext sec, @NotNull @PathParam("id") @ApiParam(required = true) final String integrationId) {
+    public void stopIntegration(@Context final SecurityContext sec, @NotNull @PathParam("id") @Parameter(required = true) final String integrationId) {
 
         final Integration integration = getIntegration(integrationId);
         IntegrationDeploymentHandler.TargetStateRequest targetState = new IntegrationDeploymentHandler.TargetStateRequest(IntegrationDeploymentState.Unpublished);
@@ -411,11 +420,11 @@ public class PublicApiHandler {
         return deploymentHandler.update(sec, integration.getId().get());
     }
 
-    private void updateConnection(Connection c, Map<String, String> values) {
-        updateConnection(c, values, new Date());
-    }
+    private void updateConnection(Connection c, Map<String, String> values, Boolean refreshIntegrations,
+                                  Date lastImportedAt, List<WithResourceId> results) {
 
-    private void updateConnection(Connection c, Map<String, String> values, Date lastImportedAt) {
+        final String connectionId = c.getId().get();
+
         // encrypt properties
         final Connector connector = dataMgr.fetch(Connector.class, c.getConnectorId());
         final Map<String, String> encryptedValues = encryptionComponent.encryptPropertyValues(values,
@@ -428,15 +437,51 @@ public class PublicApiHandler {
         // TODO how can credential flow be handled without a user session??
         // is there any way to determine which connections require manual
         // intervention??
-        dataMgr.update(c.builder()
+        final Connection updatedConnection = c.builder()
             .configuredProperties(map)
             .lastUpdated(lastImportedAt)
-            .build());
+            .build();
+        dataMgr.update(updatedConnection);
+
+        // refresh integrations that reference this connection?
+        if (Boolean.TRUE.equals(refreshIntegrations)) {
+            // we have to use the super heavy weight getOverview method below,
+            // which returns a bunch of other data we ignore,
+            // but it's also deeply involved with refreshing the integration,
+            // which is what the UI does
+            final Map<String, Integration> updated = dataMgr.fetchAll(Integration.class, l -> {
+                final List<Integration> integrations = l.getItems().stream()
+                    .filter(i -> i.getConnectionIds().contains(connectionId))
+                    .collect(Collectors.toList());
+                return new ListResult.Builder<Integration>().addAllItems(integrations).build();
+            }, l -> new ListResult.Builder<Integration>().addAllItems(l.getItems().stream()
+                        .map(i -> integrationHandler.getOverview(i.getId().get()))
+                        .map(i -> new Integration.Builder().createFrom(i).build())
+                        .collect(Collectors.toList())).build()
+            ).getItems().stream()
+                .peek(i -> integrationHandler.update(i.getId().get(), i))
+                .collect(Collectors.toMap(i -> i.getId().get(), Function.identity()));
+
+            int updatedCount = updated.size();
+            // if necessary, update results
+            if (results != null) {
+                for (int i = 0; i < results.size(); i++) {
+                    final WithResourceId resource = results.get(i);
+                    if (resource instanceof Integration) {
+                        final Integration newInt = updated.remove(resource.getId().get());
+                        if (newInt != null) {
+                            results.set(i, newInt);
+                        }
+                    }
+                }
+            }
+
+            LOG.debug("Refreshed {} integrations for connection {}", updatedCount, connectionId);
+        }
     }
 
     private Integration getIntegration(String integrationId) {
-        validateParam(PROPERTY_INTEGRATION_ID, integrationId);
-        return dataMgr.fetch(Integration.class, integrationId);
+        return environmentHandler.getIntegration(integrationId);
     }
 
     private <T extends WithId<T> & WithName> T getResource(Class<T> resourceClass, String nameOrId, Predicate<? super T> operator) {
@@ -498,6 +543,9 @@ public class PublicApiHandler {
         @FormParam("properties")
         private InputStream properties;
 
+        @FormParam("refreshIntegrations")
+        private Boolean refreshIntegrations;
+
         @FormParam("environment")
         private String environment;
 
@@ -518,6 +566,14 @@ public class PublicApiHandler {
 
         public void setProperties(InputStream properties) {
             this.properties = properties;
+        }
+
+        public Boolean getRefreshIntegrations() {
+            return refreshIntegrations;
+        }
+
+        public void setRefreshIntegrations(Boolean refreshIntegrations) {
+            this.refreshIntegrations = refreshIntegrations;
         }
 
         public String getEnvironment() {

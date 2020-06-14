@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>General procedure for developing extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-developing-extensions.html">General procedure for developing extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/customizing/proc-developing-extensions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">General procedure for developing extensions</h1>
+<div class="paragraph">
+<p>Before you start to develop an extension, become familiar with the tasks that
+you will need to accomplish.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Familiarity with <a href="https://maven.apache.org/">Maven</a></p>
+</li>
+<li>
+<p>Familiarity with <a href="https://camel.apache.org/">Camel</a> if you are developing an extension that provides
+a connector or that provides an integration step that operates on data between connections</p>
+</li>
+<li>
+<p>Experience programming</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>An integration pod runs in a Java process with a flat classpath.
+To avoid version clashes, make sure that the dependencies that an extension
+uses are aligned with the imported bill of materials (BOM) from all of
+these sources:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>org.springframework.boot:spring-boot-dependencies:$SPRING_BOOT_VERSION</code></p>
+</li>
+<li>
+<p><code>org.apache.camel:camel-spring-boot-dependencies:$CAMEL_VERSION</code></p>
+</li>
+<li>
+<p><code>io.syndesis.integration:integration-bom:$SYNDESIS_VERSION</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there are additional dependencies that are not part of the imported BOMs,
+you must:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Package them in the extension JAR file that is in the <code>lib</code> directory.</p>
+</li>
+<li>
+<p>Omit them from the <code>dependencies</code> property of the extension&#8217;s JSON descriptor file.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Obtain an understanding of what the extended feature must do.
+Talk to your business colleague to understand the feature requirements.</p>
+</li>
+<li>
+<p>Determine whether you need to develop a step extension, a connector extension,
+or a library extension.</p>
+</li>
+<li>
+<p>Set up the Maven project in which to develop the extension.</p>
+</li>
+<li>
+<p>If you are developing a step extension:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Decide whether to implement it as a Camel route or implement it by using
+the Syndesis <code>Step</code> API. Information for the Syndesis API is at
+<a href="http://javadoc.io/doc/io.syndesis.extension/extension-api" class="bare">http://javadoc.io/doc/io.syndesis.extension/extension-api</a>.</p>
+</li>
+<li>
+<p>If you choose to implement the extension as a Camel route,
+decide whether to implement XML fragments, a <code>RouteBuilder</code> class, or a bean.</p>
+</li>
+<li>
+<p>In your Maven project, specify the required metadata, such as the
+<code>schemaVersion</code>, extension <code>name</code>, <code>extensionId</code>, and so on.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Code the classes that implement the feature.</p>
+</li>
+<li>
+<p>Add dependencies to the project&#8217;s <code>pom.xml</code> file.</p>
+</li>
+<li>
+<p>For connector and library extensions, and for step extensions that
+you implement in XML, create the JSON file that
+defines the extension.</p>
+<div class="paragraph">
+<p>For step extensions that you implement in Java,
+Maven can generate the JSON extension definition file
+for you when you specify corresponding data structure values in your Maven project.</p>
+</div>
+</li>
+<li>
+<p>Run Maven to build the extension and create the extension&#8217;s JAR file.</p>
+</li>
+<li>
+<p>Test the extension by uploading the JAR file to a {prodname} development environment.</p>
+</li>
+<li>
+<p>Provide the JAR file that packages the extension to your business colleague,
+who uploads it to a
+{prodname} production environment. When you provide the JAR file, let your
+business colleague know about any configuration settings that require
+information beyond what appears in the {prodname} web interface.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

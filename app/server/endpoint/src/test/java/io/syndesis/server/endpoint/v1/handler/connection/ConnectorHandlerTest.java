@@ -15,53 +15,71 @@
  */
 package io.syndesis.server.endpoint.v1.handler.connection;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.Map;
+import java.util.function.Function;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import io.syndesis.server.verifier.MetadataConfigurationProperties;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import io.syndesis.common.model.ListResult;
+import io.syndesis.common.model.action.ConnectorAction;
+import io.syndesis.common.model.action.ConnectorDescriptor;
+import io.syndesis.common.model.connection.ConfigurationProperty;
+import io.syndesis.common.model.connection.ConfigurationProperty.PropertyValue;
+import io.syndesis.common.model.connection.Connection;
+import io.syndesis.common.model.connection.Connector;
+import io.syndesis.common.model.connection.DynamicConnectionPropertiesMetadata;
+import io.syndesis.common.model.connection.WithDynamicProperties;
+import io.syndesis.common.model.integration.Flow;
+import io.syndesis.common.model.integration.Integration;
+import io.syndesis.common.model.integration.Step;
 import io.syndesis.server.credential.Credentials;
 import io.syndesis.server.dao.file.FileDataManager;
 import io.syndesis.server.dao.file.IconDao;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.dao.manager.EncryptionComponent;
-import io.syndesis.server.inspector.Inspectors;
-import io.syndesis.common.model.ListResult;
-import io.syndesis.common.model.action.ConnectorAction;
-import io.syndesis.common.model.action.ConnectorDescriptor;
-import io.syndesis.common.model.connection.Connection;
-import io.syndesis.common.model.connection.Connector;
-import io.syndesis.common.model.integration.Flow;
-import io.syndesis.common.model.integration.Integration;
-import io.syndesis.common.model.integration.Step;
 import io.syndesis.server.endpoint.v1.state.ClientSideState;
+import io.syndesis.server.inspector.Inspectors;
+import io.syndesis.server.verifier.MetadataConfigurationProperties;
 import io.syndesis.server.verifier.Verifier;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okio.Buffer;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
+import org.junit.Test;
+import org.mockito.AdditionalAnswers;
+import org.springframework.context.ApplicationContext;
+
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ConnectorHandlerTest {
 
@@ -85,8 +103,8 @@ public class ConnectorHandlerTest {
 
     private static final MetadataConfigurationProperties NO_METADATA_CONFIGURATION_PROPERTIES = null;
 
-    private final io.syndesis.server.endpoint.v1.handler.connection.ConnectorHandler handler =
-        new io.syndesis.server.endpoint.v1.handler.connection.ConnectorHandler(dataManager, NO_VERIFIER, NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
+    private final ConnectorHandler handler =
+        new ConnectorHandler(dataManager, NO_VERIFIER, NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
             NO_ENCRYPTION_COMPONENT, applicationContext, NO_ICON_DAO, NO_EXTENSION_DATA_MANAGER,
             NO_METADATA_CONFIGURATION_PROPERTIES);
 
@@ -113,7 +131,7 @@ public class ConnectorHandlerTest {
             final StreamingOutput so = (StreamingOutput) response.getEntity();
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             try (BufferedSink sink = Okio.buffer(Okio.sink(bos)); BufferedSource source = new Buffer();
-                ImageInputStream iis = ImageIO.createImageInputStream(source.inputStream());) {
+                 ImageInputStream iis = ImageIO.createImageInputStream(source.inputStream());) {
                 so.write(sink.outputStream());
                 source.readAll(sink);
                 final Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
@@ -154,6 +172,41 @@ public class ConnectorHandlerTest {
     }
 
     @Test
+    public void shouldListApiConnectors() {
+        final Connector connector1 = new Connector.Builder().id("1").connectorGroupId("1").build();
+        final Connector connector2 = new Connector.Builder().id("2").connectorGroupId("2").build();
+
+        final List<Connector> connectors = Arrays.asList(
+            connector1,
+            connector2,
+            new Connector.Builder().id("3").build(),
+            new Connector.Builder().id("4").connectorGroupId("4").build());
+
+        // verify predicates in listApiConnectors()
+        when(dataManager.fetchAll(eq(Connector.class), any()))
+            .then(a -> {
+                ListResult<Connector> result = ListResult.of(connectors);
+                final Object[] operators = a.getArguments();
+                for (int i = 1; i < operators.length; i++) {
+                    @SuppressWarnings("unchecked")
+                    Function<ListResult<Connector>, ListResult<Connector>> operator = (Function<ListResult<Connector>
+                        , ListResult<Connector>>) operators[i];
+                    result = operator.apply(result);
+                }
+                return result;
+            });
+
+        // no integrations, 0 usage for all connectors
+        when(dataManager.fetchAll(Integration.class))
+            .thenReturn(ListResult.of(Collections.emptyList()));
+
+        final ListResult<Connector> result = handler.listApiConnectors(Arrays.asList("1", "2"), 1, 50);
+
+        assertThat(result).size().isEqualTo(2);
+        assertThat(result).contains(connector1, connector2);
+    }
+
+    @Test
     public void shouldDeleteConnectionsWhenDeletingConnector() {
         when(dataManager.fetchIdsByPropertyValue(Connection.class, "connectorId", "connector-id"))
             .thenReturn(new HashSet<>(Arrays.asList("connection1", "connection2")));
@@ -162,6 +215,175 @@ public class ConnectorHandlerTest {
         verify(dataManager).delete(Connector.class, "connector-id");
         verify(dataManager).delete(Connection.class, "connection1");
         verify(dataManager).delete(Connection.class, "connection2");
+    }
+
+    @Test
+    public void shouldNotFailToEnrichDynamicPropertiesWithNoResponse() {
+        final ConnectorPropertiesHandler connectorPropertiesHandler = mock(ConnectorPropertiesHandler.class);
+
+        final ConnectorHandler connectorHandler = new ConnectorHandler(dataManager, NO_VERIFIER, NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
+            NO_ENCRYPTION_COMPONENT, applicationContext, NO_ICON_DAO, NO_EXTENSION_DATA_MANAGER,
+            connectorPropertiesHandler);
+
+        final DynamicConnectionPropertiesMetadata metaResponse = DynamicConnectionPropertiesMetadata.NOTHING;
+
+        when(connectorPropertiesHandler.dynamicConnectionProperties("connectorId")).thenReturn(metaResponse);
+
+        final Connector connector = new Connector.Builder()
+            .id("connectorId")
+            .build();
+        final Connector withDynamicProperties = connectorHandler.enrichConnectorWithDynamicProperties(connector);
+
+        final Connector expected = new Connector.Builder()
+            .id("connectorId")
+            .build();
+
+        assertThat(withDynamicProperties).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldEnrichDynamicPropertiesWithResponseFromMeta() {
+        final ConnectorPropertiesHandler connectorPropertiesHandler = mock(ConnectorPropertiesHandler.class);
+
+        final ConnectorHandler connectorHandler = new ConnectorHandler(dataManager, NO_VERIFIER, NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
+            NO_ENCRYPTION_COMPONENT, applicationContext, NO_ICON_DAO, NO_EXTENSION_DATA_MANAGER,
+            connectorPropertiesHandler);
+
+        final DynamicConnectionPropertiesMetadata metaResponse = new DynamicConnectionPropertiesMetadata.Builder()
+            .putProperty("property", Arrays.asList(
+                new WithDynamicProperties.ActionPropertySuggestion.Builder().displayValue("Value 1").value("value1").build(),
+                new WithDynamicProperties.ActionPropertySuggestion.Builder().displayValue("Value 2").value("value2").build()
+                )
+            ).build();
+        when(connectorPropertiesHandler.dynamicConnectionProperties("connectorId")).thenReturn(metaResponse);
+
+        final Connector connector = new Connector.Builder()
+            .id("connectorId")
+            .putProperty("property", new ConfigurationProperty.Builder().build())
+            .build();
+        final Connector withDynamicProperties = connectorHandler.enrichConnectorWithDynamicProperties(connector);
+
+        final Connector expected = new Connector.Builder()
+            .id("connectorId")
+            .putProperty("property", new ConfigurationProperty.Builder()
+                .addEnum(PropertyValue.Builder.of("value1", "Value 1"), PropertyValue.Builder.of("value2", "Value 2"))
+                .build())
+            .build();
+
+        assertThat(withDynamicProperties).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldEnrichDynamicPropertiesKeepingStaticPropertiesWithResponseFromMeta() {
+        final ConnectorPropertiesHandler connectorPropertiesHandler = mock(ConnectorPropertiesHandler.class);
+
+        final ConnectorHandler connectorHandler = new ConnectorHandler(dataManager, NO_VERIFIER, NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
+            NO_ENCRYPTION_COMPONENT, applicationContext, NO_ICON_DAO, NO_EXTENSION_DATA_MANAGER,
+            connectorPropertiesHandler);
+
+        final DynamicConnectionPropertiesMetadata metaResponse = new DynamicConnectionPropertiesMetadata.Builder()
+            .putProperty("dynamicProperty", Arrays.asList(
+                new WithDynamicProperties.ActionPropertySuggestion.Builder().displayValue("Value 1").value("value1").build(),
+                new WithDynamicProperties.ActionPropertySuggestion.Builder().displayValue("Value 2").value("value2").build()
+                )
+            ).build();
+        when(connectorPropertiesHandler.dynamicConnectionProperties("connectorId")).thenReturn(metaResponse);
+
+        final Connector connector = new Connector.Builder()
+            .id("connectorId")
+            .putProperty("staticProperty", new ConfigurationProperty.Builder().build())
+            .putProperty("dynamicProperty", new ConfigurationProperty.Builder().build())
+            .build();
+        final Connector withDynamicProperties = connectorHandler.enrichConnectorWithDynamicProperties(connector);
+
+        final Connector expected = new Connector.Builder()
+            .id("connectorId")
+            .putProperty("staticProperty", new ConfigurationProperty.Builder().build())
+            .putProperty("dynamicProperty", new ConfigurationProperty.Builder()
+                .addEnum(PropertyValue.Builder.of("value1", "Value 1"), PropertyValue.Builder.of("value2", "Value 2"))
+                .build())
+            .build();
+
+        assertThat(withDynamicProperties).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldNotFailToEnrichDynamicPropertiesWithErrorResponse() {
+        final ConnectorPropertiesHandler connectorPropertiesHandler = mock(ConnectorPropertiesHandler.class);
+
+        final ConnectorHandler connectorHandler = new ConnectorHandler(dataManager, NO_VERIFIER, NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
+            NO_ENCRYPTION_COMPONENT, applicationContext, NO_ICON_DAO, NO_EXTENSION_DATA_MANAGER,
+            connectorPropertiesHandler);
+
+        //It would never provide an error, as in such case circuit breaker provide the fallback implementation
+        final DynamicConnectionPropertiesMetadata metaResponse = DynamicConnectionPropertiesMetadata.NOTHING;
+        when(connectorPropertiesHandler.dynamicConnectionProperties("connectorId")).thenReturn(metaResponse);
+
+        final Connector connector = new Connector.Builder()
+            .id("connectorId")
+            .build();
+        final Connector withDynamicProperties = connectorHandler.enrichConnectorWithDynamicProperties(connector);
+
+        final Connector expected = new Connector.Builder()
+            .id("connectorId")
+            .build();
+
+        assertThat(withDynamicProperties).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldVerifyConfiguredProperties() {
+        final EncryptionComponent encryptionComponent = mock(EncryptionComponent.class);
+        final Verifier verifier = new Verifier() {
+            @Override
+            public List<Result> verify(String connectorId, Map<String, String> parameters) {
+                assertThat(parameters).containsEntry("configuredProperty","val0");
+                assertThat(parameters).containsEntry("userProperty","val1");
+                return null;
+            }
+        };
+        final ConnectorHandler connectorHandler = new ConnectorHandler(dataManager, verifier , NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
+            encryptionComponent, applicationContext, NO_ICON_DAO, NO_EXTENSION_DATA_MANAGER,
+            NO_METADATA_CONFIGURATION_PROPERTIES);
+
+        final Connector connector = new Connector.Builder()
+            .id("connectorId")
+            .putConfiguredProperty("configuredProperty","val0")
+            .build();
+        when(dataManager.fetch(Connector.class,"connectorId")).thenReturn(connector);
+        when(dataManager.fetchAll(Integration.class)).thenReturn(() -> 0);
+        Map<String, String> mutableMapParams = new HashMap<>(10);
+        mutableMapParams.put("userProperty", "val1");
+        when(encryptionComponent.decrypt(anyMap())).then(AdditionalAnswers.returnsFirstArg());
+
+        connectorHandler.verifyConnectionParameters("connectorId", mutableMapParams);
+    }
+
+    @Test
+    public void shouldVerifyUserPropertiesOverrideConfiguredProperties() {
+        final EncryptionComponent encryptionComponent = mock(EncryptionComponent.class);
+        final Verifier verifier = new Verifier() {
+            @Override
+            public List<Result> verify(String connectorId, Map<String, String> parameters) {
+                assertThat(parameters).containsEntry("configuredProperty","val2");
+                return null;
+            }
+        };
+        final ConnectorHandler connectorHandler = new ConnectorHandler(dataManager, verifier , NO_CREDENTIALS, NO_INSPECTORS, NO_STATE,
+            encryptionComponent, applicationContext, NO_ICON_DAO, NO_EXTENSION_DATA_MANAGER,
+            NO_METADATA_CONFIGURATION_PROPERTIES);
+
+        final Connector connector = new Connector.Builder()
+            .id("connectorId")
+            .putConfiguredProperty("configuredProperty","val1")
+            .build();
+        when(dataManager.fetch(Connector.class,"connectorId")).thenReturn(connector);
+        when(dataManager.fetchAll(Integration.class)).thenReturn(() -> 0);
+        Map<String, String> mutableMapParams = new HashMap<>(10);
+        mutableMapParams.put("configuredProperty", "val2");
+        when(encryptionComponent.decrypt(anyMap())).then(AdditionalAnswers.returnsFirstArg());
+
+        connectorHandler.verifyConnectionParameters("connectorId", mutableMapParams);
     }
 
     private static ConnectorAction newActionBy(final Connector connector) {
@@ -182,10 +404,10 @@ public class ConnectorHandlerTest {
     }
 
     private static Integration newIntegration(List<Step> steps) {
-      return new Integration.Builder()
-          .id("test")
-          .name("test")
-          .addFlow(new Flow.Builder().steps(steps).build())
-          .build();
+        return new Integration.Builder()
+            .id("test")
+            .name("test")
+            .addFlow(new Flow.Builder().steps(steps).build())
+            .build();
     }
 }

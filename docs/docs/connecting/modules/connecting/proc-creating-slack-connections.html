@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating a Slack connection :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-creating-slack-connections.html">Creating a Slack connection</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-creating-slack-connections.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating a Slack connection</h1>
+<div class="paragraph">
+<p>In an integration, a Slack connection can retrieve messages from a
+channel that you specify or send a message to a channel or user.
+You can use the same Slack connection in any number of integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Slack app for connecting {prodname} to Slack.</p>
+</li>
+<li>
+<p>You can obtain the Slack webhook URL for your Slack app.</p>
+</li>
+<li>
+<p>You can obtain a legacy token that authorizes access to your Slack app.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Slack</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Slack webhook URL</strong> field, enter the webhook URL for your
+Slack app.</p>
+</li>
+<li>
+<p>In the <strong>Token for accessing Slack API</strong> field, enter the Slack-provided token,
+which you can
+<a href="https://api.slack.com/custom-integrations/legacy-tokens">obtain from Slack.</a></p>
+</li>
+<li>
+<p>Optionally, enter values for additional parameters:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <strong>Sending username for messages</strong> field, enter the user name that
+the bot has when it sends messages to Slack.</p>
+</li>
+<li>
+<p>In the <strong>Message avatar emoji</strong> field, specify one emoji, which the bot
+uses as the message avatar when it sends a message. Examples:
+<strong><code>:smile:</code></strong>, <strong><code>:wave:</code></strong>, <strong><code>:question:</code></strong>.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Search the web for <strong>emoji cheat sheet</strong> to see some emoji codes.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>In the <strong>Message avatar icon URL</strong> field, specify the URL of
+the avatar that the bot uses when it sends messages to Slack.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you specify an emoji and an icon URL, then the integration uses the
+icon URL.  If you specify neither an emoji nor an icon URL, then the message
+is sent without an avatar.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, revise the
+connection configuration values and try again.</p>
+</li>
+<li>
+<p>If validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Slack for Tracking Company Sales</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see the updated list of available
+connections, including the connection that you just created.
+If you entered the example name, you would
+see that <strong>Slack for Tracking Company Sales</strong> appears as a connection that you can
+choose to add to an integration. You can add this connection to
+any number of integrations.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

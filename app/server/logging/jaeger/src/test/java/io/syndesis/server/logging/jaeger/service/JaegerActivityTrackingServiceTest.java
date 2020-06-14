@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
 
@@ -30,15 +29,28 @@ import org.junit.Test;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+
+/*
+
+To retrieve a new example-jaeger-trace-result.json
+
+https://syndesis-jaeger-syndesis.192.168.42.160.nip.io/api/traces?limit=10&lookback=1h&service=i-LyeLhLb6-tEYiLoWuxEz
+
+To retrieve a new expected-activities.json
+
+https://syndesis-syndesis.192.168.42.160.nip.io/api/v1/activity/integrations/i-LyeLhLb6-tEYiLoWuxEz
+
+ */
 public class JaegerActivityTrackingServiceTest {
 
     @Test
-    public void shouldRetainLastRetainActivityLogs() throws IOException {
+    public void shouldRetainLastRetainActivityLogs() throws Exception {
 
         // Instead of testing an online service, lets override to use static test data.
         JaegerActivityTrackingService service = new JaegerActivityTrackingService(new JaegerQueryAPI("http://localhost:16686/api") {
             @Override
-            public ArrayList<Trace> tracesForService(String service, int lookbackDays, int limit) {
+            public List<Trace> tracesForService(String service, int lookbackDays, int limit) {
                 try {
                     String json = resource("example-jaeger-trace-result.json");
                     Traces traces = JsonUtils.reader().forType(Traces.class).readValue(json);
@@ -52,11 +64,11 @@ public class JaegerActivityTrackingServiceTest {
         List<Activity> activities = service.getActivities("test", null, null);
         assertThat(activities).isNotNull();
 
-
         String activitiesJson = JsonUtils.writer().withDefaultPrettyPrinter().writeValueAsString(activities).trim();
+        // print the activitiesJson to replace the content of expected-activities.json
+        // System.out.println(activitiesJson);
         String expectedActivitiesJson = resource("expected-activities.json").trim();
-        assertThat(activitiesJson).isEqualTo(expectedActivitiesJson);
-
+        assertThatJson(activitiesJson).isEqualTo(expectedActivitiesJson);
     }
 
 

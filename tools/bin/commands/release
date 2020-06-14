@@ -42,14 +42,14 @@ EOT
 get_release_version() {
 
     if [ $(hasflag --snapshot-release) ]; then
-            echo $(calc_timestamp_version "$topdir")
-            return
+        echo $(calc_timestamp_version "$topdir")
+        return 1
     fi
 
     local release_version=$(readopt --release-version)
     if [ -z "${release_version}" ]; then
         echo "ERROR: Please specify --release-version"
-        exit 1
+        return 1
     fi
     echo $release_version
 }
@@ -148,16 +148,16 @@ release::run() {
         prerelease=true
     fi
 
+    # Push everything (if configured)
+    git_push "$topdir" "$release_version" "$moving_tag"
+
     # Release the binaries
-    publish_artifacts "${topdir}/install/operator/releases" "$release_version" $prerelease
+    publish_artifacts "${topdir}" "$release_version" $prerelease
 
     # Create release description based on commit between releases
     # if check_for_command gren; then
     #    gren release --data-source=commits --tags=$release_version --override
     # fi
-
-    # Push everything (if configured)
-    git_push "$topdir" "$release_version" "$moving_tag"
 }
 
 create_moving_tag_release() {
@@ -179,14 +179,18 @@ create_moving_tag_release() {
 
 calc_timestamp_version() {
     local topdir=$1
-    cd $topdir/app
-    # ./mvnw -N help:evaluate -Dexpression="project.version"
-    local pom_version=$(./mvnw -N help:evaluate -Dexpression="project.version" | grep  '^[0-9]' | sed -e 's/\([0-9]*\.[0-9]*\).*/\1/')
+    local pom_version=$(grep -oPm2 "(?<=<version>)[^<]+" "$topdir/app/pom.xml"| tail -1| sed -e 's/\([0-9]*\.[0-9]*\).*/\1/')
     if [ -z "${pom_version}" ]; then
         echo "ERROR: Cannot extract version from app/pom.xml"
-        exit 1
+        return 1
     fi
     local patch_level=$(git tag | grep ^$pom_version | grep -v '-' | grep '[0-9]*\.[0-9]*\.' | sed -e s/${pom_version}.// | sort -n -r | head -1)
+    if [ -z "${patch_level}" ]; then
+      # without the patch level, i.e. for X.Y-SNAPSHOT in POMs we set
+      # the patch level to -1 to have it evaluate to X.Y.0-YYYYMMDD
+      # instead of X.Y.1-YYYYMMDD below
+      patch_level=-1
+    fi
     echo "${pom_version}.$((patch_level+1))-$(date '+%Y%m%d')"
 }
 
@@ -204,6 +208,11 @@ check_git_clean() {
        git status
        exit 1
     fi
+
+    # we need to remove tags removed at origin so we can push tags that have been
+    # removed, root cause is when we do `git push` an error is reported
+    # `fatal: remote part of refspec is not a valid name in :...`
+    git fetch --tags --prune
 }
 
 update_pom_versions() {
@@ -283,7 +292,7 @@ prepare_binaries() {
 }
 
 publish_artifacts() {
-    local release_dir=$1
+    local top_dir=$1
     local tag=$2
     local prerelease=$3
 
@@ -294,25 +303,58 @@ publish_artifacts() {
     local data="{\
         \"tag_name\": \"${tag}\", \
         \"name\": \"${tag}\", \
+        \"target_commitish\": \"$(git rev-parse HEAD)\", \
         \"prerelease\": ${prerelease} \
     }"
 
-    local upload_url=$(curl -q -s --fail \
+    local remote=origin
+    local github_api_url=$(git config --get remote.${remote:-origin}.url)
+    # try to get URL to GitHub API server from remote should support both git and HTTP style remotes
+    # e.g for:
+    # git@github.com:syndesisio/syndesis.git
+    # https://github.com/syndesisio/syndesis.git
+    # result should be:
+    # https://api.github.com/repos/syndesisio/syndesis
+    github_api_url=${github_api_url/github.com?/api.github.com\/repos\/} # change from https://github.com to https://api.github.com, also account for `:` non-http git remote
+    github_api_url=${github_api_url/%.git/} # remove .git at the end
+    github_api_url=${github_api_url/*@/https:\//} # remove any username in ...@api.github.com
+
+    if [ ${prerelease} == true ]; then
+        # keep only last 10 snapshot releases
+        local major_minor=${tag%.*} # this relies on having two dots in $tag, i.e. at least X.Y.Z
+        if [ -z "${major_minor}" ]; then
+            echo "ERROR: refusing to proceed MAJOR.MINOR version calculated as empty this would delete all releases"
+            return 1
+        fi
+        local versions_to_discard=$(git for-each-ref --format="%(refname:short)" --sort=creatordate refs/tags/${major_minor}*|head -n -10)
+        if [ ! -z "${versions_to_discard}" ]; then
+            echo "About to remove the following tags: ${versions_to_discard}"
+            for version in ${versions_to_discard}; do
+                local release_url=$(curl -q -s -u ${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN} "${github_api_url}/releases/tags/${version}" | jq -r .url)
+                if [ "${release_url}" != "null" ]; then
+                    curl -q -s -S --fail -X DELETE -u ${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN} ${release_url}
+                fi
+            done
+            git push --delete origin ${versions_to_discard}
+        fi
+    fi
+
+    local upload_url=$(curl -q -s -S --fail \
       -X POST \
       -u ${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN} \
       -H "Accept: application/vnd.github.v3+json" \
       -H "Content-Type: application/json" \
       -d "$data" \
-      https://api.github.com/repos/syndesisio/syndesis/releases | jq -r '.upload_url | sub("{.*"; "")'
+      ${github_api_url}/releases | jq -r '.upload_url | sub("{.*"; "")'
     )
 
     if [[ ! $upload_url == http* ]]; then
         echo "ERROR: Cannot create release on remote github repository. Check if a release with the same tag already exists."
-        return
+        return 1
     fi
 
-    for file in $release_dir/*; do
-        curl -q -s --fail -X POST -u ${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN} \
+    for file in $top_dir/install/operator/releases/*; do
+        curl -q -s -S --fail -X POST -u ${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN} \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Content-Type: application/tar+gzip" \
           --data-binary "@${file}" \
@@ -320,9 +362,20 @@ publish_artifacts() {
         local err=$?
         if [ $err -ne 0 ]; then
           echo "ERROR: Cannot upload release artifact $file on remote github repository"
-          return
+          return 1
         fi
     done
+
+    (cd "$top_dir/tools/bin/" && zip -q -r - . | curl -q -s -S --fail -X POST -u ${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN} \
+      -H "Accept: application/vnd.github.v3+json" \
+      -H "Content-Type: application/zip" \
+      --data-binary @- \
+      ${upload_url}?name=syndesis-cli.zip >/dev/null) 2>&1
+    local err=$?
+    if [ $err -ne 0 ]; then
+      echo "ERROR: Cannot upload release artifact syndesis-cli.zip on remote github repository"
+      return 1
+    fi
 }
 
 build_and_stage_artefacts() {
@@ -530,8 +583,8 @@ extract_minor_version() {
     local version=$1
     local minor_version=$(echo $version | sed 's/^\([0-9]*\.[0-9]*\)\.[0-9]*\(-.*\)*$/\1/')
     if [ "$minor_version" = "$version" ]; then
-        echo "ERROR: Cannot extract minor version from $version"
-        return
+        echo "ERROR: Cannot extract minor version from ${version}, computed ${minor_version}"
+        return 1
     fi
     echo $minor_version
 }

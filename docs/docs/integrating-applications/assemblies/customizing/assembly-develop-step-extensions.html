@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Examples of developing step extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-develop-step-extensions.html">Examples of developing step extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assemblies/customizing/assembly-develop-step-extensions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Examples of developing step extensions</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A step extension implements one or more custom steps.
+Each custom step implements one action for processing integration data
+between connections.
+The following examples demonstrate the alternatives for developing
+step extensions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#example-route-xml-fragment_step-alternatives">Example of developing a Camel route with XML fragments</a></p>
+</li>
+<li>
+<p><a href="#example-route-builder_step-alternatives">Example of developing a Camel route with <code>RouteBuilder</code></a></p>
+</li>
+<li>
+<p><a href="#example-route-builder-spring-boot_step-alternatives">Example of developing a Camel route with <code>RouteBuilder</code> and Spring Boot</a></p>
+</li>
+<li>
+<p><a href="#example-camel-bean_step-alternatives">Example of using a Camel bean</a></p>
+</li>
+<li>
+<p><a href="#example-step-api_step-alternatives">Example of using the Syndesis Step API</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Syndesis provides custom Java annotations that you can use in
+conjunction with the <code>syndesis-extension-plugin</code>.  When you implement
+a step extension or a connector extension in Java, you can specify annotations
+that enable Maven to add action definitions to the extension definition JSON file.
+To enable annotation processing,  add
+the following dependency to your Maven project:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;io.syndesis.extension&lt;/groupId&gt;
+  &lt;artifactId&gt;extension-annotation-processor&lt;/artifactId&gt;
+  &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because Spring Boot is the integration runtime, to inject beans
+into a Camel context, be sure to follow standard Spring Boot
+practices. For example,
+<a href="https://docs.spring.io/spring-boot/docs/1.5.11.RELEASE/reference/html/boot-features-developing-auto-configuration.html">create an auto configuration class</a>
+and create beans there. However, the default behavior is that
+extension code is not subject to package scanning. Consequently,
+you must create and populate the <code>META-INF/spring.factories</code> file
+in a step extension.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-route-xml-fragment_step-alternatives"><a class="anchor" href="#example-route-xml-fragment_step-alternatives"></a>Example of developing a Camel route with XML fragments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To develop a custom step, you can implement the action as an XML fragment that
+is a Camel route that has an input such as <code>direct</code>. The Syndesis runtime
+invokes this route in the same way that it invokes any other Camel route.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose that you want to create a step that logs the body of a
+message with an optional prefix. The following XML defines a Camel route
+that does this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;routes xmlns="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      http://camel.apache.org/schema/spring
+      http://camel.apache.org/schema/spring/camel-spring.xsd"&gt;
+
+  &lt;route id="log-body-with-prefix"&gt;
+    &lt;from uri="direct:log"/&gt;
+    &lt;choice&gt;
+      &lt;when&gt;
+        &lt;simple&gt;${header.prefix} != ''&lt;/simple&gt;
+        &lt;log message="${header.prefix} ${body}"/&gt;
+      &lt;/when&gt;
+      &lt;otherwise&gt;
+        &lt;log message="Output ${body}"/&gt;
+      &lt;/otherwise&gt;
+    &lt;/choice&gt;
+  &lt;/route&gt;
+
+&lt;/routes&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you develop an extension in XML, you must create the extension
+definition JSON file yourself. For this XML fragment, the
+<code>src/main/resources/META-INF/syndesis/syndesis-extension-definition.json</code>
+file could define the action as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "actionType": "step",
+  "id": "log-body-with-prefix",
+  "name": "Log body with prefix",
+  "description": "A simple body log with a prefix",
+  "descriptor": {
+    "kind": "ENDPOINT", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "direct:log", <i class="conum" data-value="2"></i><b>(2)</b>
+    "resource": "classpath:log-body-action.xml", <i class="conum" data-value="3"></i><b>(3)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+  "propertyDefinitionSteps": [ {
+    "description": "extension-properties",
+    "name": "extension-properties",
+    "properties": { <i class="conum" data-value="4"></i><b>(4)</b>
+      "prefix": {
+        "componentProperty": false,
+        "deprecated": false,
+        "description": "The Log body prefix message",
+        "displayName": "Log Prefix",
+        "javaType": "String",
+        "kind": "parameter",
+        "required": false,
+        "secret": false,
+        "type": "string"
+      }
+    }
+  } ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of the action is set to <code>ENDPOINT</code>. The runtime invokes a
+Camel endpoint to execute the action provided by this custom step.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The Camel endpoint to invoke is <code>direct:log</code>. This is the <code>from</code> specification
+in the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is the location of the XML  fragment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>These are the properties that the action defined in this custom step
+exposes to the integrator who will be adding this step to an integration. In
+{prodname}, each value that the integrator specifies in the user interface
+gets mapped to a message header that has the same name as the property.
+In this example, the integrator will see one input field, with the
+<strong>Log Prefix</strong> display name. For more details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Syndesis does not support full Camel XML configuration. Syndesis supports
+only the &lt;routes&gt; tag.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-route-builder_step-alternatives"><a class="anchor" href="#example-route-builder_step-alternatives"></a>Example of developing a Camel route with <code>RouteBuilder</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can implement a custom step by developing an action as a Camel
+route with the support of the <code>RouteBuilder</code> class. Such a route
+has an input such as <code>direct</code>. Syndesis invokes this route in the same
+way that it invokes any other Camel route.</p>
+</div>
+<div class="paragraph">
+<p>To implement the example that creates a step that logs the body of a
+message with an optional prefix, you can write something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.apache.camel.builder.RouteBuilder;
+
+import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+
+@Action( <i class="conum" data-value="1"></i><b>(1)</b>
+    id = "log-body-with-prefix",
+    name = "Log body with prefix",
+    description = "A simple body log with a prefix",
+    entrypoint = "direct:log")
+public class LogAction extends RouteBuilder {
+    @ConfigurationProperty( <i class="conum" data-value="2"></i><b>(2)</b>
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")
+    private String prefix;
+
+    @Override
+    public void configure() throws Exception {
+        from("direct::start") <i class="conum" data-value="3"></i><b>(3)</b>
+            .choice()
+                .when(simple("${header.prefix} != ''"))
+                    .log("${header.prefix} ${body}")
+                .otherwise()
+                    .log("Output ${body}")
+            .endChoice();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@Action</code> annotation indicates the action definition.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@ConfigurationProperty</code> annotation indicates definitions of
+user interface form controls. For details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is the action implementation.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This Java code uses Syndesis annotations, which means that the
+<code>extension-maven-plugin</code> can automatically generate the action definition.
+In the extension definition JSON file, the action definition will look
+like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "log-body-with-prefix",
+  "name": "Log body with prefix",
+  "description": "A simple body log with a prefix",
+  "descriptor": {
+    "kind": "ENDPOINT", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "direct:log", <i class="conum" data-value="2"></i><b>(2)</b>
+    "resource": "class:io.syndesis.extension.log.LogAction", <i class="conum" data-value="3"></i><b>(3)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+    "propertyDefinitionSteps": [ {
+      "description": "extension-properties",
+      "name": "extension-properties",
+      "properties": { <i class="conum" data-value="4"></i><b>(4)</b>
+        "prefix": {
+          "componentProperty": false,
+          "deprecated": false,
+          "description": "The Log body prefix message",
+          "displayName": "Log Prefix",
+          "javaType": "java.lang.String",
+          "kind": "parameter",
+          "required": false,
+          "secret": false,
+          "type": "string",
+          "raw": false
+        }
+      }
+    } ]
+  },
+  "actionType": "step"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of action is <code>ENDPOINT</code>. The runtime invokes a Camel endpoint to execute the action that this step implements.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the Camel endpoint to invoke. It is the <code>from</code> specification in the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is the class that implements <code>RoutesBuilder</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>These are the properties that the action defined in this custom step
+exposes to the integrator who will be adding this step to an integration. In
+{prodname}, each value that the integrator specifies in the user interface
+gets mapped to a message header that has the same name as the property.
+In this example, the integrator will see one input field, with the
+<strong>Log Prefix</strong> display name. For more information, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-route-builder-spring-boot_step-alternatives"><a class="anchor" href="#example-route-builder-spring-boot_step-alternatives"></a>Example of developing a Camel route with <code>RouteBuilder</code> and Spring Boot</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can implement a custom step by developing an action as a Camel
+route with the support of the <code>RouteBuilder</code> class as well as Spring Boot.
+In this example, Spring Boot is the facility for registering a
+<code>RouteBuilder</code> object in a Camel context.
+Syndesis invokes this route in the same
+way that it invokes any other Camel route.</p>
+</div>
+<div class="paragraph">
+<p>To implement the example that creates a step that logs the body of a
+message with an optional prefix, you can write something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ActionsConfiguration {
+
+    @Action( <i class="conum" data-value="1"></i><b>(1)</b>
+        id = "log-body-with-prefix",
+        name = "Log body with prefix",
+        description = "A simple body log with a prefix",
+        entrypoint = "direct:log")
+    @ConfigurationProperty( <i class="conum" data-value="2"></i><b>(2)</b>
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")
+    @Bean <i class="conum" data-value="3"></i><b>(3)</b>
+    public RouteBuilder logBodyWithprefix() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct::start") <i class="conum" data-value="4"></i><b>(4)</b>
+                    .choice()
+                        .when(simple("${header.prefix} != ''"))
+                            .log("${header.prefix} ${body}")
+                        .otherwise()
+                            .log("Output ${body}")
+                    .endChoice();
+             }
+        };
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@Action</code> annotation indicates the action definition.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@ConfigurationProperty</code> annotation indicates definitions of
+user interface form controls. For details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Register the <code>RouteBuilder</code> object as a bean.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>This is the action implementation.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This Java code uses Syndesis annotations, which means that the
+<code>extension-maven-plugin</code> can automatically generate the action definition.
+In the extension definition JSON file, the action definition will look
+like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "log-body-with-prefix",
+  "name": "Log body with prefix",
+  "description": "A simple body log with a prefix",
+  "descriptor": {
+    "kind": "ENDPOINT", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "direct:log", <i class="conum" data-value="2"></i><b>(2)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+    "propertyDefinitionSteps": [ {
+      "description": "extension-properties",
+      "name": "extension-properties",
+      "properties": { <i class="conum" data-value="3"></i><b>(3)</b>
+        "prefix": {
+          "componentProperty": false,
+          "deprecated": false,
+          "description": "The Log body prefix message",
+          "displayName": "Log Prefix",
+          "javaType": "java.lang.String",
+          "kind": "parameter",
+          "required": false,
+          "secret": false,
+          "type": "string",
+          "raw": false
+        }
+      }
+    } ]
+  },
+  "actionType": "step"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of action is <code>ENDPOINT</code>. The runtime invokes a Camel endpoint to execute the action that this step implements.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the Camel endpoint to invoke. It is the <code>from</code> specification in the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>These are the properties that the action defined in this custom step
+exposes to the integrator who will be adding this step to an integration. In
+{prodname}, each value that the integrator specifies in the user interface
+gets mapped to a message header that has the same name as the property.
+In this example, the integrator will see one input field, with the
+<strong>Log Prefix</strong> display name. For more details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>To make configuration classes discoverable by Spring Boot, you
+must list them in a file named <code>META-INF/spring.factories</code>, for example:</p>
+</div>
+<div class="paragraph">
+<p><code>org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.company.ActionsConfiguration</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>With Spring Boot, every bean that you eventually register in your
+configuration classes is available to the Camel context. For details, see
+the Spring Boot documentation for
+<a href="https://docs.spring.io/spring-boot/docs/1.5.11.RELEASE/reference/html/boot-features-developing-auto-configuration.html">Creating your own auto-configuration</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-camel-bean_step-alternatives"><a class="anchor" href="#example-camel-bean_step-alternatives"></a>Example of using a Camel bean</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can implement a custom step by developing an action as a Camel bean processor.
+To implement the example that creates a step that logs the body of a
+message with an optional prefix, you can write something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.apache.camel.Body;
+import org.apache.camel.Handler;
+import org.apache.camel.Header;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+
+@Action(
+    id = "log-body-with-prefix",
+    name = "Log body with prefix",
+    description = "A simple body log with a prefix")
+public class LogAction  {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogAction.class);
+
+    @ConfigurationProperty(
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")
+    private String prefix;
+
+    @Handler <i class="conum" data-value="1"></i><b>(1)</b>
+    public void process(@Header("prefix") String prefix, @Body Object body) {
+        if (prefix == null) {
+            LOGGER.info("Output {}", body);
+        } else {
+            LOGGER.info("{} {}", prefix, body);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is the function that implements the action.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This Java code uses Syndesis annotations, which means that the
+<code>extension-maven-plugin</code> can automatically generate the action definition.
+In the extension definition JSON file, the action definition will look
+like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "log-body-with-prefix",
+  "name": "Log body with prefix",
+  "description": "A simple body log with a prefix",
+  "descriptor": {
+    "kind": "BEAN", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "io.syndesis.extension.log.LogAction::process", <i class="conum" data-value="2"></i><b>(2)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+    "propertyDefinitionSteps": [ {
+      "description": "extension-properties",
+      "name": "extension-properties",
+      "properties": {
+        "prefix": { <i class="conum" data-value="3"></i><b>(3)</b>
+          "componentProperty": false,
+          "deprecated": false,
+          "description": "The Log body prefix message",
+          "displayName": "Log Prefix",
+          "javaType": "java.lang.String",
+          "kind": "parameter",
+          "required": false,
+          "secret": false,
+          "type": "string",
+          "raw": false
+        }
+      }
+    } ]
+  },
+  "actionType": "step"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of the action is <code>BEAN</code>. The runtime invokes a Camel bean processor
+to execute the action in this custom step.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the Camel bean to invoke.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>These are the properties that the action defined in this custom step
+exposes to the integrator who will be adding this step to an integration. In
+{prodname}, each value that the integrator specifies in the user interface
+gets mapped to a message header that has the same name as the property.
+In this example, the integrator will see one input field, with the
+<strong>Log Prefix</strong> display name. For more details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When you use beans, you might find it convenient to
+inject user properties into the bean
+instead of retrieving them from the exchange header. To do this, implement
+getter and setter methods for the properties that you want to get injected.
+The action implementation would look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.apache.camel.Body;
+import org.apache.camel.Handler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+
+@Action(
+    id = "log-body-with-prefix",
+    name = "Log body with prefix",
+    description = "A simple body log with a prefix")
+public class LogAction  {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogAction.class);
+
+    @ConfigurationProperty(
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")
+    private String prefix;
+
+    public void setPrefix(String prefix) { <i class="conum" data-value="1"></i><b>(1)</b>
+        this.prefix = prefix;
+    }
+
+    public String getPrefix() { <i class="conum" data-value="2"></i><b>(2)</b>
+        return prefix;
+    }
+
+    @Handler
+    public void process(@Body Object body) {
+        if (this.prefix == null) {
+            LOGGER.info("Output {}", body);
+        } else {
+            LOGGER.info("{} {}", this.prefix, body);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is the property setter method.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the property getter method.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-step-api_step-alternatives"><a class="anchor" href="#example-step-api_step-alternatives"></a>Example of using the Syndesis Step API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can implement a custom step by using the Syndesis <code>Step</code> API. This
+provides a way to interact with runtime route creation. You can use
+any method provided by the <code>ProcessorDefinition</code> class and you can
+create more complex routes. Information for the Syndesis API is at
+<a href="http://javadoc.io/doc/io.syndesis.extension/extension-api" class="bare">http://javadoc.io/doc/io.syndesis.extension/extension-api</a>.</p>
+</div>
+<div class="paragraph">
+<p>Here is an example of a step extension
+that uses the Syndesis <code>Step</code> API to implement a split action:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import java.util.Map;
+import java.util.Optional;
+
+import io.syndesis.extension.api.Step;
+import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.Expression;
+import org.apache.camel.builder.Builder;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
+import org.apache.camel.spi.Language;
+
+@Action(id = "split", name = "Split", description = "Split your exchange")
+public class SplitAction implements Step {
+
+    @ConfigurationProperty(
+        name = "language",
+        displayName = "Language",
+        description = "The language used for the expression")
+    private String language;
+
+    @ConfigurationProperty(
+        name = "expression",
+        displayName = "Expression",
+        description = "The expression used to split the exchange")
+    private String expression;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    @Override
+    public Optional&lt;ProcessorDefinition&gt; configure(
+            CamelContext context,
+            ProcessorDefinition route,
+            Map&lt;String, Object&gt; parameters) { <i class="conum" data-value="1"></i><b>(1)</b>
+
+        String languageName = language;
+        String expressionDefinition = expression;
+
+        if (ObjectHelper.isEmpty(languageName) &amp;&amp; ObjectHelper.isEmpty(expressionDefinition)) {
+            route = route.split(Builder.body());
+        } else if (ObjectHelper.isNotEmpty(expressionDefinition)) {
+
+            if (ObjectHelper.isEmpty(languageName)) {
+                languageName = "simple";
+            }
+
+            final Language splitLanguage = context.resolveLanguage(languageName);
+            final Expression splitExpression = splitLanguage.createExpression(expressionDefinition);
+            final AggregationStrategy aggreationStrategy = new UseOriginalAggregationStrategy(null, false);
+
+            route = route.split(splitExpression).aggregationStrategy(aggreationStrategy);
+        }
+
+        return Optional.of(route);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is the implementation of the action that the custom step performs.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This Java code uses Syndesis annotations, which means that the
+<code>extension-maven-plugin</code> can automatically generate the action definition.
+In the extension definition JSON file, the action definition will look
+like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "split",
+  "name": "Split",
+  "description": "Split your exchange",
+  "descriptor": {
+    "kind": "STEP", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "io.syndesis.extension.split.SplitAction", <i class="conum" data-value="2"></i><b>(2)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+    "propertyDefinitionSteps": [ {
+      "description": "extension-properties",
+      "name": "extension-properties",
+      "properties": {
+        "language": {
+          "componentProperty": false,
+          "deprecated": false,
+          "description": "The language used for the expression",
+          "displayName": "Language",
+          "javaType": "java.lang.String",
+          "kind": "parameter",
+          "required": false,
+          "secret": false,
+          "type": "string",
+          "raw": false
+        },
+        "expression": {
+          "componentProperty": false,
+          "deprecated": false,
+          "description": "The expression used to split the exchange",
+          "displayName": "Expression",
+          "javaType": "java.lang.String",
+          "kind": "parameter",
+          "required": false,
+          "secret": false,
+          "type": "string",
+          "raw": false
+        }
+      }
+    } ]
+  },
+  "tags": [],
+  "actionType": "step"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of the action is <code>STEP</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the class that is implementing the <code>Step</code> interface.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p>For details about user interface properties, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

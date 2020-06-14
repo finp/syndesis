@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Implementing the Salesforce to database sample integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-sf2db-intro.html">Implementing the Salesforce to database sample integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/tutorials/assembly-sf2db-intro.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Implementing the Salesforce to database sample integration</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This sample integration captures updates in Salesforce and then
+calls a database stored procedure, which synchronizes that database
+with the Salesforce updates.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You need an account in a Salesforce installation that is used for development.
+This account must have Salesforce API access, which is available in a
+Salesforce Enterprise account or a Salesforce Developer account. To obtain
+a free developer account, visit <a href="https://developer.salesforce.com/signup" class="bare">https://developer.salesforce.com/signup</a>.
+It takes less than two minutes to obtain a Salesforce account.</p>
+<div class="paragraph">
+<p>If you already created the Twitter to Salesforce sample integration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>{prodname} is already registered as a Salesforce client.
+You do not need to do this again.</p>
+</li>
+<li>
+<p>You already have a Salesforce connection, which you can reuse in
+this sample integration.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you did not already create the Twitter to Salesforce sample
+integration, then you must register {prodname} as a Salesforce client
+and create a Salesforce connection in order to complete the
+Salesforce to database sample integration.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To implement, deploy, and test this sample integration, the main steps are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#register-with-salesforce_sf2db">[register-with-salesforce_sf2db]</a></p>
+</li>
+<li>
+<p><a href="#create-salesforce-connection_sf2db">[create-salesforce-connection_sf2db]</a></p>
+</li>
+<li>
+<p><a href="#create-sf-db-integration_sf2db">Creating and deploying the Salesforce to database sample integration</a></p>
+</li>
+<li>
+<p><a href="#sf2db-confirm-working_sf2db">[sf2db-confirm-working_sf2db]</a></p>
+</li>
+<li>
+<p><a href="#cleanup_sf2db">[cleanup_sf2db]</a></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-intro.adoc - include::../../modules/tutorials/proc-register-with-sf.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-intro.adoc - include::../../modules/tutorials/proc-create-sf-connection.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-sf-db-integration_sf2db"><a class="anchor" href="#create-sf-db-integration_sf2db"></a>Creating and deploying the Salesforce to database sample integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create and deploy an integration that uses the Salesforce
+connection that you created and the database connection that is
+provided with {prodname}, the main steps are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#sf2db-choose-start-connection_sf2db-create">[sf2db-choose-start-connection_sf2db-create]</a></p>
+</li>
+<li>
+<p><a href="#sf2db-choose-finish-connection_sf2db-create">[sf2db-choose-finish-connection_sf2db-create]</a></p>
+</li>
+<li>
+<p><a href="#sf2db-add-data-mapping-step_sf2db-create">[sf2db-add-data-mapping-step_sf2db-create]</a></p>
+</li>
+<li>
+<p><a href="#sf2db-name-and-publish_sf2db-create">[sf2db-name-and-publish_sf2db-create]</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You registered your {prodname} environment as a Salesforce client.</p>
+</li>
+<li>
+<p>You created a {prodname} Salesforce connection.</p>
+</li>
+<li>
+<p>{prodname} is open and you are logged in.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-create-integration.adoc - include::../../modules/tutorials/proc-sf2db-choose-start.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-create-integration.adoc - include::../../modules/tutorials/proc-sf2db-choose-finish.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-create-integration.adoc - include::../../modules/tutorials/proc-sf2db-add-mapping-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-create-integration.adoc - include::../../modules/tutorials/proc-sf2db-name-and-publish.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-intro.adoc - include::../../modules/tutorials/proc-sf2db-confirm-works.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/tutorials/assembly-sf2db-intro.adoc - include::../../modules/tutorials/proc-clean-up.adoc[]</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

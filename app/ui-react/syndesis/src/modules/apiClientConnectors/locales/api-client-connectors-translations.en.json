@@ -1,8 +1,9 @@
 {
   "action": "<strong>{{actionName}}</strong> - {{actionDescription}}",
   "apiConnectorDetailsPageTitle": "Connector Details",
-  "apiConnectorsPageDescription": "<strong>$t(shared:project.name)</strong> creates an API client connector when you upload a valid OpenAPI 2.0 specification that describes the API you want to connect to.",
+  "apiConnectorsPageDescription": "<strong>$t(shared:project.name)</strong> creates an API client connector when you upload a valid OpenAPI or WSDL document that describes the API you want to connect to.",
   "apiConnectorsPageTitle": "API Client Connectors",
+  "address": "Address",
   "basePath": "Base URL",
   "ConnectorIcon": "Connector Icon",
   "CreateApiConnector": "Create API Connector",
@@ -15,7 +16,7 @@
   "errorSavingApiConnector": "Unexpected server error saving the API client connector.",
   "Host": "Host",
   "invalidImageFileUpload": "Please select an image file",
-  "reviewActionsTitle": "Review Actions",
+  "reviewActionsTitle": "Imported Operations",
   "reviewApiDefinitionHeading": "API DEFINITION",
   "reviewErrorsHeading": "Errors {{count}}",
   "reviewImportedHeading": "IMPORTED",
@@ -31,15 +32,20 @@
     "selectMethod": {
       "dndUploadFailedMessage": " could not be uploaded",
       "dndUploadSuccessMessage": "Process file ",
-      "dndFileExtensions": ".json,.yaml,.yml",
-      "dndHelpMessage": "Accepted file type: .json, .yaml, and .yml",
+      "dndFileExtensions": ".json,.yaml,.yml,.wsdl",
+      "dndHelpMessage": "Accepted file type: .json, .yaml, .yml, and .wsdl",
       "dndInstructions": "Drag and drop a file here, or <strong>click</strong> to select a file by using a file chooser dialog.",
       "dndNoFileSelectedLabel": "No file selected",
       "dndSelectedFileLabel": "Selected file:",
-      "methodFromFile": "Upload an OpenAPI file",
+      "methodFromFile": "Upload document",
       "methodFromUrl": "Use a URL",
-      "title": "Upload OpenAPI Document",
+      "title": "Provide Document",
       "urlNote": "* Note: After uploading this document, updates to it are not automatically obtained."
+    },
+    "soap": {
+      "port": "Port",
+      "service": "Service",
+      "servicePortTitle": "Specify service and port"
     },
     "review": {
       "btnReviewEdit": "Review/Edit",
@@ -51,19 +57,26 @@
       "sectionImported": "IMPORTED",
       "sectionWarnings": "WARNINGS",
       "sectionErrors": "ERRORS",
-      "title": "Review Actions"
+      "title": "Imported Operations"
     },
     "specification": {
       "title": "Edit API Definition"
     },
     "security": {
+      "address": "Address",
       "accessTokenUrl": "Access Token URL",
       "authTypeLabel": "Authentication Type",
       "authorizationUrl": "Authorization URL",
-      "description": "$t(shared:project.name) reads the OpenAPI definition to determine the information needed to configure the connector to meet the API’s security requirements. Connections created from this connector always use the authentication type that you select here.",
+      "description": "$t(shared:project.name) reads the document to determine the information needed to configure the connector to meet the API’s security requirements. Connections created from this connector always use the authentication type that you select here.",
       "noSecurity": "No Security",
+      "password": "Password",
+      "passwordType": "Password Type",
       "required": "All fields are required.",
-      "title": "Specify Security"
+      "timestamp": "Timestamp",
+      "title": "Specify Security",
+      "username": "Username",
+      "usernameTokenCreated": "Username Token Created",
+      "usernameTokenNonce": "Username Token Nonce"
     },
     "details": {
       "title": "Review/Edit Connector Details",

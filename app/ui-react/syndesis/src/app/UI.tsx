@@ -1,3 +1,5 @@
+
+import rhiImage from '@rh-uxd/integration-core/styles/assets/Logo-Red_Hat-Managed_Integration-A-Reverse-RGB.png';
 import { WithApiVersion, WithUserHelpers } from '@syndesis/api';
 import { StringMap } from '@syndesis/models';
 import {
@@ -82,8 +84,11 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
   };
 
   const [notifications, setNotifications] = React.useState<INotification[]>([]);
+  const removeNotification = (toRemove: string) => {
+    setNotifications(items => items.filter(({ key }) => key !== toRemove));
+  };
   const pushNotification = (
-    msg: React.ReactNode,
+    message: React.ReactNode,
     type: INotificationType,
     persistent: boolean = false
   ) => {
@@ -91,18 +96,12 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
       ...notifications,
       {
         key: Date.now().toString(),
-        message: msg,
+        message,
         persistent,
         type,
       },
     ]);
   };
-  const onRemoveNotification = (notification: INotification) => {
-    setNotifications(
-      notifications.filter((n: INotification) => n.key !== notification.key)
-    );
-  };
-
   /* disable listening to the web worker to avoid installing it
   React.useEffect(() => {
     let refreshNotificationDisplayed = false;
@@ -153,19 +152,6 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
     element.setAttribute('href', assetUrl);
   };
 
-  const [productBuild, setProductBuild] = React.useState(false);
-  React.useEffect(() => {
-    updateHref('favicon', !productBuild ? synFavicon : favicon);
-    updateHref(
-      'appleTouchIcon',
-      !productBuild ? synAppleTouchIcon : rhAppleTouchIcon
-    );
-    updateHref(
-      'safariPinnedTab',
-      !productBuild ? synSafariPinnedTabIcon : redHatSafariPinnedTabIcon
-    );
-  }, [productBuild]);
-
   return (
     <UIContext.Provider
       value={{
@@ -180,9 +166,18 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
             <AppContext.Consumer>
               {({ user, config }) => {
                 const isProductBuild = config && config.branding.productBuild;
-                setProductBuild(isProductBuild);
-                const productName = isProductBuild ? 'Fuse Online' : 'Syndesis';
-                const features = (config && config.features) || {} as Map<string, any>;
+                updateHref('favicon', !isProductBuild ? synFavicon : favicon);
+                updateHref(
+                  'appleTouchIcon',
+                  !isProductBuild ? synAppleTouchIcon : rhAppleTouchIcon
+                );
+                updateHref(
+                  'safariPinnedTab',
+                  !isProductBuild ? synSafariPinnedTabIcon : redHatSafariPinnedTabIcon
+                );
+                const productName = t('shared:project:name');
+                const features =
+                  (config && config.features) || ({} as Map<string, any>);
                 return (
                   <>
                     {
@@ -230,8 +225,7 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
                     }
                     <Notifications
                       notifications={notifications}
-                      notificationTimerDelay={8000}
-                      removeNotificationAction={onRemoveNotification}
+                      onClose={removeNotification}
                     />
                     <WithRouter>
                       {({ history, match }) => {
@@ -251,7 +245,12 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
                                 window.document.write(html);
                                 window.document.close();
                               };
-
+                              const tutorialLink = t('shared:links:tutorial');
+                              const userGuideLink = t('shared:links:userguide');
+                              const connectorsGuideLink = t(
+                                'shared:links:connectorsguide'
+                              );
+                              const contactUsLink = t('shared:links:contactus');
                               return (
                                 <AppLayout
                                   onShowAboutModal={toggleAboutModal}
@@ -259,26 +258,16 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
                                     history.push(resolvers.support.root());
                                   }}
                                   onSelectSampleIntegrationTutorials={() => {
-                                    window.open(
-                                      'https://access.redhat.com/documentation/en-us/red_hat_fuse/7.4/html-single/fuse_online_sample_integration_tutorials/',
-                                      '_blank'
-                                    );
+                                    window.open(tutorialLink, '_blank');
                                   }}
                                   onSelectUserGuide={() => {
-                                    window.open(
-                                      'https://access.redhat.com/documentation/en-us/red_hat_fuse/7.4/html-single/integrating_applications_with_fuse_online',
-                                      '_blank'
-                                    );
+                                    window.open(userGuideLink, '_blank');
                                   }}
                                   onSelectConnectorsGuide={() => {
-                                    window.open(
-                                      'https://access.redhat.com/documentation/en-us/red_hat_fuse/7.4/html-single/connecting_fuse_online_to_applications_and_services/',
-                                      '_blank'
-                                    );
+                                    window.open(connectorsGuideLink, '_blank');
                                   }}
                                   onSelectContactUs={() => {
-                                    window.location.href =
-                                      'mailto:fuse-online-tech-preview@redhat.com';
+                                    window.open(contactUsLink, '_blank');
                                   }}
                                   logoutItem={{
                                     children: t('Logout'),
@@ -340,6 +329,15 @@ export const UI: React.FunctionComponent<IAppUIProps> = ({ routes }) => {
                                         isProductBuild
                                           ? redHatFuseOnlineLogo
                                           : syndesisLogo
+                                      }
+                                      alt={productName}
+                                      className="pf-c-brand"
+                                    />
+                                  }
+                                  rhiPictograph={
+                                    <img
+                                      src={
+                                        rhiImage
                                       }
                                       alt={productName}
                                       className="pf-c-brand"

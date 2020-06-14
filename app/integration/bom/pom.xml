@@ -27,11 +27,11 @@
   <packaging>pom</packaging>
 
   <properties>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <camel.version>2.23.2.fuse-760011</camel.version>
-    <atlasmap.version>1.42.10</atlasmap.version>
-    <jackson.databind.version>2.9.9</jackson.databind.version>
-    <mongo.driver.version>3.6.3</mongo.driver.version>
+    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
+    <camel.version>3.1.0</camel.version>
+    <atlasmap.version>2.0.4</atlasmap.version>
+    <jackson.databind.version>2.9.10.4</jackson.databind.version>
+    <mongodb.version>3.11.2</mongodb.version>
   </properties>
 
   <!-- Metadata need to publish to central -->
@@ -81,53 +81,13 @@
     <url>https://github.com/syndesisio/syndesis.io/issues</url>
   </issueManagement>
 
-  <repositories>
-    <repository>
-      <id>central</id>
-      <name>Maven Central</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>jboss-ea</id>
-      <name>JBoss Early Access</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea/</url>
-    </repository>
-    <repository>
-      <id>redhat-ga</id>
-      <name>Red Hat General Availability Repository</name>
-      <url>https://maven.repository.redhat.com/ga/</url>
-    </repository>
-    <repository>
-      <id>atlassian-public</id>
-      <url>https://packages.atlassian.com/maven-external</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>central</id>
-      <name>Maven Central</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>jboss-ea</id>
-      <name>JBoss Early Access</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>redhat-ga</id>
-      <name>Red Hat General Availability Repository</name>
-      <url>https://maven.repository.redhat.com/ga/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <dependencyManagement>
     <dependencies>
       <!-- Overriden Spring boot BOM dependecies -->
       <dependency>
         <groupId>org.mongodb</groupId>
         <artifactId>mongo-java-driver</artifactId>
-        <version>${mongo.driver.version}</version>
+        <version>${mongodb.version}</version>
       </dependency>
       <!--
           NOTE: the final BOM will be an extension of the FIS BOM.
@@ -147,7 +107,7 @@
 
       <!-- Camel BOM for Spring-boot -->
       <dependency>
-        <groupId>org.apache.camel</groupId>
+        <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
         <version>${camel.version}</version>
         <type>pom</type>
@@ -189,7 +149,7 @@
       <!-- Atlasmap runtime -->
       <dependency>
         <groupId>io.atlasmap</groupId>
-        <artifactId>camel-atlasmap</artifactId>
+        <artifactId>camel3-atlasmap</artifactId>
         <version>${atlasmap.version}</version>
       </dependency>
 
@@ -318,6 +278,11 @@
       </dependency>
       <dependency>
         <groupId>io.syndesis.connector</groupId>
+        <artifactId>connector-soap</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.syndesis.connector</groupId>
         <artifactId>connector-webhook</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -399,6 +364,11 @@
       <dependency>
         <groupId>io.syndesis.connector</groupId>
         <artifactId>connector-mongodb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.syndesis.connector</groupId>
+        <artifactId>connector-debezium</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

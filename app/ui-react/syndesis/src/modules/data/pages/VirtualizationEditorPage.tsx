@@ -4,7 +4,6 @@ import {
   VirtualizationPublishingDetails,
 } from '@syndesis/models';
 import {
-  IVirtualizationAction,
   PageSection,
   VirtualizationBreadcrumb,
   VirtualizationDetailsHeader,
@@ -21,8 +20,7 @@ import {
 import {
   getOdataUrl,
   getPublishingDetails,
-  getStateLabelStyle,
-  getStateLabelText,
+  getPublishStateLabelInfo,
   isPublishStep,
 } from '../shared/VirtualizationUtils';
 import './VirtualizationEditorPage.css';
@@ -49,12 +47,12 @@ export interface IVirtualizationEditorPageProps {
    */
   actions?: VirtualizationActionId[];
 
-  deleteActionCustomProps?: IVirtualizationAction;
-  exportActionCustomProps?: IVirtualizationAction;
-  publishActionCustomProps?: IVirtualizationAction;
-  saveActionCustomProps?: IVirtualizationAction;
-  startActionCustomProps?: IVirtualizationAction;
-  stopActionCustomProps?: IVirtualizationAction;
+  deleteActionCustomProps?: any;
+  exportActionCustomProps?: any;
+  publishActionCustomProps?: any;
+  saveActionCustomProps?: any;
+  startActionCustomProps?: any;
+  stopActionCustomProps?: any;
 
   /**
    * The breadcrumb kebab menu items. Leave `undefined` if default kebab menu items are wanted.
@@ -77,9 +75,7 @@ export interface IVirtualizationEditorPageProps {
   virtualization: Virtualization;
 }
 
-export const VirtualizationEditorPage: React.FunctionComponent<
-  IVirtualizationEditorPageProps
-> = props => {
+export const VirtualizationEditorPage: React.FunctionComponent<IVirtualizationEditorPageProps> = props => {
   /**
    * Context that provides app-wide variables and functions.
    */
@@ -138,10 +134,9 @@ export const VirtualizationEditorPage: React.FunctionComponent<
   /**
    * State identifying the type that should be used by labels.
    */
-  const [labelType, setLabelType] = React.useState('default' as
-    | 'danger'
-    | 'primary'
-    | 'default');
+  const [labelType, setLabelType] = React.useState(
+    'default' as 'danger' | 'primary' | 'default'
+  );
 
   /**
    * State for the user-friendly text of the current published state.
@@ -159,17 +154,28 @@ export const VirtualizationEditorPage: React.FunctionComponent<
   });
 
   /**
+   * State identifying the message that should be used by publish state label popover.
+   */
+  const [publishStateMessage, setPublishStateMessage] = React.useState('');
+
+  /**
    * Update publishing details and description whenever a virtualization state changes.
    */
   React.useEffect(() => {
     const publishedDetails: VirtualizationPublishingDetails = getPublishingDetails(
       appContext.config.consoleUrl,
-      props.virtualization
+      props.virtualization.name
+        ? props.virtualization
+        : props.routeState.virtualization
     ) as VirtualizationPublishingDetails;
 
     setCurrPublishedState(publishedDetails);
     setDescription(props.virtualization.description);
-  }, [props.virtualization, appContext.config.consoleUrl]);
+  }, [
+    props.routeState.virtualization,
+    props.virtualization,
+    appContext.config.consoleUrl,
+  ]);
 
   /**
    * Update UI whenever publishing details change.
@@ -187,8 +193,10 @@ export const VirtualizationEditorPage: React.FunctionComponent<
     setProgressWithLink(isPublishStep(currPublishedState));
 
     if (!isSubmitted) {
-      setLabelType(getStateLabelStyle(currPublishedState));
-      setPublishStateText(getStateLabelText(currPublishedState));
+      const labelInfo = getPublishStateLabelInfo(currPublishedState);
+      setLabelType(labelInfo.style);
+      setPublishStateText(labelInfo.text);
+      setPublishStateMessage(labelInfo.message);
     }
   }, [currPublishedState, isProgressWithLink, isSubmitted]);
 
@@ -275,16 +283,17 @@ export const VirtualizationEditorPage: React.FunctionComponent<
         <VirtualizationDetailsHeader
           isProgressWithLink={isProgressWithLink}
           i18nPublishState={publishStateText}
+          i18nPublishStateMessage={publishStateMessage}
           labelType={labelType}
           i18nDescriptionPlaceholder={t('descriptionPlaceholder')}
           i18nPublishLogUrlText={t('shared:viewLogs')}
           i18nODataUrlText={t('viewOData')}
-          modified={props.virtualization.modified}
+          modified={currPublishedState.modified}
           odataUrl={getOdataUrl(
             props.virtualization || props.routeState.virtualization
           )}
           publishedState={currPublishedState.state}
-          publishedVersion={props.virtualization.publishedRevision}
+          publishedVersion={currPublishedState.version}
           publishingCurrentStep={currPublishedState.stepNumber}
           publishingLogUrl={currPublishedState.logUrl}
           publishingTotalSteps={currPublishedState.stepTotal}
@@ -295,8 +304,8 @@ export const VirtualizationEditorPage: React.FunctionComponent<
           onChangeDescription={doSetDescription}
         />
       </PageSection>
-      <PageSection variant={'light'} noPadding={true}>
-        <VirtualizationNavBar virtualization={props.virtualization} />
+      <PageSection variant={'light'}>
+        <VirtualizationNavBar virtualization={props.routeState.virtualization} />
       </PageSection>
       <PageSection variant={'light'} noPadding={true}>
         {props.children}

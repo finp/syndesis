@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Dropbox :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-dropbox.html">Connecting to Dropbox</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-dropbox.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Dropbox</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can download files from Dropbox or upload files
+to Dropbox. The following topics provide the details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#register-with-dropbox_dropbox">Registering {prodname} as a Dropbox client</a></p>
+</li>
+<li>
+<p><a href="#create-dropbox-connection_dropbox">Creating a Dropbox connection</a></p>
+</li>
+<li>
+<p><a href="#adding-dropbox-connection-start_dropbox">Obtaining files from Dropbox to trigger integration execution</a></p>
+</li>
+<li>
+<p><a href="#adding-dropbox-connection-finish_dropbox">Adding files to Dropbox to finish an integration</a></p>
+</li>
+<li>
+<p><a href="#adding-dropbox-connection-middle_dropbox">Accessing Dropbox in the middle of an integration</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="register-with-dropbox_dropbox"><a class="anchor" href="#register-with-dropbox_dropbox"></a>Registering {prodname} as a Dropbox client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You must register your {prodname} environment as a client application
+that can access Dropbox.
+This lets you create any number of integrations that connect
+to Dropbox. In other words, you need to register a particular
+{prodname} environment with Dropbox only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Dropbox client application. However, while each Dropbox
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You can sign in to the Dropbox account that you want an integration to use
+to download or upload files.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL,
+click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your {prodname} environment to the clipboard.
+You will need this URL toward the end of this procedure.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, go  to <code><a href="https://www.dropbox.com" class="bare">https://www.dropbox.com</a></code>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Sign in to the Dropbox account that has the data that you want to
+access in an integration.</p>
+</li>
+<li>
+<p>After signing in, go to <a href="https://www.dropbox.com/developers/apps" class="bare">https://www.dropbox.com/developers/apps</a>.</p>
+</li>
+<li>
+<p>Click <strong>Create App</strong>.</p>
+</li>
+<li>
+<p>Select <strong>Dropbox API</strong>.</p>
+</li>
+<li>
+<p>Near the top of the page, in the sentence that starts with
+<code><strong>During registration, enter this callback URL:</strong></code>,
+paste the URL that you copied to the clipboard at the beginning of this procedure.
+For example, the URL that you paste is something like this:
+<code>https://app-proj9128.7b63.{prodnameinurl}.openshiftapps.com/api/v1/credentials/callback</code>.</p>
+</li>
+<li>
+<p>Choose whether {prodname} can access a single folder or all of the
+folders and files.</p>
+</li>
+<li>
+<p>Specify a name for your Dropbox app. For example, you might
+specify <code><strong>Fuse Online Access From Aslan LLC</strong></code>. The name you specify must be
+unique in the set of Dropbox app names.</p>
+</li>
+<li>
+<p>Check the box to indicate that you agree to Dropbox API terms and
+conditions.</p>
+</li>
+<li>
+<p>Click <strong>Create App</strong>.</p>
+</li>
+<li>
+<p>In the Dropbox <strong>Settings</strong> page for your new app, in
+the input field for <strong>OAuth2 Redirect URIs</strong>, paste your {prodname} URL,
+which you copied to the clipboard at the beginning of this procedure.</p>
+</li>
+<li>
+<p>Click <strong>Add</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>Your {prodname} environment is now registered as a Dropbox client, which
+means that {prodname} can access content in the Dropbox account that
+you signed into.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-dropbox-connection_dropbox"><a class="anchor" href="#create-dropbox-connection_dropbox"></a>Creating a Dropbox connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to download or upload Dropbox files, create a
+Dropbox connection, which you can add
+to an integration. You can add the same connection to any number of
+integrations.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You registered your {prodname} environment as an application that can
+access Dropbox.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a new browser tab, go  to <code><a href="https://www.dropbox.com" class="bare">https://www.dropbox.com</a></code>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Sign in to the Dropbox account in which you created the app that
+registers access from your {prodname} environment.</p>
+</li>
+<li>
+<p>Go to <a href="https://www.dropbox.com/developers/apps" class="bare">https://www.dropbox.com/developers/apps</a>.</p>
+</li>
+<li>
+<p>Click the {prodname} app to display its settings.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, in {prodname}, do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Dropbox</strong> connector.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Go back to the Dropbox settings display for your app and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Scroll down to see <strong>Generated Access Token</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Generate</strong>.</p>
+</li>
+<li>
+<p>Copy the generated access token to the clipboard.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Back in {prodname}, in the <strong>Configure Connection</strong> page, in the
+<strong>Access Token</strong> field, paste the generated
+access token.</p>
+</li>
+<li>
+<p>In the <strong>Client Identifier</strong> field, enter the name that you specified
+when you created the Dropbox app.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} displays a message that indicates whether
+it can validate this connection. If validation fails, try again and
+be sure to enter the correct values.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Dropbox Connect 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Dropbox connection
+that can access all content in our company Dropbox account.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Dropbox Connect 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-dropbox-connection-start_dropbox"><a class="anchor" href="#adding-dropbox-connection-start_dropbox"></a>Obtaining files from Dropbox to trigger integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To start an integration by downloading files from Dropbox,
+add a Dropbox connection as the start connection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You created a Dropbox connection.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Dropbox connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Download</strong> action
+to obtain one or more files from the Dropbox account that this connection
+accesses.</p>
+</li>
+<li>
+<p>To configure the action, in the <strong>Folder or file name path to download</strong> field,
+specify the filename path for the content that you want
+the integration to obtain. In this release, you can download only a single
+file.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection starts the simple integration and {prodname} prompts
+you to choose the finish connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-dropbox-connection-finish_dropbox"><a class="anchor" href="#adding-dropbox-connection-finish_dropbox"></a>Adding files to Dropbox to finish an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To finish an integration by uploading files to Dropbox,
+add a Dropbox connection as the integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Dropbox connection.</p>
+</li>
+<li>
+<p>You are creating or editing an integration and {prodname} is prompting
+you to choose the finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Dropbox connection that
+you want to use to finish the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Upload</strong>
+action to add the current integration data to the
+Dropbox account that this connection accesses.</p>
+</li>
+<li>
+<p>In the <strong>Remote Path</strong> field, enter the
+local filename path for file that you want to upload. Dropbox stores the file with the
+same path and name. In this release, you can upload only a single file.</p>
+</li>
+<li>
+<p>For the <strong>Upload mode</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Select <strong>Add</strong> to upload a file only when a file with the same name is not already
+in the same Dropbox folder. If a file with the same name is already
+in the same Dropbox folder, then the file is not uploaded and the integration continues.
+This is the behavior regardless of whether the content in the file you are trying to
+upload has been updated.</p>
+</li>
+<li>
+<p>Select <strong>Force</strong> to ensure that the file is uploaded even if a file with the
+same name is present in the same Dropbox folder. Dropbox overwrites the file
+that it already has with the file that you are uploading.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s input type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears at the end of the integration visualization.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-dropbox-connection-middle_dropbox"><a class="anchor" href="#adding-dropbox-connection-middle_dropbox"></a>Accessing Dropbox in the middle of an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To upload a file to Dropbox in the middle of a flow,
+add a Dropbox connection to the middle of the flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Dropbox connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Dropbox connection that you
+want the integration to use.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Upload</strong> to
+add the current integration data to the
+Dropbox account that this connection accesses.</p>
+</li>
+<li>
+<p>Configure this action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Remote Path</strong> field, specify the local path and
+file name of the file that you want to upload. Dropbox stores the file with the
+same path and name. In this release, you can upload only a single file.</p>
+</li>
+<li>
+<p>For the <strong>Upload mode</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Select <strong>Add</strong> to upload a file only when a file with the same name is not already
+in the same Dropbox folder. If a file with the same name is already
+in the same Dropbox folder, then the file is not uploaded and the integration continues.
+This is the behavior regardless of whether the content in the file you are trying to
+upload has been updated.</p>
+</li>
+<li>
+<p>Select <strong>Force</strong> to ensure that the file is uploaded even if a file with the
+same name is present in the same Dropbox folder. Dropbox overwrites the file
+that it already has with the file that you are uploading.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s input and output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input/output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration flow
+where you added it.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

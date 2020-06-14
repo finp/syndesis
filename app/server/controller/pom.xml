@@ -27,6 +27,91 @@
   <artifactId>server-controller</artifactId>
   <name>Server :: Controller</name>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core</artifactId>
+        <version>${camel.version}</version>
+        <!--
+          not required for running the test, it collides with
+          org.glassfish.jaxb implementation
+        -->
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog</artifactId>
+        <version>${camel.version}</version>
+        <!--
+          not required for running the test, it collides with
+          org.glassfish.jaxb implementation
+        -->
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-openapi-rest-dsl-generator</artifactId>
+        <version>${camel.version}</version>
+        <!--
+          not required for running the test, it collides with
+          org.glassfish.jaxb implementation
+        -->
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xml-jaxb</artifactId>
+        <version>${camel.version}</version>
+        <!--
+          not required for running the test, it collides with
+          org.glassfish.jaxb implementation
+        -->
+        <exclusions>
+          <exclusion>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>io.syndesis.connector</groupId>
+        <artifactId>connector-webhook</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+        <!--
+          not required for running the test, it collides with
+          org.glassfish.jaxb implementation
+        -->
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <!-- === Internal dependencies (don't touch without discussion) ========================== -->
     <dependency>
@@ -72,12 +157,16 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-core-engine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xml-jaxb</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-openapi-rest-dsl-generator</artifactId>
-      <version>${camel.version}</version>
     </dependency>
     <dependency>
       <groupId>io.apicurio</groupId>
@@ -127,14 +216,14 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.annotation</groupId>
-      <artifactId>jboss-annotations-api_1.2_spec</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.immutables</groupId>
       <artifactId>value</artifactId>
-      <scope>provided</scope>
+      <classifier>annotations</classifier>
     </dependency>
 
     <dependency>
@@ -182,18 +271,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>javax.el</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
       <scope>test</scope>
     </dependency>
 

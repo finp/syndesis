@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating an integration that is triggered by an HTTP request (Webhook) :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-triggering-integrations-with-http-requests.html">Creating an integration that is triggered by an HTTP request (Webhook)</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assemblies/integrating-applications/assembly-triggering-integrations-with-http-requests.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating an integration that is triggered by an HTTP request (Webhook)</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can trigger execution of a simple integration by sending an HTTP <code>GET</code> or <code>POST</code>
+request to an HTTP endpoint that {prodname} exposes. The following topics
+provide details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#how-to-use-webhook_webhook">General procedure for using the {prodname} webhook</a></p>
+</li>
+<li>
+<p><a href="#start-with-webhook-connection_webhook">Creating an integration that an HTTP request can trigger</a></p>
+</li>
+<li>
+<p><a href="#how-requests-are-handled_webhook">How {prodname} handles HTTP requests</a></p>
+</li>
+<li>
+<p><a href="#guidelines-for-service-sending-requests_webhook">Guidelines for an HTTP client that invokes a {prodname} Webhook</a></p>
+</li>
+<li>
+<p><a href="#about-json-schema-for-http-requests_webhook">About the JSON schema for specifying request parameters</a></p>
+</li>
+<li>
+<p><a href="#how-to-specify-request_webhook">How to specify HTTP requests</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-use-webhook_webhook"><a class="anchor" href="#how-to-use-webhook_webhook"></a>General procedure for using the {prodname} webhook</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration with an HTTP <code>GET</code> or <code>POST</code>
+request, you must do the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Decide whether you want to send a <code>GET</code> or <code>POST</code> request to {prodname}.</p>
+</li>
+<li>
+<p>Plan your integration to handle this request.</p>
+</li>
+<li>
+<p>Create the connection that finishes the integration.</p>
+<div class="paragraph">
+<p>{prodname} provides a Webhook connection that you use as the start
+connection.</p>
+</div>
+</li>
+<li>
+<p>Create any other connections that you want to add to the integration.</p>
+</li>
+<li>
+<p>Create the integration:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Add the Webhook connection as the start connection.</p>
+</li>
+<li>
+<p>Add the finish connection and then any other connections that are
+required in the integration. The finish connection and any middle
+connections handle the HTTP request that triggers execution of the
+integration. It is up to you to choose and specify the most appropriate
+HTTP request for accomplishing your goals. Keep the following in mind:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Add a connection to the application that contains the
+data that you want to obtain or that contains the data that you want to
+update.</p>
+</li>
+<li>
+<p>A <code>GET</code> request is limited to specification of key/value
+parameters.</p>
+</li>
+<li>
+<p>A <code>POST</code> request can provide an arbitrary body, such
+as an XML or JSON instance.</p>
+</li>
+<li>
+<p>{prodname} returns only an HTTP status header and does not return
+any data. Consequently, you can define an integration that is triggered by
+a <code>GET</code> request and that updates data rather than obtaining data.
+Likewise, you can define an
+integration that is triggered by a <code>POST</code> request and that obtains data
+rather than updating data.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Add a data mapper step after the Webhook connection.</p>
+<div class="paragraph">
+<p>For a <code>GET</code> request, map the parameter fields in the HTTP request to the
+data fields in the next connection.</p>
+</div>
+<div class="paragraph">
+<p>For a <code>POST</code> request, you might
+have specified the output data shape in the request by passing a JSON
+instance, JSON schema, XML instance, or XML schema. If you did not, then
+when you add a Webhook connection as the start connection of an integration,
+{prodname} prompts you to specify the output data type. If you do not,
+then the default Webhook connection output data type is in JSON format.</p>
+</div>
+</li>
+<li>
+<p>Add any other steps that the integration needs.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Publish the integration and wait for it to be <strong>Running</strong>.</p>
+</li>
+<li>
+<p>Go to the integration summary page and copy the external URL that
+{prodname} provides.</p>
+</li>
+<li>
+<p>Modify this external URL to construct your <code>GET</code> or <code>POST</code> request.</p>
+</li>
+<li>
+<p>Implement the application that sends the HTTP <code>GET</code> or <code>POST</code> request
+to {prodname}.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="start-with-webhook-connection_webhook"><a class="anchor" href="#start-with-webhook-connection_webhook"></a>Creating an integration that an HTTP request can trigger</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration with an HTTP <code>GET</code> or <code>POST</code> request,
+add a Webhook connection as the integration&#8217;s start connection.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Webhook connection.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Incoming Webhook</strong> action.</p>
+<div class="paragraph">
+<p>In the <strong>Webhook Configuration</strong> page, {prodname} displays the webhook
+token that {prodname} generates for this integration.</p>
+</div>
+<div class="paragraph">
+<p>When you construct the HTTP request, this token is the last part of the URL.
+After you publish this integration and it is running, {prodname} displays
+the {prodname} external URL, which has this token at the end.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Specify Output Data Type</strong> page:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click in the <strong>Select Type</strong> field, and select <strong>JSON schema</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Definition</strong> field, paste the JSON schema that defines the data
+types of the parameters in the HTTP request. See
+<a href="{LinkSyndesisIntegrationGuide}#about-json-schema-for-http-requests_webhook">About the JSON schema for specifying request parameters</a>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, specify a name for this data type.
+Although this is optional, if you specify a name, it appears in the
+data mapper <strong>Sources</strong> list, which can make it easier to correctly map fields.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Data Type Description</strong> field, provide some information
+that helps you distinguish this data type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Add the finish connection to the integration.</p>
+</li>
+<li>
+<p>Add any other needed connections.</p>
+</li>
+<li>
+<p>Add any other needed steps.</p>
+</li>
+<li>
+<p>Immediately after the start connection, add a data mapper step.</p>
+</li>
+<li>
+<p>Click <strong>Publish</strong>, give the integration a name and optionally, a description,
+and click <strong>Save and publish</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-requests-are-handled_webhook"><a class="anchor" href="#how-requests-are-handled_webhook"></a>How {prodname} handles HTTP requests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can specify an HTTP <code>GET</code> or <code>POST</code> request to trigger execution of
+a simple integration. Although a <code>GET</code> request usually obtains data and a
+<code>POST</code> request usually updates data, you can use either request
+to trigger an integration that does either operation. Any parameters
+in the request are available for mapping to data fields in the
+next connection that is in the integration. For details, see
+<a href="{LinkSyndesisIntegrationGuide}#about-json-schema-for-http-requests_webhook">About the JSON schema for specifying request parameters</a>.</p>
+</div>
+<div class="paragraph">
+<p>A Webhook connection only passes the data it receives to
+the next connection in the integration.
+When {prodname} receives an HTTP request, it:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Returns an HTTP status header to the requester. When a request successfully
+triggers execution of an integration, the {prodname} return code is <code>201</code>.
+When a request fails to trigger execution of an integration, the {prodname}
+return code is <code>5xx</code>.</p>
+</li>
+<li>
+<p>Does not return any other data to the requester. In other words, there is
+no data in the HTTP body of the response that contains the status header.</p>
+</li>
+<li>
+<p>Passes the data in the request to the next connection in the integration.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This means that you can define a simple integration that is triggered by
+a <code>GET</code> request and that updates data rather than obtaining data.
+Likewise, you can define a simple integration that is triggered by a <code>POST</code> request
+and that obtains data rather than updating data.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="guidelines-for-service-sending-requests_webhook"><a class="anchor" href="#guidelines-for-service-sending-requests_webhook"></a>Guidelines for an HTTP client that invokes a {prodname} Webhook</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you implement a client that sends an HTTP request to {prodname},
+your implementation should:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add to the {prodname}-provided external URL to construct a URL that makes a
+<code>GET</code> or <code>POST</code> request.</p>
+</li>
+<li>
+<p>In the URL request, specify HTTP header and query parameter values
+whose data types adhere to the <code>io:syndesis:webhook</code> JSON schema. See
+<a href="{LinkSyndesisIntegrationGuide}#about-json-schema-for-http-requests_webhook">About the JSON schema for specifying request parameters</a>.
+When header and query parameters
+adhere to this data type specification, then you can map parameter fields to
+fields that the next connection in the integration can process.</p>
+</li>
+<li>
+<p>If the request succeeds, handle a returned success code of <code>201</code>.</p>
+</li>
+<li>
+<p>If the request fails, handle an HTTP <code>5xx</code> error code.</p>
+</li>
+<li>
+<p>Not expect any other response from {prodname}. In other words,
+sending the request does not directly return data to the requesting
+client other than the return code.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="about-json-schema-for-http-requests_webhook"><a class="anchor" href="#about-json-schema-for-http-requests_webhook"></a>About the JSON schema for specifying request parameters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you typically map header and query parameters
+in the HTTP request to data fields that the next connection in the
+integration can process. To make this possible, when you add the Webhook
+connection to the integration, specify the output data type in a JSON schema
+that has the following structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "$schema": "http://json-schema.org/schema#",
+   "id": "io:syndesis:webhook",
+   "type": "object",
+   "properties": {
+      "parameters": {
+         "type": "object",
+         "properties": { <i class="conum" data-value="1"></i><b>(1)</b>
+         }
+      },
+      "body": {
+         "type": "object",
+         "properties": { <i class="conum" data-value="2"></i><b>(2)</b>
+         }
+      }
+   }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To add the data structures that you need, in the JSON instance for your HTTP request:</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Specify query parameters in the <code>properties</code> section under the <code>parameters</code> object.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specify the HTTP body schema in the <code>properties</code> section under the <code>body</code> object.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>While all data that an HTTP client sends is available in the integration,
+when a Webhook connection&#8217;s data shape conforms to this JSON schema,
+then query parameters and body content are available for mapping.</p>
+</div>
+<div class="paragraph">
+<p>For examples, see
+<a href="{LinkSyndesisIntegrationGuide}#how-to-specify-request_webhook">How to specify HTTP requests</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-specify-request_webhook"><a class="anchor" href="#how-to-specify-request_webhook"></a>How to specify HTTP requests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following examples show how to specify HTTP requests for the
+{prodname} Webhook.</p>
+</div>
+<div class="paragraph">
+<div class="title">Webhook example of POST request with only HTTP body</div>
+<p>Consider an integration that starts with a Webhook connection and then
+creates a row in the <strong>Todo</strong> table of the {prodname}-provided database:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/WebhookToDB.png" alt="Webhook-Data Mapper-DB integration"></span></p>
+</div>
+<div class="paragraph">
+<p>During creation of this integration, when you add the Webhook start
+connection, you specify its output data type with a JSON instance that
+has this content: <code>{"todo":"text"}</code>:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/SpecifyDataShape.png" alt="Specify Data Shape Image"></span></p>
+</div>
+<div class="paragraph">
+<p>When you add the <strong>PostgresDB</strong> connection as the finish connection, you
+select the <strong>Invoke SQL</strong> action and specify this SQL statement:</p>
+</div>
+<div class="paragraph">
+<p><code>INSERT INTO TODO (TASK) VALUES (:#TASK)</code></p>
+</div>
+<div class="paragraph">
+<p>After you add the database connection, you add a mapping step:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/TODOtoTASK.png" alt="Map Todo to Task"></span></p>
+</div>
+<div class="paragraph">
+<p>You save and publish the integration. When it is running, you can
+copy the external URL that {prodname} provides:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/ExternalURL.png" alt="External URL"></span></p>
+</div>
+<div class="paragraph">
+<p>To understand the parts of the external URL, consider this sample URL:</p>
+</div>
+<div class="paragraph">
+<p><code>https://i-webhook-to-db-myproject.192.168.64.4.nip.io/webhook/bvGvQdpq308BcHIQQYeysFOK4plFISmghNHkRyOOk3YppitvOd</code></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>i-</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{prodname} always inserts this value at the beginning of the URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>webhook-to-db</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the integration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>myproject</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The OpenShift namespace that contains the pod that is running the integration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>192.168.64.4.nip.io</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The DNS domain that is configured for OpenShift. This indicates the
+{prodname} environment that is providing the webhook.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>webhook</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Appears in each Webhook connection URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bvGvQdpq308BcHIQQYeysFOK4plFISmghNHkRyOOk3YppitvOd</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Webhook connection token that {prodname} provides when you add
+a Webhook connection to an integration. The token is a random string that
+provides security in that it makes the URL hard to discern, which prevents
+anyone else from sending a request.</p>
+<p class="tableblock">In a request, you can specify the token that {prodname} provides or you
+can define your own. If you define your own, ensure that it is hard to guess.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>As you can see in the external URL, {prodname} constructs the host
+name from the name of the integration,
+the name of the OpenShift namespace, and the OpenShift DNS domain.
+{prodname} removes illegal characters and converts spaces to hyphens.
+In the sample external URL, this is the host name:</p>
+</div>
+<div class="paragraph">
+<p><code>https://i-webhook-to-db-myproject.192.168.64.4.nip.io</code></p>
+</div>
+<div class="paragraph">
+<p>To use <code>curl</code> to invoke the webhook, you would specify the command as follows:</p>
+</div>
+<div class="paragraph">
+<p><code>curl -H 'Content-Type: application/json' -d '{"todo":"from webhook"}' https://i-webhook-to-db-myproject.192.168.64.4.nip.io/webhook/bvGvQdpq308BcHIQQYeysFOK4plFISmghNHkRyOOk3YppitvOd</code></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>-H</code> option specifies the HTTP <code>Content-Type</code> header.</p>
+</li>
+<li>
+<p>The <code>-d</code> option sets the HTTP method to <code>POST</code> by default.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Execution of this command triggers the integration. The database
+finish connection inserts a new task into the tasks table. To see this,
+display the <strong>Todo</strong> app at, for example, <code>https://todo-myproject.192.168.64.4.nip.io</code>,
+Click <strong>Update</strong> and you should see <code>from webhook</code> as a new task.</p>
+</div>
+<div class="paragraph">
+<div class="title">Webhook example of POST request with query parameters</div>
+<p>For this example, consider the same integration as in the previous
+example:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/WebhookToDB.png" alt="Webhook-Data Mapper-DB integration"></span></p>
+</div>
+<div class="paragraph">
+<p>But in this example, you define the Webhook connection output
+data type by specifying a JSON schema with this content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "type": "object",
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "io:syndesis:webhook",
+  "properties": {
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "body": {
+      "type": "object",
+      "properties": {
+        "company": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this JSON schema:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>id</code> must be set to <code>io.syndesis.webhook</code>.</p>
+</li>
+<li>
+<p>The <code>parameters</code> section must specify the HTTP query parameters.</p>
+</li>
+<li>
+<p>The <code>body</code> section must specify the body content and it can be
+as complex as you need it to be. For example, it can define
+nested properties as well as arrays.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This provides the information that the Webhook connector needs
+to prepare the content for the next step in the integration.</p>
+</div>
+<div class="paragraph">
+<p>To use <code>curl</code> to send an HTTP request, invoke a command such as the following:</p>
+</div>
+<div class="paragraph">
+<p><code>curl -H 'Content-Type: application/json' -d '{"company":"Gadgets","email":"<a href="mailto:sales@gadgets.com">sales@gadgets.com</a>","phone":"+1-202-555-0152"}'https://i-webhook-params-to-db-myproject.192.168.42.235.nip.io/webhook/ZYWrhaW7dVk097vNsLX3YJ1GyxUFMFRteLpw0z4O69MW7d2Kjg?source=web&amp;status=new</code></p>
+</div>
+<div class="paragraph">
+<p>When the Webhook connection receives this request it creates a JSON
+instance that looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "parameters": {
+    "source": "web",
+    "status": "new"
+  },
+  "body": {
+    "company": "Gadgets",
+    "email": "sales@gadgets.com",
+    "phone": "+1-202-555-0152"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is this internal JSON instance that enables the following mapping:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/TODOtoAddLead.png" alt="Map to Add Lead"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">Webhook examples with GET</div>
+<p>To trigger an integration with a <code>GET</code> request that does not provide input data,
+specify the Webhook connection output data shape as a JSON instance with the
+definition <code>'{}'</code>. You can then invoke the following <code>curl</code> command, which
+does not specify query parameters:</p>
+</div>
+<div class="paragraph">
+<p><code>curl 'https://i-webhook-params-to-db-myproject.192.168.42.235.nip.io/webhook/ZYWrhaW7dVk097vNsLX3YJ1GyxUFMFRteLpw0z4O69MW7d2Kjg'</code></p>
+</div>
+<div class="paragraph">
+<p>You can change the previous <code>POST</code> example to
+send a <code>GET</code> request with query parameters but no body. You would
+specify the Webhook connection output data shape as a JSON schema with the
+definition as shown below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "type": "object",
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "io:syndesis:webhook",
+  "properties": {
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here is the <code>curl</code> command that sends the <code>GET</code> request:</p>
+</div>
+<div class="paragraph">
+<p><code>curl 'https://i-webhook-params-to-db-myproject.192.168.42.235.nip.io/webhook/ZYWrhaW7dVk097vNsLX3YJ1GyxUFMFRteLpw0z4O69MW7d2Kjg?source=web&amp;status=new'`</code></p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

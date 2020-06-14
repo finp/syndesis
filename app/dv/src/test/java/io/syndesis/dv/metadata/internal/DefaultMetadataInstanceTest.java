@@ -16,20 +16,22 @@
 
 package io.syndesis.dv.metadata.internal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import io.syndesis.dv.metadata.MetadataInstance.ValidationResult;
 import io.syndesis.dv.metadata.TeiidVdb;
 import io.syndesis.dv.metadata.internal.DefaultMetadataInstance.TeiidVdbImpl;
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import javax.xml.stream.XMLStreamException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.teiid.adminapi.impl.VDBMetadataParser;
 import org.teiid.runtime.EmbeddedConfiguration;
-
-import io.syndesis.dv.KException;
 
 @SuppressWarnings("nls")
 public class DefaultMetadataInstanceTest {
@@ -52,19 +54,19 @@ public class DefaultMetadataInstanceTest {
     }
 
     @Test
-    public void shouldParse() throws KException {
+    public void shouldParse() {
         ValidationResult result = metadataInstance.parse("create view v as select 1");
         assertNull(result.getMetadataException());
     }
 
     @Test
-    public void shouldFailParse() throws KException {
+    public void shouldFailParse() {
         ValidationResult result = metadataInstance.parse("create view v as ");
         assertNotNull(result.getMetadataException());
     }
 
     @Test
-    public void shouldValidate() throws Exception {
+    public void shouldValidate() throws UnsupportedEncodingException, XMLStreamException {
         String vdb = "<vdb name=\"myservice\" version=\"1\">\n" +
                 "    <model visible=\"true\" name=\"accounts\" type=\"VIRTUAL\">\n" +
                 "      <metadata type=\"DDL\">create view tbl (col) as select 1;</metadata>" +
@@ -78,10 +80,13 @@ public class DefaultMetadataInstanceTest {
 
         report = metadataInstance.getVdb("myservice").validate("create view v as select * from tbl1");
         assertTrue(report.toString(), report.getReport().hasItems());
+
+        //redo with the same name
+        metadataInstance.getVdb("myservice").validate("create view v (col, col1) as select col from tbl");
     }
 
     @Test
-    public void testHasLoaded() throws Exception {
+    public void testHasLoaded() throws UnsupportedEncodingException, XMLStreamException {
         String vdb = "<vdb name=\"myservice\" version=\"1\">\n" +
                 "    <model visible=\"true\" name=\"accounts\" type=\"VIRTUAL\">\n" +
                 "      <metadata type=\"DDL\">create view tbl (col) as select 1;</metadata>" +
@@ -101,7 +106,7 @@ public class DefaultMetadataInstanceTest {
     }
 
     @Test
-    public void shouldFindValidationErrors() throws Exception {
+    public void shouldFindValidationErrors() throws UnsupportedEncodingException, XMLStreamException {
         String vdb = "<vdb name=\"myservice\" version=\"1\">\n" +
                 "    <property name=\"preview\" value=\"true\"/>" +
                 "    <model visible=\"true\" name=\"views\" type=\"VIRTUAL\">\n" +
@@ -116,6 +121,17 @@ public class DefaultMetadataInstanceTest {
         assertFalse(teiidVdb.hasValidationError("views", "tbl", "table"));
 
         assertTrue(teiidVdb.hasValidationError("views", "tbl2", "table"));
+    }
+
+    @Test
+    public void testTeiidDataSourceImpl() {
+        TeiidDataSourceImpl impl = new TeiidDataSourceImpl("x", "y", "z", null);
+
+        assertNull(impl.getLastMetadataLoadTime());
+
+        impl.loadingMetadata();
+
+        assertNotNull(impl.getLastMetadataLoadTime());
     }
 
 }

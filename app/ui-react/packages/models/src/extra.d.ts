@@ -11,7 +11,7 @@ import {
   IntegrationOverview,
   Step,
 } from './models';
-import { ActionDescriptor } from './models-internal';
+import { ActionDescriptor, APISummary } from './models-internal';
 
 /**
  * Extra interfaces and overrides for the swagger generated models
@@ -43,6 +43,42 @@ export interface ActivityStep extends Step {
   messages?: string[];
   output?: string;
   events?: any;
+}
+
+/**
+ * Extending APISummary to support `connectorTemplateId`
+ * for SOAP connector
+ */
+export interface IApiSummarySoap extends APISummary {
+  connectorTemplateId?: string;
+}
+
+/**
+ * Customizable properties in API Client Connector wizard
+ */
+export interface ICreateConnectorProps {
+  addTimestamp?: boolean;
+  addUsernameTokenCreated?: boolean;
+  addUsernameTokenNonce?: boolean;
+  authenticationType?: string;
+  authorizationEndpoint?: string;
+  basePath?: string;
+  connectorTemplateId?: string;
+  description?: string;
+  host?: string;
+  icon?: string;
+  name?: string;
+  password?: string;
+  passwordType?: string;
+  /**
+   * portName & serviceName
+   * are used for SOAP documents
+   */
+  portName?: string;
+  serviceName?: string;
+  specification?: string;
+  tokenEndpoint?: string;
+  username?: string;
 }
 
 export interface IApiVersion {

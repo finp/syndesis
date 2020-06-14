@@ -1,5 +1,12 @@
 // TODO remove when these values are advertised by the swagger
 export interface Virtualization {
+  deployedMessage?: string;
+  deployedState:
+    | 'NOTFOUND'
+    | 'DEPLOYING'
+    | 'FAILED'
+    | 'RUNNING';
+  deployedRevision?: number;
   empty: boolean;
   id: string;
   modified: boolean;
@@ -7,10 +14,12 @@ export interface Virtualization {
   odataHostName?: string;
   podNamespace?: string;
   publishPodName?: string;
+  publishedMessage?: string;
   publishedState:
     | 'BUILDING'
     | 'CANCELLED'
     | 'CONFIGURING'
+    | 'COMPLETE'
     | 'DELETE_SUBMITTED'
     | 'DELETE_REQUEUE'
     | 'DELETE_DONE'
@@ -22,6 +31,7 @@ export interface Virtualization {
   publishedRevision?: number;
   serviceViewModel: string;
   description: string;
+  secured: boolean;
   usedBy: string[];
 }
 
@@ -40,6 +50,17 @@ export interface VirtualizationMetrics {
   resultSetCacheHitRatio: number;
 }
 
+export interface RoleInfo {
+  operation: 'GRANT' | 'REVOKE';
+  tablePrivileges: TablePrivilege[];
+}
+
+export interface TablePrivilege {
+  grantPrivileges: string[];
+  roleName: string | undefined;
+  viewDefinitionIds: string[];
+}
+
 export interface SchemaNode {
   name: string;
   teiidName: string;
@@ -47,6 +68,11 @@ export interface SchemaNode {
   connectionName: string;
   queryable: boolean;
   children: SchemaNode[];
+}
+
+export interface TableInfo {
+  connectionName: string;
+  tableName: string;
 }
 
 export interface ViewInfo {
@@ -61,6 +87,7 @@ export interface ViewInfo {
 
 export interface SchemaNodeInfo {
   connectionName: string;
+  isVirtualizationSchema: boolean;
   name: string;
   nodePath: string[];
   teiidName: string;
@@ -72,6 +99,18 @@ export interface VirtualizationSourceStatus {
   loading: boolean;
   schemaState: 'ACTIVE' | 'MISSING' | 'FAILED';
   sourceName: string;
+  teiidName: string;
+  lastLoad: number;
+  isVirtualizationSource?: boolean;
+}
+
+export interface DVStatusObj {
+  exposeVia3scale: string;
+  ssoConfigured: string;
+}
+
+export interface DVStatus {
+  attributes: DVStatusObj;
 }
 
 export interface ViewDefinitionDescriptor {
@@ -79,6 +118,7 @@ export interface ViewDefinitionDescriptor {
   name: string;
   description: string;
   valid: boolean;
+  tablePrivileges: TablePrivilege[]
 }
 
 export interface ViewDefinition {
@@ -137,6 +177,11 @@ export interface TableColumns {
   columnNames: string[];
 }
 
+export interface ConnectionTable {
+  name: string;
+  tables: SourceTable[];
+}
+
 export interface ViewDefinitionStatus {
   status: string;
   message: string;
@@ -151,10 +196,13 @@ export interface ImportSources {
 }
 
 export interface VirtualizationPublishingDetails {
+  logUrl?: string;
+  modified: boolean;
   state:
     | 'BUILDING'
     | 'CANCELLED'
     | 'CONFIGURING'
+    | 'COMPLETE'
     | 'DELETE_SUBMITTED'
     | 'DELETE_REQUEUE'
     | 'DELETE_DONE'
@@ -163,10 +211,11 @@ export interface VirtualizationPublishingDetails {
     | 'NOTFOUND'
     | 'RUNNING'
     | 'SUBMITTED';
-  logUrl?: string;
+  stateMessage?: string;
   stepNumber: number;
   stepText: string;
   stepTotal: number;
+  version?: number;
 }
 
 export interface TeiidStatus {
@@ -178,6 +227,7 @@ export interface TeiidStatus {
       | 'BUILDING'
       | 'CANCELLED'
       | 'CONFIGURING'
+      | 'COMPLETE'
       | 'DELETE_SUBMITTED'
       | 'DELETE_REQUEUE'
       | 'DELETE_DONE'
@@ -199,6 +249,7 @@ export interface BuildStatus {
     | 'BUILDING'
     | 'CANCELLED'
     | 'CONFIGURING'
+    | 'COMPLETE'
     | 'DELETE_SUBMITTED'
     | 'DELETE_REQUEUE'
     | 'DELETE_DONE'

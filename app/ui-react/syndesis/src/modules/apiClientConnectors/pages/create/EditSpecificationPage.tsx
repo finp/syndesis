@@ -1,6 +1,6 @@
 import { ApicurioAdapter } from '@syndesis/apicurio-adapter';
 import * as H from '@syndesis/history';
-import { Breadcrumb, ButtonLink, PageSection } from '@syndesis/ui';
+import { Breadcrumb, ButtonLink } from '@syndesis/ui';
 import { useRouteData } from '@syndesis/utils';
 import * as React from 'react';
 import { Translation } from 'react-i18next';
@@ -17,7 +17,7 @@ export interface IEditSpecificationRouteState {
 export const EditSpecificationPage: React.FunctionComponent = () => {
   const { state } = useRouteData<null, IEditSpecificationRouteState>();
 
-  const [updatedSpecification, setUpdatedSpecification] = React.useState();
+  const [updatedSpecification, setUpdatedSpecification] = React.useState<string>(state.specification);
 
   const onSpecification = (newSpec: any) => {
     setUpdatedSpecification(JSON.stringify(newSpec.spec));
@@ -80,16 +80,10 @@ export const EditSpecificationPage: React.FunctionComponent = () => {
                   {t('apiClientConnectors:create:specification:title')}
                 </span>
               </Breadcrumb>
-              <PageSection
-                variant={'light'}
-                noPadding={true}
-                style={{ overflow: 'hidden' }}
-              >
-                <ApicurioAdapter
-                  specification={updatedSpecification || state.specification!}
-                  onSpecification={onSpecification}
-                />
-              </PageSection>
+              <ApicurioAdapter
+                specification={updatedSpecification}
+                onSpecification={onSpecification}
+              />
             </>
           )}
         </WithLeaveConfirmation>

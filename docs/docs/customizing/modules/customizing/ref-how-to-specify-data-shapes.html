@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>How to specify data shapes in extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-how-to-specify-data-shapes.html">How to specify data shapes in extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/customizing/ref-how-to-specify-data-shapes.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">How to specify data shapes in extensions</h1>
+<div class="paragraph">
+<p>A data shape holds data type metadata for use by the data mapper.
+The data mapper transforms this metadata into internal documents that
+it uses to display the source and target data fields in the data mapper
+user interface. In an extension definition JSON file for a connector or
+for a custom step, each action specification defines an input
+data shape (<code>inputDataShape</code>) and an output data shape (<code>outputDataShape</code>).</p>
+</div>
+<div class="paragraph">
+<p>When you are developing an extension, it is important to specify data
+shape properties that allow the data mapper to correctly handle and display the
+source and target fields. The following data shape properties affect
+data mapper behavior:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kind</code></p>
+</li>
+<li>
+<p><code>type</code></p>
+</li>
+<li>
+<p><code>specification</code></p>
+</li>
+<li>
+<p><code>name</code></p>
+</li>
+<li>
+<p><code>description</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">About the <code>kind</code> property</div>
+<p>The data shape <code>kind</code> property is represented by the <code>DataShapeKinds</code> enum.
+The possible values for the <code>kind</code> property are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>java</code> indicates that the data type is represented by a Java class.
+Follow the <code>"kind": "java"</code> declaration by specifying a fully qualified
+class name for the <code>type</code> property. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>"outputDataShape": {
+     "kind": "java",
+     "type": "org.apache.camel.component.telegram.model.IncomingMessage"
+},</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>json-schema</code> indicates that the data type is represented by a JSON schema.
+When <code>kind</code> is set to <code>json-schema</code>, specify a JSON schema as the value of
+the data shape&#8217;s <code>specification</code> property. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>"inputDataShape": {
+  "description": "Person data",
+  "kind": "json-schema",
+  "name": "Person",
+  "specification": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"title\":\"Person\",\"type\":\"object\",\"properties\":{\"firstName\":{...}}}"
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The code for the SAP Concur connector contains
+<a href="https://github.com/syndesisio/syndesis/blob/master/app/connector/concur/src/main/resources/META-INF/syndesis/connector/concur-api.json">examples of data shapes that are specified by JSON schemas</a>.</p>
+</div>
+</li>
+<li>
+<p><code>json-instance</code> indicates that the data type is represented by a JSON instance.
+When <code>kind</code> is set to <code>json-instance</code>, specify a JSON instance as the value of
+the data shape&#8217;s <code>specification</code> property. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>"inputDataShape": {
+  "description": "Person data",
+  "kind": "json-instance",
+  "name": "Person",
+  "specification": "{\"firstName\":\"John\",...}"
+}</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>xml-schema</code> indicates that the data type is represented by an XML schema.
+When <code>kind</code> is set to <code>xml-schema</code>, specify an XML Schema as the value of
+the data shape&#8217;s <code>specification</code> property. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>"inputDataShape": {
+  "description": "Person data",
+  "kind": "xml-schema",
+  "name": "Person",
+  "specification": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" ?&gt;&lt;xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"&gt;...&lt;/xs:schema&gt;"
+}</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>xml-instance</code> indicates that the data type is represented by an XML instance.
+When <code>kind</code> is set to <code>xml-instance</code>, specify an XML instance as the value of
+the data shape&#8217;s <code>specification</code> property. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>"inputDataShape": {
+  "description": "Person data",
+  "kind": "xml-instance",
+  "name": "Person",
+  "specification": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" ?&gt;&lt;Person&gt;&lt;firstName&gt;Jane&lt;/firstName&gt;&lt;/Person&gt;"
+}</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>any</code> indicates that the data type is not structured. For example, it might
+be a byte array or free format text. The data mapper ignores a data shape when
+its <code>kind</code> property is set to <code>any</code>.
+In other words, the data does not appear in the data mapper and therefore
+you cannot map any fields to or from this data.</p>
+<div class="paragraph">
+<p>However, for a custom connector, when its <code>kind</code> property is set to <code>any</code>,
+{prodname} prompts you to specify input and/or output data types when you
+configure a connection that you have created from the custom connector.
+This happens when you add a connection to an integration.
+You can specify the kind of the data shape’s schema, an appropriate
+document for the kind of schema that you specify, and a name for the data type.</p>
+</div>
+</li>
+<li>
+<p><code>none</code> indicates that there is no data type. For an input data shape,
+this indicates that the connection or step does not read data. For an output data shape,
+this indicates that the connection or step does not modify data. For example, when
+an input message body is being transferred to an output message body,
+setting the <code>kind</code> property to <code>none</code> indicates that the data is only passing
+through. The data mapper ignores data shapes when <code>kind</code> is set to <code>none</code>.
+In other words, the data does not appear in the data mapper and therefore
+you cannot map any fields to or from this data.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">About the <code>type</code> property</div>
+<p>When the value of the <code>kind</code> property is <code>java</code>, the <code>"kind": "java"</code>
+declaration is followed by a <code>type</code> declaration that specifies a fully qualified
+Java class name. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>"outputDataShape": {
+     "kind": "java",
+     "type": "org.apache.camel.component.telegram.model.IncomingMessage"
+},</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the <code>kind</code> property is set to anything other than <code>java</code> then any
+setting for the <code>type</code> property is ignored.</p>
+</div>
+<div class="paragraph">
+<div class="title">About the <code>specification</code> property</div>
+<p>The setting of the <code>kind</code> property determines the setting of the
+<code>specification</code> property, as shown in the following table.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>kind</code> property setting</th>
+<th class="tableblock halign-left valign-top"><code>specification</code> property setting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Java inspection result.</p>
+<p class="tableblock">For each extension that you write in Java, use <code>extension-maven-plugin</code>
+to at least obtain the Java inspection result. The plugin inserts the Java
+inspection result in the JSON extension definition file as the setting
+of the <code>specification</code> property. This is the only way to obtain the Java
+inspection result, which is required for data mapping in {prodname}.</p>
+<p class="tableblock">As a reminder, for step extensions written in Java, <code>extension-maven-plugin</code>
+generates the JSON extension definition file and populates it with
+required content. For connector extensions, while <code>extension-maven-plugin</code>
+inserts the Java inspection result in the JSON extension definition file,
+you will need to manually
+add the required content that the plugin does not insert.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>json-schema</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An actual JSON schema document. The setting cannot be a reference to a
+document and the JSON schema cannot point to other JSON schema documents
+by means of references.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>json-instance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An actual JSON document that contains example data. The data mapper
+derives the data types from the example data. The setting cannot be a
+reference to a document.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xml-schema</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An actual XML schema document. The setting cannot be a reference to a
+document and the XML schema cannot point to other XML schema documents
+by means of references.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xml-instance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An actual
+XML instance document. The setting cannot be a reference to a document.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>any</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>specification</code> property is not required. Any setting is ignored.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>none</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>specification</code> property is not required. Any setting is ignored.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<div class="title">About the <code>name</code> property</div>
+<p>The data shape <code>name</code> property specifies a human readable name for the
+data type. The data mapper displays this name in its user interface
+as the label for the data fields. In the following image,
+<strong>Twitter Mention</strong> is an example of where you would see the value of
+the <code>name</code> property.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/TwitterMention.png" alt="Name example"></span></p>
+</div>
+<div class="paragraph">
+<p>This name also appears in data type indicators in the {prodname}
+flow visualization.</p>
+</div>
+<div class="paragraph">
+<div class="title">About the <code>description</code> property</div>
+<p>The data shape <code>description</code> property specifies text that appears as a
+tooltip when the cursor hovers over the data type name in the data mapper
+user interface.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

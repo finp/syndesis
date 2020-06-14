@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +34,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import io.syndesis.common.model.DataShape;
@@ -61,21 +61,20 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.entry;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 @SuppressWarnings({ "PMD.ExcessiveImports", "PMD.ExcessiveMethodLength" })
 @RunWith(Parameterized.class)
@@ -225,7 +224,7 @@ public class ProjectGeneratorTest {
         assertThat(runtimeDir.resolve("src/main/resources/mapping-flow-0-step-1.json")).exists();
 
         // lets validate configuration when activity tracing is enabled.
-        try( Stream<Path> stream = Files.walk(testFolder.getRoot().toPath().resolve("integration-project")) ) {
+        try (Stream<Path> stream = Files.walk(testFolder.getRoot().toPath().resolve("integration-project")) ) {
             stream.sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
                 .forEach(File::delete);
@@ -264,7 +263,7 @@ public class ProjectGeneratorTest {
         configuration.setSecretMaskingEnabled(true);
 
         generate(integration, configuration, resourceManager);
-        await().atMost(5000L, TimeUnit.MILLISECONDS).until(() -> !errors.isEmpty());
+        await().atMost(Duration.ofSeconds(5)).until(() -> !errors.isEmpty());
         assertThat(errors.get(0)).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -612,6 +611,39 @@ public class ProjectGeneratorTest {
     }
 
     @Test
+    public void testIntegrationAndFlowsDependencyCollection() throws Exception {
+        TestResourceManager resourceManager = new TestResourceManager();
+
+        Dependency integrationMavenDependency = Dependency.maven("io.syndesis:something-integration:1.0.0");
+        Dependency integrationlibraryExtension = Dependency.libraryTag("someLibraryIntegrationTag");
+        Dependency flow1MavenDependency = Dependency.maven("io.syndesis:something:1.0.0");
+        Dependency flow1libraryExtension = Dependency.libraryTag("someLibraryTag");
+        Dependency flow2libraryExtension = Dependency.libraryTag("someLibraryTag2");
+
+        Integration integration = new Integration.Builder()
+            .id("test-integration")
+            .name("Test Integration")
+            .description("This is a test integration!")
+            .addDependency(integrationMavenDependency)
+            .addDependency(integrationlibraryExtension)
+            .addFlow(new Flow.Builder()
+                .steps(Collections.emptyList())
+                .addDependency(flow1MavenDependency)
+                .addDependency(flow1libraryExtension)
+                .build())
+            .addFlow(new Flow.Builder()
+                .steps(Collections.emptyList())
+                .addDependency(flow2libraryExtension)
+                .build())
+            .build();
+
+        Collection<Dependency> dependencies = resourceManager.collectDependencies(integration);
+
+        assertThat(dependencies).contains(integrationMavenDependency, integrationlibraryExtension,
+            flow1MavenDependency, flow1libraryExtension, flow2libraryExtension);
+    }
+
+    @Test
     public void testGenerateTemplateStepProjectDependencies() throws Exception {
         TestResourceManager resourceManager = new TestResourceManager();
 
@@ -688,7 +720,7 @@ public class ProjectGeneratorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private void assertFileContentsJson(ProjectGeneratorConfiguration generatorConfiguration, Path actualFilePath, String expectedFileName) throws URISyntaxException, IOException, JSONException {
+    private void assertFileContentsJson(ProjectGeneratorConfiguration generatorConfiguration, Path actualFilePath, String expectedFileName) throws URISyntaxException, IOException {
         URL resource = null;
         String overridePath = generatorConfiguration.getTemplates().getOverridePath();
         String methodName = testName.getMethodName();
@@ -711,7 +743,7 @@ public class ProjectGeneratorTest {
         final String actual = new String(Files.readAllBytes(actualFilePath), StandardCharsets.UTF_8).trim();
         final String expected = new String(Files.readAllBytes(Paths.get(resource.toURI())), StandardCharsets.UTF_8).trim();
 
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+        assertThatJson(actual).isEqualTo(expected);
     }
 
     private Path generate(Integration integration, ProjectGeneratorConfiguration generatorConfiguration, TestResourceManager resourceManager) throws IOException {
@@ -739,7 +771,7 @@ public class ProjectGeneratorTest {
                         destPath.getParentFile().mkdirs();
                         destPath.createNewFile();
 
-                        try(BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(destPath))) {
+                        try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(destPath))) {
                             IOUtils.copy(tis, bout);
                         }
                     }

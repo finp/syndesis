@@ -15,48 +15,40 @@
  */
 package io.syndesis.server.endpoint.v1.handler.setup;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.connection.Connection;
 import io.syndesis.common.model.connection.Connector;
 import io.syndesis.server.credential.Credentials;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.endpoint.util.PaginationFilter;
-import io.syndesis.server.endpoint.util.ReflectiveFilterer;
-import io.syndesis.server.endpoint.util.ReflectiveSorter;
-import io.syndesis.server.endpoint.v1.operations.FilterOptionsFromQueryParams;
 import io.syndesis.server.endpoint.v1.operations.PaginationOptionsFromQueryParams;
-import io.syndesis.server.endpoint.v1.operations.SortOptionsFromQueryParams;
-
 import org.springframework.stereotype.Component;
 
 /**
  * This rest endpoint handles working with global oauth settings.
  */
 @Path("/setup/oauth-apps")
-@Api(value = "oauth-apps")
+@Tag(name = "oauth-apps")
 @Component
 public class OAuthAppHandler {
 
@@ -69,7 +61,7 @@ public class OAuthAppHandler {
     @DELETE
     @Consumes("application/json")
     @Path(value = "/{id}")
-    public void delete(@NotNull @PathParam("id") @ApiParam(required = true) final String id) {
+    public void delete(@NotNull @PathParam("id") @Parameter(required = true) final String id) {
         final Connector connector = dataMgr.fetch(Connector.class, id);
 
         update(id, OAuthApp.fromConnector(connector).clearValues());
@@ -78,7 +70,7 @@ public class OAuthAppHandler {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value = "/{id}")
-    public OAuthApp get(@NotNull @PathParam("id") @ApiParam(required = true) final String id) {
+    public OAuthApp get(@NotNull @PathParam("id") @Parameter(required = true) final String id) {
 
         final Connector connector = dataMgr.fetch(Connector.class, id);
         if (connector == null || !isOauthConnector(connector)) {
@@ -90,27 +82,16 @@ public class OAuthAppHandler {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "sort", value = "Sort the result list according to the given field value", paramType = "query",
-            dataType = "string"),
-        @ApiImplicitParam(name = "direction",
-            value = "Sorting direction when a 'sort' field is provided. Can be 'asc' " + "(ascending) or 'desc' (descending)",
-            paramType = "query", dataType = "string"),
-        @ApiImplicitParam(name = "page", value = "Page number to return", paramType = "query", dataType = "integer", defaultValue = "1"),
-        @ApiImplicitParam(name = "per_page", value = "Number of records per page", paramType = "query", dataType = "integer",
-            defaultValue = "20"),
-        @ApiImplicitParam(name = "query", value = "The search query to filter results on", paramType = "query", dataType = "string"),
-
-    })
-    public ListResult<OAuthApp> list(@Context final UriInfo uriInfo) {
+    public ListResult<OAuthApp> list(
+        @Parameter(required = false, description = "Page number to return") @QueryParam("page") @DefaultValue("1") int page,
+        @Parameter(required = false, description = "Number of records per page") @QueryParam("per_page") @DefaultValue("20") int perPage
+    ) {
         final List<Connector> oauthConnectors = dataMgr.fetchAll(Connector.class, //
             OAuthConnectorFilter.INSTANCE,
-            new ReflectiveFilterer<>(Connector.class, new FilterOptionsFromQueryParams(uriInfo).getFilters()),
-            new ReflectiveSorter<>(Connector.class, new SortOptionsFromQueryParams(uriInfo)),
-            new PaginationFilter<>(new PaginationOptionsFromQueryParams(uriInfo))).getItems();
+            new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage))
+        ).getItems();
 
         final List<OAuthApp> apps = oauthConnectors.stream().map(OAuthApp::fromConnector).collect(Collectors.toList());
-
         return ListResult.of(apps);
     }
 

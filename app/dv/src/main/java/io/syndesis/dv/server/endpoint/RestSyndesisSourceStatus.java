@@ -16,6 +16,7 @@
 package io.syndesis.dv.server.endpoint;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +24,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import io.syndesis.dv.StringConstants;
 import io.syndesis.dv.server.V1Constants;
 
 /**
@@ -54,10 +58,12 @@ public final class RestSyndesisSourceStatus implements V1Constants {
     }
 
     private String sourceName;
+    private String teiidName;
     private List< String > errors;
     private EntityState schemaState = EntityState.MISSING;
     private String id;
     private boolean loading;
+    private Date lastLoad;
 
     /**
      * Constructor for use in deserialization.
@@ -81,13 +87,14 @@ public final class RestSyndesisSourceStatus implements V1Constants {
      */
     @Override
     public boolean equals( final Object obj ) {
-        if ( obj == null || !( obj instanceof RestSyndesisSourceStatus ) ) {
+        if ( !( obj instanceof RestSyndesisSourceStatus ) ) {
             return false;
         }
 
         final RestSyndesisSourceStatus that = ( RestSyndesisSourceStatus )obj;
 
         return Objects.equals( this.sourceName, that.sourceName )
+               && Objects.equals( this.teiidName, that.teiidName )
                && Objects.equals( this.errors, that.errors )
                && Objects.equals( this.id, that.id )
                && Objects.equals(  this.schemaState, that.schemaState )
@@ -102,10 +109,17 @@ public final class RestSyndesisSourceStatus implements V1Constants {
     }
 
     /**
+     * @return the teiid name (can be empty)
+     */
+    public String getTeiidName() {
+        return this.teiidName;
+    }
+
+    /**
      * @return the errors (never <code>null</code>)
      */
     public List<String> getErrors() {
-        return this.errors == null ? Arrays.asList( EMPTY_ARRAY ) : this.errors;
+        return this.errors == null ? Arrays.asList( StringConstants.EMPTY_ARRAY ) : this.errors;
     }
 
     /**
@@ -130,6 +144,7 @@ public final class RestSyndesisSourceStatus implements V1Constants {
     @Override
     public int hashCode() {
         return Objects.hash( this.sourceName,
+                             this.teiidName,
                              this.errors,
                              this.id,
                              this.schemaState,
@@ -141,6 +156,13 @@ public final class RestSyndesisSourceStatus implements V1Constants {
      */
     public void setSourceName( final String sourceName ) {
         this.sourceName = sourceName;
+    }
+
+    /**
+     * @param teiidName the teiid name (can be empty)
+     */
+    public void setTeiidName( final String teiidName ) {
+        this.teiidName = teiidName;
     }
 
     /**
@@ -167,6 +189,16 @@ public final class RestSyndesisSourceStatus implements V1Constants {
 
     public boolean isLoading() {
         return loading;
+    }
+
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public void setLastLoad(Date lastLoad) {
+        this.lastLoad = lastLoad;
+    }
+
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public Date getLastLoad() {
+        return lastLoad;
     }
 
 }

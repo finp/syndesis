@@ -28,17 +28,17 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollecti
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsValuesApiMethod;
 import org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import io.syndesis.connector.sheets.model.RangeCoordinate;
 import io.syndesis.connector.support.util.ConnectorOptions;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 @RunWith(Parameterized.class)
 public class GoogleSheetsNamedColumnsTest extends AbstractGoogleSheetsCustomizerTestSupport {
@@ -100,7 +100,7 @@ public class GoogleSheetsNamedColumnsTest extends AbstractGoogleSheetsCustomizer
         Assert.assertEquals(model.size(), body.size());
         Iterator<String> modelIterator = body.iterator();
         for (String expected : model) {
-            JSONAssert.assertEquals(String.format(expected, getSpreadsheetId()), modelIterator.next(), JSONCompareMode.STRICT);
+            assertThatJson(modelIterator.next()).isEqualTo(String.format(expected, getSpreadsheetId()));
         }
     }
 

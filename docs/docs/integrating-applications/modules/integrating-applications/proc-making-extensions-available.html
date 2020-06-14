@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Making custom features available :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-making-extensions-available.html">Making custom features available</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-making-extensions-available.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Making custom features available</h1>
+<div class="paragraph">
+<p>To make a custom feature available for use in an integration, upload
+the extension to {prodname}.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A developer has provided a <code>.jar</code> file that contains a {prodname} extension.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left {prodname} panel, click <strong>Customizations</strong> &gt; <strong>Extensions</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Import Extension</strong>.</p>
+</li>
+<li>
+<p>Drag and drop, or choose, the <code>.jar</code> file that contains the extension
+that you want to upload.</p>
+<div class="paragraph">
+<p>{prodname} immediately tries to validate that the file contains an
+extension. If there is a problem, {prodname} displays a message about the error.
+You must coordinate with the extension
+developer to obtain an updated <code>.jar</code> file, which you can then try to upload.</p>
+</div>
+</li>
+<li>
+<p>Review the extension details.</p>
+<div class="paragraph">
+<p>After {prodname} validates the file, it extracts and displays the extension&#8217;s
+name, ID, description, and type. The type indicates whether the extension
+defines a custom connector, or one or more custom steps for
+operating on data between connections, or a runtime library extension (including a JDBC driver).</p>
+</div>
+<div class="paragraph">
+<p>For a connector extension, {prodname} displays
+the actions that are available to a connection that is created from this
+custom connector. In the extension, the developer might have provided an icon
+that {prodname} can use to represent the application connections created
+from this connector. While you do not see this icon in the extension
+details page, it appears when you create connections
+from the custom connector. If the extension developer did not provide
+an icon in the extension, then {prodname} generates an icon.</p>
+</div>
+<div class="paragraph">
+<p>For a step extension, {prodname} displays
+the name of each custom step that the extension defines.</p>
+</div>
+<div class="paragraph">
+<p>For a library extension, {prodname} includes the imported Maven dependencies into the integration runtime classpath. You must ensure that the imported Maven dependencies do not conflict with other dependencies that are already used in the integration (including any other library extension, such as a JDBC driver).</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Import Extension</strong>. {prodname} makes the custom connector or
+custom step(s) available and displays the extension&#8217;s details page.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#creating-connections-from-custom-connectors_connections">Creating a connection from a custom connectors</a>.</p>
+</li>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#add-custom-step_create">Adding a custom step</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#connecting-to-proprietary-databases_db">Connecting to a proprietary database</a></p>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

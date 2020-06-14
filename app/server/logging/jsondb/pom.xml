@@ -27,7 +27,6 @@
   <artifactId>server-logging-jsondb</artifactId>
   <name>Server :: Logging :: JsonDB</name>
 
-
   <dependencies>
 
     <!-- === Internal dependencies (don't touch without discussion) ========================== -->
@@ -63,10 +62,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.annotation</groupId>
-      <artifactId>jboss-annotations-api_1.2_spec</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
-
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -86,6 +84,7 @@
     <dependency>
       <groupId>org.immutables</groupId>
       <artifactId>value</artifactId>
+      <classifier>annotations</classifier>
     </dependency>
 
     <dependency>
@@ -130,6 +129,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -140,12 +140,6 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>javax.el</artifactId>
-      <scope>test</scope>
     </dependency>
 
     <dependency>

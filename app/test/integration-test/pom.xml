@@ -45,6 +45,8 @@
     <syndesis.output.directory>${project.build.directory}/integrations</syndesis.output.directory>
     <syndesis.project.mount.path>/tmp/src</syndesis.project.mount.path>
     <syndesis.image.tag>${syndesis.version}</syndesis.image.tag>
+    <syndesis.container.startup.timeout>120</syndesis.container.startup.timeout>
+    <syndesis.default.timeout>60</syndesis.default.timeout>
   </properties>
 
   <dependencies>
@@ -66,12 +68,27 @@
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-http</artifactId>
+      <artifactId>citrus-junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.consol.citrus</groupId>
-      <artifactId>citrus-java-dsl</artifactId>
+      <artifactId>citrus-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-base</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-validation-json</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-http</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -88,6 +105,36 @@
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-mail</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.subethamail</groupId>
+      <artifactId>subethasmtp</artifactId>
+      <version>3.1.7</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.mail</groupId>
+          <artifactId>mail</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jvnet.staxex</groupId>
+      <artifactId>stax-ex</artifactId>
+      <version>1.8</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -122,8 +169,8 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
     </dependency>
 
     <dependency>
@@ -156,15 +203,15 @@
     </dependency>
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>compile</scope>
+      <groupId>org.immutables</groupId>
+      <artifactId>value</artifactId>
+      <classifier>annotations</classifier>
     </dependency>
 
     <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>javax.el</artifactId>
-      <scope>test</scope>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -221,6 +268,8 @@
             <syndesis.output.directory>${syndesis.output.directory}</syndesis.output.directory>
             <syndesis.project.mount.path>${syndesis.project.mount.path}</syndesis.project.mount.path>
             <syndesis.image.tag>${syndesis.image.tag}</syndesis.image.tag>
+            <syndesis.default.timeout>${syndesis.default.timeout}</syndesis.default.timeout>
+            <syndesis.container.startup.timeout>${syndesis.container.startup.timeout}</syndesis.container.startup.timeout>
           </systemProperties>
         </configuration>
         <executions>
@@ -248,6 +297,12 @@
         </configuration>
       </plugin>
     </plugins>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
   </build>
 
   <profiles>

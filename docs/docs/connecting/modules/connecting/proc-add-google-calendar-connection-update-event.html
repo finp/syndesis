@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Updating an event in a Google Calendar :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-google-calendar-connection-update-event.html">Updating an event in a Google Calendar</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-add-google-calendar-connection-update-event.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Updating an event in a Google Calendar</h1>
+<div class="paragraph">
+<p>In an integration, you can update an event in a Google Calendar
+in the middle of a flow or to finish a simple integration.
+To do this, add a Google Calendar connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In this release, the <strong>Update Event</strong> action requires a value in each event
+field. In most if not all cases, this means that you must add a Google
+Calendar connection that
+<a href="{LinkSyndesisConnectorGuide}#add-google-calendar-connection-to-get-one-event_calendar">obtains the event that you want to update</a>,
+then add the Google Calendar connection that updates the event, and then
+insert a data mapper step between the two Google Calendar connections.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Calendar connection that
+is authorized to access the Google Calendar that has the event that
+you want to update.</p>
+</li>
+<li>
+<p>In the flow, there is an earlier connection to Google Calendar
+and that connection obtains the event that you want to update.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Calendar connection that is authorized to access
+the calendar that has the event that you want to update.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Update Event</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Update Event</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Enter the title of the event that you want to update.</p>
+</li>
+<li>
+<p>Enter content in each event field that you want to update.
+Do not enter content in an event field when you want the content
+in that field to remain unchanged.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization
+where you added it.</p>
+</li>
+<li>
+<p>In the integration visualization, click the plus sign that is
+just before the connection that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>In the data mapper, for each event field that remains the same in the
+updated event, map that field from the Google Calendar connection that
+obtained the event to the corresponding field in the Google Calendar
+connection that updates the event.</p>
+<div class="paragraph">
+<p>Do not map fields that you are updating. If you map a field and also
+specify an update for that field when you configure the <strong>Update Event</strong> action,
+{prodname} uses the mapped value.</p>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

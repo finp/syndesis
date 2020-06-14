@@ -41,7 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
@@ -145,8 +145,6 @@ public class AggregateStepHandler implements IntegrationStepHandler {
 
         /**
          * Specifies the script.
-         *
-         * @param script
          */
         public void setScript(String script) {
             this.script = script;
@@ -154,8 +152,6 @@ public class AggregateStepHandler implements IntegrationStepHandler {
 
         /**
          * Specifies the language.
-         *
-         * @param language
          */
         public void setLanguage(String language) {
             this.language = language;

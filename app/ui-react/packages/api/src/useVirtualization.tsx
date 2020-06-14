@@ -16,12 +16,14 @@ export const useVirtualization = (
 ) => {
   const { read, resource, ...rest } = useApiResource<Virtualization>({
     defaultValue: {
+      deployedState: 'NOTFOUND',
       description: '',
       empty: true,
       id: '',
       modified: true,
       name: '',
       publishedState: 'NOTFOUND',
+      secured: false,
       serviceViewModel: '',
       usedBy: []
     },

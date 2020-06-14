@@ -18,10 +18,10 @@ package io.syndesis.dv.datasources;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
 import org.teiid.spring.data.mongodb.MongoDBConfiguration;
 import org.teiid.spring.data.mongodb.MongoDBConnectionFactory;
-import org.teiid.spring.data.mongodb.MongoDBTemplate;
+
+import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
 
 public class MongoDBDefinition extends DataSourceDefinition {
 
@@ -47,10 +47,7 @@ public class MongoDBDefinition extends DataSourceDefinition {
 
     @Override
     public boolean isTypeOf(Map<String, String> properties, String type) {
-        if (type.equalsIgnoreCase("mongodb3")) {
-            return true;
-        }
-        return false;
+        return "mongodb3".equalsIgnoreCase(type);
     }
 
     @Override
@@ -62,7 +59,7 @@ public class MongoDBDefinition extends DataSourceDefinition {
         config.setDatabase(scd.getProperty("database"));
         config.setRemoteServerList(scd.getProperty("host"));
 
-        MongoDBConnectionFactory mcf = new MongoDBConnectionFactory(new MongoDBTemplate(config));
+        MongoDBConnectionFactory mcf = new MongoDBConnectionFactory(config);
 
         Map<String, String> importProperties = new HashMap<String, String>();
         Map<String, String> translatorProperties = new HashMap<String, String>();

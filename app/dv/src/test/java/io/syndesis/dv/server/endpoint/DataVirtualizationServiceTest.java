@@ -16,7 +16,9 @@
 
 package io.syndesis.dv.server.endpoint;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,20 +26,6 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.syndesis.dv.datasources.DefaultSyndesisDataSource;
-import io.syndesis.dv.datasources.H2SQLDefinition;
-import io.syndesis.dv.metadata.internal.DefaultMetadataInstance;
-import io.syndesis.dv.model.DataVirtualization;
-import io.syndesis.dv.model.ViewDefinition;
-import io.syndesis.dv.repository.RepositoryConfiguration;
-import io.syndesis.dv.repository.RepositoryManagerImpl;
-import io.syndesis.dv.rest.JsonMarshaller;
-import io.syndesis.dv.server.endpoint.DataVirtualizationService;
-import io.syndesis.dv.server.endpoint.ImportPayload;
-import io.syndesis.dv.server.endpoint.MetadataService;
-import io.syndesis.dv.server.endpoint.RestDataVirtualization;
-import io.syndesis.dv.server.endpoint.StatusObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -46,6 +34,18 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.server.ResponseStatusException;
+import org.teiid.adminapi.AdminException;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import io.syndesis.dv.datasources.DefaultSyndesisDataSource;
+import io.syndesis.dv.datasources.H2SQLDefinition;
+import io.syndesis.dv.metadata.internal.DefaultMetadataInstance;
+import io.syndesis.dv.model.DataVirtualization;
+import io.syndesis.dv.model.ViewDefinition;
+import io.syndesis.dv.repository.RepositoryConfiguration;
+import io.syndesis.dv.repository.RepositoryManagerImpl;
+import io.syndesis.dv.rest.JsonMarshaller;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -66,36 +66,23 @@ public class DataVirtualizationServiceTest {
     @Autowired
     private DefaultMetadataInstance metadataInstance;
 
-    @Test public void testImport() throws Exception {
+    @Test public void testImport() throws AdminException {
         ImportPayload payload = new ImportPayload();
         payload.setTables(Arrays.asList("tbl", "tbl2", "tbl3"));
 
-        StatusObject kso = null;
-        try {
-            kso = dataVirtualizationService.importViews("dv", "source", payload);
-            fail();
-        } catch (ResponseStatusException e) {
-            //dv not found
-        }
+        assertThatThrownBy(() -> dataVirtualizationService.importViews("dv", "source", payload))
+            .isInstanceOf(ResponseStatusException.class);
 
         DataVirtualization dv = workspaceManagerImpl.createDataVirtualization("dv");
 
-        try {
-            kso = dataVirtualizationService.importViews("dv", "source", payload);
-            fail();
-        } catch (ResponseStatusException e) {
-            //source not found
-        }
+        assertThatThrownBy(() -> dataVirtualizationService.importViews("dv", "source", payload))
+            .isInstanceOf(ResponseStatusException.class);
 
         DefaultSyndesisDataSource sds = createH2DataSource("source");
         metadataInstance.registerDataSource(sds);
 
-        try {
-            kso = dataVirtualizationService.importViews("dv", "source", payload);
-            fail();
-        } catch (ResponseStatusException e) {
-            //source not found - as the properties are not valid
-        }
+        assertThatThrownBy(() -> dataVirtualizationService.importViews("dv", "source", payload))
+            .isInstanceOf(ResponseStatusException.class);
 
         //add the schema definition - so that we don't really need the datasource, and redeploy
         workspaceManagerImpl.createSchema("someid", "source",
@@ -104,7 +91,7 @@ public class DataVirtualizationServiceTest {
                 + "create foreign table tbl3 (col string) options (\"teiid_rel:fqn\" 'schema=s/table=tbl3');");
         metadataInstance.undeployDynamicVdb(MetadataService.getWorkspaceSourceVdbName("source"));
 
-        kso = dataVirtualizationService.importViews("dv", "source", payload);
+        StatusObject kso = dataVirtualizationService.importViews("dv", "source", payload);
         assertEquals(3, kso.getAttributes().size());
 
         for (String id : kso.getAttributes().values()) {
@@ -122,7 +109,7 @@ public class DataVirtualizationServiceTest {
         assertEquals("{\n" +
                 "  \"complete\" : true,\n" +
                 "  \"dataVirtualizationName\" : \"dv\",\n" +
-                "  \"ddl\" : \"CREATE VIEW tbl (col) AS \\nSELECT col\\nFROM source.tbl\",\n" +
+                "  \"ddl\" : \"CREATE VIEW tbl (\\n  col\\n) AS \\n  SELECT \\n    t1.col\\n  FROM \\n    source.tbl AS t1\",\n" +
                 "  \"id\" : \"consistent\",\n" +
                 "  \"name\" : \"tbl\",\n" +
                 "  \"sourcePaths\" : [ \"schema=source/table=tbl\" ],\n" +
@@ -137,29 +124,20 @@ public class DataVirtualizationServiceTest {
         assertEquals(Long.valueOf(1), dv.getVersion());
     }
 
-    @Test public void testValidateNameUsingGet() throws Exception {
-        try {
-            dataVirtualizationService.getDataVirtualization("foo");
-            fail();
-        } catch (ResponseStatusException e) {
-            assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
-        }
+    @Test public void testValidateNameUsingGet() {
+        assertThatThrownBy(() -> dataVirtualizationService.getDataVirtualization("foo"))
+            .isInstanceOf(ResponseStatusException.class)
+            .extracting(e -> ((ResponseStatusException) e).getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
 
         //must end with number/letter
-        try {
-            dataVirtualizationService.getDataVirtualization("foo-");
-            fail();
-        } catch (ResponseStatusException e) {
-            assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
-        }
+        assertThatThrownBy(() ->  dataVirtualizationService.getDataVirtualization("foo-"))
+            .isInstanceOf(ResponseStatusException.class)
+            .extracting(e -> ((ResponseStatusException) e).getStatus()).isEqualTo(HttpStatus.FORBIDDEN);
 
         //bad chars
-        try {
-            dataVirtualizationService.getDataVirtualization("%foo&");
-            fail();
-        } catch (ResponseStatusException e) {
-            assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
-        }
+        assertThatThrownBy(() -> dataVirtualizationService.getDataVirtualization("%foo&"))
+            .isInstanceOf(ResponseStatusException.class)
+            .extracting(e -> ((ResponseStatusException) e).getStatus()).isEqualTo(HttpStatus.FORBIDDEN);
 
         workspaceManagerImpl.createDataVirtualization("foo");
 

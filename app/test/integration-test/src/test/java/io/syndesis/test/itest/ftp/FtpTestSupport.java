@@ -23,8 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeTestSupport;
+import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.exceptions.CitrusRuntimeException;
 import com.consol.citrus.ftp.client.FtpEndpointConfiguration;
 import com.consol.citrus.ftp.server.FtpServer;
@@ -42,6 +41,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SocketUtils;
 import org.testcontainers.Testcontainers;
+
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 
 /**
  * @author Christoph Deppisch
@@ -97,17 +98,6 @@ public abstract class FtpTestSupport extends SyndesisIntegrationTestSupport {
 
             return ftpServer;
         }
-
-        @Bean
-        public TestRunnerBeforeTestSupport beforeTest(DataSource sampleDb) {
-            return new TestRunnerBeforeTestSupport() {
-                @Override
-                public void beforeTest(TestRunner runner) {
-                    runner.sql(builder -> builder.dataSource(sampleDb)
-                            .statement("delete from todo"));
-                }
-            };
-        }
     }
 
     @BeforeClass
@@ -136,5 +126,11 @@ public abstract class FtpTestSupport extends SyndesisIntegrationTestSupport {
 
     public static Path getFtpUserHome() {
         return Paths.get("target/ftp/user/syndesis");
+    }
+
+    protected void cleanupDatabase(TestCaseRunner runner) {
+        runner.given(sql(sampleDb)
+            .dataSource(sampleDb)
+            .statement("delete from todo"));
     }
 }

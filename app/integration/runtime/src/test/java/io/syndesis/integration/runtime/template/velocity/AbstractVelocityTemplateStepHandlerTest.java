@@ -16,11 +16,12 @@
 package io.syndesis.integration.runtime.template.velocity;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.junit.Test;
+
 import io.syndesis.common.model.integration.step.template.TemplateStepConstants;
 import io.syndesis.common.model.integration.step.template.TemplateStepLanguage;
 import io.syndesis.common.model.integration.step.template.TemplateStepLanguage.SymbolSyntax;
 import io.syndesis.integration.runtime.handlers.AbstractTemplateStepHandlerTest;
+import org.junit.Test;
 
 public abstract class AbstractVelocityTemplateStepHandlerTest extends AbstractTemplateStepHandlerTest
     implements TemplateStepConstants{
@@ -59,7 +60,7 @@ public abstract class AbstractVelocityTemplateStepHandlerTest extends AbstractTe
      }
 
     @Test
-    public void testInvalidTemplate() throws Exception {
+    public void testInvalidTemplate() {
         SymbolSyntax mustacheSyntax = TemplateStepLanguage.MUSTACHE.getDefaultSymbolSyntax();
         Symbol[] symbols = {
             new Symbol("time", "string", mustacheSyntax),

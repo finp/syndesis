@@ -2,10 +2,10 @@ import { WithApiConnector, WithApiConnectorHelpers } from '@syndesis/api';
 import { Connector } from '@syndesis/models';
 import {
   ApiConnectorDetailCard,
+  ApiConnectorDetailsForm,
   ApiConnectorReview,
   Breadcrumb,
   ButtonLink,
-  Container,
   Loader,
   PageLoader,
   PageSection,
@@ -16,7 +16,7 @@ import { Translation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { UIContext } from '../../../app';
 import i18n from '../../../i18n';
-import { ApiError } from '../../../shared';
+import { ApiError, PageTitle } from '../../../shared';
 import resolvers from '../../resolvers';
 import { ApiConnectorInfoForm, IConnectorValues } from '../components';
 
@@ -32,58 +32,71 @@ export interface IApiConnectorDetailsPageProps {
   edit: boolean;
 }
 
-export default class ApiConnectorDetailsPage extends React.Component<
-  IApiConnectorDetailsPageProps
-> {
-  public getUsedByMessage(apiConnector: Connector): string {
-    // TODO: Schema is currently wrong as it has 'uses' as an OptionalInt. Remove cast when schema is fixed.
-    const numUsedBy = apiConnector.uses as number;
+export const ApiConnectorDetailsPage: React.FunctionComponent<IApiConnectorDetailsPageProps> = (
+  {
+    edit,
+  }) => {
 
-    if (numUsedBy === 1) {
-      return i18n.t('apiClientConnectors:usedByOne');
+  const getTagMessages = (apiConnector: Connector): string[] | undefined => {
+    if (
+      apiConnector.actionsSummary &&
+      apiConnector.actionsSummary.actionCountByTags
+    ) {
+      return Object.keys(apiConnector.actionsSummary.actionCountByTags).map(
+        tagName => {
+          const numTagged = apiConnector.actionsSummary!.actionCountByTags![
+            tagName
+            ];
+          return i18n.t('apiClientConnectors:reviewOperationsTaggedMessage', {
+            count: numTagged,
+            tag: tagName,
+          });
+        },
+      );
     }
 
-    return i18n.t('apiClientConnectors:usedByMulti', { count: numUsedBy });
-  }
+    return undefined;
+  };
 
-  public render() {
-    const getTagMessages = (apiConnector: Connector): string[] | undefined => {
-      if (
-        apiConnector.actionsSummary &&
-        apiConnector.actionsSummary.actionCountByTags
-      ) {
-        return Object.keys(apiConnector.actionsSummary.actionCountByTags).map(
-          tagName => {
-            const numTagged = apiConnector.actionsSummary!.actionCountByTags![
-              tagName
-            ];
-            return i18n.t('apiClientConnectors:reviewOperationsTaggedMessage', {
-              count: numTagged,
-              tag: tagName,
-            });
-          }
-        );
-      }
-
-      return undefined;
-    };
-
-    return (
-      <>
-        <UIContext.Consumer>
-          {({ pushNotification }) => {
-            return (
-              <WithRouteData<
-                IApiConnectorDetailsRouteParams,
-                IApiConnectorDetailsRouteState
-              >>
-                {(
-                  { apiConnectorId },
-                  { apiConnector },
-                  { history, location }
-                ) => (
-                  <Translation ns={['apiClientConnectors', 'shared']}>
-                    {t => (
+  return (
+    <>
+      <UIContext.Consumer>
+        {({ pushNotification }) => {
+          return (
+            <WithRouteData<IApiConnectorDetailsRouteParams,
+                IApiConnectorDetailsRouteState>>
+              {(
+                { apiConnectorId },
+                { apiConnector },
+                { history, location },
+              ) => (
+                <Translation ns={['apiClientConnectors', 'shared']}>
+                  {t => (
+                    <>
+                      <Breadcrumb>
+                        <Link
+                          data-testid={
+                            'api-connector-details-page-home-link'
+                          }
+                          to={resolvers.dashboard.root()}
+                        >
+                          {t('shared:Home')}
+                        </Link>
+                        <Link
+                          data-testid={
+                            'api-connector-details-page-api-connectors-link'
+                          }
+                          to={resolvers.apiClientConnectors.list()}
+                        >
+                          {t('apiConnectorsPageTitle')}
+                        </Link>
+                        <span>
+                                              {t(
+                                                'apiConnectorDetailsPageTitle',
+                                              )}
+                                            </span>
+                      </Breadcrumb>
+                      <PageTitle title={t('apiConnectorDetailsPageTitle')}/>
                       <WithApiConnectorHelpers>
                         {({ saveApiConnector, updateApiConnector }) => {
                           const handleSave = async (updated: Connector) => {
@@ -97,9 +110,9 @@ export default class ApiConnectorDetailsPage extends React.Component<
                               key={location.key}
                             >
                               {({ data, hasData, error, errorMessage }) => {
-                                const handleSubmit = async (
+                                const onSubmit = async (
                                   values: IConnectorValues,
-                                  actions: any
+                                  actions: any,
                                 ) => {
                                   const updated = updateApiConnector(
                                     data,
@@ -107,7 +120,7 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                     values.description,
                                     values.host,
                                     values.basePath,
-                                    values.icon
+                                    values.icon,
                                   );
 
                                   try {
@@ -117,15 +130,15 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                       resolvers.apiClientConnectors.apiConnector.details(
                                         {
                                           apiConnector: updated,
-                                        }
-                                      )
+                                        },
+                                      ),
                                     );
                                     return true;
                                   } catch (error) {
                                     actions.setSubmitting(false);
                                     pushNotification(
                                       t('errorSavingApiConnector'),
-                                      'error'
+                                      'error',
                                     );
                                     return false;
                                   }
@@ -136,8 +149,8 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                     resolvers.apiClientConnectors.apiConnector.details(
                                       {
                                         apiConnector: data,
-                                      }
-                                    )
+                                      },
+                                    ),
                                   );
                                 };
 
@@ -146,8 +159,8 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                     resolvers.apiClientConnectors.apiConnector.edit(
                                       {
                                         apiConnector: data,
-                                      }
-                                    )
+                                      },
+                                    ),
                                   );
                                 };
 
@@ -155,46 +168,21 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                   <WithLoader
                                     error={error}
                                     loading={!hasData}
-                                    loaderChildren={<PageLoader />}
+                                    loaderChildren={<PageLoader/>}
                                     errorChildren={
-                                      <ApiError error={errorMessage!} />
+                                      <ApiError error={errorMessage!}/>
                                     }
                                   >
                                     {() => {
                                       return (
                                         <>
-                                          <Breadcrumb>
-                                            <Link
-                                              data-testid={
-                                                'api-connector-details-page-home-link'
-                                              }
-                                              to={resolvers.dashboard.root()}
-                                            >
-                                              {t('shared:Home')}
-                                            </Link>
-                                            <Link
-                                              data-testid={
-                                                'api-connector-details-page-api-connectors-link'
-                                              }
-                                              to={resolvers.apiClientConnectors.list()}
-                                            >
-                                              {t('apiConnectorsPageTitle')}
-                                            </Link>
-                                            <span>
-                                              {t(
-                                                'apiConnectorDetailsPageTitle'
-                                              )}
-                                            </span>
-                                          </Breadcrumb>
-                                          <PageSection>
-                                            <Container className="col-sm-4">
-                                              <ApiConnectorDetailCard
-                                                description={data.description}
-                                                icon={data.icon}
-                                                name={data.name}
-                                              />
-                                            </Container>
-                                            <Container className="col-sm-8">
+                                          <PageSection style={{ height: '10em' }}>
+                                            <ApiConnectorDetailCard
+                                              description={data.description}
+                                              icon={data.icon}
+                                              name={data.name}
+                                            />
+                                            <>
                                               <ApiConnectorInfoForm
                                                 name={data.name}
                                                 description={data.description}
@@ -211,63 +199,79 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                                   ).host
                                                 }
                                                 apiConnectorIcon={data.icon}
-                                                isEditing={this.props.edit}
-                                                handleSubmit={handleSubmit}
+                                                handleSubmit={onSubmit}
                                               >
                                                 {({
-                                                  submitForm,
-                                                  isSubmitting,
-                                                  isUploadingImage,
-                                                }) =>
-                                                  this.props.edit ? (
+                                                    connectorName,
+                                                    fields,
+                                                    handleSubmit,
+                                                    icon,
+                                                    isSubmitting,
+                                                    isUploadingImage,
+                                                    onUploadImage,
+                                                  }) => {
+                                                  return (
                                                     <>
-                                                      <ButtonLink
-                                                        data-testid={
-                                                          'api-connector-details-form-cancel-button'
-                                                        }
-                                                        className="api-connector-details-form__editButton"
-                                                        disabled={
-                                                          isSubmitting ||
-                                                          isUploadingImage
-                                                        }
-                                                        onClick={cancelEditing}
-                                                      >
-                                                        {t('shared:Cancel')}
-                                                      </ButtonLink>
-                                                      <ButtonLink
-                                                        data-testid={
-                                                          'api-connector-details-form-save-button'
-                                                        }
-                                                        as="primary"
-                                                        className="api-connector-details-form__editButton"
-                                                        disabled={
-                                                          isSubmitting ||
-                                                          isUploadingImage
-                                                        }
-                                                        onClick={submitForm}
-                                                      >
-                                                        {(isSubmitting ||
-                                                          isUploadingImage) && (
-                                                          <Loader
-                                                            size={'sm'}
-                                                            inline={true}
-                                                          />
-                                                        )}
-                                                        {t('shared:Save')}
-                                                      </ButtonLink>
+                                                      <ApiConnectorDetailsForm
+                                                        apiConnectorIcon={icon}
+                                                        apiConnectorName={connectorName}
+                                                        i18nIconLabel={t('ConnectorIcon')}
+                                                        handleSubmit={handleSubmit}
+                                                        onUploadImage={onUploadImage}
+                                                        isEditing={edit}
+                                                        fields={fields}
+                                                      />
+                                                      {edit ? (
+                                                        <>
+                                                          <ButtonLink
+                                                            data-testid={
+                                                              'api-connector-details-form-cancel-button'
+                                                            }
+                                                            className="api-connector-details-form__editButton"
+                                                            disabled={
+                                                              isSubmitting ||
+                                                              isUploadingImage
+                                                            }
+                                                            onClick={cancelEditing}
+                                                          >
+                                                            {t('shared:Cancel')}
+                                                          </ButtonLink>
+                                                          <ButtonLink
+                                                            data-testid={
+                                                              'api-connector-details-form-save-button'
+                                                            }
+                                                            as="primary"
+                                                            className="api-connector-details-form__editButton"
+                                                            disabled={
+                                                              isSubmitting ||
+                                                              isUploadingImage
+                                                            }
+                                                            onClick={handleSubmit}
+                                                          >
+                                                            {(isSubmitting ||
+                                                              isUploadingImage) && (
+                                                              <Loader
+                                                                size={'sm'}
+                                                                inline={true}
+                                                              />
+                                                            )}
+                                                            {t('shared:Save')}
+                                                          </ButtonLink>
+                                                        </>
+                                                      ) : (
+                                                        <ButtonLink
+                                                          data-testid={
+                                                            'api-connector-details-form-edit-button'
+                                                          }
+                                                          as="primary"
+                                                          onClick={startEditing}
+                                                        >
+                                                          {t('shared:Edit')}
+                                                        </ButtonLink>
+                                                      )}
                                                     </>
-                                                  ) : (
-                                                    <ButtonLink
-                                                      data-testid={
-                                                        'api-connector-details-form-edit-button'
-                                                      }
-                                                      as="primary"
-                                                      onClick={startEditing}
-                                                    >
-                                                      {t('shared:Edit')}
-                                                    </ButtonLink>
-                                                  )
-                                                }
+                                                  );
+                                                }}
                                               </ApiConnectorInfoForm>
                                               &nbsp;
                                               {data.actionsSummary ? (
@@ -277,22 +281,22 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                                   }
                                                   apiConnectorName={data.name}
                                                   i18nApiDefinitionHeading={t(
-                                                    'reviewApiDefinitionHeading'
+                                                    'reviewApiDefinitionHeading',
                                                   )}
                                                   i18nDescriptionLabel={t(
-                                                    'shared:Description'
+                                                    'shared:Description',
                                                   )}
                                                   i18nErrorsHeading={t(
                                                     'reviewErrorsHeading',
                                                     {
                                                       count: 0,
-                                                    }
+                                                    },
                                                   )} // TODO fix count
                                                   i18nImportedHeading={t(
-                                                    'reviewImportedHeading'
+                                                    'reviewImportedHeading',
                                                   )}
                                                   i18nNameLabel={t(
-                                                    'shared:Name'
+                                                    'shared:Name',
                                                   )}
                                                   i18nOperationsHtmlMessage={t(
                                                     'reviewOperationsMessage',
@@ -300,50 +304,50 @@ export default class ApiConnectorDetailsPage extends React.Component<
                                                       count:
                                                         data.actionsSummary
                                                           .totalActions || 0,
-                                                    }
+                                                    },
                                                   )}
                                                   i18nOperationTagHtmlMessages={getTagMessages(
-                                                    data
+                                                    data,
                                                   )}
                                                   i18nTitle={t(
-                                                    'reviewActionsTitle'
+                                                    'reviewActionsTitle',
                                                   )}
                                                   i18nWarningsHeading={t(
                                                     'reviewWarningsHeading',
                                                     {
                                                       count: 0,
-                                                    }
+                                                    },
                                                   )} // TODO fix count
                                                 />
                                               ) : (
                                                 <ApiConnectorReview
                                                   i18nApiDefinitionHeading={t(
-                                                    'apiConnectorsPageTitle'
+                                                    'apiConnectorsPageTitle',
                                                   )}
                                                   i18nDescriptionLabel={t(
-                                                    'shared:Description'
+                                                    'shared:Description',
                                                   )}
                                                   i18nImportedHeading={t(
-                                                    'apiConnectorsPageTitle'
+                                                    'apiConnectorsPageTitle',
                                                   )}
                                                   i18nNameLabel={t(
-                                                    'shared:Name'
+                                                    'shared:Name',
                                                   )}
                                                   i18nOperationsHtmlMessage={t(
                                                     'reviewOperationsMessage',
                                                     {
                                                       count: 0,
-                                                    }
+                                                    },
                                                   )}
                                                   i18nTitle={t(
-                                                    'reviewActionsTitle'
+                                                    'reviewActionsTitle',
                                                   )}
                                                   i18nValidationFallbackMessage={t(
-                                                    'reviewValidationFallback'
+                                                    'reviewValidationFallback',
                                                   )}
                                                 />
                                               )}
-                                            </Container>
+                                            </>
                                           </PageSection>
                                         </>
                                       );
@@ -355,14 +359,14 @@ export default class ApiConnectorDetailsPage extends React.Component<
                           );
                         }}
                       </WithApiConnectorHelpers>
-                    )}
-                  </Translation>
-                )}
-              </WithRouteData>
-            );
-          }}
-        </UIContext.Consumer>
-      </>
-    );
-  }
-}
+                    </>
+                  )}
+                </Translation>
+              )}
+            </WithRouteData>
+          );
+        }}
+      </UIContext.Consumer>
+    </>
+  );
+};

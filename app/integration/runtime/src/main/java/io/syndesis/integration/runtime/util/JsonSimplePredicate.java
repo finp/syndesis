@@ -31,6 +31,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import io.syndesis.common.util.IOStreams;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -39,7 +42,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +82,7 @@ public final class JsonSimplePredicate implements Predicate {
     }
 
     @Override
+    @SuppressFBWarnings({"NP_LOAD_OF_KNOWN_NULL_VALUE", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", "RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"}) // https://github.com/spotbugs/spotbugs/issues/868 though this code is fishy (TODO)
     public boolean matches(final Exchange exchange) {
         // Clone the exchange and set the JSON message converted to a Map /
         // List as in message.
@@ -148,6 +152,7 @@ public final class JsonSimplePredicate implements Predicate {
         return predicate.matches(exchange);
     }
 
+    @SuppressWarnings("JdkObsolete") // j.u.Matcher accepts only StringBuffer
     static String convertSimpleToOGNLForMaps(final String simple) {
         final Matcher matcher = SIMPLE_EXPRESSION.matcher(simple);
 

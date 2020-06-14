@@ -15,7 +15,6 @@
  */
 package io.syndesis.server.jsondb.impl.expr;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,9 +31,10 @@ import io.syndesis.server.jsondb.impl.SqlJsonDB;
 
 public abstract class SqlExpressionBuilder {
 
-    protected abstract void build(StringBuilder sql, ArrayList<Consumer<Query<Map<String, Object>>>> binds, AtomicInteger bindCounter);
+    protected abstract void build(StringBuilder sql, List<Consumer<Query<Map<String, Object>>>> binds,
+                                  AtomicInteger bindCounter);
 
-    public void build(StringBuilder sql, ArrayList<Consumer<Query<Map<String, Object>>>> binds) {
+    public void build(StringBuilder sql, List<Consumer<Query<Map<String, Object>>>> binds) {
         build(sql, binds, new AtomicInteger());
     }
 
@@ -75,7 +75,7 @@ public abstract class SqlExpressionBuilder {
         }
     }
 
-    private static String toSqlOp(ChildFilter.Op op) {
+    private static String toSqlOp(Filter.Op op) {
         switch(op) {
             case EQ: return " = ";
             case NEQ: return " <> ";

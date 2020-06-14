@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Appending data to a sheet :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-google-sheets-connection-append-sheet-values.html">Appending data to a sheet</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-add-google-sheets-connection-append-sheet-values.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Appending data to a sheet</h1>
+<div class="paragraph">
+<p>You can append data to a sheet
+in the middle of a flow or to finish a simple integration.
+To do this, add a Google Sheets connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access the
+Google spreadsheet in which you want to append data.</p>
+</li>
+<li>
+<p>You have access to the ID for the spreadsheet in which
+you want to append data.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the spreadsheet in which you want to append data.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Append values to a sheet</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Append values to a sheet</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter the ID of the spreadsheet that you want to append values to.</p>
+</li>
+<li>
+<p>Leave the field blank. In this case, after you add this connection
+to the flow, you must add a data mapper step
+before this connection. In the data mapper step, map the spreadsheet ID from
+a previous connection to this connection. The previous connection must
+access the spreadsheet that you want to append data to in this connection.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Range</strong> field, use Google A1 notation to specify the spreadsheet
+range that you want to append data to. Specify the start and end coordinates,
+for example, <code>A3:D3</code> appends data to the first sheet, after the third
+row for 4 columns. The default is <code>A:A</code>, which appends data to the first
+column in the first sheet in the spreadsheet.</p>
+<div class="paragraph">
+<p>The connection never overwrites data. The connection starts appending
+data after the range you specify, and then always appends data to the
+content that is in place.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Major dimension</strong> field, accept <strong>Rows</strong>, which is the default, or
+select <strong>Columns</strong>. <strong>Rows</strong> configures the action to use row objects to append
+data. Each row object contains a value for each column that you want to append
+data to. <strong>Columns</strong> configures the action to use column objects to append data.
+Each column object contains a value for each row that you want to append.</p>
+</li>
+<li>
+<p>In the <strong>Value input option</strong> field, indicate how you want Google sheets
+to interpret the data that it receives for appending to a sheet.
+<strong>Unspecified</strong>, which is the default, enables Google Sheets to automatically
+convert data that it recognizes. For example, if the input data is a date, then
+Google Sheets formats it as a date. If the input data is a decimal, then
+Google Sheets formats it as a decimal.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Unspecified</strong> defaults to the Google Sheets API setting,
+which defaults to <strong>User entered</strong>.</p>
+</li>
+<li>
+<p><strong>Raw</strong> does nothing. Google Sheets inserts the input data as is.</p>
+</li>
+<li>
+<p><strong>User entered</strong> enables automatic conversion of recognizable data.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization where you added it.</p>
+<div class="paragraph">
+<p>The values that you specify to configure the <strong>Append values to a sheet</strong>
+action determine the fields that the data mapper displays for mapping
+to or from this connection.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If you want to add any other connections to the flow, add them now
+and then return to these instructions.</p>
+</li>
+<li>
+<p>After the flow has all desired connections,
+in the integration visualization, click the plus sign that is
+just before the Google Sheets connection that appends data to a sheet.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> to add a data mapping step to the flow.</p>
+</li>
+<li>
+<p>In the data mapper:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If you did not specify the spreadsheet ID when you configured the
+<strong>Append values to a spreadsheet</strong> action, then map a source <code>spreadsheetId</code>
+to the target <code>spreadsheetId</code>.</p>
+</li>
+<li>
+<p>Specify the data to append to the sheet by mapping fields from
+a source step to the target spreadsheet. For example,
+you might map fields from another spreadsheet or from a database.</p>
+<div class="paragraph">
+<p>If you need to, you can edit the Google Sheets connection that appends
+sheet values and change the settings for <strong>Range</strong> or <strong>Major dimension</strong>.
+Changing these settings causes the data mapper to display different
+target fields according to your changes.</p>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

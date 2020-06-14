@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Enabling auto-discovery of Kafka brokers/AMQ Streams :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-enabling-auto-discovery-of-kafka-brokers.html">Enabling auto-discovery of Kafka brokers/AMQ Streams</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-enabling-auto-discovery-of-kafka-brokers.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Enabling auto-discovery of Kafka brokers/AMQ Streams</h1>
+<div class="paragraph">
+<p>In an integration, if you plan to connect to a Kafka broker that
+is an AMQ Streams instance, enable auto-discovery of such brokers
+before you create the Kafka connection. This makes creating the
+Kafka connection easier because {prodname} can provide Kafka
+broker details that are required to configure the connection.</p>
+</div>
+<div class="paragraph">
+<p>To enable auto-discovery, you give an OpenShift user account
+privileges that allow that account to see resources on the cluster.
+The particular privileges that you assign let the account discover
+different subsets of brokers.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You installed the <code>oc</code> client tool and it is connected to the cluster
+in which you want to enable auto-discovery of Kafka brokers.</p>
+</li>
+<li>
+<p>You have cluster administration permissions.</p>
+</li>
+<li>
+<p>Kafka broker(s) (AMQ Streams instances) that you want to connect to in
+an integration are installed in the same cluster as {prodname}.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Log in to OpenShift with an account that has cluster administration
+permissions. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ oc login -u admin -p admin</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Ensure that the current project is the project in which {prodname} is running.
+To view the current project, invoke the following command:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ oc project</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Give privileges that enable access to Kafka brokers in the cluster to an
+<code>oc</code> user account. How your cluster is configured determines the privileges
+that you need to grant. For example, for a Strimzi cluster on minishift,
+you can do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Create a cluster role that can access Kafka/Strimzi resources in the cluster.
+In the following example, <code>kafkas.kafka.strimzi.io-view</code> is the name of the new role:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">oc create clusterrole kafkas.kafka.strimzi.io-view --verb=get,list --resource=kafkas --resource=crd</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add this cluster role to an <code>oc</code> user. In the following example,
+<code>syndesis-server</code> is the name of the <code>oc</code> user account:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">oc adm policy add-cluster-role-to-user kafkas.kafka.strimzi.io-view -z syndesis-server</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>In {prodname}, when you create a Kafka connection, the connection configuration
+page displays the Kafka brokers that are available. You select the broker that
+you want the connection to access.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

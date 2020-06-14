@@ -1,4 +1,5 @@
 import {
+  DataList,
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
@@ -7,7 +8,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 import * as H from '@syndesis/history';
-import { ListView } from 'patternfly-react';
 import * as React from 'react';
 import { ButtonLink } from '../../../Layout';
 import './ConnectionSchemaList.css';
@@ -18,12 +18,15 @@ export interface IConnectionSchemaListProps {
   i18nEmptyStateTitle: string;
   i18nLinkCreateConnection: string;
   linkToConnectionCreate: H.LocationDescriptor;
+  loading: boolean;
 }
 
 export const ConnectionSchemaList: React.FunctionComponent<IConnectionSchemaListProps> = props => {
   return (
     <>
-      {props.hasListData ? (
+      {props.loading ? (
+        <DataList aria-label={'connection schema list'}>{props.children}</DataList>
+      ) : props.hasListData ? (
         <Flex
           breakpointMods={[{ modifier: 'column', breakpoint: 'md' }]}
           className={'connection-schema-list_content'}
@@ -37,14 +40,14 @@ export const ConnectionSchemaList: React.FunctionComponent<IConnectionSchemaList
                   </Text>
                 </TextContent>
               </FlexItem> */}
-              <FlexItem>
+              <FlexItem breakpointMods={[{ modifier: 'align-right', breakpoint: 'md' }]}>
                 <ButtonLink
                   className={'connection-schema-list-create-connection-button'}
                   data-testid={
                     'dv-connection-schema-list-create-connection-button'
                   }
                   href={props.linkToConnectionCreate}
-                  as={'primary'}
+                  as={'default'}
                 >
                   {props.i18nLinkCreateConnection}
                 </ButtonLink>
@@ -53,7 +56,7 @@ export const ConnectionSchemaList: React.FunctionComponent<IConnectionSchemaList
           </FlexItem>
           <FlexItem className={'connection-schema-list_contentSection'}>
             <div className={'connection-schema-list'}>
-              <ListView>{props.children}</ListView>
+              <DataList aria-label={'connection schema list'}>{props.children}</DataList>
             </div>
           </FlexItem>
         </Flex>

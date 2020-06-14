@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.syndesis.common.model.environment.Environment;
 import io.syndesis.common.model.integration.ContinuousDeliveryEnvironment;
 import io.syndesis.common.model.integration.Integration;
@@ -58,6 +58,7 @@ public class EnvironmentHandler extends BaseHandler {
     private static final Logger LOG = LoggerFactory.getLogger(EnvironmentHandler.class);
     private static final Pattern UNSAFE_CHARS = Pattern.compile("[<>\"#%{}|\\\\^~\\[\\]`;/?:@=&]");
     private static final String NAME_PROPERTY = "name";
+    public static final String ENVIRONMENT = "environment";
 
     public EnvironmentHandler(DataManager dataMgr) {
         super(dataMgr);
@@ -73,7 +74,7 @@ public class EnvironmentHandler extends BaseHandler {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReleaseEnvironments(@QueryParam("withUses") @ApiParam boolean withUses) {
+    public Response getReleaseEnvironments(@QueryParam("withUses") @Parameter boolean withUses) {
 
         final Response response;
         final List<Environment> environments = getDataManager().fetchAll(Environment.class).getItems();
@@ -104,8 +105,8 @@ public class EnvironmentHandler extends BaseHandler {
      */
     @POST
     @Path("{env}")
-    public void addNewEnvironment(@NotNull @PathParam("env") @ApiParam(required = true) String environment) {
-        validateEnvironment("environment", environment);
+    public void addNewEnvironment(@NotNull @PathParam("env") @Parameter(required = true) String environment) {
+        validateEnvironment(ENVIRONMENT, environment);
 
         // look for duplicate environment name
         if (fetchEnvironment(environment).isPresent()) {
@@ -120,9 +121,9 @@ public class EnvironmentHandler extends BaseHandler {
      */
     @DELETE
     @Path("{env}")
-    public void deleteEnvironment(@NotNull @PathParam("env") @ApiParam(required = true) String environment) {
+    public void deleteEnvironment(@NotNull @PathParam("env") @Parameter(required = true) String environment) {
 
-        validateEnvironment("environment", environment);
+        validateEnvironment(ENVIRONMENT, environment);
         final DataManager dataManager = getDataManager();
         final String envId = getEnvironment(environment).getId().orElse(null);
 
@@ -150,9 +151,9 @@ public class EnvironmentHandler extends BaseHandler {
     @PUT
     @Path("{env}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void renameEnvironment(@NotNull @PathParam("env") @ApiParam(required = true) String environment, @NotNull @ApiParam(required = true) String newEnvironment) {
+    public void renameEnvironment(@NotNull @PathParam("env") @Parameter(required = true) String environment, @NotNull @Parameter(required = true) String newEnvironment) {
 
-        validateEnvironment("environment", environment);
+        validateEnvironment(ENVIRONMENT, environment);
         validateEnvironment("newEnvironment", newEnvironment);
 
         // ignore request if names are the same
@@ -179,7 +180,7 @@ public class EnvironmentHandler extends BaseHandler {
     @GET
     @Path("integrations/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, ContinuousDeliveryEnvironment> getReleaseTags(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId) {
+    public Map<String, ContinuousDeliveryEnvironment> getReleaseTags(@NotNull @PathParam("id") @Parameter(required = true) String integrationId) {
         final Map<String, ContinuousDeliveryEnvironment> deliveryState =
                 getIntegration(integrationId).getContinuousDeliveryState();
         return getNamedDeliveryState(deliveryState);
@@ -190,10 +191,10 @@ public class EnvironmentHandler extends BaseHandler {
      */
     @DELETE
     @Path("integrations/{id}/{env}")
-    public void deleteReleaseTag(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId, @NotNull @PathParam("env") @ApiParam(required = true) String environment) {
+    public void deleteReleaseTag(@NotNull @PathParam("id") @Parameter(required = true) String integrationId, @NotNull @PathParam("env") @Parameter(required = true) String environment) {
 
         final Integration integration = getIntegration(integrationId);
-        validateEnvironment("environment", environment);
+        validateEnvironment(ENVIRONMENT, environment);
 
         final Environment env = getEnvironment(environment);
 
@@ -213,7 +214,7 @@ public class EnvironmentHandler extends BaseHandler {
     @Path("integrations/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, ContinuousDeliveryEnvironment> putTagsForRelease(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId, @NotNull @ApiParam(required = true) List<String> environments) {
+    public Map<String, ContinuousDeliveryEnvironment> putTagsForRelease(@NotNull @PathParam("id") @Parameter(required = true) String integrationId, @NotNull @Parameter(required = true) List<String> environments) {
         return tagForRelease(integrationId, environments, true);
     }
 
@@ -224,7 +225,7 @@ public class EnvironmentHandler extends BaseHandler {
     @Path("integrations/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, ContinuousDeliveryEnvironment> patchTagsForRelease(@NotNull @PathParam("id") @ApiParam(required = true) String integrationId, @NotNull @ApiParam(required = true) List<String> environments) {
+    public Map<String, ContinuousDeliveryEnvironment> patchTagsForRelease(@NotNull @PathParam("id") @Parameter(required = true) String integrationId, @NotNull @Parameter(required = true) List<String> environments) {
         return tagForRelease(integrationId, environments, false);
     }
 
@@ -250,7 +251,7 @@ public class EnvironmentHandler extends BaseHandler {
         }
     }
 
-    public Environment getEnvironment(@ApiParam(required = true) @PathParam("env") @NotNull String environment) {
+    public Environment getEnvironment(@Parameter(required = true) @PathParam("env") @NotNull String environment) {
         return fetchEnvironment(environment)
                 .orElseThrow(() -> new ClientErrorException("Missing environment " + environment, Response.Status.NOT_FOUND));
     }
@@ -281,7 +282,7 @@ public class EnvironmentHandler extends BaseHandler {
         final Integration integration = getIntegration(integrationId);
         final HashMap<String, ContinuousDeliveryEnvironment> deliveryState = new HashMap<>(integration.getContinuousDeliveryState());
 
-        Date lastTaggedAt = new Date();
+        @SuppressWarnings("JdkObsolete") Date lastTaggedAt = new Date();
         for (String envId : ids) {
             // create or update tag
             deliveryState.put(envId, createOrUpdateTag(deliveryState, envId, lastTaggedAt));
@@ -307,7 +308,7 @@ public class EnvironmentHandler extends BaseHandler {
                 .collect(Collectors.toMap(v -> getDataManager().fetch(Environment.class, v.getEnvironmentId()).getName(), v -> v));
     }
 
-    private Integration getIntegration(String integrationId) {
+    public Integration getIntegration(String integrationId) {
         validateParam("integrationId", integrationId);
 
         // try fetching by name first, then by id
@@ -322,7 +323,7 @@ public class EnvironmentHandler extends BaseHandler {
         return resource;
     }
 
-    private Optional<Environment> fetchEnvironment(@ApiParam(required = true) @PathParam("env") @NotNull String environment) {
+    private Optional<Environment> fetchEnvironment(@Parameter(required = true) @PathParam("env") @NotNull String environment) {
         return getDataManager().fetchByPropertyValue(Environment.class, NAME_PROPERTY, environment);
     }
 

@@ -15,26 +15,28 @@
  */
 package io.syndesis.server.endpoint.v1.handler.integration;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.integration.Integration;
 import io.syndesis.common.model.integration.IntegrationDeployment;
@@ -42,21 +44,15 @@ import io.syndesis.common.model.integration.IntegrationDeploymentState;
 import io.syndesis.common.util.Labels;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.endpoint.util.PaginationFilter;
-import io.syndesis.server.endpoint.util.ReflectiveSorter;
 import io.syndesis.server.endpoint.v1.handler.BaseHandler;
 import io.syndesis.server.endpoint.v1.handler.user.UserConfigurationProperties;
 import io.syndesis.server.endpoint.v1.operations.PaginationOptionsFromQueryParams;
-import io.syndesis.server.endpoint.v1.operations.SortOptionsFromQueryParams;
 import io.syndesis.server.openshift.OpenShiftService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Path("/integrations/{id}/deployments")
-@Api(value = "integration-deployments")
+@Tag(name = "integration-deployments")
 @Component
 public final class IntegrationDeploymentHandler extends BaseHandler {
 
@@ -101,25 +97,29 @@ public final class IntegrationDeploymentHandler extends BaseHandler {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{version}")
-    public IntegrationDeployment get(@NotNull @PathParam("id") @ApiParam(required = true) final String id,
-        @NotNull @PathParam("version") @ApiParam(required = true) final int version) {
+    public IntegrationDeployment get(@NotNull @PathParam("id") @Parameter(required = true) final String id,
+        @NotNull @PathParam("version") @Parameter(required = true) final int version) {
         final String compositeId = IntegrationDeployment.compositeId(id, version);
         return getDataManager().fetch(IntegrationDeployment.class, compositeId);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ListResult<IntegrationDeployment> list(@NotNull @PathParam("id") @ApiParam(required = true) final String id,
-        @Context final UriInfo uriInfo) {
-        return getDataManager().fetchAll(IntegrationDeployment.class, new IntegrationIdFilter(id),
-            new ReflectiveSorter<>(IntegrationDeployment.class, new SortOptionsFromQueryParams(uriInfo)),
-            new PaginationFilter<>(new PaginationOptionsFromQueryParams(uriInfo)));
+    public ListResult<IntegrationDeployment> list(
+        @NotNull @PathParam("id") @Parameter(required = true) final String id,
+        @Parameter(required = false, description = "Page number to return") @QueryParam("page") @DefaultValue("1") int page,
+        @Parameter(required = false, description = "Number of records per page") @QueryParam("per_page") @DefaultValue("20") int perPage
+    ) {
+        return getDataManager().fetchAll(IntegrationDeployment.class,
+            new IntegrationIdFilter(id),
+            new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage))
+        );
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public IntegrationDeployment update(@Context final SecurityContext sec,
-        @NotNull @PathParam("id") @ApiParam(required = true) final String id) {
+        @NotNull @PathParam("id") @Parameter(required = true) final String id) {
         final DataManager dataManager = getDataManager();
         final Integration integration = dataManager.fetch(Integration.class, id);
 
@@ -152,9 +152,9 @@ public final class IntegrationDeploymentHandler extends BaseHandler {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{version}/targetState")
-    public void updateTargetState(@NotNull @PathParam("id") @ApiParam(required = true) final String id,
-        @NotNull @PathParam("version") @ApiParam(required = true) final int version,
-        @ApiParam(required = true) final TargetStateRequest request) {
+    public void updateTargetState(@NotNull @PathParam("id") @Parameter(required = true) final String id,
+        @NotNull @PathParam("version") @Parameter(required = true) final int version,
+        @Parameter(required = true) final TargetStateRequest request) {
 
         final String compositeId = IntegrationDeployment.compositeId(id, version);
         final DataManager dataManager = getDataManager();
@@ -181,9 +181,6 @@ public final class IntegrationDeploymentHandler extends BaseHandler {
     }
     /**
      * Count the deployments of the owner of the specified integration.
-     *
-     * @param deployment The specified IntegrationDeployment.
-     * @return The number of deployed integrations (excluding the current).
      */
     private int countDeployments(String integrationId, String username) {
 

@@ -19,12 +19,11 @@ package io.syndesis.test.itest.apiprovider;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
+import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeTestSupport;
 import com.consol.citrus.http.client.HttpClient;
+import com.consol.citrus.http.client.HttpClientBuilder;
 import io.syndesis.test.SyndesisTestEnvironment;
 import io.syndesis.test.container.integration.SyndesisIntegrationRuntimeContainer;
 import io.syndesis.test.itest.SyndesisIntegrationTestSupport;
@@ -37,6 +36,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
+
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
+import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
+import static com.consol.citrus.container.Wait.Builder.waitFor;
+import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 /**
  * @author Christoph Deppisch
@@ -70,18 +74,20 @@ public class TodoListApi_IT extends SyndesisIntegrationTestSupport {
 
     @Test
     @CitrusTest
-    public void testGetOpenApiSpec(@CitrusResource TestRunner runner) {
-        runner.waitFor().http()
-                .method(HttpMethod.GET)
-                .seconds(10L)
-                .status(HttpStatus.OK)
-                .url(String.format("http://localhost:%s/actuator/health", integrationContainer.getManagementPort()));
+    public void testGetOpenApiSpec(@CitrusResource TestCaseRunner runner) {
+        cleanupDatabase(runner);
 
-        runner.http(action -> action.client(todoListApiClient)
+        runner.given(waitFor().http()
+                .method(HttpMethod.GET.name())
+                .seconds(10L)
+                .status(HttpStatus.OK.value())
+                .url(String.format("http://localhost:%s/actuator/health", integrationContainer.getManagementPort())));
+
+        runner.when(http().client(todoListApiClient)
                 .send()
                 .get("/openapi.json"));
 
-        runner.http(builder -> builder.client(todoListApiClient)
+        runner.then(http().client(todoListApiClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .contentType(VND_OAI_OPENAPI_JSON)
@@ -90,19 +96,21 @@ public class TodoListApi_IT extends SyndesisIntegrationTestSupport {
 
     @Test
     @CitrusTest
-    public void testAddTodoList(@CitrusResource TestRunner runner) {
-        runner.http(builder -> builder.client(todoListApiClient)
+    public void testAddTodoList(@CitrusResource TestCaseRunner runner) {
+        cleanupDatabase(runner);
+
+        runner.given(http().client(todoListApiClient)
                 .send()
                 .post("/todos")
                 .payload("[{\"name\":\"Wash the cat\",\"done\":0}," +
                             "{\"name\":\"Feed the cat\",\"done\":0}," +
                             "{\"name\":\"Play with the cat\",\"done\":0}]"));
 
-        runner.http(builder -> builder.client(todoListApiClient)
+        runner.when(http().client(todoListApiClient)
                 .receive()
                 .response(HttpStatus.CREATED));
 
-        runner.query(builder -> builder.dataSource(sampleDb)
+        runner.then(query(sampleDb)
                 .statement("select task, completed from todo")
                 .validate("task", "Wash the cat", "Feed the cat", "Play with the cat")
                 .validate("completed", "0", "0", "0"));
@@ -110,17 +118,19 @@ public class TodoListApi_IT extends SyndesisIntegrationTestSupport {
 
     @Test
     @CitrusTest
-    public void testGetTodoList(@CitrusResource TestRunner runner) {
-        runner.sql(builder -> builder.dataSource(sampleDb)
+    public void testGetTodoList(@CitrusResource TestCaseRunner runner) {
+        cleanupDatabase(runner);
+
+        runner.given(sql(sampleDb)
                 .statements(Arrays.asList("insert into todo (task, completed) values ('Wash the dog', 0)",
                         "insert into todo (task, completed) values ('Feed the dog', 0)",
                         "insert into todo (task, completed) values ('Play with the dog', 0)")));
 
-        runner.http(builder -> builder.client(todoListApiClient)
+        runner.when(http().client(todoListApiClient)
                 .send()
                 .get("/todos"));
 
-        runner.http(builder -> builder.client(todoListApiClient)
+        runner.then(http().client(todoListApiClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .payload("[{\"id\":\"@ignore@\",\"name\":\"Wash the dog\",\"done\":0}," +
@@ -130,12 +140,14 @@ public class TodoListApi_IT extends SyndesisIntegrationTestSupport {
 
     @Test
     @CitrusTest
-    public void testGetEmptyTodoList(@CitrusResource TestRunner runner) {
-        runner.http(builder -> builder.client(todoListApiClient)
+    public void testGetEmptyTodoList(@CitrusResource TestCaseRunner runner) {
+        cleanupDatabase(runner);
+
+        runner.when(http().client(todoListApiClient)
                 .send()
                 .get("/todos"));
 
-        runner.http(builder -> builder.client(todoListApiClient)
+        runner.then(http().client(todoListApiClient)
                 .receive()
                 .response(HttpStatus.OK)
                 .payload("[]"));
@@ -145,21 +157,15 @@ public class TodoListApi_IT extends SyndesisIntegrationTestSupport {
     public static class EndpointConfig {
         @Bean
         public HttpClient todoListApiClient() {
-            return CitrusEndpoints.http().client()
+            return new HttpClientBuilder()
                     .requestUrl(String.format("http://localhost:%s", integrationContainer.getServerPort()))
                     .build();
         }
+    }
 
-        @Bean
-        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-        public TestRunnerBeforeTestSupport beforeTest(DataSource sampleDb) {
-            return new TestRunnerBeforeTestSupport() {
-                @Override
-                public void beforeTest(TestRunner runner) {
-                    runner.sql(builder -> builder.dataSource(sampleDb)
-                            .statement("delete from todo"));
-                }
-            };
-        }
+    private void cleanupDatabase(TestCaseRunner runner) {
+        runner.given(sql(sampleDb)
+            .dataSource(sampleDb)
+            .statement("delete from todo"));
     }
 }

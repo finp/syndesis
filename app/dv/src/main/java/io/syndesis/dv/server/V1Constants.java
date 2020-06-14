@@ -16,73 +16,23 @@
 
 package io.syndesis.dv.server;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Properties;
 
 import io.syndesis.dv.StringConstants;
 
 /**
- * Constants associated with version 1 of the Komodo REST application.
+ * Constants associated with version 1 of the REST application.
  */
-public interface V1Constants extends StringConstants {
-
-    class App {
-        private App() {}
-
-        private static final Properties properties = new Properties();
-
-        private static void init() {
-            InputStream fileStream = V1Constants.class.getClassLoader().getResourceAsStream("app.properties"); //$NON-NLS-1$
-
-            try {
-                properties.load(fileStream);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-        /**
-         * Application name and context
-         */
-        public static String name() {
-            init();
-
-            return properties.getProperty("app.name"); //$NON-NLS-1$
-        }
-
-        /**
-         * Application display title
-         */
-        public static String title() {
-            init();
-
-            return properties.getProperty("app.title"); //$NON-NLS-1$
-        }
-
-        /**
-         * Application description
-         */
-        public static String description() {
-            init();
-
-            return properties.getProperty("app.description"); //$NON-NLS-1$
-        }
-
-        /**
-         * Version of the application
-         */
-        public static String version() {
-            init();
-
-            return properties.getProperty("app.version"); //$NON-NLS-1$
-        }
-    }
+public interface V1Constants {
 
     /**
-     * The URI path segment for the Komodo REST application. It is included in the base URI. <strong>DO NOT INCLUDE THIS IN
+     * The URI path segment for the REST application. It is included in the base URI. <strong>DO NOT INCLUDE THIS IN
      * OTHER URI SEGMENTS</strong>
      */
-    String APP_PATH = FS + "v1"; //$NON-NLS-1$
+    String APP_PATH = StringConstants.FS + "v1"; //$NON-NLS-1$
 
     /**
      * The name of the URI path segment for the utility service.
@@ -135,7 +85,7 @@ public interface V1Constants extends StringConstants {
     /**
      * syndesis source summaries segment
      */
-    String SYNDESIS_SOURCE_STATUSES = "syndesisSourceStatuses"; //$NON-NLS-1$
+    String SOURCE_STATUSES = "sourceStatuses"; //$NON-NLS-1$
 
     /**
      * The view editor state of the user profile
@@ -176,4 +126,66 @@ public interface V1Constants extends StringConstants {
 
     String REVERT = "revert"; //$NON-NLS-1$
 
+    String TEST_SUPPORT = "test-support"; //$NON-NLS-1$
+
+    /**
+     * Roles
+     */
+    String ROLES = "roles"; //$NON-NLS-1$
+
+    String STATUS = "status"; //$NON-NLS-1$
+
+    String DELETE_FROM = "deleteFrom"; //$NON-NLS-1$
+
+    class App {
+        private static final Properties PROPERTIES = new Properties();
+
+        private App() {}
+
+        private static void init() {
+            InputStream fileStream = V1Constants.class.getClassLoader().getResourceAsStream("app.properties"); //$NON-NLS-1$
+
+            try {
+                PROPERTIES.load(fileStream);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+
+        /**
+         * Application name and context
+         */
+        public static String name() {
+            init();
+
+            return PROPERTIES.getProperty("app.name"); //$NON-NLS-1$
+        }
+
+        /**
+         * Application display title
+         */
+        public static String title() {
+            init();
+
+            return PROPERTIES.getProperty("app.title"); //$NON-NLS-1$
+        }
+
+        /**
+         * Application description
+         */
+        public static String description() {
+            init();
+
+            return PROPERTIES.getProperty("app.description"); //$NON-NLS-1$
+        }
+
+        /**
+         * Version of the application
+         */
+        public static String version() {
+            init();
+
+            return PROPERTIES.getProperty("app.version"); //$NON-NLS-1$
+        }
+    }
 }

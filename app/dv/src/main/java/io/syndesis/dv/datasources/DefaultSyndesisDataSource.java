@@ -19,7 +19,7 @@ import java.util.Map;
 
 import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
 
-public class DefaultSyndesisDataSource {
+public class DefaultSyndesisDataSource implements Cloneable {
     private String syndesisConnectionId;
     private String syndesisName;
     private volatile String teiidName;
@@ -76,13 +76,14 @@ public class DefaultSyndesisDataSource {
     }
 
     public TeiidDataSourceImpl createDataSource() {
-        return this.definition.createDatasource(this.teiidName, this);
+        TeiidDataSourceImpl result = this.definition.createDatasource(this.teiidName, this);
+        result.setSyndesisDataSource(this);
+        return result;
     }
 
     /**
      * If bound returns the unique Teiid datasource name, which is also a valid
      * schema name.  It will already be cleansed of problematic characters.
-     * @return
      */
     public String getTeiidName() {
         return teiidName;
@@ -90,5 +91,10 @@ public class DefaultSyndesisDataSource {
 
     public void setTeiidName(String teiidName) {
         this.teiidName = teiidName;
+    }
+
+    @Override
+    public DefaultSyndesisDataSource clone() throws CloneNotSupportedException {
+        return (DefaultSyndesisDataSource)super.clone();
     }
 }

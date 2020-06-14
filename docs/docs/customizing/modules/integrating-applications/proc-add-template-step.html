@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding a template step :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-template-step.html">Adding a template step</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/proc-add-template-step.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding a template step</h1>
+<div class="paragraph">
+<p>In a flow, a template step takes data from a source and
+inserts it into the format that is defined in a template that you upload to {prodname}.
+The benefit of a template step is that it provides data output in a
+consistent format that you specify.</p>
+</div>
+<div class="paragraph">
+<p>In the template, you define placeholders and specify static text.
+When you create the flow, you add a template step, map source fields
+to the template placeholders, and then map template content to the next step
+in the flow. When {prodname} executes the flow, it
+inserts the values that are in the mapped source fields into an
+instance of the template and makes the result available to the next step
+in the flow.</p>
+</div>
+<div class="paragraph">
+<p>If a flow includes a template step then it is most likely the only
+template step in that flow. However, more than one template step in a
+flow is allowed.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} supports the following kinds of templates:
+<a href="https://freemarker.apache.org">Freemarker</a>,
+<a href="https://mustache.github.io">Mustache</a>,
+<a href="https://velocity.apache.org">Velocity</a>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You must be creating or editing a flow.</p>
+</li>
+<li>
+<p>If you are creating a simple
+integration then it must already have its start and finish connections.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="Plus Sign"></span>
+where you want to add a template step.</p>
+</li>
+<li>
+<p>Click <strong>Template</strong>. The
+<strong>Upload Template</strong> page opens.</p>
+</li>
+<li>
+<p>Specify the template type, which is Freemarker, Mustache, or Velocity.</p>
+</li>
+<li>
+<p>To define the template, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Drag and drop a template file or a file that contains text that you
+want to modify to create a template, into the template editor.</p>
+</li>
+<li>
+<p>Click <strong>browse to upload</strong>, navigate to a file, and upload it.</p>
+</li>
+<li>
+<p>In the template editor, start typing to define a template.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the template editor, ensure that the template
+is valid for use with {prodname}. Examples of valid templates are
+after this procedure. {prodname} displays
+<span class="image"><img src="../../../_images/images/integrating-applications/RedCircleXError.png" alt="a red error indicator"></span> to the left of
+a line that contains a syntax error. Hovering over a syntax error
+indicator displays hints about how to resolve the error.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the template step to the flow.</p>
+<div class="paragraph">
+<p>If the <strong>Done</strong> button is not enabled then there is at least one syntax error
+that you must correct.</p>
+</div>
+<div class="paragraph">
+<p>Input to a template step must be in the form of a JSON object. Consequently,
+you must add
+a data mapping step before a template step.</p>
+</div>
+</li>
+<li>
+<p>To add a data mapper step before the template step:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="Plus Sign"></span> that is
+immediately before the template step that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>In the data mapper, map a source field to each template placeholder field.</p>
+<div class="paragraph">
+<p>For example, using the example templates that are after this procedure,
+map a source field to each of these template fields:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>time</code></p>
+</li>
+<li>
+<p><code>name</code></p>
+</li>
+<li>
+<p><code>text</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step to the
+flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Output from a template step is always a JSON object. Consequently, you must
+add a data mapper step after a template step.</p>
+</div>
+</li>
+<li>
+<p>To add a data mapper step after the template step:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="Plus Sign"></span> that is
+immediately after the template step that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>In the data mapper, map the template&#8217;s <strong>message</strong> field, which
+always contains the result of inserting source fields into the
+template, to a target field. For example, suppose that a Gmail connection is
+next in the flow and you want to send the result of the template step
+as the content of a Gmail message. To do this, you would map the <strong>message</strong>
+source field to the <strong>text</strong> target field.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Examples of templates</div>
+<p>Example of a Mustache template:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>At {{time}}, {{name}} tweeted:
+{{text}}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Freemarker and Velocity support this example template:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>At ${time}, ${name} tweeted:
+${text}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Velocity also supports syntax without braces, as shown in this example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>At $time, $name tweeted:
+$text</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A placeholder cannot contain a <code>.</code> (period).</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resources</div>
+<p>For details about mapping fields, see <a href="{LinkSyndesisIntegrationGuide}#mapping-data_ug">Mapping integration data to fields for the next connection</a>.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

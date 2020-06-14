@@ -44,7 +44,9 @@ public interface OpenShiftService {
     String INTEGRATION_ID_LABEL = "syndesis.io/integration-id";
     String INTEGRATION_NAME_LABEL = "syndesis.io/integration";
     String INTEGRATION_TYPE_LABEL = "syndesis.io/type";
+    String INTEGRATION_TYPE_LABEL_VALUE = "integration";
     String INTEGRATION_APP_LABEL = "syndesis.io/app";
+    String INTEGRATION_APP_LABEL_VALUE = "syndesis";
     String DEPLOYMENT_VERSION_LABEL = "syndesis.io/deployment-version";
     String USERNAME_LABEL = "syndesis.io/username";
     String COMPONENT_LABEL = "syndesis.io/component";
@@ -109,7 +111,6 @@ public interface OpenShiftService {
      * @param timeUnit of the time
      */
     void scale(String name, Map<String, String> labels, int desiredReplicas, long amount, TimeUnit timeUnit) throws InterruptedException;
-
 
     /**
      * Checks if the deployment (Deployment and Build configurations, Image Streams etc) is scaled.
@@ -253,7 +254,7 @@ public interface OpenShiftService {
      * @param resourceType the type of T
      * @param resourceListType the type of L
      * @param doneableResourceType the type of D
-     * @param watcher a BiConsumer<Watcher.Action,T> function to be executed for each received Action on T
+     * @param watcher a {@code BiConsumer<Watcher.Action,T>} function to be executed for each received Action on T
      * @return the Watch
      */
     <T extends HasMetadata, L extends KubernetesResourceList<T>, D extends Doneable<T>> Watch watchCR(CustomResourceDefinition crd, Class<T> resourceType, Class<L> resourceListType, Class<D> doneableResourceType, BiConsumer<Watcher.Action,T> watcher);

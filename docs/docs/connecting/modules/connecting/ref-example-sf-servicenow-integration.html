@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Example Salesforce to ServiceNow integrations :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-example-sf-servicenow-integration.html">Example Salesforce to ServiceNow integrations</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/ref-example-sf-servicenow-integration.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Example Salesforce to ServiceNow integrations</h1>
+<div class="paragraph">
+<p>This example describes two simple integrations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>One integration obtains new
+cases from Salesforce and adds them as incidents to ServiceNow.</p>
+</li>
+<li>
+<p>The other integration obtains updated
+cases from Salesforce and updates a corresponding
+incident in ServiceNow.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites (in ServiceNow)</div>
+<p>For both integrations, a prerequisite is for a ServiceNow
+administrator to create an inbound web service.
+This implicitly creates a ServiceNow import set, which is required for
+an integration to add data to ServiceNow. For this example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The name of the web service is <strong>Cases from Salesforce</strong>.</p>
+</li>
+<li>
+<p>The service&#8217;s target table is <strong>Incidents</strong>. This table
+contains the data to be updated.</p>
+</li>
+<li>
+<p>The import set has the same schema as the <strong>Incidents</strong> table
+because of the selection of <strong>Copy fields from target table</strong>. The name of the
+import set is also <strong>Cases from Salesforce</strong>.</p>
+</li>
+<li>
+<p>ServiceNow can copy and transform data from the <strong>Cases from Salesforce</strong>
+import set to the <strong>Incidents</strong> target table because of the selection of
+<strong>Create transform map</strong>.</p>
+</li>
+<li>
+<p>In the import set, the correlation field is <code>correlation_Id</code> because
+of the selection of the <code>correlation_Id</code> field followed by selection of
+<strong>Coalesce</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Procedure overview (in {prodname})</div>
+<p>In {prodname}, you create the Salesforce and ServiceNow connections.</p>
+</div>
+<div class="paragraph">
+<p>The two integrations are the same except for the action performed
+by the Salesforce connection, as noted in the following steps.
+To create the integrations, you would perform these steps twice,
+that is, once to create each integration:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the Salesforce connection as the start connection.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>To create the integration that obtains new cases, select the
+<strong>On create</strong> action.</p>
+</li>
+<li>
+<p>To create the integration that obtains updated cases, select the
+<strong>On update</strong> action.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Select the <strong>Case</strong> object for the action to operate on.
+This Salesforce connection returns new <strong>Case</strong> objects or
+updated <strong>Case</strong> objects according to the chosen action.</p>
+</li>
+<li>
+<p>Add the ServiceNow connection as the finish connection.</p>
+</li>
+<li>
+<p>Select the <strong>Create Record</strong> action, and then select <strong>Cases from Salesforce</strong>
+as the import set that the integration updates.</p>
+<div class="paragraph">
+<p>This ServiceNow connection adds new or updated Salesforce cases to the
+<strong>Cases from Salesforce</strong> import set.</p>
+</div>
+</li>
+<li>
+<p>Add a data mapper step that maps:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Salesforce case <code>id</code> to the ServiceNow import set&#8217;s <code>correlation_Id</code></p>
+</li>
+<li>
+<p>Salesforce <code>subject</code> to the ServiceNow <code>short_description</code></p>
+</li>
+<li>
+<p>Salesforce <code>description</code> to the ServiceNow <code>description</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Give the integration a name and then publish it.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For the integration that obtains new cases, use <strong>On SF Create Case</strong>.</p>
+</li>
+<li>
+<p>For the integration that obtains updated cases, <strong>On SF Update Case</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Confirm that the integrations work</div>
+<p>When both integrations are
+running, you can confirm that the integrations work:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In Salesforce, create a case.</p>
+</li>
+<li>
+<p>In {prodname}, view the summary for the <strong>On SF Create Case</strong> integration.
+Click its <strong>Activity</strong> tab to see that {prodname} executed the integration once.</p>
+</li>
+<li>
+<p>In ServiceNow, view the <strong>Incidents</strong> table. You should see a new incident that
+has the subject and description that you specified in Salesforce.</p>
+</li>
+<li>
+<p>Back in Salesforce, update the case that you just created by changing
+its subject.</p>
+</li>
+<li>
+<p>In {prodname}, view the summary for the <strong>On SF Update Case</strong> integration.
+Click its <strong>Activity</strong> tab to see that {prodname} executed the integration once.</p>
+</li>
+<li>
+<p>In ServiceNow, view the <strong>Incidents</strong> table and expand the entry for the
+incident that was previously new. You should
+see that this incident has an updated <code>short_description</code> value.
+ServiceNow checks the import set entry for the value of its <code>correlation_Id</code>. If
+this value already exists in the <strong>Incidents</strong> table, ServiceNow updates
+the incident that has that value.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

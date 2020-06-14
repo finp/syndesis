@@ -15,9 +15,6 @@
  */
 package io.syndesis.server.endpoint.v1.handler.integration;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Validator;
 import javax.ws.rs.GET;
@@ -28,14 +25,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.common.model.DataShape;
 import io.syndesis.common.model.Kind;
 import io.syndesis.common.model.ListResult;
@@ -49,21 +44,22 @@ import io.syndesis.server.api.generator.APIGenerator;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.dao.manager.EncryptionComponent;
 import io.syndesis.server.endpoint.util.PaginationFilter;
-import io.syndesis.server.endpoint.util.ReflectiveSorter;
 import io.syndesis.server.endpoint.v1.handler.BaseHandler;
 import io.syndesis.server.endpoint.v1.operations.Creator;
 import io.syndesis.server.endpoint.v1.operations.Deleter;
 import io.syndesis.server.endpoint.v1.operations.Getter;
 import io.syndesis.server.endpoint.v1.operations.Lister;
 import io.syndesis.server.endpoint.v1.operations.PaginationOptionsFromQueryParams;
-import io.syndesis.server.endpoint.v1.operations.SortOptionsFromQueryParams;
 import io.syndesis.server.endpoint.v1.operations.Updater;
 import io.syndesis.server.endpoint.v1.operations.Validating;
 import io.syndesis.server.inspector.Inspectors;
 import io.syndesis.server.openshift.OpenShiftService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Path("/integrations")
-@Api(value = "integrations")
+@Tag(name = "integrations")
 @Component
 public class IntegrationHandler extends BaseHandler implements Lister<IntegrationOverview>, Getter<IntegrationOverview>,
     Creator<Integration>, Deleter<Integration>, Updater<Integration>, Validating<Integration> {
@@ -144,7 +140,7 @@ public class IntegrationHandler extends BaseHandler implements Lister<Integratio
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value = "/filters/options")
     public FilterOptions getFilterOptions(final DataShape dataShape) {
-        final FilterOptions.Builder builder = new FilterOptions.Builder().addOps(Op.DEFAULT_OPTS);
+        final FilterOptions.Builder builder = new FilterOptions.Builder().addAllOps(Op.DEFAULT_OPTS);
 
         final List<String> paths = inspectors.getPaths(dataShape.getKind().toString(), dataShape.getType(),
             dataShape.getSpecification(), dataShape.getExemplar());
@@ -156,7 +152,7 @@ public class IntegrationHandler extends BaseHandler implements Lister<Integratio
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value = "/filters/options")
     public FilterOptions getGlobalFilterOptions() {
-        return new FilterOptions.Builder().addOps(Op.DEFAULT_OPTS).build();
+        return new FilterOptions.Builder().addAllOps(Op.DEFAULT_OPTS).build();
     }
 
     public Integration getIntegration(final String id) {
@@ -183,11 +179,10 @@ public class IntegrationHandler extends BaseHandler implements Lister<Integratio
     }
 
     @Override
-    public ListResult<IntegrationOverview> list(final UriInfo uriInfo) {
+    public ListResult<IntegrationOverview> list(int page, int perPage) {
         final DataManager dataManager = getDataManager();
         final ListResult<Integration> integrations = dataManager.fetchAll(Integration.class,
-            new ReflectiveSorter<>(Integration.class, new SortOptionsFromQueryParams(uriInfo)),
-            new PaginationFilter<>(new PaginationOptionsFromQueryParams(uriInfo)));
+            new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage)));
 
         return ListResult.of(integrations.getItems().stream().map(i -> integrationOverviewHelper.toCurrentIntegrationOverview(i))
             .collect(Collectors.toList()));

@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
@@ -43,12 +42,13 @@ public class AbstractKuduTest extends CamelTestSupport {
     protected ApplicationContext applicationContext;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         applicationContext = new AnnotationConfigApplicationContext(MockedKuduConfiguration.class);
 
         final CamelContext ctx = new SpringCamelContext(applicationContext);
-        final PropertiesComponent pc = new PropertiesComponent("classpath:test-options.properties");
-        ctx.addComponent("properties", pc);
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.addLocation("classpath:test-options.properties");
+        ctx.setPropertiesComponent(pc);
         return ctx;
     }
 
@@ -97,8 +97,8 @@ public class AbstractKuduTest extends CamelTestSupport {
         return template().requestBody(endpoint, body);
     }
 
-    protected Object requestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers) {
-        return template().requestBodyAndHeaders(endpointUri, body, headers);
+    protected void requestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers) {
+        template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 
     protected static void deleteTestTable(final String tableName, final String connection) throws KuduException {

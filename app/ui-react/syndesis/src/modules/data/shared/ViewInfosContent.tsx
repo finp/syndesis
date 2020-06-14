@@ -1,19 +1,21 @@
-import { useVirtualizationConnectionSchema } from '@syndesis/api';
+import { useVirtualizationConnectionSchema, useVirtualizationHelpers } from '@syndesis/api';
 import { SchemaNode, ViewInfo } from '@syndesis/models';
 import {
+  DvConnectionStatus,
   IActiveFilter,
   IFilterType,
   ISortType,
   ViewInfoList,
-  ViewInfoListItem,
+  ViewInfoListItems,
   ViewInfoListSkeleton,
 } from '@syndesis/ui';
 import { WithListViewToolbarHelpers, WithLoader } from '@syndesis/utils';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { UIContext } from '../../../app';
 import i18n from '../../../i18n';
 import { ApiError } from '../../../shared';
-import { generateAllViewInfos } from './VirtualizationUtils';
+import { generateAllViewInfos, getDateAndTimeDisplay } from './VirtualizationUtils';
 
 function getFilteredAndSortedViewInfos(
   schemaNodes: SchemaNode[],
@@ -23,7 +25,7 @@ function getFilteredAndSortedViewInfos(
   selectedViewNames: string[],
   existingViewNames: string[]
 ) {
-  const viewInfos: ViewInfo[] = [];
+  const viewInfos: any[] = [];
   if (schemaNodes && schemaNodes.length > 0) {
     generateAllViewInfos(
       viewInfos,
@@ -34,7 +36,7 @@ function getFilteredAndSortedViewInfos(
     );
   }
 
-  let filteredAndSorted = viewInfos;
+  let filteredAndSorted = viewInfos.slice();
   activeFilters.forEach((filter: IActiveFilter) => {
     const valueToLower = filter.value.toLowerCase();
     filteredAndSorted = filteredAndSorted.filter((viewInfo: ViewInfo) =>
@@ -59,11 +61,17 @@ const getSelectedViewName = (selectedViews: ViewInfo[]): string[] => {
 };
 
 export interface IViewInfosContentProps {
+  connectionLoading: boolean;
   connectionName: string;
+  connectionStatus: string;
+  connectionStatusMessage: string;
+  connectionTeiidName: string;
   existingViewNames: string[];
+  connectionLastLoad: number;
   onViewSelected: (view: ViewInfo) => void;
   onViewDeselected: (viewName: string) => void;
   selectedViews: ViewInfo[];
+  handleSelectAll: (isSelected: boolean, AllViewInfo: any[]) => void;
 }
 
 const filterByName = {
@@ -87,6 +95,17 @@ export const ViewInfosContent: React.FunctionComponent<
   IViewInfosContentProps
 > = props => {
   const { t } = useTranslation(['data', 'shared']);
+  /**
+   * Context that broadcasts global notifications.
+   */
+  const { pushNotification } = React.useContext(UIContext);
+
+  const [schemaList, setSchemaList] = React.useState<SchemaNode[]>([]);
+  const [lastSchemaRefresh, setLastSchemaRefresh] = React.useState(0);
+
+  const [lastSchemaRefreshMsg, setLastSchemaRefreshMsg] = React.useState<string>(t('schemaLastRefresh', {
+    refreshTime: getDateAndTimeDisplay(props.connectionLastLoad),
+  }));
 
   let displayedViews: ViewInfo[] = [];
   const selectedViewNames: string[] = getSelectedViewName(props.selectedViews);
@@ -104,10 +123,60 @@ export const ViewInfosContent: React.FunctionComponent<
   };
 
   const {
+    refreshConnectionSchema,
+  } = useVirtualizationHelpers();
+
+  /**
+   * Callback that triggers refresh of the connection schema
+   * @param connectionName the name of the connection
+   */
+  const handleRefreshSchema = async (connectionName: string) => {
+    try {
+      pushNotification(
+        t('refreshConnectionSchemaStarted', {
+          name: connectionName,
+        }),
+        'info'
+      );
+      await refreshConnectionSchema(props.connectionTeiidName);
+    } catch (error) {
+      const details = error.message ? error.message : '';
+      // inform user of error
+      pushNotification(
+        t('refreshConnectionSchemaFailed', {
+          details,
+          name: connectionName,
+        }),
+        'error'
+      );
+    }
+  };
+
+  const {
     resource: schema,
-    hasData: hasSchema,
+    hasData,
     error,
-  } = useVirtualizationConnectionSchema(props.connectionName);
+    read,
+  } = useVirtualizationConnectionSchema(props.connectionTeiidName);
+
+  React.useEffect(()=>{
+    if (hasData) {
+      const rootNode = schema.find((node: { name: string; }) => node.name === props.connectionTeiidName);
+      if (rootNode) {
+        setSchemaList(rootNode.children);
+      }
+    }
+  },[schema, props.connectionTeiidName, hasData]);
+
+  React.useEffect(() => {
+    if(props.connectionLastLoad > lastSchemaRefresh) {
+      read();
+      setLastSchemaRefresh(props.connectionLastLoad);
+      setLastSchemaRefreshMsg(t('schemaLastRefresh', {
+        refreshTime: getDateAndTimeDisplay(props.connectionLastLoad),
+      }));
+    }
+  }, [props.connectionLastLoad, lastSchemaRefresh, read, setLastSchemaRefresh, t]);
 
   return (
     <WithListViewToolbarHelpers
@@ -116,14 +185,14 @@ export const ViewInfosContent: React.FunctionComponent<
     >
       {helpers => {
         const filteredAndSorted = getFilteredAndSortedViewInfos(
-          schema,
+          schemaList,
           helpers.activeFilters,
           helpers.currentSortType,
           helpers.isSortAscending,
           selectedViewNames,
           props.existingViewNames
         );
-        displayedViews = filteredAndSorted;
+        displayedViews = filteredAndSorted.slice();
 
         return (
           <ViewInfoList
@@ -131,34 +200,48 @@ export const ViewInfosContent: React.FunctionComponent<
             sortTypes={sortTypes}
             resultsCount={filteredAndSorted.length}
             {...helpers}
+            connectionLoading={props.connectionLoading}
+            connectionName={props.connectionName}
+            connectionStatus={
+              <DvConnectionStatus
+                dvStatus={props.connectionStatus}
+                dvStatusMessage={props.connectionStatusMessage}
+                i18nRefreshInProgress={t('refreshInProgress')}
+                i18nStatusErrorPopoverTitle={t('connectionStatusPopoverTitle')}
+                i18nStatusErrorPopoverLink={t('connectionStatusPopoverLink')}
+                loading={props.connectionLoading}
+              />
+            }
             i18nEmptyStateInfo={t('emptyStateInfoMessage')}
             i18nEmptyStateTitle={t('emptyStateTitle')}
             i18nName={t('shared:Name')}
             i18nNameFilterPlaceholder={t('shared:nameFilterPlaceholder')}
+            i18nLastUpdatedMessage={lastSchemaRefreshMsg}
+            i18nRefresh={t('shared:Refresh')}
             i18nResultsCount={t('shared:resultsCount', {
               count: filteredAndSorted.length,
             })}
+            refreshConnectionSchema={handleRefreshSchema}
           >
             <WithLoader
               error={error !== false}
-              loading={!hasSchema}
+              loading={schemaList.length===0}
               loaderChildren={<ViewInfoListSkeleton width={800} />}
               errorChildren={<ApiError error={error as Error} />}
             >
-              {() =>
-                filteredAndSorted.map((viewInfo: ViewInfo, index: number) => (
-                  <ViewInfoListItem
-                    key={index}
-                    connectionName={viewInfo.connectionName}
-                    name={viewInfo.viewName}
-                    nodePath={viewInfo.nodePath}
-                    selected={viewInfo.selected}
-                    i18nUpdate={t('shared:Update')}
-                    isUpdateView={viewInfo.isUpdate}
-                    onSelectionChanged={handleViewSelectionChange}
-                  />
-                ))
-              }
+              {() => (
+                <ViewInfoListItems
+                  filteredAndSorted={filteredAndSorted}
+                  onSelectionChanged={handleViewSelectionChange}
+                  selectedViewNames={selectedViewNames}
+                  handleSelectAll={props.handleSelectAll}
+                  i18nUpdate={t('shared:Update')}
+                  i18nSelectAll={t('importViewSelectAll', {
+                    x: selectedViewNames ? selectedViewNames.length : 0,
+                    y: filteredAndSorted ? filteredAndSorted.length : 0,
+                  })}
+                />
+              )}
             </WithLoader>
           </ViewInfoList>
         );

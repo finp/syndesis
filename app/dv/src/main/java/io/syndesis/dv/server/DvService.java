@@ -22,36 +22,11 @@ import org.springframework.web.server.ResponseStatusException;
 import io.syndesis.dv.RepositoryManager;
 import io.syndesis.dv.utils.KLog;
 /**
- * A Komodo service implementation.
+ * A DV service implementation.
  */
 public abstract class DvService implements V1Constants {
 
-    /**
-     * System user for transactions to be executed internally
-     */
-    public static final String SYSTEM_USER_NAME = "SYSTEM";
-
-    public static final String ENCRYPTED_PREFIX = "ENCRYPTED-";
-
     protected static final KLog LOGGER = KLog.getLogger();
-
-    /**
-     * Query parameter keys used by the service methods.
-     */
-    public interface QueryParamKeys {
-
-        /**
-         * The number of objects to return. If not present, all objects are returned.
-         */
-        String SIZE = "size"; //$NON-NLS-1$
-
-        /**
-         * The index of the first object to return. Defaults to zero.
-         */
-        String START = "start"; //$NON-NLS-1$
-
-        String VIRTUALIZATION = "virtualization";
-    }
 
     @Autowired
     protected RepositoryManager repositoryManager;

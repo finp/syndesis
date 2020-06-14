@@ -28,10 +28,11 @@
     verbs:
     - get
   - apiGroups:
-    - ""
+    - batch
+    - extensions
     resources:
-    - serviceaccounts
-    verbs: [ impersonate ]
+    - jobs
+    verbs: [ get, list, create, delete, update, watch, deletecollection ]
   - apiGroups:
     - ""
     resources:
@@ -122,6 +123,32 @@
     - deploymentconfigs/scale
     - deploymentconfigs/finalizers
     verbs: [ get, list, create, update, delete, deletecollection, watch, patch ]
+  # For monitoring functions by operator-sdk
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - services/finalizers
+    verbs:
+      - list
+      - get
+      - watch
+      - create
+      - update
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - servicemonitors
+    verbs:
+      - get
+      - create
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/finalizers
+    verbs:
+      - update
+  # END For monitoring functions by operator-sdk
   - apiGroups:
     - ""
     - apps.openshift.io
@@ -184,7 +211,7 @@
     resources:
     - "*"
     - "*/finalizers"
-    verbs: [ get, list, create, update, delete, deletecollection, watch ]
+    verbs: [ get, list, create, update, delete, deletecollection, watch, patch ]
   - apiGroups:
     - ""
     resources:
@@ -281,6 +308,7 @@
   - apiGroups:
     - authorization.openshift.io
     resources:
+    - roles
     - rolebindings
     verbs: [ get, list, create, update, delete, deletecollection, watch ]
   - apiGroups:
@@ -317,3 +345,9 @@
     resources:
     - channels
     verbs: [ get, list, watch]
+  - apiGroups:
+    - jaegertracing.io
+    resources:
+    - '*'
+    verbs:
+    - '*'

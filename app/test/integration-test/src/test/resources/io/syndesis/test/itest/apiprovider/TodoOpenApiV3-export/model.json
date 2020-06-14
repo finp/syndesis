@@ -72,16 +72,16 @@
               ],
               "standardizedErrors": [
                 {
-                  "displayName": "SqlDataAccessError",
-                  "name": "SQL_DATA_ACCESS_ERROR"
+                  "displayName": "DataAccessError",
+                  "name": "DATA_ACCESS_ERROR"
                 },
                 {
-                  "displayName": "SqlEntityNotFoundError",
-                  "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                  "displayName": "EntityNotFoundError",
+                  "name": "ENTITY_NOT_FOUND_ERROR"
                 },
                 {
-                  "displayName": "SqlConnectorError",
-                  "name": "SQL_CONNECTOR_ERROR"
+                  "displayName": "ConnectorError",
+                  "name": "CONNECTOR_ERROR"
                 }
               ]
             },
@@ -285,7 +285,7 @@
         ],
         "dependencies": [
           {
-            "id": "io.syndesis.connector:connector-sql:2.0-SNAPSHOT",
+            "id": "io.syndesis.connector:connector-sql:${project.version}",
             "type": "MAVEN"
           },
           {
@@ -425,6 +425,7 @@
               "connectorCustomizers": [
                 "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
               ],
+              "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
               "inputDataShape": {
                 "kind": "any"
               },
@@ -511,15 +512,15 @@
         ],
         "dependencies": [
           {
-            "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+            "id": "io.syndesis.connector:connector-api-provider:${project.version}",
             "type": "MAVEN"
           },
           {
-            "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+            "id": "org.apache.camel:camel-swagger-java:${camel.version}",
             "type": "MAVEN"
           },
           {
-            "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+            "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
             "type": "MAVEN"
           }
         ],
@@ -600,6 +601,7 @@
             "connectorCustomizers": [
               "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
             ],
+            "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
             "inputDataShape": {
               "kind": "any"
             },
@@ -686,15 +688,15 @@
       ],
       "dependencies": [
         {
-          "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+          "id": "io.syndesis.connector:connector-api-provider:${project.version}",
           "type": "MAVEN"
         },
         {
-          "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+          "id": "org.apache.camel:camel-swagger-java:${camel.version}",
           "type": "MAVEN"
         },
         {
-          "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+          "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
           "type": "MAVEN"
         }
       ],
@@ -772,16 +774,16 @@
             ],
             "standardizedErrors": [
               {
-                "displayName": "SqlDataAccessError",
-                "name": "SQL_DATA_ACCESS_ERROR"
+                "displayName": "DataAccessError",
+                "name": "DATA_ACCESS_ERROR"
               },
               {
-                "displayName": "SqlEntityNotFoundError",
-                "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                "displayName": "EntityNotFoundError",
+                "name": "ENTITY_NOT_FOUND_ERROR"
               },
               {
-                "displayName": "SqlConnectorError",
-                "name": "SQL_CONNECTOR_ERROR"
+                "displayName": "ConnectorError",
+                "name": "CONNECTOR_ERROR"
               }
             ]
           },
@@ -985,7 +987,7 @@
       ],
       "dependencies": [
         {
-          "id": "io.syndesis.connector:connector-sql:2.0-SNAPSHOT",
+          "id": "io.syndesis.connector:connector-sql:${project.version}",
           "type": "MAVEN"
         },
         {
@@ -1179,6 +1181,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -1265,15 +1268,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -1392,16 +1395,16 @@
                   ],
                   "standardizedErrors": [
                     {
-                      "displayName": "SqlDataAccessError",
-                      "name": "SQL_DATA_ACCESS_ERROR"
+                      "displayName": "DataAccessError",
+                      "name": "DATA_ACCESS_ERROR"
                     },
                     {
-                      "displayName": "SqlEntityNotFoundError",
-                      "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                      "displayName": "EntityNotFoundError",
+                      "name": "ENTITY_NOT_FOUND_ERROR"
                     },
                     {
-                      "displayName": "SqlConnectorError",
-                      "name": "SQL_CONNECTOR_ERROR"
+                      "displayName": "ConnectorError",
+                      "name": "CONNECTOR_ERROR"
                     }
                   ]
                 },
@@ -1489,16 +1492,16 @@
                         ],
                         "standardizedErrors": [
                           {
-                            "displayName": "SqlDataAccessError",
-                            "name": "SQL_DATA_ACCESS_ERROR"
+                            "displayName": "DataAccessError",
+                            "name": "DATA_ACCESS_ERROR"
                           },
                           {
-                            "displayName": "SqlEntityNotFoundError",
-                            "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                            "displayName": "EntityNotFoundError",
+                            "name": "ENTITY_NOT_FOUND_ERROR"
                           },
                           {
-                            "displayName": "SqlConnectorError",
-                            "name": "SQL_CONNECTOR_ERROR"
+                            "displayName": "ConnectorError",
+                            "name": "CONNECTOR_ERROR"
                           }
                         ]
                       },
@@ -1702,7 +1705,7 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-sql:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-sql:${project.version}",
                       "type": "MAVEN"
                     },
                     {
@@ -1834,6 +1837,7 @@
                   "connectorCustomizers": [
                     "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                   ],
+                  "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                   "inputDataShape": {
                     "description": "API response payload",
                     "kind": "json-schema",
@@ -1994,6 +1998,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -2080,15 +2085,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -2247,6 +2252,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -2333,15 +2339,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -2496,16 +2502,16 @@
                   ],
                   "standardizedErrors": [
                     {
-                      "displayName": "SqlDataAccessError",
-                      "name": "SQL_DATA_ACCESS_ERROR"
+                      "displayName": "DataAccessError",
+                      "name": "DATA_ACCESS_ERROR"
                     },
                     {
-                      "displayName": "SqlEntityNotFoundError",
-                      "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                      "displayName": "EntityNotFoundError",
+                      "name": "ENTITY_NOT_FOUND_ERROR"
                     },
                     {
-                      "displayName": "SqlConnectorError",
-                      "name": "SQL_CONNECTOR_ERROR"
+                      "displayName": "ConnectorError",
+                      "name": "CONNECTOR_ERROR"
                     }
                   ]
                 },
@@ -2593,16 +2599,16 @@
                         ],
                         "standardizedErrors": [
                           {
-                            "displayName": "SqlDataAccessError",
-                            "name": "SQL_DATA_ACCESS_ERROR"
+                            "displayName": "DataAccessError",
+                            "name": "DATA_ACCESS_ERROR"
                           },
                           {
-                            "displayName": "SqlEntityNotFoundError",
-                            "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                            "displayName": "EntityNotFoundError",
+                            "name": "ENTITY_NOT_FOUND_ERROR"
                           },
                           {
-                            "displayName": "SqlConnectorError",
-                            "name": "SQL_CONNECTOR_ERROR"
+                            "displayName": "ConnectorError",
+                            "name": "CONNECTOR_ERROR"
                           }
                         ]
                       },
@@ -2806,7 +2812,7 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-sql:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-sql:${project.version}",
                       "type": "MAVEN"
                     },
                     {
@@ -2938,6 +2944,7 @@
                   "connectorCustomizers": [
                     "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                   ],
+                  "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                   "inputDataShape": {
                     "description": "API response payload",
                     "kind": "json-schema",
@@ -3098,6 +3105,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -3184,15 +3192,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -3351,6 +3359,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -3437,15 +3446,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -3600,16 +3609,16 @@
                   ],
                   "standardizedErrors": [
                     {
-                      "displayName": "SqlDataAccessError",
-                      "name": "SQL_DATA_ACCESS_ERROR"
+                      "displayName": "DataAccessError",
+                      "name": "DATA_ACCESS_ERROR"
                     },
                     {
-                      "displayName": "SqlEntityNotFoundError",
-                      "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                      "displayName": "EntityNotFoundError",
+                      "name": "ENTITY_NOT_FOUND_ERROR"
                     },
                     {
-                      "displayName": "SqlConnectorError",
-                      "name": "SQL_CONNECTOR_ERROR"
+                      "displayName": "ConnectorError",
+                      "name": "CONNECTOR_ERROR"
                     }
                   ]
                 },
@@ -3697,16 +3706,16 @@
                         ],
                         "standardizedErrors": [
                           {
-                            "displayName": "SqlDataAccessError",
-                            "name": "SQL_DATA_ACCESS_ERROR"
+                            "displayName": "DataAccessError",
+                            "name": "DATA_ACCESS_ERROR"
                           },
                           {
-                            "displayName": "SqlEntityNotFoundError",
-                            "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                            "displayName": "EntityNotFoundError",
+                            "name": "ENTITY_NOT_FOUND_ERROR"
                           },
                           {
-                            "displayName": "SqlConnectorError",
-                            "name": "SQL_CONNECTOR_ERROR"
+                            "displayName": "ConnectorError",
+                            "name": "CONNECTOR_ERROR"
                           }
                         ]
                       },
@@ -3910,7 +3919,7 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-sql:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-sql:${project.version}",
                       "type": "MAVEN"
                     },
                     {
@@ -4042,6 +4051,7 @@
                   "connectorCustomizers": [
                     "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                   ],
+                  "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                   "inputDataShape": {
                     "description": "API response payload",
                     "kind": "json-schema",
@@ -4146,7 +4156,7 @@
                 ]
               },
               "configuredProperties": {
-                "errorResponseCodes": "{\"SQL_ENTITY_NOT_FOUND_ERROR\":\"404\"}",
+                "errorResponseCodes": "{\"ENTITY_NOT_FOUND_ERROR\":\"404\"}",
                 "httpResponseCode": "200",
                 "returnBody": "false"
               },
@@ -4206,6 +4216,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -4292,15 +4303,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -4459,6 +4470,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -4545,15 +4557,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -4702,16 +4714,16 @@
                   ],
                   "standardizedErrors": [
                     {
-                      "displayName": "SqlDataAccessError",
-                      "name": "SQL_DATA_ACCESS_ERROR"
+                      "displayName": "DataAccessError",
+                      "name": "DATA_ACCESS_ERROR"
                     },
                     {
-                      "displayName": "SqlEntityNotFoundError",
-                      "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                      "displayName": "EntityNotFoundError",
+                      "name": "ENTITY_NOT_FOUND_ERROR"
                     },
                     {
-                      "displayName": "SqlConnectorError",
-                      "name": "SQL_CONNECTOR_ERROR"
+                      "displayName": "ConnectorError",
+                      "name": "CONNECTOR_ERROR"
                     }
                   ]
                 },
@@ -4799,16 +4811,16 @@
                         ],
                         "standardizedErrors": [
                           {
-                            "displayName": "SqlDataAccessError",
-                            "name": "SQL_DATA_ACCESS_ERROR"
+                            "displayName": "DataAccessError",
+                            "name": "DATA_ACCESS_ERROR"
                           },
                           {
-                            "displayName": "SqlEntityNotFoundError",
-                            "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                            "displayName": "EntityNotFoundError",
+                            "name": "ENTITY_NOT_FOUND_ERROR"
                           },
                           {
-                            "displayName": "SqlConnectorError",
-                            "name": "SQL_CONNECTOR_ERROR"
+                            "displayName": "ConnectorError",
+                            "name": "CONNECTOR_ERROR"
                           }
                         ]
                       },
@@ -5012,7 +5024,7 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-sql:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-sql:${project.version}",
                       "type": "MAVEN"
                     },
                     {
@@ -5144,6 +5156,7 @@
                   "connectorCustomizers": [
                     "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                   ],
+                  "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                   "inputDataShape": {
                     "description": "API response payload",
                     "kind": "json-schema",
@@ -5304,6 +5317,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -5390,15 +5404,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -5557,6 +5571,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -5643,15 +5658,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],
@@ -5800,16 +5815,16 @@
                   ],
                   "standardizedErrors": [
                     {
-                      "displayName": "SqlDataAccessError",
-                      "name": "SQL_DATA_ACCESS_ERROR"
+                      "displayName": "DataAccessError",
+                      "name": "DATA_ACCESS_ERROR"
                     },
                     {
-                      "displayName": "SqlEntityNotFoundError",
-                      "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                      "displayName": "EntityNotFoundError",
+                      "name": "ENTITY_NOT_FOUND_ERROR"
                     },
                     {
-                      "displayName": "SqlConnectorError",
-                      "name": "SQL_CONNECTOR_ERROR"
+                      "displayName": "ConnectorError",
+                      "name": "CONNECTOR_ERROR"
                     }
                   ]
                 },
@@ -5897,16 +5912,16 @@
                         ],
                         "standardizedErrors": [
                           {
-                            "displayName": "SqlDataAccessError",
-                            "name": "SQL_DATA_ACCESS_ERROR"
+                            "displayName": "DataAccessError",
+                            "name": "DATA_ACCESS_ERROR"
                           },
                           {
-                            "displayName": "SqlEntityNotFoundError",
-                            "name": "SQL_ENTITY_NOT_FOUND_ERROR"
+                            "displayName": "EntityNotFoundError",
+                            "name": "ENTITY_NOT_FOUND_ERROR"
                           },
                           {
-                            "displayName": "SqlConnectorError",
-                            "name": "SQL_CONNECTOR_ERROR"
+                            "displayName": "ConnectorError",
+                            "name": "CONNECTOR_ERROR"
                           }
                         ]
                       },
@@ -6110,7 +6125,7 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-sql:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-sql:${project.version}",
                       "type": "MAVEN"
                     },
                     {
@@ -6213,6 +6228,7 @@
                   "connectorCustomizers": [
                     "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                   ],
+                  "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                   "inputDataShape": {
                     "kind": "none"
                   },
@@ -6367,6 +6383,7 @@
                         "connectorCustomizers": [
                           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
                         ],
+                        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
                         "inputDataShape": {
                           "kind": "any"
                         },
@@ -6453,15 +6470,15 @@
                   ],
                   "dependencies": [
                     {
-                      "id": "io.syndesis.connector:connector-api-provider:2.0-SNAPSHOT",
+                      "id": "io.syndesis.connector:connector-api-provider:${project.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-swagger-java:2.23.2.fuse-760011",
+                      "id": "org.apache.camel:camel-swagger-java:${camel.version}",
                       "type": "MAVEN"
                     },
                     {
-                      "id": "org.apache.camel:camel-servlet-starter:2.23.2.fuse-760011",
+                      "id": "org.apache.camel.springboot:camel-servlet-starter:${camel.version}",
                       "type": "MAVEN"
                     }
                   ],

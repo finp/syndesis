@@ -1,6 +1,5 @@
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
-import { withNotes } from '@storybook/addon-notes';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 
@@ -11,7 +10,6 @@ const stories = storiesOf('Data/Views/ViewListItem', module);
 const viewName = 'CustomersView';
 const viewDescription = 'View description for CustomersView';
 const deleteText = 'Delete';
-const deleteTip = 'Delete ' + viewName + ' view';
 const deleteActionText = 'Delete ' + viewName + ' View';
 const editText = 'Edit';
 const editTip = 'Edit ' + viewName + ' view';
@@ -33,16 +31,13 @@ const sampleViewNotes =
   '- Verify the kebab menu contains action "' +
   deleteText +
   '"\n' +
-  '- Verify the delete action tooltip is "' +
-  deleteTip +
-  '"\n' +
   '- Verify selecting Delete in the kebab menu prints "' +
   deleteActionText +
   '" in the ACTION LOGGER';
 
 stories.add(
   'valid view item',
-  withNotes(sampleViewNotes)(() => (
+  () => (
     <ViewListItem
       viewId="viewListItem1"
       viewName={text('viewName', viewName)}
@@ -51,7 +46,6 @@ stories.add(
       viewIcon={text('icon', null)}
       i18nCancelText={'Cancel'}
       i18nDelete={text('deleteText', deleteText)}
-      i18nDeleteTip={text('deleteTip', deleteTip)}
       i18nDeleteModalMessage={'Do you really want to delete the view?'}
       i18nDeleteModalTitle={'Confirm Delete'}
       i18nEdit={text('editText', editText)}
@@ -60,12 +54,13 @@ stories.add(
       isValid={true}
       onDelete={action(deleteActionText)}
     />
-  ))
+  ),
+  { notes: sampleViewNotes }
 );
 
 stories.add(
   'invalid view item',
-  withNotes(sampleViewNotes)(() => (
+  () => (
     <ViewListItem
       viewId="invalidViewListItem"
       viewName={text('viewName', viewName)}
@@ -74,7 +69,6 @@ stories.add(
       viewIcon={text('icon', null)}
       i18nCancelText={'Cancel'}
       i18nDelete={text('deleteText', deleteText)}
-      i18nDeleteTip={text('deleteTip', deleteTip)}
       i18nDeleteModalMessage={'Do you really want to delete the view?'}
       i18nDeleteModalTitle={'Confirm Delete'}
       i18nEdit={text('editText', editText)}
@@ -83,5 +77,6 @@ stories.add(
       isValid={false}
       onDelete={action(deleteActionText)}
     />
-  ))
+  ),
+  { notes: sampleViewNotes }
 );

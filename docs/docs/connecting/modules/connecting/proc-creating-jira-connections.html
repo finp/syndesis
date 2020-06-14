@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating a Jira connection :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-creating-jira-connections.html">Creating a Jira connection</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-creating-jira-connections.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating a Jira connection</h1>
+<div class="paragraph">
+<p>In an integration, to obtain, create, or update a Jira issue, create a
+Jira connection, which you then add to an integration. You can add the
+same connection to any number of integrations.</p>
+</div>
+<div class="paragraph">
+<p>If the Jira server that you want to connect to uses the OAuth protocol
+for authenticating access, you must have registered your {prodname}
+environment as a client of the Jira server that you want to connect to. See
+<a href="{LinkSyndesisConnectorGuide}#registering-with-jira_jira">Registering {prodname} with a Jira server that uses OAuth</a>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>For a Jira server that uses basic authentication, you have a Jira
+user name and password.</p>
+</li>
+<li>
+<p>For a Jira server that uses OAuth, you have access to the <code>config.properties</code> file
+that contains values for the Jira
+access token, consumer key, private key, and verification code.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the navigation panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Jira</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Jira URL</strong> field, enter the URL for the Jira server that
+you want an integration to connect to,
+for example, <code><strong><a href="https://issues.mycompany.org" class="bare">https://issues.mycompany.org</a></strong></code>.</p>
+<div class="paragraph">
+<p>For a connection to a Jira server uses OAuth, the procedure to register
+your {prodname} environment as a Jira consumer application resulted in
+a <code>config.properties</code> file. The URL
+that you specify here should be the same URL that is in that <code>config.preperties</code>
+file. For example, you would see
+a line like this in the <code>config.properties</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>jira_home=https\:issues.mycompany.org</pre>
+</div>
+</div>
+</li>
+<li>
+<p>If this Jira server uses basic authentication:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>User name</strong> field, enter a Jira user name. The connection
+uses this account to operate on the specified Jira server.</p>
+</li>
+<li>
+<p>In the <strong>Password</strong> field, enter the specified user&#8217;s password.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Skip the next step if the Jira server does not use OAuth authentication.</p>
+</div>
+</li>
+<li>
+<p>If the Jira server uses OAuth authentication:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Open the <code>config.properties</code> file that contains the OAuth
+access token, keys, and verification code. This is the file that is the
+result of the registration procedure. Copy values from that file
+and paste them into the connection configuration fields.</p>
+</li>
+<li>
+<p>Copy the <code>access_token</code> value into the <strong>Access Token</strong> field.</p>
+</li>
+<li>
+<p>Copy the <code>consumer_key</code> value into the <strong>Consumer Key</strong> field.</p>
+</li>
+<li>
+<p>Copy the <code>private_key</code> value into the <strong>Private Key</strong> field.</p>
+</li>
+<li>
+<p>Copy the <code>secret</code> value into the <strong>Verification Code</strong> field.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} displays a message that indicates whether
+it can validate this connection. If validation fails, try again and
+be sure to enter the correct values.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Jira Connect 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Jira connection
+that uses the jkim account.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Jira Connect 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Troubleshooting data mapping :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-troubleshooting-data-mapping.html">Troubleshooting data mapping</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/ref-troubleshooting-data-mapping.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Troubleshooting data mapping</h1>
+<div class="paragraph">
+<p>The data mapper displays the largest possible set of source fields that
+can be provided by the previous integration step. However, not all
+connections provide data in each displayed source field. For example,
+a change to a third-party application might discontinue providing data
+in a particular field. As you create an integration, if you notice that
+data mapping is not behaving as you expect, ensure that a source field
+that you want to map contains the data that you expect.</p>
+</div>
+<div class="paragraph">
+<p>A data shape change that affects a field that is already mapped
+might prevent the data mapper from loading a document. In this
+situation, when you try to edit a data mapper step that maps the
+affected field, the data mapper cannot display the source and
+target panels. Instead, it displays an error that indicates
+that it cannot load or cannot find the document. The error
+message looks like one of the following messages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Data Mapper UI Initialization Error: Could not load document '-La_rwMD_ggphAW6nE9o': undefined undefined</code></p>
+</li>
+<li>
+<p><code>Could not find document for mapped field 'last_name' at URI atlas:json:-LaX4LMC1CfVJYp3JXM6</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You must delete this data mapper step and replace it with a new data
+mapper step in which you map the updated fields.</p>
+</div>
+<div class="paragraph">
+<p>While a data shape change to a mapped field always requires you to
+redo the mapping, you do not always need to delete and remove the data
+mapper step. For example, if an XML instance specifies an input data
+shape and you change the name of an element, the data mapper removes the
+mapping that was to/from the old field name. You just need to map
+to/from the field with the updated name.</p>
+</div>
+<div class="paragraph">
+<p>It is possible to change the data shape for a mapped field in the
+following ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In an API provider integration, while editing a flow, you edit the
+OpenAPI document that defines the operation.</p>
+<div class="paragraph">
+<p>Changing the data shape of the operation response always prevents the data mapper
+from being able to load the document.</p>
+</div>
+</li>
+<li>
+<p>In a flow, you edit the input data type and/or the output data type
+for one of these kinds of connections:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Amazon S3</p>
+</li>
+<li>
+<p>AMQ</p>
+</li>
+<li>
+<p>AMQP</p>
+</li>
+<li>
+<p>Dropbox</p>
+</li>
+<li>
+<p>FTP/SFTP</p>
+</li>
+<li>
+<p>HTTP/HTTPS</p>
+</li>
+<li>
+<p>Kafka</p>
+</li>
+<li>
+<p>IRC</p>
+</li>
+<li>
+<p>MQTT</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

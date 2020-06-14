@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Knative resources :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-knative-resources.html">Connecting to Knative resources</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-knative-resources.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Knative resources</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create a simple integration that does any of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Connects to a Knative channel to obtain or send messages</p>
+</li>
+<li>
+<p>Exposes the integration as a Knative service</p>
+</li>
+<li>
+<p>Calls a Knative service</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The exchanged messages can be of any format, however, messages are
+typically in JSON format.</p>
+</div>
+<div class="paragraph">
+<p>For example, a simple integration might periodically poll Salesforce
+for new leads. When a Salesforce connection finds a new lead it can
+send a message that contains the details to a Knative channel.
+Multiple simple integrations can obtain messages from that same
+Knative channel. Each integration can perform different actions on
+the lead data.</p>
+</div>
+<div class="paragraph">
+<p>See the following topics for details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#enabling-connections-to-knative-resources_knative">Enabling connections to Knative resources</a></p>
+</li>
+<li>
+<p><a href="#subscribing-to-a-knative-channel-to-obtain-messages_knative">Subscribing to a Knative channel to obtain messages</a></p>
+</li>
+<li>
+<p><a href="#sending-messages-to-a-knative-channel_knative">Sending messages to a Knative channel</a></p>
+</li>
+<li>
+<p><a href="#exposing-a-simple-integration-as-a-knative-service_knative">Exposing a simple integration as a Knative service</a></p>
+</li>
+<li>
+<p><a href="#calling-a-knative-service-from-a-simple-integration_knative">Calling a Knative service from a simple integration</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="enabling-connections-to-knative-resources_knative"><a class="anchor" href="#enabling-connections-to-knative-resources_knative"></a>Enabling connections to Knative resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You must enable Knative connections before you can add them to
+simple integrations.</p>
+</div>
+<div class="paragraph">
+<p>Knative connections might have been enabled when {prodname} was
+installed. To check this, view the content of the <code>syndesis</code> custom resource.
+If the <code>camelk</code> and <code>knative</code> add-ons specify <code>enabled: true</code> then Knative
+connections are already enabled.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The <code>oc</code> client tool is installed in, and connected to, the OCP
+cluster in which {prodname} is running.</p>
+</li>
+<li>
+<p>{prodname} is running on OpenShift Container Platform on-site in a
+customer-managed environment.</p>
+</li>
+<li>
+<p>The {prodname} runtime is Camel K.</p>
+</li>
+<li>
+<p>In the cluster in which {prodname} is installed, each Knative resource
+that you want an integration to connect to is also installed.
+Before you can install Knative resources, you must install the
+<a href="https://docs.openshift.com/container-platform/4.3/serverless/installing-openshift-serverless.html">OpenShift Serverless Operator</a>
+and the
+<a href="https://openshift-knative.github.io/docs/docs/proc_knative-eventing.html">Knative Eventing Operator</a>.</p>
+</li>
+<li>
+<p>You have permission to install {prodname}.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Log in to OpenShift with an account that has permission to install {prodname}.
+For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ oc login -u developer -p developer</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Switch to the project in which {prodname} is running, for example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ oc project my-integration-project</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Edit the <code>syndesis</code> custom resource:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Invoke the following command, which typically opens the resource in an editor:</p>
+<div class="listingblock">
+<div class="content">
+<pre>oc edit syndesis</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Update the resource to specify the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>spec:
+  addons:
+     camelk:
+       enabled: true
+     knative:
+       enabled: true</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Save the resource.</p>
+<div class="paragraph">
+<p>Saving this change to the <code>syndesis</code> custom resource triggers
+<code>syndesis-operator</code>, which is responsible for installing {prodname},
+to redeploy <code>syndesis-server</code>.</p>
+</div>
+<div class="paragraph">
+<p>If <code>camelk</code> and <code>knative</code> are already enabled, you can close the file.
+Connections to Knative resources are enabled.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>In the {prodname} console, on the <strong>Connections</strong> page, a Knative connection
+is now available. You can add the same Knative connection to any number of
+simple integrations. Configuration of the connection action,
+specifies the Knative resource that the connection accesses.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="subscribing-to-a-knative-channel-to-obtain-messages_knative"><a class="anchor" href="#subscribing-to-a-knative-channel-to-obtain-messages_knative"></a>Subscribing to a Knative channel to obtain messages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger integration execution upon receiving a message from a
+Knative channel, add a Knative connection as a simple integration’s
+start connection. An integration that starts this way automatically
+scales down to 0 pods when no messages have been received from the
+channel for a specified number of minutes. The default is 1 minute.</p>
+</div>
+<div class="paragraph">
+<p>This automatic scaling saves resources, which is an advantage over
+simple integrations that start with other kinds of connections,
+such as a connection to an AMQ broker.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Connections to Knative resources are enabled.</p>
+</li>
+<li>
+<p>The Knative resource that you want to obtain messages from is
+in the same cluster as {prodname}</p>
+</li>
+<li>
+<p>You know the name of the Knative channel that you want the connection
+to obtain messages from.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Knative connection.</p>
+</li>
+<li>
+<p>Select the <strong>Receive from Channel</strong> action.</p>
+</li>
+<li>
+<p>Click in the <strong>Channel name</strong> field to display a list of available Knative channels.</p>
+</li>
+<li>
+<p>Select the Knative channel name for the resource that you want to obtain
+messages from.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the <strong>Receive from Channel</strong> action’s output type.
+This is the type that the connection passes to the next step in the integration.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong> and click <strong>Next</strong>. You do not need to
+follow the rest of these instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following
+as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} prompts you to add the simple integration’s finish connection.</p>
+</div>
+<div class="paragraph">
+<p>During execution, each time the selected Knative channel receives a new message,
+the Knative connection passes the message to the next step in the integration,</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>Add all needed connections to the integration. Then add a data mapper step
+after the Knative connection that starts the integration. Map the source
+<code>message</code> field to a target field in the next connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sending-messages-to-a-knative-channel_knative"><a class="anchor" href="#sending-messages-to-a-knative-channel_knative"></a>Sending messages to a Knative channel</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a simple integration, a Knative connection can send a message to a
+Knative channel in the middle of a flow or to finish a simple integration.
+To do this, add a Knative connection to the middle of a flow or as a
+simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Knative connections are enabled.</p>
+</li>
+<li>
+<p>The Knative resource that you want to send messages to is installed
+in the same cluster as {prodname}.</p>
+</li>
+<li>
+<p>You know the name of the Knative channel that you want the connection
+to send messages to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you to
+add to the integration. Or, {prodname} is prompting you to choose a
+finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you want
+to add the connection. Skip this step if {prodname} is prompting you to
+choose the finish connection.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Knative connection.</p>
+</li>
+<li>
+<p>Select the <strong>Send to Channel</strong> action.</p>
+</li>
+<li>
+<p>Click in the <strong>Channel name</strong> field to display a list of the Knative
+channels that are available in the cluster that is running {prodname}.</p>
+</li>
+<li>
+<p>Select the channel that you want the integration to send messages to.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the <strong>Send to Channel</strong> action’s input type.
+This is the type that the integration sends to the Knative channel.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+or if the output from the previous integration step is the expected type,
+accept <strong>Type specification not required</strong> and click <strong>Next</strong>.
+You do not need to follow the rest of these instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following
+as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>In the integration visualization, the connection appears where you added it.
+During execution, this connection sends a message to the selected Knative channel.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>Add all needed connections to the integration. Then add a data mapper
+step just before the Knative connection that sends messages to a Knative channel.
+Map a source field to the Knative connection target <code>message</code> field.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exposing-a-simple-integration-as-a-knative-service_knative"><a class="anchor" href="#exposing-a-simple-integration-as-a-knative-service_knative"></a>Exposing a simple integration as a Knative service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a simple integration, the start connection can be a Knative connection
+that exposes the integration as a Knative service. An integration that
+starts this way automatically scales down to 0 pods when there have
+been no calls to the service for a specified number of minutes.
+The default is 1 minute.</p>
+</div>
+<div class="paragraph">
+<p>This automatic scaling saves resources, which is an advantage over simple
+integrations that start with other kinds of connections, such as a
+connection to an AMQ broker.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Connections to Knative resources are enabled.</p>
+</li>
+<li>
+<p>Knative is installed in the same cluster that {prodname} is running in.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Knative connection.</p>
+</li>
+<li>
+<p>Select the <strong>Expose as Service</strong> action.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} prompts you to add the simple integration’s finish connection.</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} publishes the integration, the Camel K runtime creates a
+Knative <code>serving.knative.dev</code> service. This service:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Is an alternative to a Kubernetes deployment object</p>
+</li>
+<li>
+<p>Can automatically scale to 0 after a period of no activity</p>
+</li>
+<li>
+<p>Should not be confused with the Kubernetes Service</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Publication makes the integration available to be called at the root
+path ( / ). Clients can invoke execution of the integration by calling it
+as an HTTP endpoint and passing data as needed. Typically, the passed
+data is in JSON format.</p>
+</div>
+<div class="paragraph">
+<p>In this release, it is expected that the primary use for exposing an
+integration as a Knative service is that other {prodname} integrations
+call that service. In this scenario, the integration that calls the
+service selects the service name and does not need to specify a path.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="calling-a-knative-service-from-a-simple-integration_knative"><a class="anchor" href="#calling-a-knative-service-from-a-simple-integration_knative"></a>Calling a Knative service from a simple integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a simple integration, a Knative connection can call a Knative service
+in the middle of the integration or to finish the integration.
+To do this, add a Knative connection to the middle of a flow or as
+a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Knative connections are enabled.</p>
+</li>
+<li>
+<p>You know the name of the Knative service that you want the connection
+to call. The service is running in the same cluster as {prodname}.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you to
+add to the integration. Or, {prodname} is prompting you to choose a
+finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you want
+to add the connection. Skip this step if {prodname} is prompting you
+to choose the finish connection.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Knative connection.</p>
+</li>
+<li>
+<p>Select the <strong>Call Service</strong> action.</p>
+</li>
+<li>
+<p>Click in the <strong>Service name</strong> field to display a list of the Knative
+services that are available in the cluster that is running {prodname}.</p>
+</li>
+<li>
+<p>Select the service that you want the integration to call.</p>
+<div class="paragraph">
+<p>If you exposed an integration as a Knative service and that is the
+service that you want to call, the name of the service is similar,
+if not identical, to the name of the integration.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the <strong>Call Service</strong> action’s input type.
+This is the type that the integration sends to the Knative service.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+or if the output from the previous integration step is the expected type,
+accept <strong>Type specification not required</strong> and click <strong>Next</strong>.
+You do not need to follow this subset of instructions.</p>
+<div class="paragraph">
+<p>A structured data type is recommended. For example, if you want
+to map the connection input in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following
+as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Specify the <strong>Call Service</strong> action’s output type.</p>
+<div class="paragraph">
+<p>This is the type that the Knative service returns to the integration
+when the Knative connection is a middle connection.</p>
+</div>
+<div class="paragraph">
+<p>Repeat the previous subset of instructions to specify the output type.
+Or, if the Knative service response is empty, accept <strong>Type specification not required</strong>.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>In the integration visualization, the connection appears where you added it.</p>
+</div>
+<div class="paragraph">
+<p>During execution, this connection calls the specified Knative service.
+The call includes the output from the previous integration step
+(the step before this Knative connection). If this Knative connection is a
+middle connection, the connection passes the service output to the next step
+in the integration.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>Add any other needed connections to the integration. If you specified
+input and/or output types, add data mapper steps before and/or after the
+Knative connection and map fields as needed.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

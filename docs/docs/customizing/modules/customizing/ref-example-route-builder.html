@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Example of developing a Camel route with RouteBuilder :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-example-route-builder.html">Example of developing a Camel route with <code>RouteBuilder</code></a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/customizing/ref-example-route-builder.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Example of developing a Camel route with <code>RouteBuilder</code></h1>
+<div class="paragraph">
+<p>You can implement a custom step by developing an action as a Camel
+route with the support of the <code>RouteBuilder</code> class. Such a route
+has an input such as <code>direct</code>. Syndesis invokes this route in the same
+way that it invokes any other Camel route.</p>
+</div>
+<div class="paragraph">
+<p>To implement the example that creates a step that logs the body of a
+message with an optional prefix, you can write something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.apache.camel.builder.RouteBuilder;
+
+import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+
+@Action( <i class="conum" data-value="1"></i><b>(1)</b>
+    id = "log-body-with-prefix",
+    name = "Log body with prefix",
+    description = "A simple body log with a prefix",
+    entrypoint = "direct:log")
+public class LogAction extends RouteBuilder {
+    @ConfigurationProperty( <i class="conum" data-value="2"></i><b>(2)</b>
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")
+    private String prefix;
+
+    @Override
+    public void configure() throws Exception {
+        from("direct::start") <i class="conum" data-value="3"></i><b>(3)</b>
+            .choice()
+                .when(simple("${header.prefix} != ''"))
+                    .log("${header.prefix} ${body}")
+                .otherwise()
+                    .log("Output ${body}")
+            .endChoice();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@Action</code> annotation indicates the action definition.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>@ConfigurationProperty</code> annotation indicates definitions of
+user interface form controls. For details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is the action implementation.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This Java code uses Syndesis annotations, which means that the
+<code>extension-maven-plugin</code> can automatically generate the action definition.
+In the extension definition JSON file, the action definition will look
+like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "log-body-with-prefix",
+  "name": "Log body with prefix",
+  "description": "A simple body log with a prefix",
+  "descriptor": {
+    "kind": "ENDPOINT", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "direct:log", <i class="conum" data-value="2"></i><b>(2)</b>
+    "resource": "class:io.syndesis.extension.log.LogAction", <i class="conum" data-value="3"></i><b>(3)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+    "propertyDefinitionSteps": [ {
+      "description": "extension-properties",
+      "name": "extension-properties",
+      "properties": { <i class="conum" data-value="4"></i><b>(4)</b>
+        "prefix": {
+          "componentProperty": false,
+          "deprecated": false,
+          "description": "The Log body prefix message",
+          "displayName": "Log Prefix",
+          "javaType": "java.lang.String",
+          "kind": "parameter",
+          "required": false,
+          "secret": false,
+          "type": "string",
+          "raw": false
+        }
+      }
+    } ]
+  },
+  "actionType": "step"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of action is <code>ENDPOINT</code>. The runtime invokes a Camel endpoint to execute the action that this step implements.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the Camel endpoint to invoke. It is the <code>from</code> specification in the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is the class that implements <code>RoutesBuilder</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>These are the properties that the action defined in this custom step
+exposes to the integrator who will be adding this step to an integration. In
+{prodname}, each value that the integrator specifies in the user interface
+gets mapped to a message header that has the same name as the property.
+In this example, the integrator will see one input field, with the
+<strong>Log Prefix</strong> display name. For more information, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+</table>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

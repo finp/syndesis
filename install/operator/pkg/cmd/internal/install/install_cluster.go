@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/syndesisio/syndesis/install/operator/pkg/util"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
@@ -30,7 +30,7 @@ func (o *Install) installClusterResources() error {
 		if len(crds) == 0 {
 			o.Println("shared resources were previously installed")
 		} else {
-			return util.RunAsMinishiftAdminIfPossible(o.GetClientConfig(), func() error {
+			return util.RunAsMinishiftAdminIfPossible(o.ClientTools().RestConfig(), func() error {
 				err := o.install("cluster resources were", resources)
 				if err != nil {
 					return err
@@ -91,7 +91,7 @@ func toGroupVersionKindMap(resources []unstructured.Unstructured) map[v1.GroupVe
 }
 
 func (o *Install) removeInstalledCRDs(crds map[v1.GroupVersionKind]bool) error {
-	for crd, _ := range crds {
+	for crd := range crds {
 		if found, err := o.IsCRDInstalled(crd); err != nil {
 			return err
 		} else if found {
@@ -103,7 +103,7 @@ func (o *Install) removeInstalledCRDs(crds map[v1.GroupVersionKind]bool) error {
 
 // IsCRDInstalled check if the given CRD kind is installed
 func (o *Install) IsCRDInstalled(crd v1.GroupVersionKind) (bool, error) {
-	api, err := o.NewApiClient()
+	api, err := o.ClientTools().ApiClient()
 	if err != nil {
 		return false, err
 	}

@@ -27,8 +27,8 @@
   <packaging>pom</packaging>
 
   <properties>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <camel.version>2.23.2.fuse-760011</camel.version>
+    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
+    <camel.version>3.1.0</camel.version>
   </properties>
 
     <!-- Metadata need to publish to central -->
@@ -78,51 +78,15 @@
     <url>https://github.com/syndesisio/syndesis.io/issues</url>
   </issueManagement>
 
-  <repositories>
-    <repository>
-      <id>central</id>
-      <name>Maven Central</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>jboss-ea</id>
-      <name>JBoss Early Access</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea/</url>
-    </repository>
-    <repository>
-      <id>redhat-ga</id>
-      <name>Red Hat General Availability Repository</name>
-      <url>https://maven.repository.redhat.com/ga/</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>central</id>
-      <name>Maven Central</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>jboss-ea</id>
-      <name>JBoss Early Access</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>redhat-ga</id>
-      <name>Red Hat General Availability Repository</name>
-      <url>https://maven.repository.redhat.com/ga/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <dependencyManagement>
     <dependencies>
-            <!--
-                NOTE: the final BOM will be an extension of the FIS BOM.
-                Once the FIS BOM is aligned with versions used in syndesis, the FIS BOM should be imported instead of
-                the spring-boot and camel BOMs.
-            -->
+      <!--
+          NOTE: the final BOM will be an extension of the FIS BOM.
+          Once the FIS BOM is aligned with versions used in syndesis, the FIS BOM should be imported instead of
+          the spring-boot and camel BOMs.
+      -->
 
-            <!-- Spring-boot full BOM -->
+      <!-- Spring-boot full BOM -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -130,16 +94,17 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-            <!-- Camel BOM for Spring-boot -->
+
+      <!-- Camel BOM for Spring-boot -->
       <dependency>
-        <groupId>org.apache.camel</groupId>
+        <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
         <version>${camel.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
 
-            <!-- Project dependencies -->
+      <!-- Project dependencies -->
       <dependency>
         <groupId>io.syndesis.extension</groupId>
         <artifactId>extension-annotation-processor</artifactId>
@@ -156,7 +121,7 @@
 
   <build>
     <pluginManagement>
-            <!-- Maven plugin -->
+      <!-- Maven plugin -->
       <plugins>
         <plugin>
           <groupId>io.syndesis.extension</groupId>

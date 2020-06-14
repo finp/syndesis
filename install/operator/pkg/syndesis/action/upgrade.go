@@ -2,29 +2,22 @@ package action
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/clienttools"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/upgrade"
+
 	"github.com/syndesisio/syndesis/install/operator/pkg"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-
-	v1 "k8s.io/api/core/v1"
-	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/kubernetes"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1alpha1"
-	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/operation"
-	"github.com/syndesisio/syndesis/install/operator/pkg/util"
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
 
+var u upgrade.Upgrader
+
 const (
+	// UpgradePodPrefix is the prefix name for the upgrade Pod
 	UpgradePodPrefix = "syndesis-upgrade-"
 )
 
@@ -34,169 +27,125 @@ type upgradeAction struct {
 	operatorVersion string
 }
 
-func newUpgradeAction(mgr manager.Manager, api kubernetes.Interface) SyndesisOperatorAction {
+func newUpgradeAction(mgr manager.Manager, clientTools *clienttools.ClientTools) SyndesisOperatorAction {
 	return &upgradeAction{
-		newBaseAction(mgr, api, "upgrade"),
+		newBaseAction(mgr, clientTools, "upgrade"),
 		"",
 	}
 }
 
-func (a *upgradeAction) CanExecute(syndesis *v1alpha1.Syndesis) bool {
-	return syndesisPhaseIs(syndesis, v1alpha1.SyndesisPhaseUpgrading)
+func (a *upgradeAction) CanExecute(syndesis *v1beta1.Syndesis) bool {
+	return syndesisPhaseIs(syndesis,
+		v1beta1.SyndesisPhaseUpgrading,
+		v1beta1.SyndesisPhasePostUpgradeRunSucceed,
+		v1beta1.SyndesisPhasePostUpgradeRun,
+	)
 }
 
-func (a *upgradeAction) Execute(ctx context.Context, syndesis *v1alpha1.Syndesis) error {
-	if a.operatorVersion == "" {
-		a.operatorVersion = pkg.DefaultOperatorTag
-	}
+func (a *upgradeAction) Execute(ctx context.Context, syndesis *v1beta1.Syndesis) error {
+	targetVersion := pkg.DefaultOperatorTag
 
-	targetVersion := a.operatorVersion
+	if syndesis.Status.Phase == v1beta1.SyndesisPhaseUpgrading {
+		// Normal upgrade workflow, we land here if action checkupdate detected that and
+		// upgrade is needed
 
-	resources, err := a.getUpgradeResources(a.scheme, syndesis)
-	if err != nil {
-		return err
-	}
-
-	templateUpgradePod, err := a.findUpgradePod(resources)
-	if err != nil {
-		return err
-	}
-
-	upgradePod, err := a.getUpgradePodFromNamespace(ctx, templateUpgradePod, syndesis)
-	if err != nil && !k8serrors.IsNotFound(err) {
-		return err
-	}
-
-	if syndesis.Status.ForceUpgrade || k8serrors.IsNotFound(err) {
-		// Upgrade pod not found or upgrade forced
-
-		if syndesis.Status.Version != targetVersion {
-			a.log.Info("Upgrading syndesis resource ", "name", syndesis.Name, "currentVersion", syndesis.Status.Version, "targetVersion", targetVersion)
-
-			for _, res := range resources {
-				operation.SetNamespaceAndOwnerReference(res, syndesis)
-
-				err = createOrReplaceForce(ctx, a.client, res, true)
-				if err != nil {
-					return err
-				}
+		// Initialize the upgrade object, this happens only once, this object lives throughout
+		// the whole upgrade / rollback process
+		if u == nil {
+			var err error
+			u, err = upgrade.Build(ctx, a.log, syndesis, a.clientTools)
+			if err != nil {
+				return err
 			}
-
-			var currentAttemptDescr string
-			if syndesis.Status.UpgradeAttempts > 0 {
-				currentAttemptDescr = " (attempt " + strconv.Itoa(int(syndesis.Status.UpgradeAttempts+1)) + ")"
-			}
-
-			target := syndesis.DeepCopy()
-			target.Status.ForceUpgrade = false
-			// Set to avoid stale information in case of operator version change
-			target.Status.TargetVersion = targetVersion
-			target.Status.Description = "Upgrading from " + syndesis.Status.Version + " to " + targetVersion + currentAttemptDescr
-
-			return a.client.Update(ctx, target)
-		} else {
-			// No upgrade pod, no version change: upgraded
-			a.log.Info("Syndesis resource already upgraded to version ", "name", syndesis.Name, "targetVersion", targetVersion)
-			return a.completeUpgrade(ctx, syndesis, targetVersion)
 		}
-	} else {
-		// Upgrade pod present, checking the status
-		if upgradePod.Status.Phase == v1.PodSucceeded {
-			// Upgrade finished (correctly)
 
-			a.log.Info("Syndesis resource upgraded", "name", syndesis.Name, "targetVersion", targetVersion)
-			return a.completeUpgrade(ctx, syndesis, targetVersion)
-		} else if upgradePod.Status.Phase == v1.PodFailed {
-			// Upgrade failed
-			a.log.Error(nil, "Failure while upgrading Syndesis resource: upgrade pod failure", "name", syndesis.Name, "targetVersion", targetVersion)
+		a.log.Info("Upgrading syndesis resource ", "name", syndesis.Name, "current version", syndesis.Status.Version, "target version", targetVersion)
+		err := u.Upgrade()
+		if err == nil {
+			// If upgrade finished correctly, we go to the post upgrade run, meaning we want to do an install
+			// run and make sure it succeed
+			a.log.Info("Syndesis resource upgraded", "name", syndesis.Name, "target version", targetVersion)
+			return a.setPhaseToRun(ctx, syndesis)
+		}
 
-			target := syndesis.DeepCopy()
-			target.Status.Phase = v1alpha1.SyndesisPhaseUpgradeFailureBackoff
-			target.Status.Reason = v1alpha1.SyndesisStatusReasonUpgradePodFailed
-			target.Status.Description = "Syndesis upgrade from " + syndesis.Status.Version + " to " + targetVersion + " failed (it will be retried again)"
-			target.Status.LastUpgradeFailure = &metav1.Time{
-				Time: time.Now(),
-			}
-			target.Status.UpgradeAttempts = target.Status.UpgradeAttempts + 1
+		a.log.Error(err, "Failure while upgrading Syndesis", "name", syndesis.Name, "target version", targetVersion)
+		if err := u.Rollback(); err != nil {
+			a.log.Error(err, "Failure while rolling back Syndesis, some manual steps might be required", "name", syndesis.Name, "target version", targetVersion)
+		}
 
-			return a.client.Update(ctx, target)
+		return a.setPhaseToFailureBackoff(ctx, syndesis, targetVersion)
+	} else if syndesis.Status.Phase == v1beta1.SyndesisPhasePostUpgradeRunSucceed {
+		// We land here only if the install phase after upgrading finished correctly
+		a.log.Info("syndesis resource post upgrade ran successfully", "name", syndesis.Name, "previous version", syndesis.Status.Version, "target version", targetVersion)
+		return a.completeUpgrade(ctx, syndesis, targetVersion)
+	} else if syndesis.Status.Phase == v1beta1.SyndesisPhasePostUpgradeRun {
+		// If the first run of the install action failed, we land here. We need to retry
+		// this few times to consider the cases where install action return error due to
+		// race conditions or when the syndesis custom resource was changed in the meantime. 3 times seems
+		// to be enough
+		a.log.Info("failure while running post upgrade run", "name", syndesis.Name, "target version", targetVersion)
+		if u.InstallFailed() < 4 {
+			a.log.Info("attempting again to run post upgrade", "name", syndesis.Name)
 		} else {
-			// Still running
-			a.log.Info("Syndesis resource is currently being upgraded", "name", syndesis.Name, "targetVersion", targetVersion)
-			return nil
+			a.log.Info("syndesis first run after upgrade failed repeatedly, attempting to rollback now")
+			if err := u.Rollback(); err != nil {
+				a.log.Error(err, "failure while rolling back Syndesis, some manual steps might be required", "name", syndesis.Name, "target version", targetVersion)
+			} else {
+				a.log.Info("syndesis successfully rolled back", "name", syndesis.Name)
+			}
+			return a.setPhaseToFailureBackoff(ctx, syndesis, targetVersion)
 		}
 	}
+
+	return nil
 }
 
-func (a *upgradeAction) completeUpgrade(ctx context.Context, syndesis *v1alpha1.Syndesis, newVersion string) error {
+/*
+ * Following functions have a sleep after updating the custom resource. This is
+ * needed to avoid race conditions where k8s wasn't yet able to update or
+ * kubernetes didn't change the object yet
+ */
+func (a *upgradeAction) completeUpgrade(ctx context.Context, syndesis *v1beta1.Syndesis, newVersion string) (err error) {
 	target := syndesis.DeepCopy()
-	target.Status.Phase = v1alpha1.SyndesisPhaseInstalled
+	target.Status.Phase = v1beta1.SyndesisPhaseInstalled
 	target.Status.TargetVersion = ""
-	target.Status.Reason = v1alpha1.SyndesisStatusReasonMissing
+	target.Status.Reason = v1beta1.SyndesisStatusReasonMissing
 	target.Status.Description = ""
 	target.Status.Version = newVersion
 	target.Status.LastUpgradeFailure = nil
 	target.Status.UpgradeAttempts = 0
 	target.Status.ForceUpgrade = false
 
-	return a.client.Update(ctx, target)
+	rtClient, _ := a.clientTools.RuntimeClient()
+	err = rtClient.Update(ctx, target)
+	time.Sleep(3 * time.Second)
+	return
 }
 
-func (a *upgradeAction) getUpgradeResources(scheme *runtime.Scheme, syndesis *v1alpha1.Syndesis) ([]runtime.Object, error) {
+func (a *upgradeAction) setPhaseToRun(ctx context.Context, syndesis *v1beta1.Syndesis) (err error) {
+	target := syndesis.DeepCopy()
+	target.Status.Phase = v1beta1.SyndesisPhasePostUpgradeRun
+	target.Status.Reason = v1beta1.SyndesisStatusReasonPostUpgradeRun
+	target.Status.Description = "Perform the first install run after syndesis resource was upgraded"
 
-	// TODO: Refactor upgrade, it wont load Upgrade resources any more
-	// unstructured, err := template.GetUpgradeResources(scheme, syndesis)
-	// if err != nil {
-	//	return nil, err
-	//}
-
-	unstructured := []unstructured.Unstructured{}
-
-	var structured []runtime.Object
-	structured, unstructured = util.SeperateStructuredAndUnstructured(a.scheme, unstructured)
-
-	if len(unstructured) > 0 {
-		return nil, fmt.Errorf("Could not convert some objects to runtime.Object")
-	}
-	return structured, nil
+	rtClient, _ := a.clientTools.RuntimeClient()
+	err = rtClient.Update(ctx, target)
+	time.Sleep(3 * time.Second)
+	return
 }
 
-func (a *upgradeAction) findUpgradePod(resources []runtime.Object) (*v1.Pod, error) {
-	for _, res := range resources {
-		if pod, ok := res.(*v1.Pod); ok {
-			if strings.HasPrefix(pod.Name, UpgradePodPrefix) {
-				return pod, nil
-			}
-		}
+func (a *upgradeAction) setPhaseToFailureBackoff(ctx context.Context, syndesis *v1beta1.Syndesis, targetVersion string) (err error) {
+	target := syndesis.DeepCopy()
+	target.Status.Phase = v1beta1.SyndesisPhaseUpgradeFailureBackoff
+	target.Status.Reason = v1beta1.SyndesisStatusReasonUpgradeFailed
+	target.Status.Description = "Syndesis upgrade from " + syndesis.Status.Version + " to " + targetVersion + " failed (it will be retried again)"
+	target.Status.LastUpgradeFailure = &metav1.Time{
+		Time: time.Now(),
 	}
-	return nil, errors.New("upgrade pod not found")
-}
+	target.Status.UpgradeAttempts = target.Status.UpgradeAttempts + 1
 
-func (a *upgradeAction) getUpgradePodFromNamespace(ctx context.Context, podTemplate *v1.Pod, syndesis *v1alpha1.Syndesis) (*v1.Pod, error) {
-	pod := v1.Pod{}
-	key := client.ObjectKey{
-		Namespace: syndesis.Namespace,
-		Name:      podTemplate.Name,
-	}
-	err := a.client.Get(ctx, key, &pod)
-	return &pod, err
-}
-
-func getTypes(api kubernetes.Interface) ([]metav1.TypeMeta, error) {
-	resources, err := api.Discovery().ServerPreferredNamespacedResources()
-	if err != nil {
-		return nil, err
-	}
-
-	types := make([]metav1.TypeMeta, 0)
-	for _, resource := range resources {
-		for _, r := range resource.APIResources {
-			types = append(types, metav1.TypeMeta{
-				Kind:       r.Kind,
-				APIVersion: resource.GroupVersion,
-			})
-		}
-	}
-
-	return types, nil
+	rtClient, _ := a.clientTools.RuntimeClient()
+	err = rtClient.Update(ctx, target)
+	time.Sleep(3 * time.Second)
+	return
 }

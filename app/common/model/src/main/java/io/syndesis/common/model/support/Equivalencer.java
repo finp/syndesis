@@ -17,7 +17,6 @@ package io.syndesis.common.model.support;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import io.syndesis.common.model.action.Action;
@@ -47,7 +46,7 @@ public class Equivalencer implements StringConstants {
 
     private boolean push(String id, Class<?> klazz) {
         if (failureContext == null) {
-            failureContext = new ArrayDeque<EquivContext>();
+            failureContext = new ArrayDeque<>();
         }
 
         EquivContext ctx = new EquivContext(id, klazz);
@@ -57,7 +56,7 @@ public class Equivalencer implements StringConstants {
 
     private boolean push(String id, Class<?> klazz, String failingProperty, Object a, Object b) {
         if (failureContext == null) {
-            failureContext = new ArrayDeque<EquivContext>();
+            failureContext = new ArrayDeque<>();
         }
 
         EquivContext ctx = new EquivContext(id, klazz);
@@ -90,9 +89,7 @@ public class Equivalencer implements StringConstants {
         StringBuilder builder = new StringBuilder(msg);
         StringBuilder context = new StringBuilder();
 
-        Iterator<EquivContext> iterator = failureContext.iterator();
-        while(iterator.hasNext()) {
-            EquivContext ctx = iterator.next();
+        for (EquivContext ctx : failureContext) {
             if (ctx.hasFailed()) {
                 context.append(ctx.id());
                 builder.append(ctx.getFailed());
@@ -106,8 +103,8 @@ public class Equivalencer implements StringConstants {
     }
 
     private <T> boolean equivalent(List<T> oneList, List<T> anotherList, Class<T> contentClass) {
-        List<T> thisList = null;
-        List<T> otherList = null;
+        List<T> thisList;
+        List<T> otherList;
         if (oneList.size() >= anotherList.size()) {
             thisList = oneList;
             otherList = anotherList;
@@ -173,10 +170,6 @@ public class Equivalencer implements StringConstants {
 
         if (tgtClass.equals(StepDescriptor.class)) {
             return equivalent((StepDescriptor) one, (StepDescriptor) another);
-        }
-
-        if (tgtClass.equals(ConnectorAction.class)) {
-            return equivalent((ConnectorAction) one, (ConnectorAction) another);
         }
 
         return false;
@@ -481,8 +474,7 @@ public class Equivalencer implements StringConstants {
      * properties are different. Thus, this should only be used in appropriate
      * situations.
      *
-     * @param parentContext
-     * @param one
+     * @param one first {@link Connector} to compare with
      * @param another a {@link Connector} to compare with
      * @return true if this is equivalent to {code}another{code}, false otherwise
      */
@@ -513,6 +505,7 @@ public class Equivalencer implements StringConstants {
                        pair(one.getComponentScheme(), another.getComponentScheme(), "component-schema"),
                        pair(one.getConnectorFactory(), another.getConnectorFactory(), "connector-factory"),
                        pair(one.getConnectorCustomizers(), another.getConnectorCustomizers(), "connector-customizers"),
+                       pair(one.getExceptionHandler(), another.getExceptionHandler(), "exception-handler"),
                        pair(one.getId(), another.getId(), "id"),
                        pair(one.getTags(), another.getTags(), "tags"),
                        pair(one.getName(), another.getName(), "name"),
@@ -774,6 +767,7 @@ public class Equivalencer implements StringConstants {
                        pair(one.getComponentScheme(), another.getComponentScheme(), "component-scheme"),
                        pair(one.getConnectorFactory(), another.getConnectorFactory(), "connector-factory"),
                        pair(one.getConnectorCustomizers(), another.getConnectorCustomizers(), "connector-customizers"),
+                       pair(one.getExceptionHandler(), another.getExceptionHandler(), "exception-handler"),
                        pair(one.getInputDataShape(), another.getInputDataShape(), "input-data-shape"),
                        pair(one.getOutputDataShape(), another.getOutputDataShape(), "output-data-shape"),
                        pair(one.getPropertyDefinitionSteps(), another.getPropertyDefinitionSteps(), "property-defn-steps"),

@@ -65,7 +65,11 @@
         jaeger-activity-tracing:
           enabled: true
       jaeger:
+      {{- if .Syndesis.Addons.Jaeger.QueryURI}}
+        query.api.url: {{.Syndesis.Addons.Jaeger.QueryURI}}
+      {{- else}}
         query.api.url: http://noauth-syndesis-jaeger-query:443/api
+      {{- end}}
         service.name: syndesis-server
 {{- end}}
 {{- if .Syndesis.Components.Server.Features.MavenRepositories}}
@@ -78,7 +82,7 @@
       openshift:
         apiBaseUrl: '{{.Syndesis.Components.Server.Features.OpenShiftMaster}}/oapi/v1'
         namespace: '{{.OpenShiftProject}}'
-        imageStreamNamespace: {{.ImageStreamNamespace}}
+        imageStreamNamespace: '{{.OpenShiftProject}}'
         builderImageStreamTag: syndesis-s2i:{{ tagOf .Syndesis.Components.S2I.Image }}
         deploymentMemoryRequestMi: 200
         deploymentMemoryLimitMi: 512

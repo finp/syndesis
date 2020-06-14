@@ -17,11 +17,14 @@ package io.syndesis.dv.server.endpoint;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.syndesis.dv.model.DataVirtualization;
 import io.syndesis.dv.rest.JsonMarshaller;
@@ -29,7 +32,7 @@ import io.syndesis.dv.rest.JsonMarshaller;
 @SuppressWarnings( { "javadoc", "nls" } )
 public final class DataVirtualizationSerializerTest {
 
-    protected static final String DATASERVICE_NAME = "dataservice1";
+    static final String DATASERVICE_NAME = "dataservice1";
 
     private static final String DESCRIPTION = "my description";
 
@@ -39,13 +42,14 @@ public final class DataVirtualizationSerializerTest {
             "  \"publishedState\" : \"NOTFOUND\",\n" +
             "  \"empty\" : true,\n" +
             "  \"modified\" : false,\n" +
-            "  \"editionCount\" : 0\n" +
+            "  \"editionCount\" : 0,\n" +
+            "  \"secured\" : false\n" +
             "}";
 
     private RestDataVirtualization dataVirtualization;
 
     @Before
-    public void init() throws Exception {
+    public void init() {
         DataVirtualization theService = Mockito.mock(DataVirtualization.class);
         Mockito.when(theService.getName()).thenReturn(DATASERVICE_NAME);
 
@@ -54,7 +58,7 @@ public final class DataVirtualizationSerializerTest {
     }
 
     @Test
-    public void shouldExportJson() throws Exception {
+    public void shouldExportJson() throws UnsupportedEncodingException {
         String json = JsonMarshaller.marshall( this.dataVirtualization );
         json = URLDecoder.decode(json, "UTF-8");
         assertEquals(JSON, json);
@@ -67,10 +71,11 @@ public final class DataVirtualizationSerializerTest {
         assertEquals(DESCRIPTION, descriptor.getDescription());
     }
 
-    @Test( expected = Exception.class )
+    @Test
     public void shouldNotImportJsonWhenIdIsMissing() {
         final String malformed = "{\"description\":\"my description\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/v1/workspace/vdbs/MyVdb\",\"method\":\"GET\"},{\"rel\":\"parent\",\"href\":\"http://localhost:8080/v1/workspace/vdbs\",\"method\":\"GET\"},{\"rel\":\"manifest\",\"href\":\"http://localhost:8080/v1/workspace/vdbs/MyVdb/manifest\",\"method\":\"GET\"}]}";
-        JsonMarshaller.unmarshall( malformed, RestDataVirtualization.class );
+        assertThatThrownBy(() -> JsonMarshaller.unmarshall( malformed, RestDataVirtualization.class ))
+            .isInstanceOf(RuntimeException.class);
     }
 
 }

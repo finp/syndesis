@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>General procedure for using the {prodname} webhook :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-how-to-use-webhook.html">General procedure for using the {prodname} webhook</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-how-to-use-webhook.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">General procedure for using the {prodname} webhook</h1>
+<div class="paragraph">
+<p>To trigger execution of an integration with an HTTP <code>GET</code> or <code>POST</code>
+request, you must do the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Decide whether you want to send a <code>GET</code> or <code>POST</code> request to {prodname}.</p>
+</li>
+<li>
+<p>Plan your integration to handle this request.</p>
+</li>
+<li>
+<p>Create the connection that finishes the integration.</p>
+<div class="paragraph">
+<p>{prodname} provides a Webhook connection that you use as the start
+connection.</p>
+</div>
+</li>
+<li>
+<p>Create any other connections that you want to add to the integration.</p>
+</li>
+<li>
+<p>Create the integration:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Add the Webhook connection as the start connection.</p>
+</li>
+<li>
+<p>Add the finish connection and then any other connections that are
+required in the integration. The finish connection and any middle
+connections handle the HTTP request that triggers execution of the
+integration. It is up to you to choose and specify the most appropriate
+HTTP request for accomplishing your goals. Keep the following in mind:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Add a connection to the application that contains the
+data that you want to obtain or that contains the data that you want to
+update.</p>
+</li>
+<li>
+<p>A <code>GET</code> request is limited to specification of key/value
+parameters.</p>
+</li>
+<li>
+<p>A <code>POST</code> request can provide an arbitrary body, such
+as an XML or JSON instance.</p>
+</li>
+<li>
+<p>{prodname} returns only an HTTP status header and does not return
+any data. Consequently, you can define an integration that is triggered by
+a <code>GET</code> request and that updates data rather than obtaining data.
+Likewise, you can define an
+integration that is triggered by a <code>POST</code> request and that obtains data
+rather than updating data.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Add a data mapper step after the Webhook connection.</p>
+<div class="paragraph">
+<p>For a <code>GET</code> request, map the parameter fields in the HTTP request to the
+data fields in the next connection.</p>
+</div>
+<div class="paragraph">
+<p>For a <code>POST</code> request, you might
+have specified the output data shape in the request by passing a JSON
+instance, JSON schema, XML instance, or XML schema. If you did not, then
+when you add a Webhook connection as the start connection of an integration,
+{prodname} prompts you to specify the output data type. If you do not,
+then the default Webhook connection output data type is in JSON format.</p>
+</div>
+</li>
+<li>
+<p>Add any other steps that the integration needs.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Publish the integration and wait for it to be <strong>Running</strong>.</p>
+</li>
+<li>
+<p>Go to the integration summary page and copy the external URL that
+{prodname} provides.</p>
+</li>
+<li>
+<p>Modify this external URL to construct your <code>GET</code> or <code>POST</code> request.</p>
+</li>
+<li>
+<p>Implement the application that sends the HTTP <code>GET</code> or <code>POST</code> request
+to {prodname}.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

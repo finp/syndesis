@@ -15,18 +15,30 @@
  */
 package io.syndesis.dv.server.endpoint;
 
+import io.syndesis.dv.KException;
+import io.syndesis.dv.StringConstants;
+import io.syndesis.dv.metadata.TeiidDataSource;
+import io.syndesis.dv.metadata.TeiidVdb;
+import io.syndesis.dv.metadata.internal.DefaultMetadataInstance;
+import io.syndesis.dv.model.TablePrivileges;
+import io.syndesis.dv.model.TablePrivileges.Privilege;
+import io.syndesis.dv.model.ViewDefinition;
+import io.syndesis.dv.utils.PathUtils;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
-
 import org.springframework.data.util.Pair;
 import org.teiid.adminapi.Admin.SchemaObjectType;
+import org.teiid.adminapi.DataPolicy.ResourceType;
+import org.teiid.adminapi.impl.DataPolicyMetadata;
+import org.teiid.adminapi.impl.DataPolicyMetadata.PermissionMetaData;
 import org.teiid.adminapi.impl.ModelMetaData;
 import org.teiid.adminapi.impl.VDBImportMetadata;
 import org.teiid.adminapi.impl.VDBMetaData;
@@ -34,20 +46,11 @@ import org.teiid.language.SQLConstants;
 import org.teiid.metadata.AbstractMetadataRecord;
 import org.teiid.metadata.Column;
 import org.teiid.metadata.KeyRecord;
-import org.teiid.metadata.KeyRecord.Type;
 import org.teiid.metadata.Schema;
 import org.teiid.metadata.Table;
 import org.teiid.query.metadata.DDLConstants;
 import org.teiid.query.metadata.DDLStringVisitor;
 import org.teiid.query.sql.visitor.SQLStringVisitor;
-
-import io.syndesis.dv.KException;
-import io.syndesis.dv.StringConstants;
-import io.syndesis.dv.metadata.TeiidDataSource;
-import io.syndesis.dv.metadata.TeiidVdb;
-import io.syndesis.dv.metadata.internal.DefaultMetadataInstance;
-import io.syndesis.dv.model.ViewDefinition;
-import io.syndesis.dv.utils.PathUtils;
 
 /**
  * This class provides methods to generate data service vdbs containing a view model
@@ -56,18 +59,15 @@ import io.syndesis.dv.utils.PathUtils;
  * Each model is created via generating DDL and calling setModelDefinition() method
  *
  */
-public final class ServiceVdbGenerator implements StringConstants {
+@SuppressWarnings("PMD.GodClass")
+public final class ServiceVdbGenerator {
 
-    public interface SchemaFinder {
-        Schema findSchema(String connectionName) throws KException;
+    private static final String VIRTUALIZATION_PLACEHOLDER = "$dv";
 
-        TeiidDataSource findTeiidDatasource(String connectionName) throws KException;
-    }
+    public static final String ANY_AUTHENTICATED = "any authenticated"; //$NON-NLS-1$
 
-    private static final char NEW_LINE = '\n';
-    private static final String OPEN_SQUARE_BRACKET = "["; //$NON-NLS-1$
-    private static final String CLOSE_SQUARE_BRACKET = "]"; //$NON-NLS-1$
-
+    private static final String COMMENT_START = "/*"; //$NON-NLS-1$
+    private static final String COMMENT_END = "*/"; //$NON-NLS-1$
     /**
      * Inner Join Type
      */
@@ -89,8 +89,6 @@ public final class ServiceVdbGenerator implements StringConstants {
 
     /**
      * Constructs a ServiceVdbGenerator instance
-     *
-     * @param finder
      */
     public ServiceVdbGenerator( final SchemaFinder finder ) {
         this.finder = finder;
@@ -98,16 +96,19 @@ public final class ServiceVdbGenerator implements StringConstants {
 
     /**
      * Creates the service vdb - must be valid
-     * @throws KException
      */
-    public VDBMetaData createServiceVdb(String virtualizationName, TeiidVdb previewVDB, List<? extends ViewDefinition> editorStates) throws KException {
+    @SuppressWarnings("PMD.NPathComplexity") // TODO refactor
+    public VDBMetaData createServiceVdb(String virtualizationName, TeiidVdb previewVDB, List<? extends ViewDefinition> editorStates, List<TablePrivileges> tablePrivileges) {
         VDBMetaData vdb = new VDBMetaData();
+        vdb.addProperty("hidden-qualified", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         vdb.setName(virtualizationName);
         // Keep track of unique list of sources needed
         Map< Schema, LinkedHashSet<Table> > schemaTableMap = new LinkedHashMap<Schema, LinkedHashSet<Table>>();
 
         // Generate new model DDL by appending all view DDLs
         StringBuilder allViewDdl = new StringBuilder();
+
+        Map<String, String> viewMap = new HashMap<>();
 
         Schema s = previewVDB.getSchema(virtualizationName);
 
@@ -116,12 +117,14 @@ public final class ServiceVdbGenerator implements StringConstants {
                 continue;
             }
 
+            viewMap.put(viewDef.getId(), viewDef.getName());
+
             String viewDdl = viewDef.getDdl();
             allViewDdl.append(viewDdl);
-            if (!viewDdl.endsWith(SEMI_COLON)) {
-                allViewDdl.append(SEMI_COLON);
+            if (!viewDdl.endsWith(StringConstants.SEMI_COLON)) {
+                allViewDdl.append(StringConstants.SEMI_COLON);
             }
-            allViewDdl.append(NEW_LINE);
+            allViewDdl.append(StringConstants.NEW_LINE);
 
             AbstractMetadataRecord record = s.getTable(viewDef.getName());
 
@@ -153,7 +156,7 @@ public final class ServiceVdbGenerator implements StringConstants {
             StringBuilder regex = new StringBuilder();
             for ( Table table: entry.getValue() ) {
                 if (regex.length() > 0) {
-                    regex.append("|"); //$NON-NLS-1$
+                    regex.append('|'); //$NON-NLS-1$
                 }
                 regex.append(Pattern.quote(table.getName()));
             }
@@ -177,8 +180,61 @@ public final class ServiceVdbGenerator implements StringConstants {
             }
         }
 
+        addRoleInformation(vdb, tablePrivileges, viewMap);
+
         return vdb;
 
+    }
+
+    private static void addRoleInformation(VDBMetaData vdb, List<TablePrivileges> tablePrivileges,
+            Map<String, String> viewMap) {
+        if (tablePrivileges == null) {
+            return;
+        }
+        //group by role - we're assuming case-sensitive names
+        Map<String, List<TablePrivileges>> roleMap = new HashMap<String, List<TablePrivileges>>();
+        for (TablePrivileges privileges : tablePrivileges) {
+            roleMap.computeIfAbsent(privileges.getRoleName(), (k)->new ArrayList<>()).add(privileges);
+        }
+        for (Map.Entry<String, List<TablePrivileges>> entry : roleMap.entrySet()) {
+            String roleName = entry.getKey();
+            DataPolicyMetadata dpm = new DataPolicyMetadata();
+            dpm.setName(roleName);
+            if (roleName.equals(ANY_AUTHENTICATED)) {
+                dpm.setAnyAuthenticated(true);
+            } else {
+                dpm.setMappedRoleNames(Arrays.asList(roleName));
+            }
+            for (TablePrivileges privileges : entry.getValue()) {
+                String tableName = viewMap.get(privileges.getViewDefinitionId());
+                if (tableName == null) {
+                    continue; // not included
+                }
+                PermissionMetaData pmd = new PermissionMetaData();
+                //add schema qualification
+                pmd.setResourceName(vdb.getName() + "." + tableName); //$NON-NLS-1$
+                pmd.setResourceType(ResourceType.TABLE);
+                for (Privilege p : privileges.getGrantPrivileges()) {
+                    switch (p) {
+                    case D:
+                        pmd.setAllowDelete(true);
+                        break;
+                    case I:
+                        pmd.setAllowCreate(true);
+                        break;
+                    case S:
+                        pmd.setAllowRead(true);
+                        break;
+                    case U:
+                        pmd.setAllowUpdate(true);
+                        break;
+                    }
+                }
+                dpm.addPermission(pmd);
+            }
+            //even if it's empty, we can still add it - for use by hasRole
+            vdb.addDataPolicy(dpm);
+        }
     }
 
     /**
@@ -187,6 +243,7 @@ public final class ServiceVdbGenerator implements StringConstants {
      */
     public VDBMetaData createPreviewVdb(String virtualizationName, String vdbName, List<? extends ViewDefinition> editorStates) {
         VDBMetaData vdb = new VDBMetaData();
+        vdb.addProperty("hidden-qualified", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         vdb.setName(vdbName);
 
         // Generate new model DDL by appending all view DDLs
@@ -200,10 +257,10 @@ public final class ServiceVdbGenerator implements StringConstants {
             String viewDdl = viewDef.getDdl();
             //we don't need an exhaustive check here,
             //the parser is tolerant to redundant semi-colons
-            if (!viewDdl.endsWith(SEMI_COLON)) {
-                allViewDdl.append(SEMI_COLON);
+            if (!viewDdl.endsWith(StringConstants.SEMI_COLON)) {
+                allViewDdl.append(StringConstants.SEMI_COLON);
             }
-            allViewDdl.append(viewDdl).append(NEW_LINE);
+            allViewDdl.append(viewDdl).append(StringConstants.NEW_LINE);
         }
 
         addServiceModel(virtualizationName, vdb, allViewDdl);
@@ -218,7 +275,7 @@ public final class ServiceVdbGenerator implements StringConstants {
         return vdb;
     }
 
-    private ModelMetaData addServiceModel(String virtualizationName, VDBMetaData vdb, StringBuilder allViewDdl) {
+    private static ModelMetaData addServiceModel(String virtualizationName, VDBMetaData vdb, StringBuilder allViewDdl) {
         ModelMetaData model = new ModelMetaData();
         model.setName(virtualizationName);
         model.setModelType(org.teiid.adminapi.Model.Type.VIRTUAL);
@@ -227,173 +284,135 @@ public final class ServiceVdbGenerator implements StringConstants {
         return model;
     }
 
+
     /*
      * Generates DDL for a view definition based on properties and supplied array of TableInfo from one or more sources
      */
-    private String getODataViewDdl(ViewDefinition viewDef, TableInfo[] sourceTableInfos) {
-
-        // Need to construct DDL based on
-        //   * 1 or 2 source tables
-        //   * Join criteria in the form of left and right critieria column names
+    @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength"}) // TODO refactor
+    private static String getODataViewDdl(ViewDefinition viewDef, TableInfo... sourceTableInfos) {
 
         String viewName = viewDef.getName();
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(200);
 
         // Generate the View DDL
         startView(viewName, sb);
-        sb.append(StringConstants.OPEN_BRACKET);
+        sb.append(StringConstants.OPEN_BRACKET)
+          .append(StringConstants.NEW_LINE)
+          .append(StringConstants.SPACE)
+          .append(StringConstants.SPACE);
 
-        // Check for join and single or 2 source join
-        // Disable join for Syndesis 7.4 DDL generation.
-        boolean isJoin = sourceTableInfos.length > 1;
-        boolean singleTable = sourceTableInfos.length == 1;
+        // add primary table
+        appendViewColumns(sourceTableInfos[0], false, false, sb);
 
-        TableInfo lhTableInfo = sourceTableInfos[0];
-        TableInfo rhTableInfo = null;
-        if( isJoin ) {
-            rhTableInfo = sourceTableInfos[1];
-        }
-        // Need to create 2 lists of column info
-        // 1) Projected symbol list including name + type
-        // 2) FQN list for (SELECT xx, xxx, xxx ) clause
-        // Note: need to filter out duplicate names from 2nd table (if join)
-
-        // So for the INNER JOIN we need to get create an ordered list of source table columns and types based on the 1 or 2 source tables
-
-        LinkedHashMap<String, ColumnInfo> columns = new LinkedHashMap<>();
-
-        // ------------------------------------------------------------------
-        // Assemble all left and right source table columns, in order
-        // Duplicate column names are omitted if found in right table
-        // ------------------------------------------------------------------
-        for( ColumnInfo info : lhTableInfo.getColumnInfos() ) {
-            columns.put(info.getName(), info);
-        }
-
-        // Add right table columns, if right table exists
-        if( rhTableInfo != null ) {
-            for( ColumnInfo info : rhTableInfo.getColumnInfos() ) {
-                if( !columns.containsKey(info.getName())) {
-                    columns.put(info.getName(), info);
-                }
+        // add all others in comments
+        if (sourceTableInfos.length > 1) {
+            for (int i = 1; i < sourceTableInfos.length; i++) {
+                sb.append(StringConstants.NEW_LINE)
+                  .append(StringConstants.SPACE)
+                  .append(StringConstants.SPACE)
+                  .append(COMMENT_START)
+                  .append(StringConstants.COMMA);
+                appendViewColumns(sourceTableInfos[i], false, false, sb);
+                sb.append(COMMENT_END);
             }
         }
 
-        // ---------------------------------------------
-        // Generate the View projected columns
-        // ---------------------------------------------
-        Set<String> selectedProjColumnNames = new LinkedHashSet<String>();
-
-        // If "SELECT ALL" then include all of the source table columns
-        for (Iterator<ColumnInfo> iter = columns.values().iterator(); iter.hasNext();) {
-            ColumnInfo info = iter.next();
-            // keep track of projected column names
-            String colName = info.getName();
-            selectedProjColumnNames.add(colName);
-            // append name and type
-            sb.append(info.getName());
-            if (iter.hasNext()) {
-                sb.append(StringConstants.COMMA).append(StringConstants.SPACE);
+        // Add PK from primary
+        KeyRecord constraint = sourceTableInfos[0].getUniqueConstraint();
+        if (constraint != null) {
+            sb.append(StringConstants.COMMA).append(StringConstants.SPACE);
+            if (sourceTableInfos.length > 1) {
+                sb.append(StringConstants.NEW_LINE)
+                  .append(StringConstants.SPACE)
+                  .append(StringConstants.SPACE);
             }
-        }
-
-        if( singleTable ) {
-            KeyRecord constraint = lhTableInfo.getUniqueConstraint();
-            if (constraint != null) {
-                boolean usingKey = true;
-                List<Column> keyCols = constraint.getColumns();
-                for (Column c : keyCols) {
-                    if (!selectedProjColumnNames.contains(c.getName())) {
-                        usingKey = false;
-                        break;
-                    }
-                }
-                if (usingKey) {
+            List<Column> keyCols = constraint.getColumns();
+            sb.append(constraint.getType() == KeyRecord.Type.Primary ? DDLConstants.PRIMARY_KEY : SQLConstants.Reserved.UNIQUE)
+                    .append(StringConstants.OPEN_BRACKET);
+            for (int i = 0; i < keyCols.size(); i++) {
+                if (i > 0) {
                     sb.append(StringConstants.COMMA).append(StringConstants.SPACE);
-                    sb.append(constraint.getType()==Type.Primary?DDLConstants.PRIMARY_KEY:SQLConstants.Reserved.UNIQUE).append(StringConstants.OPEN_BRACKET);
-                    for (int i = 0; i < keyCols.size(); i++) {
-                        if (i > 0) {
-                            sb.append(StringConstants.COMMA).append(StringConstants.SPACE);
-                        }
-                        sb.append(keyCols.get(i).getName());
-                    }
-                    sb.append(StringConstants.CLOSE_BRACKET);
                 }
+                sb.append(keyCols.get(i).getName());
             }
-        } else {
-            //TODO: needs analysis of key preservation
+            sb.append(StringConstants.CLOSE_BRACKET);
         }
 
-        sb.append(") "); //$NON-NLS-1$
-        sb.append(getTableAnnotation(viewDef.getDescription()));
-        sb.append("AS \nSELECT "); //$NON-NLS-1$
+        sb.append(StringConstants.NEW_LINE).append(StringConstants.CLOSE_BRACKET).append(StringConstants.SPACE)
+          .append(getTableAnnotation(viewDef.getDescription()))
+          .append("AS \n  SELECT ") //$NON-NLS-1$
 
-        // Append column names
-        for (Iterator<String> iter = selectedProjColumnNames.iterator(); iter.hasNext();) {
-            ColumnInfo col = columns.get(iter.next());
-            if (col == null) {
-                continue;
-            }
-            sb.append(col.getAliasedName());
-            if (iter.hasNext()) {
-                sb.append(StringConstants.COMMA).append(StringConstants.SPACE);
+          .append(StringConstants.NEW_LINE)
+          .append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE);
+        appendViewColumns(sourceTableInfos[0], true, false, sb);
+        if (sourceTableInfos.length > 1) {
+            for (int i = 1; i < sourceTableInfos.length; i++) {
+                sb.append(StringConstants.NEW_LINE)
+                  .append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE)
+                  .append(COMMENT_START)
+                  .append(StringConstants.COMMA);
+                appendViewColumns(sourceTableInfos[i], true, false, sb);
+                sb.append(COMMENT_END);
             }
         }
 
-        sb.append("\n"); //$NON-NLS-1$
-        sb.append("FROM "); //$NON-NLS-1$
+        sb.append(StringConstants.NEW_LINE) //$NON-NLS-1$
+          .append("  FROM ") //$NON-NLS-1$
+          .append(StringConstants.NEW_LINE)
+          .append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE);
 
-        // --------- JOIN ---------
-
-        if( isJoin ) {
-            String lhTableName = lhTableInfo.getFQName() + " AS " + lhTableInfo.getAlias(); //$NON-NLS-1$
-            sb.append(lhTableName);
-            // Disable join for Syndesis 7.4 DDL generation.
-            /*String rhTableName = rhTableInfo.getFQName() + " AS " + rhTableInfo.getAlias(); //$NON-NLS-1$
-
-            sb.append(lhTableName+StringConstants.SPACE);
-
-            SqlComposition comp1 = viewDef.getSqlCompositions()[0];
-            String joinType = comp1.getType();
-
-
-
-            if(JOIN_INNER.equals(joinType)) {
-                sb.append("\nINNER JOIN \n").append(rhTableName+StringConstants.SPACE); //$NON-NLS-1$
-            } else if(JOIN_LEFT_OUTER.equals(joinType)) {
-                sb.append("\nLEFT OUTER JOIN \n").append(rhTableName+StringConstants.SPACE); //$NON-NLS-1$
-            } else if(JOIN_RIGHT_OUTER.equals(joinType)) {
-                sb.append("\nRIGHT OUTER JOIN \n").append(rhTableName+StringConstants.SPACE); //$NON-NLS-1$
-            } else if(JOIN_FULL_OUTER.equals(joinType)) {
-                sb.append("\nFULL OUTER JOIN \n").append(rhTableName+StringConstants.SPACE); //$NON-NLS-1$
+        for (int i = 0; i < sourceTableInfos.length; i++) {
+            if (i == 0) {
+                sb.append(sourceTableInfos[0].getFQName() + " AS " + sourceTableInfos[0].getAlias());
             } else {
-                sb.append("\nINNER JOIN \n").append(rhTableName+StringConstants.SPACE); //$NON-NLS-1$
+                sb.append(StringConstants.NEW_LINE)
+                  .append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE).append(StringConstants.SPACE)
+                  .append(COMMENT_START)
+                  .append(StringConstants.COMMA);
+                if (constraint != null) {
+                    sb.append(" [INNER|LEFT OUTER|RIGHT OUTER] JOIN ")
+                      .append(sourceTableInfos[i].getFQName()).append(" AS ").append(sourceTableInfos[i].getAlias())
+                      .append(" ON ");
+                    List<Column> keyCols = constraint.getColumns();
+                    for (int k = 0; k < keyCols.size(); k++) {
+                        if (k > 0) {
+                            sb.append(" AND ");
+                        }
+                        sb.append(sourceTableInfos[0].getAlias()).append(StringConstants.DOT)
+                                .append(keyCols.get(k).getName()).append(StringConstants.EQUALS)
+                                .append(sourceTableInfos[i].getAlias()).append(StringConstants.DOT)
+                                .append("<?>");
+                    }
+                }
+                sb.append(COMMENT_END);
             }
-
-            sb.append("\nON \n"); //$NON-NLS-1$
-
-            String lhColumn = comp1.getLeftCriteriaColumn();
-            String rhColumn = comp1.getRightCriteriaColumn();
-            String operator = getOperator(comp1);
-
-            sb.append(lhTableInfo.getAlias()+StringConstants.DOT).append(lhColumn)
-              .append(StringConstants.SPACE+operator+StringConstants.SPACE)
-              .append(rhTableInfo.getAlias()+StringConstants.DOT).append(rhColumn);
-
-            */
-        // --------- Single Source ---------
-        } else {
-            sb.append(lhTableInfo.getFQName());
         }
-
         return sb.toString();
     }
 
-    private void startView(String viewName, StringBuilder sb) {
-        sb.append("CREATE VIEW "); //$NON-NLS-1$
-        sb.append(SQLStringVisitor.escapeSinglePart(viewName));
-        sb.append(StringConstants.SPACE);
+    private static void appendViewColumns(TableInfo tableInfo, boolean useAliased, boolean useType, StringBuilder sb) {
+        for( Iterator<ColumnInfo> iter = tableInfo.getColumnInfos().iterator(); iter.hasNext();) {
+            ColumnInfo info = iter.next();
+            if (useAliased) {
+                sb.append(info.getAliasedName());
+            } else {
+                sb.append(info.getName());
+            }
+            if (useType) {
+                sb.append(StringConstants.SPACE);
+                sb.append(info.getType());
+            }
+            if (iter.hasNext()) {
+                sb.append(StringConstants.COMMA).append(StringConstants.SPACE);
+            }
+        }
+    }
+
+    private static void startView(String viewName, StringBuilder sb) {
+        sb.append("CREATE VIEW ") //$NON-NLS-1$
+          .append(SQLStringVisitor.escapeSinglePart(viewName))
+          .append(StringConstants.SPACE);
     }
 
     /**
@@ -405,7 +424,7 @@ public final class ServiceVdbGenerator implements StringConstants {
      * @throws KException
      *         if problem occurs
      */
-    public String getODataViewDdl(ViewDefinition viewDef) throws KException {
+    public String getODataViewDdl(ViewDefinition viewDef) {
         if ( !viewDef.isComplete() ) {
             return null;
         }
@@ -415,10 +434,10 @@ public final class ServiceVdbGenerator implements StringConstants {
         }
 
         if (tableInfos.length == 0) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(200);
             startView(viewDef.getName(), sb);
-            sb.append(getTableAnnotation(viewDef.getDescription()));
-            sb.append("AS \nSELECT 1 as col;"); //$NON-NLS-1$
+            sb.append(getTableAnnotation(viewDef.getDescription()))
+              .append("AS \nSELECT 1 as col;"); //$NON-NLS-1$
             return sb.toString();
         }
 
@@ -430,7 +449,7 @@ public final class ServiceVdbGenerator implements StringConstants {
      * @param description the description
      * @return the table annotation
      */
-    private String getTableAnnotation(final String description) {
+    private static String getTableAnnotation(final String description) {
         if( description!=null && description.length()>0 ) {
             return "OPTIONS (ANNOTATION '" + description + "') ";
         }
@@ -444,7 +463,7 @@ public final class ServiceVdbGenerator implements StringConstants {
      * @return {@link TableInfo} array
      * @throws KException
      */
-    private TableInfo[] getSourceTableInfos(ViewDefinition viewDefinition) throws KException {
+    private TableInfo[] getSourceTableInfos(ViewDefinition viewDefinition) {
         if ( !viewDefinition.isComplete() ) {
             return null;
         }
@@ -455,18 +474,23 @@ public final class ServiceVdbGenerator implements StringConstants {
         for(String path : sourceTablePaths) {
             List<Pair<String, String>> options = PathUtils.getOptions(path);
 
-            //format is connection=x/table=y
-            //NOTE: will eventually need to accomodate other object types, like
+            //format is schema=x/table=y
+            //NOTE: will eventually need to accommodate other object types, like
             //procedures
 
-            String connectionName = options.get(0).getSecond();
+            String schema = options.get(0).getSecond();
 
             // Find schema model based on the connection name (i.e. connection=pgConn)
-            final Schema schemaModel = finder.findSchema(connectionName);
+            Schema schemaModel = finder.findConnectionSchema(schema);
 
             // Get the tables from the schema and match them with the table name
             if ( schemaModel == null ) {
-                return null;
+                if (schema.equals(VIRTUALIZATION_PLACEHOLDER)) {
+                    schemaModel = finder.findVirtualSchema(viewDefinition.getDataVirtualizationName());
+                }
+                if (schemaModel == null) {
+                    return null;
+                }
             }
             String tableName = options.get(1).getSecond();
 
@@ -475,34 +499,46 @@ public final class ServiceVdbGenerator implements StringConstants {
                 return null;
             }
             // create a new TableInfo object
-            sourceTableInfos.add(new TableInfo(path, table, sourceTablePaths.size()>1?("t" + (sourceTableInfos.size()+1)):null));
+            sourceTableInfos.add(new TableInfo(path, table, "t" + (sourceTableInfos.size()+1)));
         }
 
         return sourceTableInfos.toArray(new TableInfo[0]);
     }
 
+    public interface SchemaFinder {
+        Schema findConnectionSchema(String connectionName);
+
+        TeiidDataSource findTeiidDatasource(String connectionName);
+
+        Schema findVirtualSchema(String virtualization);
+    }
+
     /*
      * Inner class to hold state for source table information and simplifies the DDL generating process
      */
-    class TableInfo {
+    static class TableInfo {
         private final String path;
         private final String alias;
         private final Table table;
 
-        private String name;
-        private String fqname;
+        private final String name;
+        private final String fqname;
 
-        private List<ColumnInfo> columnInfos = new ArrayList<ColumnInfo>();
+        private final List<ColumnInfo> columnInfos = new ArrayList<ColumnInfo>();
 
         private KeyRecord constraint;
 
-        private TableInfo(String path, Table table, String alias) throws KException {
+        TableInfo(String path, Table table, String alias) {
             this.path = path;
             this.alias = alias;
             this.table = table;
             this.name = SQLStringVisitor.escapeSinglePart(table.getName());
             Schema schemaModel = table.getParent();
-            this.fqname = SQLStringVisitor.escapeSinglePart(schemaModel.getName()) + DOT + this.name;
+            if (schemaModel.isPhysical()) {
+                this.fqname = SQLStringVisitor.escapeSinglePart(schemaModel.getName()) + StringConstants.DOT + this.name;
+            } else {
+                this.fqname = this.name;
+            }
             createColumnInfos(table);
             constraint = table.getPrimaryKey();
             if (constraint == null) {
@@ -513,11 +549,11 @@ public final class ServiceVdbGenerator implements StringConstants {
             }
         }
 
-        private void createColumnInfos(Table table) throws KException {
+        private void createColumnInfos(Table table) {
             // Walk through the columns and create an array of column + datatype strings
             List<Column> cols = table.getColumns();
             for( Column col : cols) {
-                this.columnInfos.add(new ColumnInfo(col, getFQName(), this.alias));
+                this.columnInfos.add(new ColumnInfo(col, fqname, this.alias));
             }
         }
 
@@ -553,18 +589,20 @@ public final class ServiceVdbGenerator implements StringConstants {
     /*
      * Inner class to hold state for table column information and simplifies the DDL generating process
      */
-    class ColumnInfo {
-        private String name;
-        private String fqname;
+    static class ColumnInfo {
+        private final String name;
+        private final String fqname;
         private String aliasedName;
+        private final String type;
 
-        private ColumnInfo(Column column, String tableFqn, String tblAlias) throws KException {
+        ColumnInfo(Column column, String tableFqn, String tblAlias) {
             this.name = SQLStringVisitor.escapeSinglePart(column.getName());
             this.aliasedName = name;
             if( tblAlias != null ) {
-                this.aliasedName = tblAlias + DOT + name;
+                this.aliasedName = tblAlias + StringConstants.DOT + name;
             }
-            this.fqname = tableFqn + DOT + name;
+            this.fqname = tableFqn + StringConstants.DOT + name;
+            this.type = column.getDatatype().getName();
         }
 
         public String getName() {
@@ -577,6 +615,10 @@ public final class ServiceVdbGenerator implements StringConstants {
 
         public String getFqname() {
             return this.fqname;
+        }
+
+        public String getType() {
+            return this.type;
         }
     }
 }

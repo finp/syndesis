@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to AMQP :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-amqp.html">Connecting to AMQP</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-amqp.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to AMQP</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can obtain messages from or publish messages
+to an Advanced Message Queue Protocol (AMQP) broker. AMQP defines communication
+between clients and message brokers. To communicate with the following
+broker types, use the AMQP connector to create a connection to the
+broker of interest:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache ActiveMQ broker that supports AMQP</p>
+</li>
+<li>
+<p>Apache ActiveMQ Artemis</p>
+</li>
+<li>
+<p>AMQ 7 broker</p>
+</li>
+<li>
+<p>EnMasse, which is an open source messaging platform</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To communicate with one of the following broker types,
+<a href="{LinkSyndesisConnectorGuide}#connecting-to-amq_amq">use the Red Hat AMQ connector</a>
+to create a connection to the broker of interest:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache ActiveMQ broker that does not support AMQP</p>
+</li>
+<li>
+<p>AMQ 6 broker</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is possible to use the AMQP connector to create a connection to an
+Apache ActiveMQ broker that does not support AMQP or to an AMQ 6 broker.
+Doing this requires transport configuration in the broker.
+For information about configuring the broker, see
+<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_a-mq/6.3/html/managing_and_monitoring_a_broker/fmqadmintransportconnectors">Red Hat JBoss A-MQ Managing and Monitoring Brokers, Adding Client Connection Points</a>.
+For information about the configuration values to specify, see
+<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_a-mq/6.3/html-single/connection_reference/index#AMQP">Red Hat JBoss A-MQ Connection Reference, Advanced Message Queuing Protocol (AMQP)</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To use the AMQP connector, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-amqp-connection_amqp">Creating an AMQP connection</a></p>
+</li>
+<li>
+<p><a href="#adding-amqp-connection-start_amqp">Adding an AMQP connection to trigger integration execution upon receiving messages</a></p>
+</li>
+<li>
+<p><a href="#adding-amqp-connection-middle_amqp">Publishing messages to AMQP in the middle of a flow or to finish an integration</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-amqp-connection_amqp"><a class="anchor" href="#create-amqp-connection_amqp"></a>Creating an AMQP connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to obtain messages from or publish messages to an AMQP
+broker, create an AMQP connection, which you can add to an integration.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites</div>
+<p>For the AMQP broker that you want to connect to, you have the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Its URI</p>
+</li>
+<li>
+<p>User account credentials</p>
+</li>
+<li>
+<p>Its PEM certificate text</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+connectors.</p>
+</li>
+<li>
+<p>Click the <strong>AMQP Message Broker</strong> connector.</p>
+</li>
+<li>
+<p>Configure the connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Connection URI</strong> field, enter the location you want to send data
+to or obtain data from.</p>
+</li>
+<li>
+<p>In the <strong>User name</strong> field, enter the user name for the account that you want
+to use to access this broker.</p>
+</li>
+<li>
+<p>In the <strong>Password</strong> field, enter the password for the account that you want
+to use to access this broker.</p>
+</li>
+<li>
+<p>In the <strong>Client ID</strong> field, enter the ID that allows connections to close
+and reopen without missing messages. The destination type must be a topic.</p>
+</li>
+<li>
+<p>If this connection will be used in a development
+environment, you can save some time by disabling
+<strong>Check certificates</strong>. Disabling the checking of certificates is a convenience for
+development environments. For secure production environments, always enable
+<strong>Check certificates</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Broker certificate</strong> field, paste the broker&#8217;s PEM certificate text.
+This is required except when you disable the
+checking of certificates.</p>
+</li>
+<li>
+<p>In the <strong>Client certificate</strong> field, paste the client&#8217;s PEM certificate text.
+Content in this field is always optional.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, revise the configuration
+details as needed and try again.</p>
+</li>
+<li>
+<p>If validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, you might enter <code>AMQP 1</code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample AMQP connection</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you
+entered the example name, you would
+see that <strong>AMQP 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-amqp-connection-start_amqp"><a class="anchor" href="#adding-amqp-connection-start_amqp"></a>Adding an AMQP connection to trigger integration execution upon receiving messages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration upon receiving messages from
+an AMQP broker, add an AMQP connection as the integration&#8217;s start connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the AMQP broker that you want to receive
+messages from.</p>
+</li>
+<li>
+<p>You are creating an integration and {prodname} is prompting you
+to choose the start connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the AMQP connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Subscribe for messages</strong> action
+to receive messages from the queue or topic that you specify.</p>
+</li>
+<li>
+<p>Configure the action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Destination name</strong> field, enter the name of the queue or topic
+to receive data from.</p>
+</li>
+<li>
+<p>For the <strong>Destination type</strong>, accept <strong>Queue</strong> or select <strong>Topic</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Durable subscription ID</strong> field, to allow connections to
+close and reopen without missing messages, enter the durable
+subscription ID. The destination type must be a topic.</p>
+</li>
+<li>
+<p>In the <strong>Message selector</strong> field, if you want to receive only
+data that satisfies a particular condition, enter a filter expression.</p>
+<div class="paragraph">
+<p>A message selector is a string that contains an expression. The syntax of
+the expression is based on a subset of the SQL92 conditional expression syntax.
+The message selector in the following example selects any message that has a
+<code>NewsType</code> property whose value is set to <code>Sports</code> or <code>Opinion</code>:</p>
+</div>
+<div class="paragraph">
+<p><code>NewsType = ’Sports’ OR NewsType = ’Opinion’</code></p>
+</div>
+<div class="paragraph">
+<p>The message consumer receives only those messages whose headers and
+properties match the message selector expression. A message selector cannot select messages on
+the basis of the content of the message body.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears at the beginning of the integration flow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-amqp-connection-middle_amqp"><a class="anchor" href="#adding-amqp-connection-middle_amqp"></a>Publishing messages to AMQP in the middle of a flow or to finish an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can publish messages to an AMQP broker in the middle of a flow or
+to finish a simple integration. To do this, add an AMQP connection to
+the middle of a flow or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the AMQP broker that you want to publish
+messages to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a
+simple integration&#8217;s finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the AMQP connection that you want to use to publish messages.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select one of the following actions:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Publish messages</strong> to
+publish messages to the queue or topic that you specify without receiving
+a response. To configure this
+action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Destination name</strong> field, enter the name of the queue or
+topic to send messages to.</p>
+</li>
+<li>
+<p>For the <strong>Destination type</strong>, accept <strong>Queue</strong> or select <strong>Topic</strong>.</p>
+</li>
+<li>
+<p>Select <strong>Persistent</strong> to guarantee message delivery even if
+a connection fails.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Request response using messages</strong> to publish messages to the queue or topic
+that you specify and receive a response.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When the finish connection in a simple integration is an AMQP connection
+that performs the <strong>Request response using messages</strong> action, the connection
+publishes the messages but the response is discarded. To avoid losing the
+response, add an AMQP connection as a middle connection that performs
+the <strong>Request response using messages</strong> action and finish the simple integration
+with a log step.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To configure this action:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Destination name</strong> field, enter the name of the queue or topic
+to send messages to.</p>
+</li>
+<li>
+<p>For the <strong>Destination type</strong>, accept <strong>Queue</strong> or select <strong>Topic</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Durable subscription ID</strong> field, to allow connections to
+close and reopen without missing messages, enter the durable
+subscription ID. The destination type must be a topic.</p>
+</li>
+<li>
+<p>In the <strong>Message selector</strong> field, if you want to receive only responses
+that satisfy a particular condition, enter a filter expression.</p>
+<div class="paragraph">
+<p>A message selector is a string that contains an expression. The syntax of
+the expression is based on a subset of the SQL92 conditional expression syntax.
+The message selector in the following example selects any message that has a
+<code>NewsType</code> property whose value is set to <code>Sports</code> or <code>Opinion</code>:</p>
+</div>
+<div class="paragraph">
+<p><code>NewsType = ’Sports’ OR NewsType = ’Opinion’</code></p>
+</div>
+<div class="paragraph">
+<p>The message consumer receives only those messages whose headers and
+properties match the message selector expression. A message selector cannot select messages on
+the basis of the content of the message body.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s input and output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input/output in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for vendors
+then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization where you added it.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

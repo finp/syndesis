@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Example of a Conditional Flows step :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-example-of-a-conditional-flows-step.html">Example of a <strong>Conditional Flows</strong> step</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/ref-example-of-a-conditional-flows-step.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Example of a <strong>Conditional Flows</strong> step</h1>
+<div class="paragraph">
+<p>Suppose that an integration connects to a SQL database to
+obtain information about how much paid-time-off (PTO) each
+employee has. The returned data indicates:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some employees might lose PTO if they do not use it by a certain date.</p>
+</li>
+<li>
+<p>Other employees already used more PTO than they earned.</p>
+</li>
+<li>
+<p>The rest of the employees have PTO that they can use without time restrictions.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In a <strong>Conditional Flows</strong> step, this example integration can define two
+conditions, an execution flow for each condition, and a default
+execution flow:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When PTO is greater than some number, it indicates that some PTO
+might be lost if not used by a certain date. When this condition
+evaluates to true, the integration executes
+a flow that sends email to affected employees. The email contains the
+amount of PTO that must be used and the date by which it must
+be used.</p>
+</li>
+<li>
+<p>When PTO is a negative number, it indicates that some PTO has been
+used but not earned. When this condition evaluates to true, the
+integration executes a flow that sends
+an email to affected employees. The email contains the amount of PTO that the
+employee has overdrawn and specifies the date on which the employee begins
+to accrue PTO again.</p>
+</li>
+<li>
+<p>When neither of the two conditions evaluates to true, the integration
+executes the default flow. This example integration executes the default conditional flow for
+employees whose PTO is neither a negative number nor above some specified number.
+The default flow sends an email to those employees with a statement of the
+amount of PTO that the employee has.</p>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

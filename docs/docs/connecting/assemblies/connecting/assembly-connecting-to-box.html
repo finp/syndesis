@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Box :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-box.html">Connecting to Box</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-box.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Box</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can download files from Box or upload files
+to Box.</p>
+</div>
+<div class="paragraph">
+<p>A connection to Box cannot start a simple integration. In other words,
+you cannot use a Box connection to trigger integration execution.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide the details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#register-with-box_box">Registering {prodname} as a Box client</a></p>
+</li>
+<li>
+<p><a href="#creating-box-connections_box">Creating a Box connection</a></p>
+</li>
+<li>
+<p><a href="#adding-box-connection-middle_box">Downloading or uploading a Box file in the middle of an integration</a></p>
+</li>
+<li>
+<p><a href="#adding-box-connection-finish_box">Uploading files to Box to finish an integration</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="register-with-box_box"><a class="anchor" href="#register-with-box_box"></a>Registering {prodname} as a Box client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You must register your {prodname} environment as a client application
+that can access Box.
+This lets you create any number of integrations that connect
+to Box. In other words, you need to register a particular
+{prodname} environment with Box only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Box client application. However, while each Box
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have a Box developer account, which you can obtain at
+<a href="https://app.box.com/developers/console" class="bare">https://app.box.com/developers/console</a>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL,
+click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your {prodname} environment to the clipboard.
+You will need this URL toward the end of this procedure.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, go to the Box developer portal at
+<a href="https://app.box.com/developers/console" class="bare">https://app.box.com/developers/console</a>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Sign in.</p>
+</li>
+<li>
+<p>Click <strong>Create New App</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Custom App</strong> and then <strong>Next</strong>.</p>
+</li>
+<li>
+<p>For <strong>Authentication Method</strong>, click <strong>Standard OAuth 2.0 (User Authentication)</strong>
+and then <strong>Next</strong>.</p>
+</li>
+<li>
+<p>Enter an app name, for example, <strong>{prodname} Client</strong> and click <strong>Create App</strong>.</p>
+</li>
+<li>
+<p>Click <strong>View Your App</strong>.</p>
+</li>
+<li>
+<p>Optional. In the <strong>OAuth 2.0 Credentials</strong> section, copy the client
+ID and the client secret to a safe location. These values are
+needed to create a connection to Box.</p>
+</li>
+<li>
+<p>Click <strong>Save Changes</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>Your {prodname} environment is now registered as a Box client, which
+means that {prodname} can access content in the Box account that
+you signed into.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-box-connections_box"><a class="anchor" href="#creating-box-connections_box"></a>Creating a Box connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to download or upload Box files, create a
+Box connection, which you can add
+to an integration. You can add the same connection to any number of
+integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>There is a Box client application that registers your
+{prodname} environment as an application that can
+access Box.</p>
+</li>
+<li>
+<p>You can log in to the Box developer account that created that
+application, or you have the Box client ID and Box client
+secret for that application.</p>
+</li>
+<li>
+<p>You know the user name and password for the Box account that
+you want this connection to use to access Box.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>If you already have the Box client ID and the client secret,
+skip to the next step. Otherwise, to obtain those values, in
+a new browser tab, go to
+<a href="https://app.box.com/developers/console" class="bare">https://app.box.com/developers/console</a>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Sign in to the Box account in which you created the app that
+registers access to Box from your {prodname} environment.</p>
+</li>
+<li>
+<p>On the <strong>My Apps</strong> page, click the {prodname} app to display its settings.</p>
+</li>
+<li>
+<p>On the left, click <strong>Configuration</strong>.</p>
+</li>
+<li>
+<p>In the <strong>OAuth 2.0 Credentials</strong> section, copy the client ID to the clipboard.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In a different browser tab, in {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click <strong>Connections</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong>.</p>
+</li>
+<li>
+<p>Click the Box connector.</p>
+</li>
+<li>
+<p>In the <strong>User name</strong> field, enter the user name for the Box account that
+you want this connection to use to download or upload Box files.</p>
+</li>
+<li>
+<p>In the <strong>User password</strong> field, enter the password for that account.</p>
+</li>
+<li>
+<p>In the <strong>Client ID</strong> field, paste the Box client ID.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Optional. If you need to, go back to the <strong>OAuth 2.0 Credentials</strong> for the Box app, copy
+the client secret to the clipboard and then return to {prodname}.</p>
+</li>
+<li>
+<p>In the <strong>Client secret</strong> field, paste the Box client secret string.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} displays a message that indicates whether
+it can validate this connection. If validation fails, try again and
+be sure to enter the correct values.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Box Sales Account</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Box connection
+that can access content in our company sales Box account.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Box Sales Account</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-box-connection-middle_box"><a class="anchor" href="#adding-box-connection-middle_box"></a>Downloading or uploading a Box file in the middle of an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To download a file from Box, or upload a file to Box in the middle of a flow,
+add a Box connection to the middle of the flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Box connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection.</p>
+</li>
+<li>
+<p>Click the Box connection that you
+want the integration to use.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Download</strong> to obtain a file from the Box account that this connection accesses.</p>
+</li>
+<li>
+<p><strong>Upload</strong> to upload a file to the Box account that this connection accesses.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Configure the action you selected.</p>
+<div class="paragraph">
+<p>To <strong>download</strong> a file:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>File encoding</strong> field, accept <code>UTF-8</code> or specify the encoding for
+the file that you want the connection to obtain.</p>
+</li>
+<li>
+<p>Optional. In the <strong>File ID</strong> field, specify the Box ID for the file that you want
+to obtain. The file ID is at the end of the URL when you are viewing the
+file in Box. For example, in this URL: <code>https://app.box.com/file/537364588548</code>,
+the file ID is <code>537364588548</code>.</p>
+<div class="paragraph">
+<p>Alternatively, you can add a data mapper step before this connection
+and map the file ID from a previous step to this connection.</p>
+</div>
+<div class="paragraph">
+<p>In this release, you can download only a single file.
+However, mapping the file ID from a previous step can make identification of
+the file dynamic, for example, the ID can come from a database table.
+This means each execution might download a different file.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>To <strong>upload</strong> a file:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Parent folder ID</strong> field, enter the ID of the Box folder to
+upload the file to.</p>
+<div class="paragraph">
+<p>Box folder IDs are at the end of the URL when you view the content of a folder in Box.
+In this example: <code>https://app.box.com/folder/89490291417</code>, the folder
+ID is <code>89490291417</code>. In this release, you can upload only a single file.</p>
+</div>
+</li>
+<li>
+<p>Optional. In the <strong>File name</strong> field, enter the name for a new file.
+If you specify the name of a file that is already
+in the specified Box folder, the connection overwrites the file that is in the folder.</p>
+<div class="paragraph">
+<p>The input to the connection must be a file that you want to upload
+to Box. If you do not specify a file name, the connection uploads a file
+that has the same name as the input file to the connection as long as a
+file with that name is not already present.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the upload action&#8217;s input type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration flow
+where you added it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-box-connection-finish_box"><a class="anchor" href="#adding-box-connection-finish_box"></a>Uploading files to Box to finish an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To finish an integration by uploading files to Box,
+add a Box connection as the integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Box connection.</p>
+</li>
+<li>
+<p>You are creating or editing a simple integration and {prodname} is prompting
+you to choose the finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Box connection that
+you want to use to finish the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Upload</strong>
+action to upload a file to the
+Box account that this connection accesses.</p>
+</li>
+<li>
+<p>In the <strong>Parent folder ID</strong> field, enter the ID of the Box folder to
+upload the file to.</p>
+<div class="paragraph">
+<p>Box folder IDs are at the end of the URL when you select a folder in Box.
+In this example: <code>https://app.box.com/folder/89490291417</code>, the folder
+ID is <code>89490291417</code>. In this release, you can upload only a single file.</p>
+</div>
+</li>
+<li>
+<p>Optional. In the <strong>File name</strong> field, enter the name for a new file or
+an existing file. If you specify the name of a file that is already
+in the specified Box folder, the connection overwrites the file that is in the folder.</p>
+<div class="paragraph">
+<p>The input to the connection must be a file that you want to upload
+to Box. If you do not specify a file name, the connection uploads a file
+that has the same name as the input file to the connection.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears at the end of the integration visualization.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

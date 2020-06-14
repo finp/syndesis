@@ -1,43 +1,72 @@
 import * as H from '@syndesis/history';
-import { APISummary } from '@syndesis/models';
+import { IApiSummarySoap } from '@syndesis/models';
 import {
-  ApiClientConnectorCreateSecurity,
+  ApiConnectorCreatorBreadcrumb,
+  ApiConnectorCreatorBreadSteps,
+  ApiConnectorCreatorFooter,
   ApiConnectorCreatorLayout,
-  PageSection,
+  ApiConnectorCreatorSecurity,
+  ApiConnectorCreatorSecurityForm,
+  ApiConnectorCreatorToggleList,
 } from '@syndesis/ui';
 import { useRouteData } from '@syndesis/utils';
 import * as React from 'react';
 import { Translation } from 'react-i18next';
 import { PageTitle } from '../../../../shared';
 import { WithLeaveConfirmation } from '../../../../shared/WithLeaveConfirmation';
-import {
-  ApiConnectorCreatorBreadcrumb,
-  ApiConnectorCreatorWizardSteps,
-} from '../../components';
+import { ICreateConnectorProps } from '../../models';
 import resolvers from '../../resolvers';
 import routes from '../../routes';
 
 export interface ISecurityPageRouteState {
-  specification: APISummary;
+  /**
+   * `configured` property contains things such
+   * as the portName, serviceName used for SOAP connectors,
+   * and other configured properties.
+   */
+  configured?: ICreateConnectorProps;
+  connectorTemplateId?: string;
+  specification: IApiSummarySoap;
 }
 
 export const SecurityPage: React.FunctionComponent = () => {
   const { state, history } = useRouteData<null, ISecurityPageRouteState>();
+  const { connectorTemplateId, specification } = state;
+  const { properties } = specification;
+  const { portName, serviceName } = specification.configuredProperties!;
+
   const backHref = resolvers.create.review({
-    specification: state.specification.configuredProperties!.specification,
+    configured: { portName, serviceName },
+    connectorTemplateId,
+    specification: specification.configuredProperties!.specification,
   });
 
-  const onNext = (
-    accessToken?: string,
-    authType?: string,
-    authUrl?: string
-  ) => {
+  const defaultValues: ICreateConnectorProps = {
+    authenticationType: properties!.authenticationType?.defaultValue,
+    authorizationEndpoint: properties!.authorizationEndpoint?.defaultValue,
+    passwordType: properties!.passwordType?.defaultValue,
+    tokenEndpoint: properties!.tokenEndpoint?.defaultValue,
+  };
+
+  const dropdowns = {
+    authenticationTypes: (
+      properties!.authenticationType?.enum || []
+    ).sort((a, b) => a.value!.localeCompare(b.value!)),
+    passwordTypes: (properties!.passwordType?.enum || []).sort((a, b) =>
+      a.value!.localeCompare(b.value!)
+    ),
+  };
+
+  const onNext = (values?: any) => {
+    if (values.authenticationType === 'unselected') {
+      throw new Error('Invalid authentication type allowed');
+    }
+
     history.push(
       resolvers.create.save({
-        authenticationType: authType,
-        authorizationEndpoint: authUrl,
-        specification: state.specification,
-        tokenEndpoint: accessToken,
+        configured: { ...values, portName, serviceName },
+        connectorTemplateId,
+        specification,
       })
     );
   };
@@ -61,49 +90,110 @@ export const SecurityPage: React.FunctionComponent = () => {
               <PageTitle
                 title={t('apiClientConnectors:create:security:title')}
               />
-              <ApiConnectorCreatorBreadcrumb cancelHref={resolvers.list()} />
-              <ApiConnectorCreatorLayout
-                header={<ApiConnectorCreatorWizardSteps step={3} />}
-                content={
-                  <PageSection>
-                    <ApiClientConnectorCreateSecurity
-                      accessToken={
-                        state.specification.properties!.tokenEndpoint &&
-                        state.specification.properties!.tokenEndpoint
-                          .defaultValue
-                      }
-                      authenticationTypeDefault={
-                        state.specification.properties!.authenticationType
-                          .defaultValue
-                      }
-                      authenticationTypes={
-                        state.specification.properties!.authenticationType &&
-                        state.specification.properties!.authenticationType.enum
-                      }
-                      authorizationUrl={
-                        state.specification.properties!.authorizationEndpoint &&
-                        state.specification.properties!.authorizationEndpoint
-                          .defaultValue
-                      }
-                      backHref={backHref}
-                      i18nAccessTokenUrl={t(
-                        'apiClientConnectors:create:security:accessTokenUrl'
-                      )}
-                      i18nAuthorizationUrl={t(
-                        'apiClientConnectors:create:security:authorizationUrl'
-                      )}
-                      i18nBtnBack={t('Back')}
-                      i18nBtnNext={t('Next')}
-                      i18nNoSecurity={t(
-                        'apiClientConnectors:create:security:noSecurity'
-                      )}
-                      i18nTitle={t('apiClientConnectors:create:security:title')}
-                      i18nDescription={t('apiClientConnectors:create:security:description')}
-                      onNext={onNext}
-                    />
-                  </PageSection>
-                }
+              <ApiConnectorCreatorBreadcrumb
+                cancelHref={resolvers.list()}
+                connectorsHref={resolvers.list()}
+                i18nCancel={t('shared:Cancel')}
+                i18nConnectors={t('apiClientConnectors:apiConnectorsPageTitle')}
+                i18nCreateConnection={t(
+                  'apiClientConnectors:CreateApiConnector'
+                )}
               />
+              <ApiConnectorCreatorSecurityForm defaultValues={defaultValues}>
+                {({ handleChange, values }) => {
+                  return (
+                    <ApiConnectorCreatorLayout
+                      content={
+                        <ApiConnectorCreatorSecurity
+                          dropdowns={dropdowns}
+                          handleChange={handleChange}
+                          i18nAccessTokenUrl={t(
+                            'apiClientConnectors:create:security:accessTokenUrl'
+                          )}
+                          i18nAuthenticationType={t(
+                            'apiClientConnectors:create:security:authTypeLabel'
+                          )}
+                          i18nAuthorizationUrl={t(
+                            'apiClientConnectors:create:security:authorizationUrl'
+                          )}
+                          i18nDescription={t(
+                            'apiClientConnectors:create:security:description'
+                          )}
+                          i18nNoSecurity={t(
+                            'apiClientConnectors:create:security:noSecurity'
+                          )}
+                          i18nPassword={t(
+                            'apiClientConnectors:create:security:password'
+                          )}
+                          i18nPasswordType={t(
+                            'apiClientConnectors:create:security:passwordType'
+                          )}
+                          i18nTimestamp={t(
+                            'apiClientConnectors:create:security:timestamp'
+                          )}
+                          i18nTitle={t(
+                            'apiClientConnectors:create:security:title'
+                          )}
+                          i18nUsername={t(
+                            'apiClientConnectors:create:security:username'
+                          )}
+                          i18nUsernameTokenCreated={t(
+                            'apiClientConnectors:create:security:usernameTokenCreated'
+                          )}
+                          i18nUsernameTokenNonce={t(
+                            'apiClientConnectors:create:security:usernameTokenNonce'
+                          )}
+                          values={values}
+                        />
+                      }
+                      footer={
+                        <ApiConnectorCreatorFooter
+                          backHref={backHref}
+                          onNext={() => onNext(values)}
+                          i18nBack={t('shared:Back')}
+                          i18nNext={t('shared:Next')}
+                          isNextLoading={false}
+                          isNextDisabled={false}
+                        />
+                      }
+                      navigation={
+                        <ApiConnectorCreatorBreadSteps
+                          step={3}
+                          i18nDetails={t(
+                            'apiClientConnectors:create:details:title'
+                          )}
+                          i18nReview={t(
+                            'apiClientConnectors:create:review:title'
+                          )}
+                          i18nSecurity={t(
+                            'apiClientConnectors:create:security:title'
+                          )}
+                          i18nSelectMethod={t(
+                            'apiClientConnectors:create:selectMethod:title'
+                          )}
+                        />
+                      }
+                      toggle={
+                        <ApiConnectorCreatorToggleList
+                          step={1}
+                          i18nDetails={t(
+                            'apiClientConnectors:create:details:title'
+                          )}
+                          i18nReview={t(
+                            'apiClientConnectors:create:review:title'
+                          )}
+                          i18nSecurity={t(
+                            'apiClientConnectors:create:security:title'
+                          )}
+                          i18nSelectMethod={t(
+                            'apiClientConnectors:create:selectMethod:title'
+                          )}
+                        />
+                      }
+                    />
+                  );
+                }}
+              </ApiConnectorCreatorSecurityForm>
             </>
           )}
         </WithLeaveConfirmation>

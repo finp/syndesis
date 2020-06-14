@@ -50,14 +50,12 @@ export interface IDataMapperPageProps extends IPageWithEditorBreadcrumb {
  * **Warning:** this component will throw an exception if the route state is
  * undefined.
  */
-export const DataMapperPage: React.FunctionComponent<
-  IDataMapperPageProps
-> = props => {
+export const DataMapperPage: React.FunctionComponent<IDataMapperPageProps> = props => {
   const appContext = React.useContext(AppContext);
-  const [mappings, setMapping] = React.useState<string | undefined>(undefined);
+  const mappingsRef = React.useRef<string | undefined>(undefined);
 
   const onMappings = (newMappings: string) => {
-    setMapping(newMappings);
+    mappingsRef.current = newMappings;
   };
 
   return (
@@ -66,7 +64,6 @@ export const DataMapperPage: React.FunctionComponent<
         <WithRouteData<IDataMapperRouteParams, IDataMapperRouteState>>
           {(params, state, { history }) => {
             const positionAsNumber = parseInt(params.position, 10);
-
             const inputDocuments = getInputDocuments(
               state.integration,
               params.flowId,
@@ -79,8 +76,11 @@ export const DataMapperPage: React.FunctionComponent<
               state.step.id!,
               props.mode === 'adding'
             );
+            // preserve the initial document in case the user doesn't make any changes in the mapper
+            const initialMappings = (state.step.configuredProperties || {})[MAPPING_KEY];
 
             const saveMappingStep = async () => {
+              const newMappings = mappingsRef.current || initialMappings;
               const updatedIntegration = await (props.mode === 'adding'
                 ? addStep
                 : updateStep)(
@@ -101,7 +101,7 @@ export const DataMapperPage: React.FunctionComponent<
                 params.flowId,
                 positionAsNumber,
                 {
-                  [MAPPING_KEY]: mappings,
+                  [MAPPING_KEY]: newMappings,
                 }
               );
               history.push(
@@ -138,9 +138,7 @@ export const DataMapperPage: React.FunctionComponent<
                         documentId={state.integration.id!}
                         inputDocuments={inputDocuments}
                         outputDocument={outputDocument}
-                        initialMappings={
-                          (state.step.configuredProperties || {})[MAPPING_KEY]
-                        }
+                        initialMappings={initialMappings}
                         {...appContext.config.datamapper}
                         onMappings={onMappings}
                       />
@@ -150,7 +148,6 @@ export const DataMapperPage: React.FunctionComponent<
                     <ButtonLink
                       data-testid={'data-mapper-page-save-mapping-button'}
                       onClick={saveMappingStep}
-                      disabled={!mappings}
                       as={'primary'}
                     >
                       Done

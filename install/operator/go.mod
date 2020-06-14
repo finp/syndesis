@@ -7,53 +7,56 @@ module github.com/syndesisio/syndesis/install/operator
 // replace github.com/chirino/hawtgo => /Users/chirino/sandbox/hawtgo
 
 require (
-	github.com/aws/aws-sdk-go v1.25.50
+	github.com/DATA-DOG/go-sqlmock v1.4.1
+	github.com/aws/aws-sdk-go v1.30.24
 	github.com/chirino/hawtgo v0.0.1
+	github.com/docker/go-connections v0.4.0
+	github.com/elazarl/goproxy v0.0.0-20190421051319-9d40249d3c2f // indirect
+	github.com/elazarl/goproxy/ext v0.0.0-20190421051319-9d40249d3c2f // indirect
 	github.com/go-logr/logr v0.1.0
-	github.com/go-openapi/spec v0.19.5
-	github.com/imdario/mergo v0.3.8
-	github.com/openshift/api v3.9.0+incompatible
-	github.com/operator-framework/operator-sdk v0.0.0-20190815222052-4ca881a92eb7
-	github.com/pkg/errors v0.8.1
+	github.com/go-openapi/spec v0.19.8
+	github.com/imdario/mergo v0.3.9
+	github.com/lib/pq v1.4.0
+	github.com/openshift/api v3.9.1-0.20190927182313-d4a64ec2cbd8+incompatible
+	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
-	github.com/robfig/cron/v3 v3.0.0
-	github.com/shurcooL/httpfs v0.0.0-20190527155220-6a4d4a70508b
+	github.com/prometheus/client_golang v1.5.1
+	github.com/robfig/cron/v3 v3.0.1
+	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749
 	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd
-	github.com/spf13/cast v1.3.0
-	github.com/spf13/cobra v0.0.5
+	github.com/spf13/cast v1.3.1
+	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.4.0
-	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
-	golang.org/x/tools v0.0.0-20190826060629-95c3470cfb70 // indirect
-	gopkg.in/yaml.v2 v2.2.2
-	k8s.io/api v0.0.0-20190612125737-db0771252981
-	k8s.io/apimachinery v0.0.0-20190612125636-6a5db36e93ad
-	k8s.io/client-go v11.0.0+incompatible
-	k8s.io/code-generator v0.0.0-20181203235156-f8cba74510f3
-	k8s.io/gengo v0.0.0-20190327210449-e17681d19d3a
-	k8s.io/kube-openapi v0.0.0-20190603182131-db7b694dc208
-	sigs.k8s.io/controller-runtime v0.4.0
-	sigs.k8s.io/controller-tools v0.2.4
-	sigs.k8s.io/yaml v1.1.0
+	github.com/stretchr/testify v1.5.1
+	github.com/testcontainers/testcontainers-go v0.3.1
+	gopkg.in/yaml.v2 v2.2.8
+	k8s.io/api v0.18.2
+	k8s.io/apimachinery v0.18.2
+	k8s.io/client-go v12.0.0+incompatible
+	k8s.io/code-generator v0.18.2
+	k8s.io/gengo v0.0.0-20200114144118-36b2048a9120
+	k8s.io/kube-openapi v0.0.0-20200121204235-bf4fb3bd569c
+	sigs.k8s.io/yaml v1.2.0
 )
 
-// Pinned to kubernetes-1.13.4
+require (
+	github.com/coreos/prometheus-operator v0.39.0 // indirect
+	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
+	github.com/go-logr/zapr v0.1.1
+	github.com/operator-framework/api v0.3.5
+	github.com/operator-framework/operator-lifecycle-manager v0.0.0-20200508205316-9ffa1fdb8dcf // Tag v0.15.0
+	github.com/operator-framework/operator-marketplace v0.0.0-20200515051804-e0148822df25
+	github.com/operator-framework/operator-sdk v0.0.0-20200428193249-b34ae44ff198 // Not a release but a bump commit aligning with client-go 0.18.2
+	github.com/spf13/afero v1.2.2
+	go.uber.org/zap v1.14.1
+	sigs.k8s.io/controller-runtime v0.6.0
+)
+
+replace k8s.io/client-go => k8s.io/client-go v0.18.2 // Required by prometheus-operator
+
 replace (
-	k8s.io/api => k8s.io/api v0.0.0-20190222213804-5cb15d344471
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.0.0-20190228180357-d002e88f6236
-	k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20190221213512-86fb29eff628
-	k8s.io/client-go => k8s.io/client-go v0.0.0-20190228174230-b40b2a5939e4
+	github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503-38ab9da00309 // Required by Helm
+	github.com/openshift/api => github.com/openshift/api v0.0.0-20190924102528-32369d4db2ad // Required until https://github.com/operator-framework/operator-lifecycle-manager/pull/1241 is resolved
 )
 
-replace (
-	github.com/coreos/prometheus-operator => github.com/coreos/prometheus-operator v0.29.0
-	github.com/prometheus/prometheus => github.com/prometheus/prometheus v0.0.0-20190424153033-d3245f150225
-	k8s.io/code-generator => k8s.io/code-generator v0.0.0-20181117043124-c2090bec4d9b
-	k8s.io/kube-state-metrics => k8s.io/kube-state-metrics v1.6.0
-	sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.1.12
-	sigs.k8s.io/controller-tools => sigs.k8s.io/controller-tools v0.1.11-0.20190411181648-9d55346c2bde
-)
-
-replace git.apache.org/thrift.git => github.com/apache/thrift v0.0.0-20180902110319-2566ecd5d999
-
-go 1.13
+go 1.14

@@ -78,7 +78,11 @@
                 fieldPath: metadata.namespace
 {{if .Syndesis.Addons.Jaeger.Enabled}}
           - name: JAEGER_ENDPOINT
+        {{- if .Syndesis.Addons.Jaeger.CollectorURI}}
+            value: "{{.Syndesis.Addons.Jaeger.CollectorURI}}"
+        {{- else}}
             value: "http://syndesis-jaeger-collector:14268/api/traces"
+        {{- end}}
           - name: JAEGER_SAMPLER_TYPE
             value: "{{.Syndesis.Addons.Jaeger.SamplerType}}"
           - name: JAEGER_SAMPLER_PARAM
@@ -140,7 +144,8 @@
     triggers:
     - type: ConfigChange
 {{if .DevSupport}}
-    - imageChangeParams:
+    - type: ImageChange
+      imageChangeParams:
         automatic: true
         containerNames:
         - syndesis-meta
@@ -148,7 +153,7 @@
           kind: ImageStreamTag
           name: syndesis-meta:latest
           namespace: {{.OpenShiftProject}}
-      type: ImageChange
+
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:

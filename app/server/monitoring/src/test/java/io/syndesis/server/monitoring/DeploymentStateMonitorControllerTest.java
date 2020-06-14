@@ -18,19 +18,19 @@ package io.syndesis.server.monitoring;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import io.syndesis.common.model.WithId;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.mockito.Mockito;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
+import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.ASSEMBLING;
+import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.BUILDING;
+import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.DEPLOYING;
+import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.STARTING;
+import static org.awaitility.Awaitility.given;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
@@ -43,6 +43,7 @@ import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildBuilder;
 import io.fabric8.openshift.client.NamespacedOpenShiftClient;
+import io.syndesis.common.model.WithId;
 import io.syndesis.common.model.integration.IntegrationDeployment;
 import io.syndesis.common.model.integration.IntegrationDeploymentState;
 import io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState;
@@ -52,15 +53,13 @@ import io.syndesis.common.util.cache.CacheManager;
 import io.syndesis.common.util.cache.LRUCacheManager;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.dao.manager.EncryptionComponent;
-
-import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.ASSEMBLING;
-import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.BUILDING;
-import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.DEPLOYING;
-import static io.syndesis.common.model.monitoring.IntegrationDeploymentDetailedState.STARTING;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.given;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.mockito.Mockito;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * Used to unit test the {@link io.syndesis.server.monitoring.DeploymentStateMonitor} implementation.
@@ -99,23 +98,21 @@ public class DeploymentStateMonitorControllerTest {
     public IntegrationDeploymentStateDetails expectedDetails;
 
     private DataManager dataManager;
-    private static final NamespacedOpenShiftClient client;
+
+    private final NamespacedOpenShiftClient client = Mockito.mock(NamespacedOpenShiftClient.class);
 
     private static final String TEST_NAMESPACE = "test-namespace";
 
-    static {
-        client = Mockito.mock(NamespacedOpenShiftClient.class);
+    @Before
+    @SuppressWarnings("unchecked")
+    public void before() throws Exception {
         try {
             Mockito.when(client.getOpenshiftUrl()).thenReturn(new URL("https://test-cluster"));
         } catch (MalformedURLException e) {
             fail(e.getMessage());
         }
         Mockito.when(client.getNamespace()).thenReturn(TEST_NAMESPACE);
-    }
 
-    @Before
-    @SuppressWarnings("unchecked")
-    public void before() throws Exception {
         CacheManager cacheManager = new LRUCacheManager(100);
         EncryptionComponent encryptionComponent = new EncryptionComponent(null);
         ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -190,8 +187,8 @@ public class DeploymentStateMonitorControllerTest {
 
             // Eventually all the log data should make it into the dataManager
             given().await()
-                .atMost(20, SECONDS)
-                .pollInterval(5, SECONDS)
+                .atMost(Duration.ofSeconds(20))
+                .pollInterval(Duration.ofSeconds(5))
                 .untilAsserted(() -> assertEquals(expectedDetails, dataManager.fetch(IntegrationDeploymentStateDetails.class, DEPLOYMENT_ID)));
         }
 

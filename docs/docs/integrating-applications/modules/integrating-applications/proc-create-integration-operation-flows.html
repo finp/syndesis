@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Defining the operation flows for an API provider integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-create-integration-operation-flows.html">Defining the operation flows for an API provider integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-create-integration-operation-flows.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Defining the operation flows for an API provider integration</h1>
+<div class="paragraph">
+<p>The OpenAPI document that defines your REST API service defines
+the operations that the service can perform. After you create an API
+provider integration, you can edit the flow for each operation.</p>
+</div>
+<div class="paragraph">
+<p>Each operation has exactly one flow.
+In an operation flow, you can add connections
+to other applications and services, as well as steps that operate on data
+between connections.</p>
+</div>
+<div class="paragraph">
+<p>As you add to operation flows, you might find that you need to update
+the OpenAPI document that the API provider integration is based on. To do this,
+click <strong>View/Edit API Definition</strong> in the upper right of a page in which
+you are editing your API provider integration. This displays your document
+in the API Designer editor. In your OpenAPI
+definition, as long as each operation has a unique <code>operationId</code> property,
+you can save your updates in API Designer and {prodname} can synchronize the
+API provider integration&#8217;s flow definitions to have your updates.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an API provider integration, gave it a name, and saved it.</p>
+</li>
+<li>
+<p>You created a connection to each application or service that you want
+an operation flow to connect to. For details, see the
+<a href="{LinkSyndesisIntegrationGuide}#about-creating-connections_connections">information about creating connections</a>.</p>
+</li>
+<li>
+<p>{prodname} is displaying the list of operations that the API defines.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the <strong>Operations</strong> list page, for the operation
+whose flow you want to define, click <strong>Create flow</strong>.</p>
+</li>
+<li>
+<p>For each connection that you want to add to this flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign to add a connection
+at that location.</p>
+</li>
+<li>
+<p>Click the connection that you want to add.</p>
+</li>
+<li>
+<p>Select the action that you want this connection to perform.</p>
+</li>
+<li>
+<p>Configure the action by entering data in the labeled fields.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Add all desired connections to the flow
+before you continue.</p>
+</div>
+</li>
+<li>
+<p>In this operation flow, to process data between connections:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the
+plus sign where you want to add a step.</p>
+</li>
+<li>
+<p>Click the step that you want to add.</p>
+</li>
+<li>
+<p>Configure the step by entering data in the labeled fields.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+<div class="paragraph">
+<p>For help, see
+<a href="{LinkSyndesisIntegrationGuide}#about-adding-steps_create">Adding steps between connections</a>.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If you want to add another step that processes
+data between connections, repeat this subset of instructions.</p>
+</div>
+</li>
+<li>
+<p>Map data to fields in the next connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, check for data type mismatch
+<span class="image"><img src="../../../_images/images/integrating-applications/DataTypeMismatchWarning.png" alt="data mismatch"></span> icons, which
+indicate that the connection cannot process the incoming data. You need
+to add a data mapper step here.</p>
+</li>
+<li>
+<p>For each data mismatch icon in the flow visualization:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Click the plus sign that is just before that step.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>Define the needed mappings. For help, see
+<a href="{LinkSyndesisIntegrationGuide}#mapping-data_ug">Mapping integration data to fields in the next connection</a>.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the data mapper step to the flow.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the flow visualization, on the
+<strong>Provided API Return Path</strong> step, click <strong>Configure</strong>.</p>
+<div class="paragraph">
+<p>Every API provider integration finishes each operation flow by
+sending a response to the REST API caller that triggered execution of
+the operation flow. The response contains one of the return codes
+that you configure for the <strong>Provided API Return Path</strong> step that
+finishes the operation’s flow. Configure the return path step as follows:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Under <strong>Default Response</strong>, in the <strong>Return Code</strong> field, accept
+the default response that {prodname} displays, or click the down
+caret and scroll to select the default response that you want.
+The flow sends this response when execution of the operation
+flow does not return any of the configured error responses.
+Typically, the default response return code indicates a successful operation.</p>
+</li>
+<li>
+<p>Under <strong>Error Handling</strong>, indicate whether you want to include
+the error message in the body of the returned message.</p>
+<div class="paragraph">
+<p>During development, you typically want to return the error message.
+In production, however, you might want to hide the error message if
+it contains sensitive or proprietary information. The error message
+is a JSON formatted string that contains <code>responseCode</code>, <code>category</code>,
+and <code>message</code> elements, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">   {
+      responseCode: 404,
+      category:  "SQL_ENTITY_NOT_FOUND_ERROR",
+      message: "SQL SELECT did not SELECT any records"
+    }</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Under <strong>Error Response Codes</strong>, {prodname} displays an entry for
+each error that a connection in the flow might return. For each
+error, accept the <strong>200 All is good</strong> default return code or click to
+select another HTTP status return code.</p>
+<div class="paragraph">
+<p>The return codes that you
+can select from, are the return codes that the OpenAPI document
+defines for the operation that this flow executes.
+If {prodname} does not display a return code that you need, you can
+edit the OpenAPI document to add it.</p>
+</div>
+<div class="paragraph">
+<p>To do this, in the upper right,
+click <strong>View/Edit API Definition</strong>. Edit the OpenAPI document as needed.
+When you are done, save the OpenAPI document. {prodname} returns to
+editing the <strong>Provided API Return Path</strong> and reflects any changes that you saved.</p>
+</div>
+</li>
+<li>
+<p>Click Next to complete configuration of the return path.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>When this flow has all needed
+connections and steps and there are no data mismatch icons, or when
+you no longer want to edit the flow for now, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Publish</strong>&#8201;&#8212;&#8201;To start running the integration, in the upper right, click <strong>Publish</strong>.
+This builds the integration, deploys the REST API service to
+OpenShift, and makes the integration available to be executed.
+You can publish the integration each time that you
+complete the creation of an operation&#8217;s flow or each
+time that you edit an operation&#8217;s flow.</p>
+</li>
+<li>
+<p><strong>Save</strong>&#8201;&#8212;&#8201;To display the list of operations, in the upper right,
+click <strong>Save</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Repeat this procedure to edit another operation&#8217;s flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Testing API provider integrations</div>
+<ul>
+<li>
+<p>Testing API provider integrations running on one of these platforms:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift Online</p>
+</li>
+<li>
+<p>OpenShift Dedicated</p>
+</li>
+<li>
+<p>OpenShift Container Platform when <strong>API discovery is disabled</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can use the <code>curl</code> utility to confirm that the integration is working as
+expected. In the <code>curl</code> command, specify the external URL that {prodname} displays
+after it publishes the API provider integration.
+For examples of doing this, see
+<a href="{LinkSyndesisIntegrationGuide}#try-api-provider-quickstart_api-provider">Testing the example API provider quickstart integration</a>.</p>
+</div>
+</li>
+<li>
+<p>Testing API provider integrations running on OpenShift Container Platform
+when <strong>API discovery is enabled</strong></p>
+<div class="paragraph">
+<p>Red Hat 3scale publishes your API provider integration. To test the integration, open the 3scale dashboard to obtain the integration’s URL.</p>
+</div>
+<div class="paragraph">
+<p>You can disable discovery for an API provider integration if, for example, you do not want Red Hat 3scale to control access to the integration’s API or you want to test the API provider integration in {prodname}. If you disable discovery, {prodname} republishes the integration and provides an external URL for invoking and testing integration execution. To do this, in {prodname} go to the integration’s summary page. On this page, click <strong>Disable discovery</strong>. {prodname} republishes the integration and provides the integration’s URL. For examples of how to test an integration, see
+<a href="{LinkSyndesisIntegrationGuide}#try-api-provider-quickstart_api-provider">Testing the example API provider quickstart integration</a>. After testing, you can re-enable discovery for the API provider integration so that 3scale publishes it.</p>
+</div>
+<div class="paragraph">
+<p>You can enable or disable discovery for each API provider integration.</p>
+</div>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

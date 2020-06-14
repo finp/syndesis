@@ -49,6 +49,10 @@
         serviceAccountName: syndesis-server
         containers:
         - name: syndesis-dv
+          envFrom:
+            - configMapRef:
+                name: dv-sso-config
+                optional: true
           env:
           - name: JAVA_APP_DIR
             value: /deployments
@@ -69,7 +73,9 @@
           - name: POSTGRESQL_DATABASE
             value: {{.Syndesis.Components.Database.Name}}
           - name: OPENSHIFT_MANAGEMENT_URL_FOR3SCALE
-            value: '{{.Syndesis.Components.Server.Features.ManagementUrlFor3scale}}'
+            value: '{{.Syndesis.Components.Server.Features.ManagementURLFor3scale}}'
+          - name: ENDPOINTS_TEST_SUPPORT_ENABLED
+            value: '{{ .Syndesis.Components.Server.Features.TestSupport }}'
 {{if .DevSupport}}
           - name: JAVA_DEBUG
             value: "true"
@@ -83,7 +89,7 @@
           livenessProbe:
             httpGet:
               port: 8080
-              path: "/dv/v1/swagger.json"
+              path: "/dv/actuator/health"
               httpHeaders:
               - name: Accept
                 value: 'application/json'
@@ -92,7 +98,7 @@
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
-              path: "/dv/v1/swagger.json"
+              path: "/dv/actuator/health"
               port: 8080
               httpHeaders:
               - name: Accept

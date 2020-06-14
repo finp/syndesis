@@ -1,6 +1,6 @@
-import { Badge } from '@patternfly/react-core';
+import { Badge, Label, Popover } from '@patternfly/react-core';
 import { OkIcon } from '@patternfly/react-icons';
-import { Label } from 'patternfly-react';
+import { global_active_color_100, global_danger_color_100, global_default_color_100 } from '@patternfly/react-tokens';
 import * as React from 'react';
 import { ProgressWithLink } from '../../Shared';
 import './PublishStatusWithProgress.css';
@@ -9,6 +9,7 @@ export interface IPublishStatusWithProgressProps {
   isProgressWithLink: boolean;
   inListView: boolean;
   i18nPublishState: string;
+  i18nPublishStateMessage: string;
   i18nPublishLogUrlText: string;
   labelType: 'danger' | 'primary' | 'default';
   modified: boolean;
@@ -20,6 +21,17 @@ export interface IPublishStatusWithProgressProps {
 }
 
 export const PublishStatusWithProgress: React.FunctionComponent<IPublishStatusWithProgressProps> = props => {
+  const getLabelClass = () => {
+    switch (props.labelType) {
+      case 'danger':
+        return { background: global_danger_color_100.value };
+      case 'primary':
+        return { background: global_active_color_100.value };
+      case 'default':
+        return { background: global_default_color_100.value };
+    }
+  };
+  
   if (props.isProgressWithLink) {
     return (
       <div
@@ -38,7 +50,9 @@ export const PublishStatusWithProgress: React.FunctionComponent<IPublishStatusWi
           i18nLogUrlText={props.i18nPublishLogUrlText}
         />
         <span className={'publish-status-with-progress_text'}>
-          {props.publishVersion && ` version ${props.publishVersion}`}
+          {props.publishVersion &&
+            !props.inListView &&
+            ` version ${props.publishVersion}`}
         </span>
         {props.modified && (
           <>
@@ -54,12 +68,19 @@ export const PublishStatusWithProgress: React.FunctionComponent<IPublishStatusWi
   if (props.inListView) {
     return (
       <React.Fragment>
-        <Label
-          className={'publish-status-with-progress_Label'}
-          type={props.labelType}
+        <Popover
+          aria-label={'Status detail popover'}
+          bodyContent={<div>{props.i18nPublishStateMessage}</div>}
+          closeBtnAriaLabel="close status detail"
         >
-          {props.i18nPublishState}
-        </Label>
+          <Label
+            className={'publish-status-with-progress_Label'}
+            style={getLabelClass()}
+            data-testid={'virtualization-publish-status-with-progress'}
+          >
+            {props.i18nPublishState || ''}
+          </Label>
+        </Popover>
       </React.Fragment>
     );
   }
@@ -72,11 +93,23 @@ export const PublishStatusWithProgress: React.FunctionComponent<IPublishStatusWi
           color={'#49B720'}
           height={'1.25rem'}
           width={'1.25rem'}
-          className={'publish-status-with-progress-margin10'}
+          className={'publish-status-with-progress-ok-icon'}
         />
       )}
       <span className={'publish-status-with-progress_text'}>
-        {props.i18nPublishState}
+        <Popover
+          aria-label={'Status detail popover'}
+          bodyContent={<div>{props.i18nPublishStateMessage}</div>}
+          closeBtnAriaLabel="close status detail"
+        >
+          <Label
+            className={'publish-status-with-progress_Label'}
+            data-testid={'virtualization-publish-status-with-progress'}
+            style={getLabelClass()}
+          >
+            {props.i18nPublishState || ''}
+          </Label>
+        </Popover>
         {props.publishVersion && ` version ${props.publishVersion}`}
       </span>
       {(props.i18nPublishState === 'Stopped' ||

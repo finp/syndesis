@@ -84,10 +84,14 @@
           - name: INTEGRATION_STATE_CHECK_INTERVAL
             value: '{{ .Syndesis.Components.Server.Features.IntegrationStateCheckInterval }}'
           - name: OPENSHIFT_MANAGEMENT_URL_FOR3SCALE
-            value: '{{ .Syndesis.Components.Server.Features.ManagementUrlFor3scale }}'
+            value: '{{ .Syndesis.Components.Server.Features.ManagementURLFor3scale }}'
 {{- if .Syndesis.Addons.Jaeger.Enabled}}
           - name: JAEGER_ENDPOINT
+        {{- if .Syndesis.Addons.Jaeger.CollectorURI}}
+            value: "{{.Syndesis.Addons.Jaeger.CollectorURI}}"
+        {{- else}}
             value: "http://syndesis-jaeger-collector:14268/api/traces"
+        {{- end}}
           - name: JAEGER_SAMPLER_TYPE
             value: "{{.Syndesis.Addons.Jaeger.SamplerType}}"
           - name: JAEGER_SAMPLER_PARAM
@@ -96,6 +100,11 @@
 {{- if .Syndesis.Addons.CamelK.Enabled}}
           # Marker that causes a redeployment of the syndesis server, so that the new configuration is applied
           - name: CAMEL_K_ENABLED
+            value: "true"
+{{- end}}
+{{- if .Syndesis.Addons.Knative.Enabled}}
+          # Marker that causes a redeployment of the syndesis server, so that the new configuration is applied
+          - name: KNATIVE_ENABLED
             value: "true"
 {{- end}}
 {{if .DevSupport}}
@@ -199,7 +208,7 @@
 {{- if .Syndesis.Addons.CamelK.Enabled }}
 # START:CAMEL-K
 - kind: Role
-  apiVersion: rbac.authorization.k8s.io/v1beta1
+  apiVersion: rbac.authorization.k8s.io/v1
   metadata:
     name: camel-k
     labels:
@@ -214,7 +223,7 @@
     - "*"
     verbs: [ get, list, create, update, delete, deletecollection, watch]
 - kind: RoleBinding
-  apiVersion: rbac.authorization.k8s.io/v1beta1
+  apiVersion: rbac.authorization.k8s.io/v1
   metadata:
     name: camel-k
     labels:
@@ -230,7 +239,7 @@
     name: camel-k
     apiGroup: rbac.authorization.k8s.io
 - kind: Role
-  apiVersion: rbac.authorization.k8s.io/v1beta1
+  apiVersion: rbac.authorization.k8s.io/v1
   metadata:
     name: syndesis-knative-reader
     labels:
@@ -250,7 +259,7 @@
       - channels
     verbs: [ get, list, watch]
 - kind: RoleBinding
-  apiVersion: rbac.authorization.k8s.io/v1beta1
+  apiVersion: rbac.authorization.k8s.io/v1
   metadata:
     name: syndesis-knative-reader
     labels:

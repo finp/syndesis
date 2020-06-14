@@ -21,8 +21,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { UIContext } from '../../../app';
 import i18n from '../../../i18n';
-import { ApiError } from '../../../shared';
+import { ApiError, PageTitle } from '../../../shared';
 import resolvers from '../../resolvers';
+import {
+  VirtualizationActionId,
+} from '../shared/VirtualizationActionContainer';
 import {
   IVirtualizationEditorPageRouteParams,
   IVirtualizationEditorPageRouteState,
@@ -155,7 +158,11 @@ export const VirtualizationViewsPage: React.FunctionComponent = () => {
       routeParams={params}
       routeState={state}
       virtualization={virtualization}
+      items={[VirtualizationActionId.Stop, VirtualizationActionId.Delete]}
+      actions={[VirtualizationActionId.Publish]}
+      publishActionCustomProps={{ as: 'default' }}
     >
+      <PageTitle title={t('viewsPageTitle')} />
       <WithListViewToolbarHelpers
         defaultFilterType={filterByName}
         defaultSortType={sortByName}
@@ -170,7 +177,7 @@ export const VirtualizationViewsPage: React.FunctionComponent = () => {
             <>
               <WithLoader
                 error={viewDefinitionDescriptorsError !== false}
-                loading={!hasViewDefinitionDescriptors}
+                loading={virtualization.name === "" || !hasViewDefinitionDescriptors}
                 loaderChildren={<ViewListSkeleton width={800} />}
                 errorChildren={
                   <ApiError error={viewDefinitionDescriptorsError as Error} />
@@ -240,7 +247,7 @@ export const VirtualizationViewsPage: React.FunctionComponent = () => {
                                 name: viewDefinitionDescriptor.name,
                               }
                             )}
-                            i18nDeleteModalTitle={t('deleteModalTitle')}
+                            i18nDeleteModalTitle={t('deleteViewModalTitle')}
                             i18nEdit={t('shared:Edit')}
                             i18nEditTip={t('shared:Edit')}
                             i18nInvalid={t('Invalid')}

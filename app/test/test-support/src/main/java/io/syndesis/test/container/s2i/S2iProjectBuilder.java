@@ -16,10 +16,14 @@
 
 package io.syndesis.test.container.s2i;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.syndesis.test.integration.project.Project;
 import io.syndesis.test.integration.project.ProjectBuilder;
 import io.syndesis.test.integration.source.IntegrationSource;
 
@@ -37,16 +41,34 @@ public class S2iProjectBuilder implements ProjectBuilder {
     }
 
     @Override
-    public Path build(IntegrationSource source) {
-        Path projectDir = delegate.build(source);
+    public Project build(IntegrationSource source) {
+        Path projectDir = delegate.build(source).getProjectPath();
 
         String integrationName = Optional.ofNullable(projectDir.getFileName())
                 .map(Objects::toString)
                 .orElse("s2i-assembly");
 
-        SyndesisS2iAssemblyContainer syndesisS2iAssemblyContainer = new SyndesisS2iAssemblyContainer(integrationName, projectDir, imageTag);
-        syndesisS2iAssemblyContainer.start();
+        final SyndesisS2iAssemblyContainer s2i = new SyndesisS2iAssemblyContainer(integrationName, projectDir, imageTag);
+        s2i.setCommand("sh", "-c", SyndesisS2iAssemblyContainer.S2I_ASSEMBLE_SCRIPT + " && sleep infinity");
+        s2i.start();
 
-        return projectDir.resolve("target").resolve("project-0.1-SNAPSHOT.jar");
+        // The S2I assembly container result need to be copied to the local host
+        // to be used by S2I integration containers
+        Path target = projectDir.resolve("target");
+        Path fatJar = target.resolve("project-0.1-SNAPSHOT.jar");
+        try {
+            Files.createDirectories(target);
+            s2i.copyFileFromContainer(
+                "/tmp/src/target/project-0.1-SNAPSHOT.jar",
+                fatJar.toAbsolutePath().toString()
+            );
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return new Project.Builder()
+            .projectPath(projectDir)
+            .fatJarPath(fatJar)
+            .build();
     }
 }

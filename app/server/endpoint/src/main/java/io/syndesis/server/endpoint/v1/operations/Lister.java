@@ -15,47 +15,30 @@
  */
 package io.syndesis.server.endpoint.v1.operations;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 
-import io.syndesis.server.dao.manager.WithDataManager;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.WithId;
+import io.syndesis.server.dao.manager.WithDataManager;
 import io.syndesis.server.endpoint.util.PaginationFilter;
-import io.syndesis.server.endpoint.util.ReflectiveFilterer;
-import io.syndesis.server.endpoint.util.ReflectiveSorter;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 
 public interface Lister<T extends WithId<T>> extends Resource, WithDataManager {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiImplicitParams({
-        @ApiImplicitParam(
-            name = "sort", value = "Sort the result list according to the given field value",
-            paramType = "query", dataType = "string"),
-        @ApiImplicitParam(
-            name = "direction", value = "Sorting direction when a 'sort' field is provided. Can be 'asc' " +
-            "(ascending) or 'desc' (descending)", paramType = "query", dataType = "string"),
-        @ApiImplicitParam(
-            name = "page", value = "Page number to return", paramType = "query", dataType = "integer", defaultValue = "1"),
-        @ApiImplicitParam(
-            name = "per_page", value = "Number of records per page", paramType = "query", dataType = "integer", defaultValue = "20"),
-        @ApiImplicitParam(
-            name = "query", value = "The search query to filter results on", paramType = "query", dataType = "string"),
-
-    })
-    default ListResult<T> list(@Context UriInfo uriInfo) {
+    default ListResult<T> list(
+        @Parameter(required = false, description = "Page number to return") @QueryParam("page") @DefaultValue("1") int page,
+        @Parameter(required = false, description = "Number of records per page") @QueryParam("per_page") @DefaultValue("20") int perPage
+    ) {
         Class<T> clazz = resourceKind().getModelClass();
         return getDataManager().fetchAll(
             clazz,
-            new ReflectiveFilterer<>(clazz, new FilterOptionsFromQueryParams(uriInfo).getFilters()),
-            new ReflectiveSorter<>(clazz, new SortOptionsFromQueryParams(uriInfo)),
-            new PaginationFilter<>(new PaginationOptionsFromQueryParams(uriInfo))
+        new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage))
         );
     }
 

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Combining multiple source fields into one target field :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-combine-multiple-source-fields-into-one-target-field.html">Combining multiple source fields into one target field</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-combine-multiple-source-fields-into-one-target-field.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Combining multiple source fields into one target field</h1>
+<div class="paragraph">
+<p>In a data mapper step, you can combine multiple source fields into one
+compound target field. For example, you can map the <code>FirstName</code> and <code>LastName</code>
+fields to the <code>CustomerName</code> field.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>For the target field, you must know what type of content is in each
+part of this compound field, the order and index of each part of the content,
+and the separator between parts, such as a space or comma. See
+<a href="{LinkSyndesisIntegrationGuide}#example-missing-unwanted-data_map">Example of missing or unwanted data</a>.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the <strong>Target</strong> panel, click the field into which you want to map more
+than one source field.</p>
+</li>
+<li>
+<p>In the <strong>Sources</strong> panel, if there is a field that contains the fields
+that you want to map to the target field, then click that container field
+to map all contained fields to the target field.</p>
+<div class="paragraph">
+<p>To individually select each source field, click the first field that
+you want to combine into the target field. For each of the other fields
+that you want to combine into the target field, hover over that field, and press
+<strong>CTRL-Mouse1</strong> (<strong>CMD-Mouse1</strong> on MacOS).</p>
+</div>
+<div class="paragraph">
+<p>When you are done you should see a line from each of the source fields to
+the target field.</p>
+</div>
+<div class="paragraph">
+<p>In the <strong>Mapping Details</strong> panel, under <strong>Sources</strong>, the data mapper
+displays the default multiplicity transformation, which is <strong>Concatenate</strong>.
+This indicates that execution of the mapping applies the <strong>Concatenate</strong>
+transformation to the values in the selected source fields and maps
+the concatenated value to the selected target field.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For information about other transformations that you can apply to
+multiple source values see
+<a href="{LinkSyndesisIntegrationGuide}#about-transformations-on-multiple-source-values_map">About transformations on multiple source values</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Also under <strong>Sources</strong>, there is an entry for each source field that
+you selected.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Mapping Details</strong> panel, configure the mapping as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Under <strong>Sources</strong>, in the <strong>Delimiter</strong> field, accept or select
+the character that the data mapper inserts in the target field between
+the content from different source fields. The default is a space.</p>
+</li>
+<li>
+<p>Optional. In each source field entry, you can click <strong>Add Transformation</strong>
+to apply a transformation to the source field value before it gets
+mapped to the target field.</p>
+</li>
+<li>
+<p>Under <strong>Sources</strong>, check the order of the entries for the source
+fields that you selected. The entries must be in the same order as
+the corresponding content in the compound target field.</p>
+<div class="paragraph">
+<p>If the entries are not in the correct order, drag and drop
+source field entries to achieve the same order. The data mapper
+automatically updates the index numbers to reflect the new order.</p>
+</div>
+<div class="paragraph">
+<p>If you mapped a source field to each part of the compound target field,
+skip the next step.</p>
+</div>
+</li>
+<li>
+<p>For each source field entry that does not already have the same
+index as the corresponding data in the target field, edit the index
+to be the same. Each source field entry must have the same index
+as the corresponding data in the target field. The data mapper
+automatically adds padding fields as needed to indicate missing data.</p>
+<div class="paragraph">
+<p>If you accidentally create too many padding fields, click the
+trash-can icon on each extra padding field to delete it.</p>
+</div>
+</li>
+<li>
+<p>Optional. Under <strong>Targets</strong>, click <strong>Add Transformation</strong> to map
+the content into the target field and then apply a transformation.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Optionally, preview the data mapping result:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the upper right of the data mapper, click
+<span class="image"><img src="../../../_images/images/tutorials/EditorSettings.png" alt="Editor settings"></span> and select
+<strong>Show Mapping Preview</strong> to display a text input field on each source
+field for the currently selected mapping and a read-only result field
+on the target field of the currently selected mapping.</p>
+</li>
+<li>
+<p>In the source data input fields, enter text. Click outside the
+text box to display the mapping result in the read-only field on the target field.</p>
+<div class="paragraph">
+<p>If you reorder the source fields or add a transformation to the mapping
+then the result field on the target field reflects this. If the data mapper
+detects any errors, it displays informative messages at the top of the
+<strong>Mapping Details</strong> panel.</p>
+</div>
+</li>
+<li>
+<p>Hide the preview fields by clicking
+<span class="image"><img src="../../../_images/images/tutorials/EditorSettings.png" alt="Editor settings"></span> again and selecting
+<strong>Show Mapping Preview</strong>.</p>
+<div class="paragraph">
+<p>If you redisplay the preview fields, any data
+that you entered in them is still there and it
+remains there until you exit the data mapper.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To confirm that the mapping is correctly defined, in the upper right, click
+<span class="image"><img src="../../../_images/images/tutorials/grid.png" alt="Grid"></span> to display the mappings defined in
+this step. A mapping that combines the values of more than one source field
+into one target field looks like this:
+<span class="image"><img src="../../../_images/images/integrating-applications/CombineMapping.png" alt="Combine Fields Mapping"></span>.</p>
+<div class="paragraph">
+<p>You can also preview mapping results in this view. Click
+<span class="image"><img src="../../../_images/images/tutorials/EditorSettings.png" alt="Editor settings"></span>, select
+<strong>Show Mapping Preview</strong>, and enter text as described in the previous step.
+Preview fields appear for only the selected mapping. Click another
+mapping in the table to view preview fields for it.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p>Example of adding padding fields:
+<a href="{LinkSyndesisIntegrationGuide}#separate-one-source-field-into-multiple-target-fields_map">Separating one source field into multiple target field</a>.</p>
+</div>
+<div class="paragraph">
+<p>Although that example is for a one-to-many mapping, the principles are the same.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

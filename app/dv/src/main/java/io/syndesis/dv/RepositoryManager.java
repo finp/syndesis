@@ -22,20 +22,12 @@ import java.util.concurrent.Callable;
 import io.syndesis.dv.model.DataVirtualization;
 import io.syndesis.dv.model.Edition;
 import io.syndesis.dv.model.SourceSchema;
+import io.syndesis.dv.model.TablePrivileges;
 import io.syndesis.dv.model.ViewDefinition;
 
 public interface RepositoryManager {
 
-    public static class EntityNotFoundException extends Exception {
-
-        /**
-         *
-         */
-        private static final long serialVersionUID = -3995911719208421687L;
-
-    }
-
-    public class TimeoutException extends Exception {
+    class TimeoutException extends RuntimeException {
 
         private static final long serialVersionUID = -3492466153109760780L;
 
@@ -45,15 +37,16 @@ public interface RepositoryManager {
 
     }
 
+    @FunctionalInterface
+    interface Task<T> extends Callable<T> {
+        @Override
+        T call();
+    }
+
     /**
      * Run the callable in the given transaction
-     * @param rollbackOnly
-     * @param callable
-     * @param <T>
-     * @return
-     * @throws Exception
      */
-    <T> T runInTransaction(boolean rollbackOnly, Callable<T> callable) throws Exception;
+    <T> T runInTransaction(boolean rollbackOnly, Task<T> callable);
 
     SourceSchema findSchemaBySourceId(String id);
 
@@ -61,7 +54,7 @@ public interface RepositoryManager {
 
     SourceSchema createSchema(String id, String name, String contents);
 
-    List<String> findAllSchemaNames();
+    List<String> findAllSourceIds();
 
 
     DataVirtualization createDataVirtualization(String virtualizationName);
@@ -72,7 +65,7 @@ public interface RepositoryManager {
 
     DataVirtualization findDataVirtualizationBySourceId(String sourceId);
 
-    public Iterable<? extends DataVirtualization> findDataVirtualizations();
+    Iterable<? extends DataVirtualization> findDataVirtualizations();
 
     boolean deleteDataVirtualization(String virtualizationName);
 
@@ -100,8 +93,6 @@ public interface RepositoryManager {
 
     /**
      * Create a new published edition, with an automatically assigned revision number
-     * @param virtualization
-     * @return
      */
     Edition createEdition(String virtualization);
 
@@ -114,4 +105,23 @@ public interface RepositoryManager {
     byte[] findEditionExport(Edition edition);
 
     long getEditionCount(String virtualization);
+
+    /*
+     * Role related
+     */
+    List<String> findRoleNames();
+
+    boolean hasRoles(String name);
+
+    List<TablePrivileges> findAllTablePrivileges(String virtualization);
+
+    TablePrivileges createTablePrivileges(String viewId, String roleName);
+
+    List<TablePrivileges> findTablePrivileges(String viewId);
+
+    TablePrivileges findTablePrivileges(String viewId, String roleName);
+
+    void deleteTablePrivileges(List<String> viewIds);
+
+    void deleteTablePrivileges(TablePrivileges existing);
 }

@@ -18,9 +18,10 @@ package io.syndesis.dv.datasources;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
 import org.teiid.spring.data.salesforce.SalesforceConfiguration;
 import org.teiid.spring.data.salesforce.SalesforceConnectionFactory;
+
+import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
 
 public class SalesforceDefinition extends DataSourceDefinition {
 
@@ -46,10 +47,7 @@ public class SalesforceDefinition extends DataSourceDefinition {
 
     @Override
     public boolean isTypeOf(Map<String, String> properties, String type) {
-        if (type.equals("salesforce")) {
-            return true;
-        }
-        return false;
+        return "salesforce".equals(type);
     }
 
     @Override
@@ -63,7 +61,7 @@ public class SalesforceDefinition extends DataSourceDefinition {
 
         Map<String, String> importProperties = new HashMap<String, String>();
         Map<String, String> translatorProperties = new HashMap<String, String>();
-        importProperties.put("includeExtensionMetadata", "true");
+        importProperties.put("importer.includeExtensionMetadata", "false");
 
         TeiidDataSourceImpl teiidDS = new TeiidDataSourceImpl(scd.getSyndesisConnectionId(), deploymentName, getTranslatorName(), scf);
         teiidDS.setImportProperties(importProperties);

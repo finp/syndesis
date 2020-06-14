@@ -19,12 +19,13 @@ package io.syndesis.test.itest.amq;
 import javax.jms.ConnectionFactory;
 import java.time.Duration;
 
+import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import com.consol.citrus.dsl.runner.TestRunner;
 import com.consol.citrus.http.server.HttpServer;
+import com.consol.citrus.http.server.HttpServerBuilder;
 import com.consol.citrus.jms.endpoint.JmsEndpoint;
+import com.consol.citrus.jms.endpoint.JmsEndpointBuilder;
 import io.syndesis.test.SyndesisTestEnvironment;
 import io.syndesis.test.container.amq.JBossAMQBrokerContainer;
 import io.syndesis.test.container.integration.SyndesisIntegrationRuntimeContainer;
@@ -40,7 +41,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SocketUtils;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+
+import static com.consol.citrus.actions.ReceiveMessageAction.Builder.receive;
+import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 /**
  * @author Christoph Deppisch
@@ -74,40 +77,40 @@ public class HttpToAMQ_IT extends SyndesisIntegrationTestSupport {
             .customize("$..configuredProperties.baseUrl",
                         String.format("http://%s:%s", GenericContainer.INTERNAL_HOST_HOSTNAME, TODO_SERVER_PORT))
             .build()
-            .withNetwork(amqBrokerContainer.getNetwork())
-            .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(SyndesisTestEnvironment.getContainerStartupTimeout())));
+            .dependsOn(amqBrokerContainer)
+            .withNetwork(amqBrokerContainer.getNetwork());
 
     @Test
     @CitrusTest
-    public void testHttpToAMQ(@CitrusResource TestRunner runner) {
-        runner.http(builder -> builder.server(todoApiServer)
+    public void testHttpToAMQ(@CitrusResource TestCaseRunner runner) {
+        runner.given(http().server(todoApiServer)
                 .receive()
                 .get());
 
-        runner.http(builder -> builder.server(todoApiServer)
+        runner.when(http().server(todoApiServer)
                 .send()
                 .response(HttpStatus.OK)
                 .payload("[{\"id\": \"1\", \"task\":\"Learn to play drums\", \"completed\": 0}," +
                           "{\"id\": \"2\", \"task\":\"Learn to play guitar\", \"completed\": 1}]"));
 
-        runner.receive(builder -> builder.endpoint(todoJms)
+        runner.then(receive().endpoint(todoJms)
                         .payload("[{\"id\": \"1\", \"name\":\"Learn to play drums\", \"done\": 0}," +
                                   "{\"id\": \"2\", \"name\":\"Learn to play guitar\", \"done\": 1}]"));
     }
 
     @Test
     @CitrusTest
-    public void testHttpToAMQEmptyList(@CitrusResource TestRunner runner) {
-        runner.http(builder -> builder.server(todoApiServer)
+    public void testHttpToAMQEmptyList(@CitrusResource TestCaseRunner runner) {
+        runner.given(http().server(todoApiServer)
                 .receive()
                 .get());
 
-        runner.http(builder -> builder.server(todoApiServer)
+        runner.when(http().server(todoApiServer)
                 .send()
                 .response(HttpStatus.OK)
                 .payload("[]"));
 
-        runner.receive(builder -> builder.endpoint(todoJms)
+        runner.then(receive().endpoint(todoJms)
                         .payload("[]"));
     }
 
@@ -122,8 +125,7 @@ public class HttpToAMQ_IT extends SyndesisIntegrationTestSupport {
 
         @Bean
         public JmsEndpoint todoJms() {
-            return CitrusEndpoints.jms()
-                    .asynchronous()
+            return new JmsEndpointBuilder()
                     .connectionFactory(connectionFactory())
                     .destination("todos")
                     .build();
@@ -131,11 +133,10 @@ public class HttpToAMQ_IT extends SyndesisIntegrationTestSupport {
 
         @Bean
         public HttpServer todoApiServer() {
-            return CitrusEndpoints.http()
-                    .server()
+            return new HttpServerBuilder()
                     .port(TODO_SERVER_PORT)
                     .autoStart(true)
-                    .timeout(60000L)
+                    .timeout(Duration.ofSeconds(SyndesisTestEnvironment.getDefaultTimeout()).toMillis())
                     .build();
         }
     }

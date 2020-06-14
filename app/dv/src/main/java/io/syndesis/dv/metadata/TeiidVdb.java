@@ -21,8 +21,6 @@ import io.syndesis.dv.metadata.MetadataInstance.ValidationResult;
 import org.teiid.adminapi.VDBImport;
 import org.teiid.metadata.Schema;
 
-import io.syndesis.dv.KException;
-
 /**
  *
  */
@@ -31,12 +29,12 @@ public interface TeiidVdb {
     /**
      * Extension of a vdb file
      */
-    static final String VDB_EXTENSION = "vdb"; //$NON-NLS-1$
+    String VDB_EXTENSION = "vdb"; //$NON-NLS-1$
 
     /**
      * Extension of a vdb file with dot appended
      */
-    static final String VDB_DOT_EXTENSION = ".vdb"; //$NON-NLS-1$
+    String VDB_DOT_EXTENSION = ".vdb"; //$NON-NLS-1$
 
     /**
      * @return the name
@@ -74,8 +72,6 @@ public interface TeiidVdb {
     List<String> getValidityErrors();
 
     /**
-     * @param key
-     *
      * @return value of property or null
      */
     String getPropertyValue(String key);
@@ -85,14 +81,12 @@ public interface TeiidVdb {
     /**
      * Return the live metadata {@link Schema} instance
      * WARNING: do not modify
-     * @param name
-     * @return
      */
     Schema getSchema(String name);
 
     List<Schema> getLocalSchema();
 
-    ValidationResult validate(String ddl) throws KException;
+    ValidationResult validate(String ddl);
 
     boolean hasValidationError(String schemaName, String objectName,
             String childType);

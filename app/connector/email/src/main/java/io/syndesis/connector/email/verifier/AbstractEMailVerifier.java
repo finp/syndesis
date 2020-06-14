@@ -25,7 +25,7 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.mail.JavaMailSender;
 import org.apache.camel.component.mail.MailConfiguration;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import io.syndesis.connector.email.EMailConstants;
 import io.syndesis.connector.email.EMailUtil;
 import io.syndesis.connector.support.util.ConnectorOptions;
@@ -33,6 +33,7 @@ import io.syndesis.connector.support.util.ConnectorOptions;
 public abstract class AbstractEMailVerifier extends DefaultComponentVerifierExtension implements EMailConstants {
 
     protected static final long DEFAULT_CONNECTION_TIMEOUT = 5000L;
+    public static final String MAIL_PREFIX = "mail.";
 
     public AbstractEMailVerifier(String defaultScheme) {
         super(defaultScheme);
@@ -62,8 +63,8 @@ public abstract class AbstractEMailVerifier extends DefaultComponentVerifierExte
         switch (secureType) {
             case STARTTLS:
                 Properties properties = new Properties();
-                properties.put("mail." + protocol + ".starttls.enable", "true");
-                properties.put("mail." + protocol + ".starttls.required", "true");
+                properties.put(MAIL_PREFIX + protocol + ".starttls.enable", "true");
+                properties.put(MAIL_PREFIX + protocol + ".starttls.required", "true");
                 parameters.put(ADDITIONAL_MAIL_PROPERTIES, properties);
                 break;
             case SSL_TLS:
@@ -82,10 +83,6 @@ public abstract class AbstractEMailVerifier extends DefaultComponentVerifierExte
      * Sets the connection timeout property, eg. mail.imap.connectiontimeout, to 'value' seconds.
      * This is necessary for situations where requests to initiate mail connections have themselves a
      * default timeout, eg. http requests, and therefore this timeout needs to be shortened.
-     *
-     * @param parameters
-     * @param configuration
-     * @param value
      */
     protected void setConnectionTimeoutProperty(Map<String, Object> parameters,
                                                 MailConfiguration configuration, String timeoutValue) {
@@ -94,10 +91,10 @@ public abstract class AbstractEMailVerifier extends DefaultComponentVerifierExte
         Protocol plainProtocol = protocol.toPlainProtocol();
         Protocol secureProtocol = protocol.toSecureProtocol();
 
-        setJavaMailProperty(configuration, "mail." + plainProtocol.id() + ".connectiontimeout", timeoutValue);
-        setJavaMailProperty(configuration, "mail." + plainProtocol.id() + ".timeout", timeoutValue);
-        setJavaMailProperty(configuration, "mail." + secureProtocol.id() + ".connectiontimeout", timeoutValue);
-        setJavaMailProperty(configuration, "mail." + secureProtocol.id() + ".timeout", timeoutValue);
+        setJavaMailProperty(configuration, MAIL_PREFIX + plainProtocol.id() + ".connectiontimeout", timeoutValue);
+        setJavaMailProperty(configuration, MAIL_PREFIX + plainProtocol.id() + ".timeout", timeoutValue);
+        setJavaMailProperty(configuration, MAIL_PREFIX + secureProtocol.id() + ".connectiontimeout", timeoutValue);
+        setJavaMailProperty(configuration, MAIL_PREFIX + secureProtocol.id() + ".timeout", timeoutValue);
     }
 
     protected MailConfiguration createConfiguration(Map<String, Object> parameters) {
@@ -109,7 +106,11 @@ public abstract class AbstractEMailVerifier extends DefaultComponentVerifierExte
         // setProperties will strip parameters key/values so copy the map
         //
         try {
-            return setProperties(new MailConfiguration(), new HashMap<>(parameters));
+            MailConfiguration configuration = setProperties(new MailConfiguration(), new HashMap<>(parameters));
+            Protocol protocol = ConnectorOptions.extractOptionAndMap(parameters,
+                                                                     PROTOCOL, Protocol::getValueOf, null);
+            configuration.configureProtocol(protocol.id());
+            return configuration;
         } catch (Exception e) {
             throw new IllegalArgumentException("Unable to set parameters", e);
         }

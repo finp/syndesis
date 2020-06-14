@@ -48,6 +48,10 @@
         "componentScheme": "bean",
         "standardizedErrors": [
           {
+            "name": "TRANSIENT_DATA_ACCESS_ERROR",
+            "displayName": "TransientDataAccessError"
+          },
+          {
             "name": "SERVER_ERROR",
             "displayName": "ServerError"
           }
@@ -59,6 +63,7 @@
         "connectorCustomizers": [
           "io.syndesis.connector.apiprovider.ApiProviderReturnPathCustomizer"
         ],
+        "exceptionHandler": "io.syndesis.connector.apiprovider.ApiProviderOnExceptionHandler",
         "inputDataShape": {
           "kind": "any"
         },
@@ -108,6 +113,7 @@
                 "order": 3,
                 "componentProperty": false,
                 "deprecated": false,
+                "defaultValue": true,
                 "displayName": "Include error message in the return body",
                 "displayNameCheckBox": "Select return body preference",
                 "javaType": "Boolean",
@@ -120,7 +126,7 @@
                 "order": 4,
                 "componentProperty": false,
                 "deprecated": false,
-                "defaultValue": "{}",
+                "defaultValue": "{\"SERVER_ERROR\":\"500\"}",
                 "description": "The return code to set according to different error situations",
                 "displayName": "Error Response Codes",
                 "javaType": "Map",
@@ -148,7 +154,7 @@
       "type": "MAVEN"
     },
     {
-      "id": "org.apache.camel:camel-servlet-starter:@camel.version@",
+      "id": "org.apache.camel.springboot:camel-servlet-starter:@camel.version@",
       "type": "MAVEN"
     }
   ],

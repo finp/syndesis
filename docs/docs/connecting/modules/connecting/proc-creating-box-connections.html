@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating a Box connection :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-creating-box-connections.html">Creating a Box connection</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-creating-box-connections.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating a Box connection</h1>
+<div class="paragraph">
+<p>In an integration, to download or upload Box files, create a
+Box connection, which you can add
+to an integration. You can add the same connection to any number of
+integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>There is a Box client application that registers your
+{prodname} environment as an application that can
+access Box.</p>
+</li>
+<li>
+<p>You can log in to the Box developer account that created that
+application, or you have the Box client ID and Box client
+secret for that application.</p>
+</li>
+<li>
+<p>You know the user name and password for the Box account that
+you want this connection to use to access Box.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>If you already have the Box client ID and the client secret,
+skip to the next step. Otherwise, to obtain those values, in
+a new browser tab, go to
+<a href="https://app.box.com/developers/console" class="bare">https://app.box.com/developers/console</a>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Sign in to the Box account in which you created the app that
+registers access to Box from your {prodname} environment.</p>
+</li>
+<li>
+<p>On the <strong>My Apps</strong> page, click the {prodname} app to display its settings.</p>
+</li>
+<li>
+<p>On the left, click <strong>Configuration</strong>.</p>
+</li>
+<li>
+<p>In the <strong>OAuth 2.0 Credentials</strong> section, copy the client ID to the clipboard.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In a different browser tab, in {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click <strong>Connections</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong>.</p>
+</li>
+<li>
+<p>Click the Box connector.</p>
+</li>
+<li>
+<p>In the <strong>User name</strong> field, enter the user name for the Box account that
+you want this connection to use to download or upload Box files.</p>
+</li>
+<li>
+<p>In the <strong>User password</strong> field, enter the password for that account.</p>
+</li>
+<li>
+<p>In the <strong>Client ID</strong> field, paste the Box client ID.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Optional. If you need to, go back to the <strong>OAuth 2.0 Credentials</strong> for the Box app, copy
+the client secret to the clipboard and then return to {prodname}.</p>
+</li>
+<li>
+<p>In the <strong>Client secret</strong> field, paste the Box client secret string.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} displays a message that indicates whether
+it can validate this connection. If validation fails, try again and
+be sure to enter the correct values.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Box Sales Account</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Box connection
+that can access content in our company sales Box account.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Box Sales Account</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Example of processing a collection in a flow :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-example-processing-collection.html">Example of processing a collection in a flow</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/ref-example-processing-collection.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Example of processing a collection in a flow</h1>
+<div class="paragraph">
+<p>This simple integration obtains a collection of tasks from the sample
+database provided with {prodname}. The flow splits the
+collection into individual task objects and then filters
+these objects to find the tasks that have been done.
+The flow then aggregates the completed tasks in a
+collection, maps the fields in that collection to fields
+in a spreadsheet, and finishes by adding a list of completed
+tasks to a spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>The procedure below provides instructions for creating
+this simple integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection.</p>
+</li>
+<li>
+<p>In the account that the Google Sheets connection accesses, there is
+a spreadsheet for receiving the database records.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>Add the start connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click <strong>PostgresDB</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Periodic SQL Invocation</strong>.</p>
+</li>
+<li>
+<p>In the <strong>SQL Statement</strong> field, enter <code><strong>select * from todo</strong></code> and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This connection returns a collection of task objects.</p>
+</div>
+</li>
+<li>
+<p>Add the finish connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click your Google Sheets connection.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Append values to a sheet</strong>.</p>
+</li>
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, enter the ID of the spreadsheet
+to add the list of tasks to.</p>
+</li>
+<li>
+<p>In the <strong>Range</strong> field, enter <code><strong>A:B</strong></code> as the target columns that
+you want to append values to. The first column, <strong>A</strong>, is for the task IDs.
+The second column, <strong>B</strong>, is for the task names.</p>
+</li>
+<li>
+<p>Accept the defaults for <strong>Major Dimension</strong> and for <strong>Value Input Option</strong>,
+and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The Google Sheets connection finishes the flow by adding each element
+in a collection to a spreadsheet.</p>
+</div>
+</li>
+<li>
+<p>Add a split step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Split</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>After the flow executes the split step, the result is a
+set of individual task objects. {prodname} executes the subsequent
+steps in the flow once for each individual task object.</p>
+</div>
+</li>
+<li>
+<p>Add a filter step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the split step, click
+the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Basic Filter</strong> and configure the filter as follows:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Click in the first field and select <code><strong>completed</strong></code>, which is the name of the
+field that contains the data that you want to evaluate.</p>
+</li>
+<li>
+<p>In the second field, select <strong>equals</strong> as the condition that
+the <strong>completed</strong> field value must satisfy.</p>
+</li>
+<li>
+<p>In the third field, specify <code><strong>1</strong></code> as the value that must be in
+the <strong>completed</strong> field. <code>1</code> indicates that the task has been completed.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>During execution, the flow executes the filter step once for each task
+object. The result is a set of individual, completed task objects.</p>
+</div>
+</li>
+<li>
+<p>Add an aggregate step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the filter step, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Aggregate</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now the result set contains one collection, which contains an
+element for each completed task.</p>
+</div>
+</li>
+<li>
+<p>Add a data mapper step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the aggregate step, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> and map the following fields from the SQL
+result source collection to the Google Sheets target collection:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>id</strong> to <strong>A</strong></p>
+</li>
+<li>
+<p><strong>task</strong> to <strong>B</strong></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Publish</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>When the integration is running, it obtains tasks from the sample database
+every minute and then adds the completed tasks to the first sheet in the spreadsheet.
+The integration maps the task ID to the first column, <strong>A</strong>, and it maps the task name
+to the second column, <strong>B</strong>.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

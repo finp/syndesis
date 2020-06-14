@@ -3,6 +3,7 @@ import {
   ImportSources,
   ImportSourcesStatus,
   QueryResults,
+  RoleInfo,
   TeiidStatus,
   ViewDefinition,
   ViewSourceInfo,
@@ -16,6 +17,13 @@ export interface IDvNameValidationResult {
   nameExists: boolean;
   hasError: boolean;
   message?: string;
+}
+
+export interface ISaveViewDefinitionResult {
+  versionConflict: boolean;
+  hasError: boolean;
+  message?: string;
+  viewDefinition?: ViewDefinition;
 }
 
 export const useVirtualizationHelpers = () => {
@@ -68,6 +76,28 @@ export const useVirtualizationHelpers = () => {
       headers: {},
       method: 'PUT',
       url: `${apiContext.dvApiUri}virtualizations/${virtName}`,
+    });
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    return Promise.resolve();
+  };
+
+  /**
+   * Updates virtualization roles.
+   * @param virtName the name of the virtualization
+   * @param roleInfo the role info for the virtualization
+   */
+  const updateVirtualizationRoles = async (
+    virtName: string,
+    roleInfo: RoleInfo
+  ): Promise<void> => {
+    const response = await callFetch({
+      body: roleInfo,
+      headers: {},
+      method: 'PUT',
+      url: `${apiContext.dvApiUri}virtualizations/${virtName}/roles`,
     });
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -235,6 +265,30 @@ export const useVirtualizationHelpers = () => {
     }
 
     return (await response.json()) as QueryResults;
+  };
+
+  /**
+   * Refresh the schema for the specified source.  This triggers the backend to start the refresh.
+   * @param connectionName the name of the connection to refresh
+   * @throws an `Error` if there was a problem with the refresh submittal
+   */
+  const refreshConnectionSchema = async (
+    connectionName: string,
+  ): Promise<void> => {
+    const response = await callFetch({
+      headers: {},
+      method: 'POST',
+      url: `${
+        apiContext.dvApiUri
+      }metadata/refreshSchema/${connectionName}`,
+    });
+    
+    if (!response.ok) {
+      const result = await response.json();
+      throw new Error(result.message);
+    }
+
+    return Promise.resolve();
   };
 
   /**
@@ -517,17 +571,29 @@ export const useVirtualizationHelpers = () => {
    */
   const saveViewDefinition = async (
     viewDefinition: ViewDefinition
-  ): Promise<ViewDefinition> => {
+  ): Promise<ISaveViewDefinitionResult> => {
     const response = await callFetch({
       body: viewDefinition,
       headers: {},
       method: 'PUT',
       url: `${apiContext.dvApiUri}editors`,
     });
+
+    // Response problem - determine if version conflict
     if (!response.ok) {
-      throw new Error(response.statusText);
+      return {
+        hasError: true,
+        message: response.statusText,
+        versionConflict: response.status === 409,
+      };
+    } else {
+      const viewDefn = (await response.json()) as ViewDefinition;
+      return {
+        hasError: false,
+        versionConflict: false,
+        viewDefinition: viewDefn,
+      }
     }
-    return (await response.json()) as ViewDefinition;
   };
 
   /**
@@ -535,13 +601,13 @@ export const useVirtualizationHelpers = () => {
    * @param virtualalization the virtualization
    */
   const getSourceInfoForView = async (
-    virtualization: Virtualization
+    virtualizationName: string
   ): Promise<ViewSourceInfo> => {
     const response = await callFetch({
       headers: {},
       method: 'GET',
       url: `${apiContext.dvApiUri}metadata/runtimeMetadata/${
-        virtualization.name
+        virtualizationName
       }`,
     });
     if (!response.ok) {
@@ -562,11 +628,13 @@ export const useVirtualizationHelpers = () => {
     importVirtualization,
     publishVirtualization,
     queryVirtualization,
+    refreshConnectionSchema,
     revertVirtualization,
     saveViewDefinition,
     startVirtualization,
     unpublishVirtualization,
     updateVirtualizationDescription,
+    updateVirtualizationRoles,
     validateViewName,
     validateVirtualizationName,
   };

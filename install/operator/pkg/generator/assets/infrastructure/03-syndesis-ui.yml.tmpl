@@ -101,7 +101,7 @@
         from:
           kind: ImageStreamTag
           name: 'syndesis-ui:latest'
-          namespace: '{{.ImageStreamNamespace}}'
+          namespace: '{{.OpenShiftProject}}'
       type: ImageChange
 
 - apiVersion: image.openshift.io/v1
@@ -135,8 +135,7 @@
       {
         "apiBase": "https://{{.Syndesis.RouteHostname}}",
         "apiEndpoint": "/api/v1",
-        "title": "Syndesis",
-        "consoleUrl": "{{.OpenShiftConsoleUrl}}",
+        "consoleUrl": "{{.OpenShiftConsoleURL}}",
         "project": "{{.OpenShiftProject}}",
         "datamapper": {
           "baseMappingServiceUrl": "https://{{.Syndesis.RouteHostname}}/api/v1/atlas/",

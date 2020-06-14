@@ -16,17 +16,19 @@
 
 package io.syndesis.server.api.generator.openapi.v3;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.syndesis.server.api.generator.openapi.OpenApiModelInfo;
 import io.syndesis.server.api.generator.openapi.OpenApiSchemaValidator;
+
+import com.github.fge.jsonschema.main.JsonSchema;
 
 /**
  * @author Christoph Deppisch
  */
 public class Oas30SchemaValidator implements OpenApiSchemaValidator {
 
+    private static final JsonSchema OPENAPI_3_0_SCHEMA = OpenApiSchemaValidator.loadSchema("schema/openapi-3.0-schema.json", "https://spec.openapis.org/oas/3.0/schema/2019-04-02");
+
     @Override
-    public void validateJSonSchema(JsonNode specRoot, OpenApiModelInfo.Builder modelBuilder) {
-        //TODO: add logic for OpenAPI 3.x
+    public JsonSchema getSchema() {
+        return OPENAPI_3_0_SCHEMA;
     }
 }

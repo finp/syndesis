@@ -31,6 +31,7 @@ import io.syndesis.dv.openshift.BuildStatus;
  */
 @JsonSerialize(as = RestDataVirtualization.class)
 @JsonInclude(Include.NON_NULL)
+@SuppressWarnings("PMD.TooManyFields")
 public final class RestDataVirtualization {
 
     private String id;
@@ -43,8 +44,13 @@ public final class RestDataVirtualization {
     private boolean empty = true;
     private List<String> usedBy;
     private Long publishedRevision;
+    private Long deployedRevision;
     private boolean modified;
     private long editionCount;
+    private String publishedMessage;
+    private String deployedMessage;
+    private String deployedState;
+    private boolean secured;
 
     /**
      * Constructor for use when deserializing
@@ -58,7 +64,7 @@ public final class RestDataVirtualization {
      * @param dataService the dataService
      * @throws KException if error occurs
      */
-    public RestDataVirtualization(DataVirtualization dataService) throws KException {
+    public RestDataVirtualization(DataVirtualization dataService) {
         setName(dataService.getName());
 
         setId(dataService.getId());
@@ -184,7 +190,6 @@ public final class RestDataVirtualization {
 
     /**
      * If there is nothing defined in this data virtualization
-     * @return
      */
     public boolean isEmpty() {
         return empty;
@@ -220,5 +225,45 @@ public final class RestDataVirtualization {
 
     public void setEditionCount(long editionCount) {
         this.editionCount = editionCount;
+    }
+
+    public void setDeployedRevision(Long version) {
+        this.deployedRevision = version;
+    }
+
+    public Long getDeployedRevision() {
+        return deployedRevision;
+    }
+
+    public String getPublishedMessage() {
+        return publishedMessage;
+    }
+
+    public void setPublishedMessage(String statusMessage) {
+        this.publishedMessage = statusMessage;
+    }
+
+    public String getDeployedState() {
+        return deployedState;
+    }
+
+    public void setDeployedState(String status) {
+        this.deployedState = status;
+    }
+
+    public String getDeployedMessage() {
+        return deployedMessage;
+    }
+
+    public void setDeployedMessage(String statusMessage) {
+        this.deployedMessage = statusMessage;
+    }
+
+    public boolean isSecured() {
+        return secured;
+    }
+
+    public void setSecured(boolean secured) {
+        this.secured = secured;
     }
 }

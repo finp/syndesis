@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>About creating a connection from a custom connector :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-about-creating-connections-from-custom-connectors.html">About creating a connection from a custom connector</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/con-about-creating-connections-from-custom-connectors.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">About creating a connection from a custom connector</h1>
+<div class="paragraph">
+<p>After you upload an extension that defines a custom connector, the
+custom connector is available for use. You use custom connectors
+to create connections
+in the same way that you use {prodname}-provided connectors to
+create connections.</p>
+</div>
+<div class="paragraph">
+<p>A custom connector might be for an application that uses the OAuth
+protocol. Before you create a connection from this kind of connector, you must
+register your {prodname} environment for access to the application
+that the connector is for. You do this in the interface for the application
+that the connector is for. The details for how to register your
+{prodname} environment vary for each application.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose the custom connector is
+for creating connections to Yammer. You would need to register your
+{prodname} environment by creating a new application within Yammer.
+Registration provides a
+Yammer client ID for {prodname}
+and a Yammer client secret value for {prodname}.
+A connection from your {prodname} environment to Yammer
+must provide these two values.</p>
+</div>
+<div class="paragraph">
+<p>Note that an application might use different
+names for these values, such as consumer ID or consumer secret.</p>
+</div>
+<div class="paragraph">
+<p>After you register your {prodname} environment, you can create
+a connection to the application. When you configure the connection,
+there should be parameters for entering the client ID and the client
+secret. If these parameters are not available, you need to talk with
+the extension developer and ask for an updated extension that lets
+you specify the client ID and client secret.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

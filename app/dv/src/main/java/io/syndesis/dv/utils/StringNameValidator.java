@@ -52,16 +52,10 @@ public class StringNameValidator {
         this(DEFAULT_MINIMUM_LENGTH, DEFAULT_MAXIMUM_LENGTH);
     }
 
-    /**
-     * @return
-     */
     public int getMaximumLength() {
         return maximumLength;
     }
 
-    /**
-     * @return
-     */
     public int getMinimumLength() {
         return minimumLength;
     }
@@ -76,14 +70,12 @@ public class StringNameValidator {
         ArgCheck.isNotNull(name);
         final int strLength = name.length();
         if (strLength < getMinimumLength()) {
-            final Object[] params = new Object[] {new Integer(getMinimumLength())};
-            final String msg = Messages.getString(Messages.StringNameValidator.minLengthFailure, params);
-            return msg;
+            final Object[] params = new Integer[]{ getMinimumLength() };
+            return Messages.getString(Messages.StringNameValidator.minLengthFailure, params);
             // check the entity name length against a desired value
         } else if (strLength > getMaximumLength()) {
-            final Object[] params = new Object[] {new Integer(strLength), new Integer(getMaximumLength())};
-            final String msg = Messages.getString(Messages.StringNameValidator.nameLengthLongerThanAllowed, params);
-            return msg;
+            final Object[] params = new Object[] {strLength, getMaximumLength()};
+            return Messages.getString(Messages.StringNameValidator.nameLengthLongerThanAllowed, params);
         }
 
         // Valid, so return no error message
@@ -93,8 +85,7 @@ public class StringNameValidator {
     public String checkValidName( final String name ) {
         // The name may not be null
         if (name == null) {
-            final String msg = Messages.getString(Messages.StringNameValidator.nameNotNull);
-            return msg;
+            return Messages.getString(Messages.StringNameValidator.nameNotNull);
         }
 
         // Check the length of the name ...

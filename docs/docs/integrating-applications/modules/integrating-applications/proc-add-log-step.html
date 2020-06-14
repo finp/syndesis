@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Logging information about integration execution :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-log-step.html">Logging information about integration execution</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-add-log-step.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Logging information about integration execution</h1>
+<div class="paragraph">
+<p>For each execution of an integration,
+for each step in a flow, {prodname} provides the following activity
+information:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The date and time that the step was executed</p>
+</li>
+<li>
+<p>How long it took to execute the step</p>
+</li>
+<li>
+<p>Whether execution was successful</p>
+</li>
+<li>
+<p>The error message if execution was not successful</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To view this information in {prodname}, display the integration&#8217;s summary
+and then click the <strong>Activity</strong> tab.</p>
+</div>
+<div class="paragraph">
+<p>To obtain further details about integration execution, you can
+log information about the messages that an integration processes by
+adding a log step to an integration flow.
+For each message that an integration receives, a log step can provide
+one or more of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The message&#8217;s context, which provides metadata about the message,
+including the message&#8217;s header.</p>
+</li>
+<li>
+<p>The message&#8217;s body, which provides the content of the message.</p>
+</li>
+<li>
+<p>Text that you specify either explicitly or through evaluation of an
+<a href="http://camel.apache.org/simple.html">Apache Camel Simple language</a> expression.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The Log connection that was available in previous releases is no longer
+available to be added to integrations. Add a log step instead of a log
+connection.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the plus sign where you want to add a log step.
+Skip this step if {prodname} is prompting you to choose a finish connection.</p>
+</li>
+<li>
+<p>Click <strong>Log</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Configure Log Step</strong> page, select the content that you want
+to log. If you select <strong>Custom Text</strong>, then in the text input field,
+enter one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The text that you want to log</p>
+</li>
+<li>
+<p>A Camel Simple language expression</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you enter an expression, {prodname} resolves the
+expression and logs the resulting text.</p>
+</div>
+</li>
+<li>
+<p>When log step configuration is complete, click <strong>Next</strong> to add the step
+to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>When the flow is complete, publish the integration to start seeing output
+from the new log step.</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resources</div>
+<p>After a flow that has a log step has been executed, output from
+the log step appears in the integration&#8217;s <strong>Activity</strong> tab. See
+<a href="{LinkSyndesisIntegrationGuide}#viewing-integration-activity-information_monitor">Viewing integration activity information</a>.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

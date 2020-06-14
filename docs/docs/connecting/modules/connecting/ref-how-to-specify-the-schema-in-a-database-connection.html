@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>How to specify the schema in a database connection :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-how-to-specify-the-schema-in-a-database-connection.html">How to specify the schema in a database connection</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/ref-how-to-specify-the-schema-in-a-database-connection.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">How to specify the schema in a database connection</h1>
+<div class="paragraph">
+<p>In {prodname}, when you create a database connection, the user interface
+prompts you to specify the database’s schema. How you specify the
+schema varies for each database. The table below shows what each database
+requires.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Database</th>
+<th class="tableblock halign-left valign-top">Example connection configuration</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Derby</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:derby:memory:testdb;create=true</code><br>
+<strong>Username</strong>: <code>sa</code><br>
+<strong>Password</strong>: any value<br>
+<strong>Schema</strong>: <code>sample</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For testing purposes only. The default username is <code>sa</code> and the password can
+be anything but you must enter a value.
+In this example configuration, the connection uses the <code>sample</code> schema, which is like
+a namespace. For example, you can reference the <code>mytable</code> table with <code>sample.mytable</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MS SQLServer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:sqlserver://localhost:1433/sampledb</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>: <code>sampledb</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Upload the driver by using the
+<a href="{LinkSyndesisIntegrationGuide}#creating-jdbc-driver-library-extensions_extensions">extension mechanism</a>.
+Then create a connection. Connection verification fails if you have
+not already uploaded the driver. You must specify the same schema at the end of
+the connection URL and in the <strong>Schema</strong> field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MySQL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>sql-connector.url=jdbc:mysql://mysql-host:3307/test?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MySQL does not support schemas. When you create a connection to
+a MySQL database,  leave the <strong>Schema</strong> field blank. MySQL expects all
+configuration in the connection (JDBC) URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Oracle DB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:oracle:thin:@10.192.212.255:1521:xe</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use the {prodname}
+<a href="{LinkSyndesisIntegrationGuide}#creating-jdbc-driver-library-extensions_extensions">extension mechanism</a>.
+to upload an Oracle database driver.
+Then create the connection. Connection verification fails if the driver has
+not been uploaded.<br>
+The schema is the database name. You must have permission to access this
+database instance, which is referred to as a schema in Oracle terminology.
+Leave the <strong>Schema</strong> field blank. In the <strong>Connection</strong> field,
+you must reference the Oracle system identifier (SID) of this database
+instance (<code>xe</code> in this example).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PostgreSQL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:postgresql://syndesis-db:5432/sampledb</code><br>
+<strong>Username</strong>: <code>kurt</code><br>
+<strong>Password</strong>: <code>mypw</code><br>
+<strong>Schema</strong>: <code>sampledb</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">You must specify the database in the connection (JDBC) URL. T
+If you want to use a schema you must specify it in the <strong>Schema</strong> field.
+A query can refer to a table in the form
+<em>database.schema.table</em>. When a reference specifies only
+a table name, the connection first searches the schema that you specify
+when you configure the connection. If the table is not found,
+then the connection searches public resources for the specified table.
+For more details, see
+<a href="https://www.postgresql.org/docs/9.1/ddl-schemas.html">PostgreSQL schema documentation</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Teiid</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Connection URL</strong> (JDBC URL): <code>jdbc:teiid:&lt;vdb-name&gt;@mm://localhost:31000</code><br>
+<strong>Username</strong>: any value<br>
+<strong>Password</strong>: any value<br>
+<strong>Schema</strong>:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The virtual database must have already been created, for example by using
+the
+<a href="{LinkIntegrationData}#creating-vdbs">Data Virtualization</a>
+feature. In the connection URL, replace <code>&lt;vdb-name&gt;</code>
+with the name of the virtual database. No security has been implemented yet
+for connections to Teiid.
+Specify any value in the <strong>Username</strong> and <strong>Password</strong> fields. Leave the <strong>Schema</strong> field blank.
+The driver is already available in {prodname}.</p></td>
+</tr>
+</tbody>
+</table>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

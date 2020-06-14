@@ -37,7 +37,6 @@ import io.syndesis.server.dao.manager.EncryptionComponent;
 import io.syndesis.server.endpoint.v1.dto.Meta;
 import io.syndesis.server.endpoint.v1.dto.MetaData;
 import io.syndesis.server.verifier.MetadataConfigurationProperties;
-import org.json.JSONException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -120,8 +119,8 @@ public class ConnectionActionHandlerTest {
 
         handler = new ConnectionActionHandler(connection, new MetadataConfigurationProperties(), new EncryptionComponent(null)) {
             @Override
-            protected HystrixExecutable<DynamicActionMetadata> createMetadataCommand(final ConnectorAction action,
-                final Map<String, String> parameters) {
+            protected HystrixExecutable<DynamicActionMetadata> createMetadataCommandAction(final ConnectorAction action,
+                                                                                           final Map<String, String> parameters) {
                 metadataCommandParameters = parameters;
                 return metadataCommand;
             }
@@ -158,7 +157,7 @@ public class ConnectionActionHandlerTest {
     }
 
     @Test
-    public void shouldElicitActionPropertySuggestions() throws JSONException {
+    public void shouldElicitActionPropertySuggestions() {
         final DynamicActionMetadata suggestions = new DynamicActionMetadata.Builder()
             .putProperty("sObjectName",
                 Collections.singletonList(DynamicActionMetadata.ActionPropertySuggestion.Builder.of("Contact", "Contact")))

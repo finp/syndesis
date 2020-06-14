@@ -33,11 +33,6 @@
 
   <properties>
     <image.build.directory>${project.basedir}/target/image</image.build.directory>
-    <!--
-      Should the ZIP file containing the settings.xml, dependencies and
-      licenses be attached and deployed in install/deploy phase
-    -->
-    <deploy.repository>false</deploy.repository>
   </properties>
 
   <dependencies>
@@ -303,6 +298,18 @@
                 merged = new DefaultSettingsReader().read(new FileInputStream(new File(project.properties.get("image.build.directory"), "settings.xml")), null);
                 // merge the settings.xml with the settings provided at runtime
                 SettingsUtils.merge(merged, settings, "user-level");
+                // if the settings.xml used by the Maven running the build contains mirror configuration make sure that it's not used for the `local-repository`
+                // which contains the cached artefacts built by this build and so unavailable through any mirror
+                mirrors = merged.getMirrors();
+                if (mirrors != null) {
+                  for (int i = 0; i &lt; mirrors.size(); i++) {
+                    mirror = mirrors.get(i);
+                    mirrorOf = mirror.getMirrorOf();
+                    if (mirrorOf != null &amp;&amp; mirrorOf.contains("*") &amp;&amp; !mirrorOf.contains("!local-repository")) {
+                      mirror.setMirrorOf(mirrorOf + ",!local-repository");
+                    }
+                  }
+                }
                 // write merged settings as settings_merged.xml
                 new DefaultSettingsWriter().write(new File(project.getBuild().getDirectory(), "settings_merged.xml"), null, merged);
               </source>
@@ -440,27 +447,19 @@
       </plugin>
 
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <artifactId>maven-deploy-plugin</artifactId>
         <executions>
           <execution>
-            <!--
-              Generate a ZIP file containing the repository
-              settings.xml and license files
-            -->
-            <id>create-repository-zip</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <attach>${deploy.repository}</attach>
-              <descriptors>
-                <descriptor>src/main/assembly/repository.xml</descriptor>
-              </descriptors>
-            </configuration>
+            <id>basepom.default</id>
+            <phase />
+          </execution>
+          <execution>
+            <id>default-deploy</id>
+            <phase />
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
 
@@ -510,6 +509,54 @@
         </plugins>
       </build>
 
+    </profile>
+
+    <profile>
+      <id>deploy-archives</id>
+      <activation>
+        <property>
+          <name>deploy.archives</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <!--
+                  Generate a ZIP file containing the repository
+                  settings.xml and license files
+                -->
+                <id>create-repository-zip</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/repository.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>basepom.default</id>
+                <phase>deploy</phase>
+              </execution>
+              <execution>
+                <id>default-deploy</id>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 

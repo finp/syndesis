@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import io.syndesis.common.model.Dependency;
-import io.syndesis.common.model.Dependency.Type;
 import io.syndesis.common.model.WithDependencies;
 import io.syndesis.common.model.connection.Connection;
 import io.syndesis.common.model.connection.ConnectionBase;
@@ -216,7 +215,20 @@ public interface IntegrationResourceManager {
     }
 
     default Collection<Dependency> collectDependencies(Integration integration) {
-        return collectDependencies(integration.getFlows().stream().flatMap(flow -> flow.getSteps().stream()).collect(Collectors.toList()), true);
+        final List<Dependency> dependencies = new ArrayList<>();
+        dependencies.addAll(integration.getDependencies());
+        dependencies.addAll(collectDependencies(integration.getFlows()));
+        return dependencies;
+    }
+
+    default Collection<Dependency> collectDependencies(List<Flow> flows){
+        final List<Dependency> dependencies = new ArrayList<>();
+        for(Flow flow : flows){
+            dependencies.addAll(flow.getDependencies());
+            Collection<Dependency> stepsDependencies = collectDependencies(flow.getSteps(), true);
+            dependencies.addAll(stepsDependencies);
+        }
+        return dependencies;
     }
 
     default Collection<Dependency> collectDependencies(Collection<? extends Step> steps, boolean resolveExtensionTags) {
@@ -250,7 +262,7 @@ public interface IntegrationResourceManager {
                 flatMap(ConnectionBase::getConnector).
                 flatMap(ctr -> Optional.ofNullable(ctr.getIcon())).
                 filter(icon -> icon.startsWith("db:")).
-                ifPresent(icon -> dependencies.add(Dependency.from(Type.ICON, icon)));
+                ifPresent(icon -> dependencies.add(Dependency.from(Dependency.Type.ICON, icon)));
 
             // Connector extension
             Stream.concat(connectorDependencies.stream(), lookedUpConnectorDependencies.stream())

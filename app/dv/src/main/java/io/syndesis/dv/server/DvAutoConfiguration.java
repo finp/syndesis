@@ -19,14 +19,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import javax.transaction.TransactionManager;
 
-import io.syndesis.dv.metadata.MetadataInstance;
-import io.syndesis.dv.metadata.internal.DefaultMetadataInstance;
-import io.syndesis.dv.metadata.internal.TeiidServer;
-import io.syndesis.dv.openshift.EncryptionComponent;
-import io.syndesis.dv.openshift.SyndesisConnectionSynchronizer;
-import io.syndesis.dv.openshift.TeiidOpenShiftClient;
-import io.syndesis.dv.repository.RepositoryManagerImpl;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,13 +36,25 @@ import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import org.teiid.runtime.EmbeddedConfiguration;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import io.syndesis.dv.RepositoryManager;
+import io.syndesis.dv.lsp.websocket.CustomConfigurator;
+import io.syndesis.dv.lsp.websocket.TeiidDdlWebSocketEndpoint;
+import io.syndesis.dv.metadata.MetadataInstance;
+import io.syndesis.dv.metadata.internal.DefaultMetadataInstance;
+import io.syndesis.dv.metadata.internal.TeiidServer;
+import io.syndesis.dv.openshift.EncryptionComponent;
+import io.syndesis.dv.openshift.SyndesisConnectionSynchronizer;
+import io.syndesis.dv.openshift.TeiidOpenShiftClient;
+import io.syndesis.dv.repository.RepositoryManagerImpl;
 
 @Configuration
-@EnableConfigurationProperties({DvConfigurationProperties.class, SpringMavenProperties.class})
-@ComponentScan(basePackageClasses = {RepositoryManagerImpl.class, DefaultMetadataInstance.class, SyndesisConnectionSynchronizer.class})
+@EnableConfigurationProperties({DvConfigurationProperties.class, SpringMavenProperties.class, SSOConfigurationProperties.class})
+@ComponentScan(basePackageClasses = {CustomConfigurator.class, RepositoryManagerImpl.class, DefaultMetadataInstance.class, SyndesisConnectionSynchronizer.class})
 @EnableAsync
 public class DvAutoConfiguration implements ApplicationListener<ContextRefreshedEvent>, AsyncConfigurer {
 
@@ -72,7 +76,7 @@ public class DvAutoConfiguration implements ApplicationListener<ContextRefreshed
     @Autowired
     private MetadataInstance metadataInstance;
 
-    private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+    private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
     @Bean(name = "connectionExecutor")
     public ScheduledThreadPoolExecutor connectionExecutor() {
@@ -86,11 +90,7 @@ public class DvAutoConfiguration implements ApplicationListener<ContextRefreshed
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        try {
-            repositoryManager.findDataVirtualization("x");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        repositoryManager.findDataVirtualization("x");
     }
 
     @Bean
@@ -123,6 +123,7 @@ public class DvAutoConfiguration implements ApplicationListener<ContextRefreshed
     protected WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
             @Override
+            @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE") // false positive
             public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
                 configurer.setTaskExecutor(getAsyncExecutor());
             }
@@ -134,5 +135,17 @@ public class DvAutoConfiguration implements ApplicationListener<ContextRefreshed
         ThreadPoolTaskExecutor tpte = new ThreadPoolTaskExecutor();
         tpte.initialize();
         return tpte;
+    }
+
+    @Bean
+    public CustomConfigurator customSpringConfigurator() {
+        return new CustomConfigurator();
+    }
+
+    @Bean
+    public ServerEndpointExporter endpointExporter() {
+        ServerEndpointExporter endpointExporter = new ServerEndpointExporter();
+        endpointExporter.setAnnotatedEndpointClasses(TeiidDdlWebSocketEndpoint.class);
+        return endpointExporter;
     }
 }

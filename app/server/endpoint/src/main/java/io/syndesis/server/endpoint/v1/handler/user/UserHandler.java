@@ -15,7 +15,7 @@
  */
 package io.syndesis.server.endpoint.v1.handler.user;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.common.model.Kind;
 import io.syndesis.common.model.integration.IntegrationDeployment;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Path("/users")
-@Api(value = "users")
+@Tag(name = "users")
 @Component
 public class UserHandler extends BaseHandler implements Lister<User>, Getter<User> {
 
@@ -93,7 +93,7 @@ public class UserHandler extends BaseHandler implements Lister<User>, Getter<Use
     /**
      * Counts active integrations (in DB) of the owner of the specified integration.
      *
-     * @param deployment The specified IntegrationDeployment.
+     * @param username The specified user
      * @return The number of integrations (excluding the current).
      */
     private int countActiveIntegrations(String username) {

@@ -22,6 +22,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/capabilities"
 	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/configuration"
 
 	"github.com/pkg/errors"
@@ -47,6 +49,9 @@ type Install struct {
 	addons         string
 	customResource string
 	devSupport     bool
+	apiServer      capabilities.ApiServerSpec
+	databaseImage  string
+	templateName   string
 
 	// processing state
 	ejectedResources []unstructured.Unstructured
@@ -110,8 +115,8 @@ func New(parent *internal.Options) *cobra.Command {
 			util.ExitOnError(err)
 		},
 	}
-	forge.PersistentFlags().StringVarP(&configuration.TemplateConfig, "operator-config", "", "/conf/config.yaml", "Path to the operator configuration file.")
 	forge.PersistentFlags().StringVarP(&o.addons, "addons", "", "", "a coma separated list of addons that should be enabled")
+	forge.PersistentFlags().StringVarP(&o.templateName, "template-name", "", "", "the name of the template")
 	cmd.AddCommand(forge)
 
 	cmd.PersistentFlags().StringVarP(&o.eject, "eject", "e", "", "eject configuration that would be applied to the cluster in the specified format instead of installing the configuration. One of: json|yaml")
@@ -119,10 +124,12 @@ func New(parent *internal.Options) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&o.tag, "tag", "", pkg.DefaultOperatorTag, "sets operator tag that gets installed")
 	cmd.PersistentFlags().BoolVarP(&o.wait, "wait", "w", false, "waits for the application to be running")
 	cmd.PersistentFlags().BoolVarP(&o.devSupport, "dev", "", false, "enable development mode by loading images from image stream tags.")
+	cmd.PersistentFlags().StringVarP(&configuration.TemplateConfig, "operator-config", "", "/conf/config.yaml", "Path to the operator configuration file.")
 	cmd.PersistentFlags().AddFlagSet(util.FlagSet)
 	return &cmd
 }
 
+//go:generate go run generator/generator.go
 func (o *Install) before(_ *cobra.Command, args []string) (err error) {
 	switch o.eject {
 	case "":
@@ -140,12 +147,25 @@ func (o *Install) before(_ *cobra.Command, args []string) (err error) {
 		o.ejectedResources = []unstructured.Unstructured{}
 	}
 
+	apiSpec, err := capabilities.ApiCapabilities(o.ClientTools())
+	if err != nil {
+		return err
+	}
+	o.apiServer = *apiSpec
+
 	// The default operator image is not valid /w dev mode since it can't have a repository in the image name.
-	if o.devSupport && o.image == pkg.DefaultOperatorImage {
+	// Not applicable on other platforms so check for Openshift
+	if o.devSupport && o.image == pkg.DefaultOperatorImage && apiSpec.ImageStreams {
 		o.image = "syndesis-operator"
 	}
 
-	return
+	o.databaseImage = defaultDatabaseImage
+	config, err := configuration.GetProperties(o.Context, configuration.TemplateConfig, o.ClientTools(), &v1beta1.Syndesis{})
+	if err == nil {
+		o.databaseImage = config.Syndesis.Components.Database.Image
+	}
+
+	return nil
 }
 
 func (o *Install) after(cmd *cobra.Command, args []string) {
@@ -182,16 +202,18 @@ type RenderScope struct {
 	Image         string
 	Tag           string
 	Namespace     string
+	ApiServer     capabilities.ApiServerSpec
 	DevSupport    bool
 	Role          string
 	Kind          string
 	EnabledAddons []string
+	DatabaseImage string
 }
 
 func (o *Install) install(action string, resources []unstructured.Unstructured) error {
 	updateCounter := 0
 	createCounter := 0
-	client, err := o.GetClient()
+	client, err := o.ClientTools().RuntimeClient()
 	if err != nil {
 		return err
 	}
@@ -206,9 +228,9 @@ func (o *Install) install(action string, resources []unstructured.Unstructured) 
 
 			switch result {
 			case controllerutil.OperationResultUpdated:
-				createCounter += 1
+				updateCounter++
 			case controllerutil.OperationResultCreated:
-				createCounter += 1
+				createCounter++
 			}
 		}
 	}
@@ -239,9 +261,11 @@ func (o *Install) render(fromFile string) ([]unstructured.Unstructured, error) {
 		Image:         o.image,
 		Tag:           o.tag,
 		DevSupport:    o.devSupport,
+		ApiServer:     o.apiServer,
 		Role:          RoleName,
 		Kind:          "Role",
 		EnabledAddons: addons,
+		DatabaseImage: o.databaseImage,
 	})
 	return resources, err
 }

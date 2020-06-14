@@ -36,6 +36,7 @@ export enum VirtualizationActionId {
 }
 
 /**
+ * @property {string} buttonStyle - the i18n confirm button style
  * @property {string} buttonText - the i18n confirm button text
  * @property {ConfirmationIconType} icon - the dialog icon
  * @property {string} message - the i18n dialog message text
@@ -43,6 +44,7 @@ export enum VirtualizationActionId {
  * @property handleAction - callback for executing the action
  */
 interface IPromptActionOptions {
+  buttonStyle: ConfirmationButtonStyle;
   buttonText: string;
   icon: ConfirmationIconType;
   message: string;
@@ -51,10 +53,10 @@ interface IPromptActionOptions {
 }
 
 /**
- * @property {IVirtualizationAction} deleteActionProps - the customization of the delete action or `undefined` if the
+ * @property {any} deleteActionProps - the customization of the delete action or `undefined` if the
  * default action properties are wanted
  * @example { disabled: false }
- * @property {IVirtualizationAction} exportActionProps - the customization of the export action or `undefined` if the
+ * @property {any} exportActionProps - the customization of the export action or `undefined` if the
  * default action properties are wanted
  * @example { as: 'primary', i18nLabel: 'My Export' }
  * @property {VirtualizationActionId[]} includeActions - the IDs of the actions wanted as buttons.
@@ -62,31 +64,31 @@ interface IPromptActionOptions {
  * @property {VirtualizationActionId[]} includeItems - the IDs of the actions wanted as kebab menu items.
  * Leave `undefined` if the default actions are wanted. Set to an empty array if no kebab menu is wanted.
  * @property {H.LocationDescriptorObject} postDeleteHref - the virtualization whose actions are being requested
- * @property {IVirtualizationAction} publishActionProps - the customization of the publish action or `undefined` if the
+ * @property {any} publishActionProps - the customization of the publish action or `undefined` if the
  * default action properties are wanted
- * @property {IVirtualizationAction} revertActionProps - the customization of the revert action or `undefined` if the
+ * @property {any} revertActionProps - the customization of the revert action or `undefined` if the
  * default action properties are wanted
- * @property {IVirtualizationAction} revision - the revision for action or `undefined` if not required.
- * @property {IVirtualizationAction} saveActionProps - the customization of the save action or `undefined` if the
+ * @property {any} revision - the revision for action or `undefined` if not required.
+ * @property {any} saveActionProps - the customization of the save action or `undefined` if the
  * default action properties are wanted
- * @property {IVirtualizationAction} startActionProps - the customization of the start action or `undefined` if the
+ * @property {any} startActionProps - the customization of the start action or `undefined` if the
  * default action properties are wanted
- * @property {IVirtualizationAction} stopActionProps - the customization of the stop action or `undefined` if the
+ * @property {any} stopActionProps - the customization of the stop action or `undefined` if the
  * default action properties are wanted
  * @property {Virtualization} virtualization - the virtualization whose actions are being requested
  */
 export interface IVirtualizationActionContainerProps {
-  deleteActionProps?: IVirtualizationAction;
-  exportActionProps?: IVirtualizationAction;
+  deleteActionProps?: any;
+  exportActionProps?: any;
   includeActions?: VirtualizationActionId[];
   includeItems?: VirtualizationActionId[];
   postDeleteHref?: H.LocationDescriptorObject;
-  publishActionProps?: IVirtualizationAction;
-  revertActionProps?: IVirtualizationAction;
+  publishActionProps?: any;
+  revertActionProps?: any;
   revision?: number;
-  saveActionProps?: IVirtualizationAction;
-  startActionProps?: IVirtualizationAction;
-  stopActionProps?: IVirtualizationAction;
+  saveActionProps?: any;
+  startActionProps?: any;
+  stopActionProps?: any;
   virtualization: Virtualization;
 }
 
@@ -116,7 +118,7 @@ export const VirtualizationActionContainer: React.FunctionComponent<
   /**
    * Hook to handle when confirmation dialog is visible.
    */
-  const [promptActionOptions, setPromptActionOptions] = React.useState();
+  const [promptActionOptions, setPromptActionOptions] = React.useState<IPromptActionOptions>();
 
   /**
    * Hook to indicate when the dialog should be visible.
@@ -182,6 +184,7 @@ export const VirtualizationActionContainer: React.FunctionComponent<
       id: VirtualizationActionId.Delete,
       onClick: async () => {
         setPromptActionOptions({
+          buttonStyle: ConfirmationButtonStyle.DANGER,
           buttonText: t('shared:Delete'),
           handleAction: async () => {
             await deleteVirtualization(props.virtualization.name).catch(
@@ -202,10 +205,10 @@ export const VirtualizationActionContainer: React.FunctionComponent<
               history.push(props.postDeleteHref);
             }
           },
-          icon: ConfirmationIconType.DANGER,
-          message: 'Are you sure you want to delete?',
-          title: 'Confirm Delete?',
-        } as IPromptActionOptions);
+          icon: ConfirmationIconType.WARNING,
+          message: t('deleteVirtualizationModalMessage',{name: props.virtualization.name}),
+          title: t('deleteVirtualizationModalTitle'),
+        });
         setShowDialog(true);
       },
     };
@@ -287,6 +290,7 @@ export const VirtualizationActionContainer: React.FunctionComponent<
       as: 'primary',
       disabled: false,
       i18nLabel: t('shared:Publish'),
+      i18nToolTip: t('publishVirtualizationEnabledTip'),
       id: VirtualizationActionId.Publish,
       onClick: async () => {
         setPublish(true);
@@ -301,6 +305,11 @@ export const VirtualizationActionContainer: React.FunctionComponent<
           const e = new Error();
           e.name = 'NoViews';
           throw e;
+        }else{
+          pushNotification(
+            (t('publishInProgress')),
+            'info'
+          );
         }
 
         publishVirtualization(props.virtualization.name).catch((e: any) => {
@@ -350,6 +359,7 @@ export const VirtualizationActionContainer: React.FunctionComponent<
       id: VirtualizationActionId.Revert,
       onClick: async () => {
         setPromptActionOptions({
+          buttonStyle: ConfirmationButtonStyle.NORMAL,
           buttonText: t('ReplaceDraft'),
           handleAction: async () => {
             const status = await revertVirtualization(
@@ -376,13 +386,13 @@ export const VirtualizationActionContainer: React.FunctionComponent<
               );
             }
           },
-          icon: ConfirmationIconType.DANGER,
+          icon: ConfirmationIconType.WARNING,
           message: t('replaceDraftVirtualizationConfirmMsg', {
             name: props.virtualization.name,
             version: props.revision,
           }),
           title: t('replaceDraftVirtualizationConfirmTitle'),
-        } as IPromptActionOptions);
+        });
         setShowDialog(true);
       },
     };
@@ -420,8 +430,13 @@ export const VirtualizationActionContainer: React.FunctionComponent<
       id: VirtualizationActionId.Start,
       onClick: async () => {
         setPromptActionOptions({
+          buttonStyle: ConfirmationButtonStyle.NORMAL,
           buttonText: t('shared:Start'),
           handleAction: async () => {
+            pushNotification(
+              (t('publishInProgress')),
+              'info'
+            );
             await startVirtualization(
               props.virtualization.name,
               props.revision!
@@ -436,7 +451,7 @@ export const VirtualizationActionContainer: React.FunctionComponent<
               );
             });
           },
-          icon: ConfirmationIconType.DANGER,
+          icon: ConfirmationIconType.NONE,
           message: t('startVirtualizationConfirmMsg', {
             name: props.virtualization.name,
             version: props.revision,
@@ -479,6 +494,10 @@ export const VirtualizationActionContainer: React.FunctionComponent<
       i18nLabel: t('shared:Stop'),
       id: VirtualizationActionId.Stop,
       onClick: async () => {
+        pushNotification(
+          (t('stopInProgress')),
+          'info'
+        );
         unpublishVirtualization(props.virtualization.name).catch((e: any) => {
           if (e.name === 'AlreadyUnpublished') {
             pushNotification(
@@ -549,7 +568,10 @@ export const VirtualizationActionContainer: React.FunctionComponent<
           }
           break;
         case VirtualizationActionId.Publish:
-          if (canPublish(props.virtualization)) {
+          // The publish is included, but may be disabled
+          if (!canPublish(props.virtualization)) {
+            actions.push(createPublishAction({ disabled: true, i18nToolTip: t('data:publishVirtualizationDisabledTip') }));
+          } else {
             actions.push(createPublishAction(props.publishActionProps));
           }
           break;
@@ -584,7 +606,7 @@ export const VirtualizationActionContainer: React.FunctionComponent<
     if (!props.includeItems) {
       // The publish is included, but may be disabled
       if (!canPublish(props.virtualization)) {
-        items.push(createPublishAction({ disabled: true }));
+        items.push(createPublishAction({ disabled: true, i18nToolTip: t('data:publishVirtualizationDisabledTip') }));
       } else {
         items.push(createPublishAction(props.publishActionProps));
       }
@@ -651,7 +673,7 @@ export const VirtualizationActionContainer: React.FunctionComponent<
   };
 
   const handleAction = () => {
-    const action = promptActionOptions.handleAction;
+    const action = promptActionOptions?.handleAction;
     setShowDialog(false);
 
     if (typeof action === 'function') {
@@ -665,10 +687,11 @@ export const VirtualizationActionContainer: React.FunctionComponent<
     <>
       {promptActionOptions && (
         <ConfirmationDialog
-          buttonStyle={ConfirmationButtonStyle.NORMAL}
+          buttonStyle={promptActionOptions.buttonStyle}
           i18nCancelButtonText={t('shared:Cancel')}
           i18nConfirmButtonText={promptActionOptions.buttonText}
-          i18nConfirmationMessage={promptActionOptions.message}
+          i18nConfirmationMessage={promptActionOptions.title}
+          i18nDetailsMessage={promptActionOptions.message}
           i18nTitle={promptActionOptions.title}
           icon={promptActionOptions.icon}
           showDialog={showDialog}

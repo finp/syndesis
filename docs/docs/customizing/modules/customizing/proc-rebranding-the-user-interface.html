@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Rebranding the {prodname} user interface :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-rebranding-the-user-interface.html">Rebranding the {prodname} user interface</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/customizing/proc-rebranding-the-user-interface.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Rebranding the {prodname} user interface</h1>
+<div class="paragraph">
+<p>You can rebrand {prodname} by replacing the {prodname} application name, logo,
+icons, and other user interface details. You do this by mounting customized
+resources as <code>ConfigMap</code> objects in the <code>syndesis-ui</code> deployment file.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>{prodname} is installed and running on OpenShift Container Platform on-site
+in a customer-managed environment.</p>
+</li>
+<li>
+<p>The <code>oc</code> client tool is connected to the OCP cluster in which {prodname}
+is installed.</p>
+</li>
+<li>
+<p>You have permission to install {prodname}.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Obtain the name of the <code>syndesis-ui</code> pod in which {prodname} is
+installed by invoking the following command:</p>
+<div class="listingblock">
+<div class="content">
+<pre>oc get pods</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Fetch customizable logos, icons, fonts, and backgrounds by invoking the
+following command and replacing <em>SYNDESIS_UI_POD_NAME</em> with the actual name
+of the pod that is running <code>syndesis-ui</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>oc rsync SYNDESIS_UI_POD_NAME:/opt/app-root/src/static/media ~/</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This puts user interface resources in the the <code>~/media/</code> folder.</p>
+</div>
+</li>
+<li>
+<p>Edit and save the file that contains the header logo, which is
+<code>`~/media/syndesis_logo_full_darkbkg.9c467d96.svg</code>.</p>
+</li>
+<li>
+<p>Upload the modified file to the cluster by creating a <code>ConfigMap</code> object
+that contains the updated logo file:</p>
+<div class="listingblock">
+<div class="content">
+<pre>cd ~/
+oc create configmap syndesis-ui-custom --from-file=media/syndesis_logo_full_darkbkg.9c467d96.svg</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Modify the <code>syndesis-ui</code> deployment file to mount the <code>syndesis-ui-custom</code>
+<code>ConfigMap</code> object. Do this by invoking <code>oc edit dc/syndesis-ui</code>
+or by using the OpenShift web console, selecting
+<strong>Applications</strong> &gt; <strong>Deployments</strong> &gt; <strong>syndesis-ui</strong> &gt; <strong>Actions</strong> &gt; <strong>Edit YAML</strong>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Under <code>spec.template.containers.volumeMounts</code>, add the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>name: syndesis-ui-custom-volume
+mountPath: /opt/app-root/src/static/media/syndesis_logo_full_darkbkg.9c467d96.svg
+subPath: syndesis_logo_full_darkbkg.9c467d96.svg</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Under <code>spec.template.volumes</code>, add the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>name: syndesis-ui-custom-volume
+configMap: name: syndesis-ui-custom</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Save the <code>syndesis-ui</code> deployment file.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Repeat steps 3 through 5 for each file that is in the <code>`~/media</code> folder
+and that you want to customize.</p>
+</li>
+<li>
+<p>Edit and save the file that contains the application title:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Create a directory in which to update the file:</p>
+<div class="listingblock">
+<div class="content">
+<pre>mkdir ~/syndesis-custom/src</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Fetch the application title file by invoking the following command and
+replacing <em>SYNDESIS_UI_POD_NAME</em> with the actual name of the pod that is
+running <code>syndesis-ui</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>oc rsync SYNDESIS_UI_POD_NAME:/opt/app-root/src/index.html ~/syndesis-custom/src</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Replace the application title. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>sed -i 's/\([title]\).*\([\/title]\)/[title]REPLACE_WITH_NEW_TITLE[\/title]/g' ~/syndesis-custom/src/index.html</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Upload the modified application title file to the cluster by creating a
+<code>ConfigMap</code> object that contains the updated file:</p>
+<div class="listingblock">
+<div class="content">
+<pre>cd ~/syndesis-custom/src
+oc create configmap syndesis-ui-custom --from-file=index.html</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Modify the <code>syndesis-ui</code> deployment by mounting the <code>syndesis-ui-custom</code>
+<code>ConfigMap</code> object:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Under <code>spec.template.containers.volumeMounts</code>, add the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>name: syndesis-ui-custom-volume
+mountPath: /opt/app-root/src/index.html
+subPath: index.html</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Under <code>spec.template.volumes</code>, add the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>name: syndesis-ui-custom-volume
+configMap: name: syndesis-ui-custom</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Save the <code>syndesis-ui</code> deployment file.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>Saving the <code>syndesis-ui</code> deployment file automatically redeploys {prodname}
+with a user interface that reflects your changes. Subsequent re-deployments
+of {prodname} also reflect your changes.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

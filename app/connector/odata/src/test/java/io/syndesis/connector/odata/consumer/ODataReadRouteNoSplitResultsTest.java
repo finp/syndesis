@@ -27,20 +27,21 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+
 import io.syndesis.common.model.connection.ConfigurationProperty;
 import io.syndesis.common.model.connection.Connector;
 import io.syndesis.common.model.integration.Integration;
 import io.syndesis.common.model.integration.Step;
 import io.syndesis.connector.odata.server.ODataTestServer;
 import io.syndesis.connector.support.util.PropertyBuilder;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 @DirtiesContext
 @RunWith(SpringRunner.class)
@@ -194,11 +195,11 @@ public class ODataReadRouteNoSplitResultsTest extends AbstractODataReadRouteTest
         assertEquals(20, json.size());
 
         String expected = testData(REF_SERVER_PEOPLE_DATA_1);
-        JSONAssert.assertEquals(expected, json.get(0), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(0)).isEqualTo(expected);
         expected = testData(REF_SERVER_PEOPLE_DATA_2);
-        JSONAssert.assertEquals(expected, json.get(1), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(1)).isEqualTo(expected);
         expected = testData(REF_SERVER_PEOPLE_DATA_3);
-        JSONAssert.assertEquals(expected, json.get(2), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(2)).isEqualTo(expected);
     }
 
     @Test
@@ -301,11 +302,11 @@ public class ODataReadRouteNoSplitResultsTest extends AbstractODataReadRouteTest
         List<String> json = extractJsonFromExchgMsg(result, 0, List.class);
         assertEquals(3, json.size());
         String expected = testData(TEST_SERVER_DATA_1_WITH_COUNT);
-        JSONAssert.assertEquals(expected, json.get(0), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(0)).isEqualTo(expected);
         expected = testData(TEST_SERVER_DATA_2_WITH_COUNT);
-        JSONAssert.assertEquals(expected, json.get(1), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(1)).isEqualTo(expected);
         expected = testData(TEST_SERVER_DATA_3_WITH_COUNT);
-        JSONAssert.assertEquals(expected, json.get(2), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(2)).isEqualTo(expected);
     }
 
     @Test
@@ -337,8 +338,6 @@ public class ODataReadRouteNoSplitResultsTest extends AbstractODataReadRouteTest
      * Despite split being set to false, the existence of a key predicate
      * forces the split since a predicate demands only 1 result which is
      * pointless putting into an array.
-     *
-     * @throws Exception
      */
     @Test
     public void testODataRouteWithKeyPredicate() throws Exception {
@@ -369,8 +368,6 @@ public class ODataReadRouteNoSplitResultsTest extends AbstractODataReadRouteTest
      * Despite split being set to false, the existence of a key predicate
      * forces the split since a predicate demands only 1 result which is
      * pointless putting into an array.
-     *
-     * @throws Exception
      */
     @Test
     public void testODataRouteWithKeyPredicateWithBrackets() throws Exception {
@@ -421,22 +418,23 @@ public class ODataReadRouteNoSplitResultsTest extends AbstractODataReadRouteTest
 
         Olingo4Endpoint olingo4Endpoint = context.getEndpoint(OLINGO4_READ_FROM_ENDPOINT, Olingo4Endpoint.class);
         assertNotNull(olingo4Endpoint);
-        Map<String, Object> consumerProperties = olingo4Endpoint.getConsumerProperties();
-        assertNotNull(consumerProperties);
-        assertTrue(consumerProperties.size() > 0);
-        assertEquals(delayValue, consumerProperties.get(DELAY));
-        assertEquals(initialDelayValue, consumerProperties.get(INITIAL_DELAY));
+        Map<String, Object> schedulerProperties = olingo4Endpoint.getSchedulerProperties();
+        assertNotNull(schedulerProperties);
+        assertTrue(schedulerProperties.size() > 0);
+        assertEquals(delayValue, schedulerProperties.get(DELAY));
+        assertEquals(initialDelayValue, schedulerProperties.get(INITIAL_DELAY));
     }
 
     @Test
     public void testODataRouteAlreadySeen() throws Exception {
-        String backoffIdleThreshold = "1";
-        String backoffMultiplier = "1";
+        int backoffIdleThreshold = 1;
+        int backoffMultiplier = 1;
+
         Connector odataConnector = createODataConnector(new PropertyBuilder<String>()
                                                             .property(SERVICE_URI, defaultTestServer.servicePlainUri())
                                                             .property(FILTER_ALREADY_SEEN, Boolean.TRUE.toString())
-                                                            .property(BACKOFF_IDLE_THRESHOLD, backoffIdleThreshold)
-                                                            .property(BACKOFF_MULTIPLIER, backoffMultiplier));
+                                                            .property(BACKOFF_IDLE_THRESHOLD, Integer.toString(backoffIdleThreshold))
+                                                            .property(BACKOFF_MULTIPLIER, Integer.toString(backoffMultiplier)));
 
         Step odataStep = createODataStep(odataConnector, defaultTestServer.resourcePath());
         Integration odataIntegration = createIntegration(odataStep, mockStep);
@@ -452,47 +450,43 @@ public class ODataReadRouteNoSplitResultsTest extends AbstractODataReadRouteTest
 
         @SuppressWarnings( "unchecked" )
         List<String> json = extractJsonFromExchgMsg(result, 0, List.class);
+        assertEquals(3, json.size());
 
         String expected;
         expected = testData(TEST_SERVER_DATA_1);
-        JSONAssert.assertEquals(expected, json.get(0), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(0)).isEqualTo(expected);
         expected = testData(TEST_SERVER_DATA_2);
-        JSONAssert.assertEquals(expected, json.get(1), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(1)).isEqualTo(expected);
         expected = testData(TEST_SERVER_DATA_3);
-        JSONAssert.assertEquals(expected, json.get(2), JSONCompareMode.LENIENT);
+        assertThatJson(json.get(2)).isEqualTo(expected);
 
         //
         // Check backup consumer options carried through to olingo4 component
         //
         Olingo4Endpoint olingo4Endpoint = context.getEndpoint(OLINGO4_READ_FROM_ENDPOINT, Olingo4Endpoint.class);
         assertNotNull(olingo4Endpoint);
-        Map<String, Object> consumerProperties = olingo4Endpoint.getConsumerProperties();
-        assertNotNull(consumerProperties);
-        assertTrue(consumerProperties.size() > 0);
-        assertEquals(backoffIdleThreshold, consumerProperties.get(BACKOFF_IDLE_THRESHOLD));
-        assertEquals(backoffMultiplier, consumerProperties.get(BACKOFF_MULTIPLIER));
+        assertEquals(backoffIdleThreshold, olingo4Endpoint.getBackoffIdleThreshold());
+        assertEquals(backoffMultiplier, olingo4Endpoint.getBackoffMultiplier());
     }
 
     /**
      * Despite split being set to false, the existence of a key predicate
      * forces the split since a predicate demands only 1 result which is
      * pointless putting into an array.
-     *
-     * @throws Exception
      */
     @Test
     public void testReferenceODataRouteAlreadySeenWithKeyPredicate() throws Exception {
         String resourcePath = "Airports";
         String keyPredicate = "KSFO";
-        String backoffIdleThreshold = "1";
-        String backoffMultiplier = "1";
+        int backoffIdleThreshold = 1;
+        int backoffMultiplier = 1;
 
         Connector odataConnector = createODataConnector(new PropertyBuilder<String>()
                                                             .property(SERVICE_URI, REF_SERVICE_URI)
                                                             .property(KEY_PREDICATE, keyPredicate)
                                                             .property(FILTER_ALREADY_SEEN, Boolean.TRUE.toString())
-                                                            .property(BACKOFF_IDLE_THRESHOLD, backoffIdleThreshold)
-                                                            .property(BACKOFF_MULTIPLIER, backoffMultiplier));
+                                                            .property(BACKOFF_IDLE_THRESHOLD, Integer.toString(backoffIdleThreshold))
+                                                            .property(BACKOFF_MULTIPLIER, Integer.toString(backoffMultiplier)));
 
         Step odataStep = createODataStep(odataConnector, resourcePath);
         Integration odataIntegration = createIntegration(odataStep, mockStep);
@@ -511,17 +505,14 @@ public class ODataReadRouteNoSplitResultsTest extends AbstractODataReadRouteTest
         String json = extractJsonFromExchgMsg(result, 0, String.class);
         assertNotNull(json);
         String expected = testData(REF_SERVER_AIRPORT_DATA_1);
-        JSONAssert.assertEquals(expected, json, JSONCompareMode.LENIENT);
+        assertThatJson(json).isEqualTo(expected);
 
         //
         // Check backup consumer options carried through to olingo4 component
         //
         Olingo4Endpoint olingo4Endpoint = context.getEndpoint(OLINGO4_READ_FROM_ENDPOINT, Olingo4Endpoint.class);
         assertNotNull(olingo4Endpoint);
-        Map<String, Object> consumerProperties = olingo4Endpoint.getConsumerProperties();
-        assertNotNull(consumerProperties);
-        assertTrue(consumerProperties.size() > 0);
-        assertEquals(backoffIdleThreshold, consumerProperties.get(BACKOFF_IDLE_THRESHOLD));
-        assertEquals(backoffMultiplier, consumerProperties.get(BACKOFF_MULTIPLIER));
+        assertEquals(backoffIdleThreshold, olingo4Endpoint.getBackoffIdleThreshold());
+        assertEquals(backoffMultiplier, olingo4Endpoint.getBackoffMultiplier());
     }
 }

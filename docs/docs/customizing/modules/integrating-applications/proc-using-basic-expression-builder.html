@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Using the basic expression builder to specify conditions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-using-basic-expression-builder.html">Using the basic expression builder to specify conditions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/proc-using-basic-expression-builder.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Using the basic expression builder to specify conditions</h1>
+<div class="paragraph">
+<p>In a flow, add a <strong>Conditional Flows</strong> step when you want to evaluate
+incoming data to determine the integration&#8217;s execution path. The procedure
+described here shows how to use the basic expression builder to
+specify conditions.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a primary flow. If this is a simple integration,
+the start and finish connections have been added.</p>
+</li>
+<li>
+<p>Input to a <strong>Conditional Flows</strong> step
+must be an individual message. In the integration visualization,
+if the previous step&#8217;s <strong>Data Type</strong> shows <strong>(Collection)</strong>, add a <strong>Split</strong> step
+after the previous step and before this <strong>Conditional Flows</strong> step.</p>
+</li>
+<li>
+<p>You are familiar with the fields that will be in the messages that the
+integration passes to the <strong>Conditional Flows</strong> step you are about to add.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the integration visualization, where you want to add a <strong>Conditional Flows</strong> step,
+click <span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Conditional Flows</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Select</strong> in the <strong>Basic expression builder</strong> entry.</p>
+</li>
+<li>
+<p>In the <strong>Configure Conditional Flows</strong> page, define one or more conditions:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click in the initial <strong>When</strong> field.</p>
+</li>
+<li>
+<p>In the list of properties, click the property that contains the
+content that you want the <strong>Conditional Flows</strong> step to evaluate.</p>
+</li>
+<li>
+<p>In the next field, accept <strong>Contains</strong> as the condition for which
+the step evaluates the data or select another condition.
+The condition that you select in this field must evaluate to
+true for the value that you enter in the next field.</p>
+</li>
+<li>
+<p>In the third field, specify the value that the condition tests for.</p>
+</li>
+<li>
+<p>Optional. Click <strong>Add another condition</strong> to specify another condition.</p>
+</li>
+<li>
+<p>Repeat this set of steps for each additional condition that you want to define.</p>
+</li>
+<li>
+<p>Optional. Change the order in which the integration evaluates
+the defined conditions by clicking the up or down arrow to the right of a
+condition.</p>
+</li>
+<li>
+<p>Optional. Click <strong>Execute default flow</strong> if you want there to be a
+default conditional flow.</p>
+<div class="paragraph">
+<p>If you select <strong>Execute default flow</strong>, during execution,
+if none of the conditions that you specified evaluates
+to true, the integration executes the default conditional flow. If you do
+not select <strong>Execute default flow</strong>, during execution, if none of the
+conditions that you specified evaluates to true, the integration continues
+execution with the step that follows this <strong>Conditional Flows</strong> step.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>Optional. Specify the output data type if {prodname} prompts for it.
+All conditional flows that are part of this <strong>Conditional Flows</strong> step
+must have the same output type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the flow visualization. Below the <strong>Conditional Flows</strong> step
+that you are adding, there is an entry for each condition that you specified,
+as well as an entry for an <strong>Otherwise</strong> default flow if you indicated that the
+<strong>Conditional Flows</strong> step has a default flow.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>For each condition, add steps to its associated flow. If there is a default flow,
+add steps to the default flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>For details about the conditions that you can select in the middle field
+for each condition, see
+<a href="https://camel.apache.org/manual/latest/simple-language.html#_operator_support">Camel Simple Language operators</a>.
+Note that the <strong>matches</strong> condition corresponds to the Simple Language
+<strong>regex</strong> operator.</p>
+</li>
+<li>
+<p>If you cannot define the conditions that you need by using the basic expression builder,
+see <a href="{LinkSyndesisIntegrationGuide}#using-advanced-expression-builder_condition">Using the advanced expression builder to specify conditions</a>.</p>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

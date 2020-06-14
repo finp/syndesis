@@ -63,6 +63,9 @@ public class SqlStatementParser {
     public SqlStatementMetaData parseSelectOnly() throws SQLException {
 
         statementInfo.setTablesInSchema(dbHelper.fetchTables(null, schema, null));
+        if (statementInfo.getSqlStatement().endsWith(";")) {
+            throw new SQLException("Your statement is invalid and should not end with a ';'");
+        }
         sqlArray = splitSqlStatement(statementInfo.getSqlStatement());
         for (String word : sqlArray) {
             sqlArrayUpperCase.add(word.toUpperCase(Locale.US));
@@ -223,8 +226,6 @@ public class SqlStatementParser {
      *
      * INSERT INTO table_name
      * VALUES (value1, value2, value3, ...);
-     * @param tableName
-     * @return
      */
     List<SqlParam> findInsertParams(String tableName) {
         boolean isColumnName = false;

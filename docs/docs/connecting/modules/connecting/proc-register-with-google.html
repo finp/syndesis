@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Registering {prodname} as a Google client application :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-register-with-google.html">Registering {prodname} as a Google client application</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-register-with-google.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Registering {prodname} as a Google client application</h1>
+<div class="paragraph">
+<p>In an integration, to be able to connect to Gmail, Google Calendar, or
+Google Sheets,
+you must register your {prodname} environment as a Google client application.
+During registration, you enable Google APIs and create credentials that
+{prodname} uses to access the Google APIs that you have enabled.</p>
+</div>
+<div class="paragraph">
+<p>With registration in place, you can create multiple connections
+to Gmail, Google Calendar, and Google Sheets. You can use each connection
+in multiple integrations.
+While each connection to a Google application can use the
+same Google client ID and Google client secret, which you obtain during registration,
+each connection can access
+a different Google account, which you choose.</p>
+</div>
+<div class="paragraph">
+<p>This procedure instructs you to enable the Gmail API, the Google Calendar API,
+and the Google Sheets API. However, you can enable only the API(s) that you
+need rather than all three APIs. At a later time, if you need to create connections
+to the applications whose APIs you did not enable, you can return here and
+follow the instructions to enable their APIs.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You must create a new Google client application for {prodname}.
+The credentials that Google provides for a new client application contain a
+refresh token that is used for refreshing expired access tokens. This refresh
+token is available only the first time that the {prodname} client application
+uses the credentials. In {prodname}, connections to Gmail, Google Calendar,
+and Google Sheets can all use the same Google client ID and Google client
+secret. If they do, the refresh token is available to all connections
+to Google applications. When you view connection details in the {prodname}
+user interface, do not click the <strong>Validate</strong> button. Validation is a second
+use of the credentials and the refresh token is no longer part of the
+client credentials. You can, however, re-connect to Google applications.</p>
+</div>
+<div class="paragraph">
+<p>In development environments, be careful if you choose to use the Google client ID and Google client
+secret that you are using for some other, non-{prodname}, OAuth client.
+{prodname} requires offline access that is requested on the first OAuth
+exchange. If another OAuth client already entered the OAuth exchange
+and did not request offline access, then {prodname} cannot obtain
+offline access on subsequent OAuth exchanges. If you are unsure
+whether offline access was requested on the first exchange,
+create a new Google client application for {prodname}.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You must be able to sign in to the Google account that you want to
+use to register {prodname} as a Google client application.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left navigation panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL,
+click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your {prodname} environment to the clipboard.
+You will need this URL later in this procedure.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, go to <code><a href="https://console.developers.google.com" class="bare">https://console.developers.google.com</a></code>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Check that you are signed into the Google account that you want to
+use to register {prodname} as a Google client application.
+Or, choose a different Google account and sign in to that account.</p>
+<div class="paragraph">
+<p>The name of the current Google project appears at the top of the Google APIs page.</p>
+</div>
+</li>
+<li>
+<p>To use the current project to grant authorization to {prodname},
+continue to the next step. To grant authorization to {prodname} in another
+Google project, choose or create that project.
+If this Google account does not already
+have a project, you must create one.</p>
+</li>
+<li>
+<p>Enable Google APIs:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>In the upper left corner, click
+<span class="image"><img src="../../../_images/images/connecting/Hamburger.png" alt="Navigation menu icon"></span> and select
+<strong>APIs and Services</strong> &gt; <strong>Library</strong>.</p>
+</li>
+<li>
+<p>If necessary, scroll down to see the <strong>G Suite</strong> row of cards.</p>
+</li>
+<li>
+<p>Click the <strong>Google Calendar API</strong> card, which displays a page that indicates
+that the Google Calendar API is enabled.</p>
+</li>
+<li>
+<p>Scroll down and click the <strong>Gmail API</strong> card, which displays a page that indicates
+that the Gmail API is enabled.</p>
+</li>
+<li>
+<p>In the upper left corner, click
+<span class="image"><img src="../../../_images/images/connecting/Hamburger.png" alt="Navigation menu icon"></span> and select
+<strong>APIs and Services</strong> &gt; <strong>Library</strong>.</p>
+</li>
+<li>
+<p>If necessary, scroll down to see the <strong>G Suite</strong> row of cards.</p>
+</li>
+<li>
+<p>Click the <strong>Google Sheets API</strong> card, which displays a page that indicates
+that the Google Sheets API is enabled.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Give your client application a name:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Click <strong>MANAGE</strong>.</p>
+</li>
+<li>
+<p>In the page that appears, in the left navigation panel, click
+<strong>Credentials</strong> and then on the right, click <strong>Credentials in APIs &amp; Services</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>OAuth consent screen</strong> tab.</p>
+</li>
+<li>
+<p>In the page that appears, in the <strong>Application Name</strong> field, enter a name for the {prodname}
+client application. For example, enter <code><strong>{prodname} client application</strong></code>.</p>
+</li>
+<li>
+<p>Skip the other fields.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Obtain client application credentials as follows:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>To the right of <strong>Create Credentials</strong>, click the down arrow to
+display a menu and select <strong>OAuth client ID</strong>.</p>
+</li>
+<li>
+<p>In the page that appears, select <strong>Web application</strong> to display more content.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter a name for the OAuth client ID for
+your {prodname} environment. This is different from the name that you
+entered for the client application itself. For example, enter
+<code>OAuth client ID for {prodname}</code>.</p>
+</li>
+<li>
+<p>Skip <strong>Authorized JavaScript origins</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Authorized redirect URIs</strong> field, paste the callback URL
+that you copied from your {prodname} environment at the beginning of
+this procedure.</p>
+</li>
+<li>
+<p>Click <strong>Create</strong> to display the client ID and client secret for your
+{prodname} environment.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To the right of the client ID field, click
+<span class="image"><img src="../../../_images/images/connecting/copy_icon.png" alt="the Copy icon"></span> to copy the client ID
+to your clipboard.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to the {prodname} <strong>Settings</strong> page and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Expand the entries for Gmail, Google Calendar, and Google Sheets.</p>
+</li>
+<li>
+<p>In the <strong>Client ID</strong> field for each Google application,
+paste the Google client ID that you just copied.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to the Google developers site and to the right of the
+client secret field, click
+<span class="image"><img src="../../../_images/images/connecting/copy_icon.png" alt="the Copy icon"></span> to copy the client secret to
+your clipboard.</p>
+</li>
+<li>
+<p>Return to the {prodname} <strong>Settings</strong> page and do the following in
+the entry for each Google application:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Client Secret</strong> field, paste the Google client secret that you
+just copied.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>. You should get a <strong>Registration Successful!</strong> notification.</p>
+</li>
+<li>
+<p>Collapse the entry.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>For each Google application API that you enabled, you can create a
+connection to that application.</p>
+</div>
+<div class="paragraph">
+<p>All connections from {prodname} to Google applications use the same Google
+client ID and Google client secret.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The Google client ID and Google client secret contain token refresh
+information to ensure that integrations
+that have connections to Google applications continuously work correctly.
+Consequently, you should <strong>not</strong> obtain new credentials. If you do, then you
+would need to recreate each Google connection, replace the old
+connections with new connections, and re-publish each
+integration that uses a Google connection.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

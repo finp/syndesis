@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Telegram :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-telegram.html">Connecting to Telegram</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-telegram.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Telegram</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a business user, you can create an integration that connects to Telegram. A
+connection to Telegram can do either one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Trigger execution of a simple integration when a Telegram bot that you specify
+receives a message. The integration passes the message to the next
+step in the flow. For example, after a simple integration receives a
+message there might be a filter step that watches
+for keyword instances such as product names. Upon finding messages that
+contain those product names, the integration can notify the appropriate contact
+in a Gmail connection or in a different Telegram connection.</p>
+</li>
+<li>
+<p>Deliver a message to a particular Telegram chat. For example, this
+behavior is useful when an integration downloads a file from an FTP server and
+processes it in some way. You can add a Telegram connection that
+notifies a Telegram chat that the process was successful.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To connect to Telegram in an integration, create a Telegram
+connection and then add the connection to an integration flow.
+Details are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-telegram-connections_connectors">Creating a Telegram connection</a></p>
+</li>
+<li>
+<p><a href="#add-telegram-connection-start_connectors">Adding a Telegram connection to trigger integration execution upon receiving messages</a></p>
+</li>
+<li>
+<p><a href="#add-telegram-connection-middle-finish_connectors">Adding a Telegram connection to send a message to a Telegram chat</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-telegram-connections_connectors"><a class="anchor" href="#creating-telegram-connections_connectors"></a>Creating a Telegram connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, a Telegram connection can receive messages that have been
+sent to a particular chat. A chat bot that you create forwards the messages
+to {prodname}. A Telegram connection can also send messages to chats that
+the connection has access to.
+You can use the same Telegram connection:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In any number of integrations that use the connection to send messages
+to a chat.</p>
+</li>
+<li>
+<p>In addition, you can use it in one integration that uses the connection
+to receive messages from a Telegram chat.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In other words, you cannot use the same Telegram connection in more than one
+integration if you want that connection to receive Telegram chat messages
+in both integrations. This is a Telegram limitation.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>In Telegram, you created a bot for the chat that you want to obtain
+messages from and send messages to. For help with this, see
+<a href="https://core.telegram.org/bots">Bots, an introduction for developers</a>.</p>
+</li>
+<li>
+<p>You obtained a bot authorization token from the Telegram BotFather.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Telegram</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Authorization Token</strong> field, enter the Telegram authorization token
+for the bot that you want to get messages from and send messages to.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Telegram for Product Mentions</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see the updated list of available
+connections, including the connection that you just created.
+If you entered the example name, you would
+see that <strong>Telegram for Product Mentions</strong> appears as a connection that you can
+choose to add to an integration. You can add this connection to
+any number of integrations.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-telegram-connection-start_connectors"><a class="anchor" href="#add-telegram-connection-start_connectors"></a>Adding a Telegram connection to trigger integration execution upon receiving messages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A Telegram connection that starts an integration triggers execution of the
+integration each time that the connection receives a message from a Telegram
+chat bot that you specify.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Telegram connection.</p>
+</li>
+<li>
+<p>You are creating a simple integration and {prodname} is prompting you to
+choose how you want to start the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click the Telegram connection that you want to use to start the integration.</p>
+</li>
+<li>
+<p>Select the <strong>Read Messages</strong> action to receive all messages that are sent
+to the chat bot.</p>
+<div class="paragraph">
+<p>The connection configuration identifies the chat bot that you want to
+receive messages from. No other configuration is required.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-telegram-connection-middle-finish_connectors"><a class="anchor" href="#add-telegram-connection-middle-finish_connectors"></a>Adding a Telegram connection to send a message to a Telegram chat</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can send a message to a Telegram chat in the
+middle of a flow or to finish a simple integration. To do this, add
+a Telegram connection to the middle of a flow or as a simple
+integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Telegram connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Telegram connection that you want to add to the flow.</p>
+</li>
+<li>
+<p>Select the <strong>Send a Text Message</strong> action.</p>
+</li>
+<li>
+<p>In the <strong>Chat Id</strong> field, enter the ID for the Telegram chat that you are sending
+a message to.</p>
+<div class="paragraph">
+<p>If you leave this field blank, and if there is an earlier
+Telegram connection that receives messages, then {prodname} uses the
+chat ID that is in an incoming message.</p>
+</div>
+<div class="paragraph">
+<p>To obtain the ID for a chat:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In Telegram, add a bot to the chat that you want to send a message to.
+The BotFather response includes a bot access token.</p>
+</li>
+<li>
+<p>Copy the access token to the clipboard.</p>
+</li>
+<li>
+<p>In Telegram, send a message directly to that chat.
+Do not use the bot to send the message.</p>
+</li>
+<li>
+<p>Read messages that are sent to that chat by invoking a <code>curl</code> command
+in the following format. Replace <code><em>bot-access-token</em></code> with the access
+token in the clipboard.</p>
+<div class="paragraph">
+<p><code>curl https://api.telegram.org/<em>bot-access-token</em>/getUpdates\?offset\=0</code></p>
+</div>
+<div class="paragraph">
+<p>The response is in JSON format. The JSON <code>chat</code> object contains the chat ID.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

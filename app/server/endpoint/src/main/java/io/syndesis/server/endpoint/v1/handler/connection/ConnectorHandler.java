@@ -15,17 +15,6 @@
  */
 package io.syndesis.server.endpoint.v1.handler.connection;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,17 +22,31 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.syndesis.common.model.Kind;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.action.ConnectorAction;
@@ -51,6 +54,8 @@ import io.syndesis.common.model.api.APISummary;
 import io.syndesis.common.model.connection.ConfigurationProperty;
 import io.syndesis.common.model.connection.Connection;
 import io.syndesis.common.model.connection.Connector;
+import io.syndesis.common.model.connection.DynamicConnectionPropertiesMetadata;
+import io.syndesis.common.model.connection.WithDynamicProperties;
 import io.syndesis.common.model.filter.FilterOptions;
 import io.syndesis.common.model.filter.Op;
 import io.syndesis.common.model.icon.Icon;
@@ -60,28 +65,22 @@ import io.syndesis.server.dao.file.FileDataManager;
 import io.syndesis.server.dao.file.IconDao;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.dao.manager.EncryptionComponent;
+import io.syndesis.server.endpoint.util.PaginationFilter;
 import io.syndesis.server.endpoint.v1.handler.BaseHandler;
 import io.syndesis.server.endpoint.v1.operations.Deleter;
 import io.syndesis.server.endpoint.v1.operations.Getter;
-import io.syndesis.server.endpoint.v1.operations.Lister;
+import io.syndesis.server.endpoint.v1.operations.PaginationOptionsFromQueryParams;
 import io.syndesis.server.endpoint.v1.operations.Updater;
 import io.syndesis.server.endpoint.v1.state.ClientSideState;
+import io.syndesis.server.endpoint.v1.util.PredicateFilter;
 import io.syndesis.server.inspector.Inspectors;
 import io.syndesis.server.verifier.MetadataConfigurationProperties;
 import io.syndesis.server.verifier.Verifier;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 @Path("/connectors")
-@Api(value = "connectors")
+@Tag(name = "connectors")
 @Component
-public class ConnectorHandler extends BaseHandler implements Lister<Connector>, Getter<Connector>, Updater<Connector>, Deleter<Connector> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ConnectorHandler.class);
-    private final ObjectMapper mapper = new ObjectMapper();
+public class ConnectorHandler extends BaseHandler implements Getter<Connector>, Updater<Connector>, Deleter<Connector> {
 
     private final ApplicationContext applicationContext;
     private final IconDao iconDao;
@@ -91,12 +90,20 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
     private final Inspectors inspectors;
     private final ClientSideState state;
     private final Verifier verifier;
-    private final MetadataConfigurationProperties config;
+    private final ConnectorPropertiesHandler connectorPropertiesHandler;
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
+    @Autowired
     public ConnectorHandler(final DataManager dataMgr, final Verifier verifier, final Credentials credentials, final Inspectors inspectors,
                             final ClientSideState state, final EncryptionComponent encryptionComponent, final ApplicationContext applicationContext,
                             final IconDao iconDao, final FileDataManager extensionDataManager, final MetadataConfigurationProperties config) {
+        this(dataMgr, verifier, credentials, inspectors, state, encryptionComponent, applicationContext, iconDao, extensionDataManager, new ConnectorPropertiesHandler(config));
+    }
+
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    ConnectorHandler(final DataManager dataMgr, final Verifier verifier, final Credentials credentials, final Inspectors inspectors,
+                            final ClientSideState state, final EncryptionComponent encryptionComponent, final ApplicationContext applicationContext,
+                            final IconDao iconDao, final FileDataManager extensionDataManager, final ConnectorPropertiesHandler propertiesHandler) {
         super(dataMgr);
         this.verifier = verifier;
         this.credentials = credentials;
@@ -106,7 +113,7 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
         this.applicationContext = applicationContext;
         this.iconDao = iconDao;
         this.extensionDataManager = extensionDataManager;
-        this.config = config;
+        this.connectorPropertiesHandler = propertiesHandler;
     }
 
     @Path("/{id}/credentials")
@@ -133,12 +140,7 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
 
         // Retrieve dynamic properties, if connector is dynamic
         if (connector.getTags().contains("dynamic")) {
-            try {
-                connector = enrichWithDynamicProperties(connector);
-            } catch (IOException e) {
-                LOG.error("Issue while enriching with metadata", e);
-                // We can go ahead, just ignoring the dynamic metadata
-            }
+            connector = enrichConnectorWithDynamicProperties(connector);
         }
 
         final Optional<String> connectorGroupId = connector.getConnectorGroupId();
@@ -146,7 +148,7 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
             return connector;
         }
 
-        final APISummary summary = new APISummary.Builder().createFrom(connector).build();
+        final APISummary summary = APISummary.Builder.createFrom(connector).build();
 
         return connector.builder().actionsSummary(summary.getActionsSummary()).build();
     }
@@ -154,46 +156,47 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
     /**
      * Query metadata to retrieve any dynamic property provided by the connector
      * and merge the result into the {@link Connector} returned value
-     *
-     * @param connector
      * @return an enriched {@link Connector}
      */
-    private Connector enrichWithDynamicProperties(Connector connector) throws IOException {
+    Connector enrichConnectorWithDynamicProperties(Connector connector) {
+        final String connectorId = connector.getId().get();
+        final Map<String, ConfigurationProperty> dynamicProperties = enrichConfigurationPropertiesWithDynamicProperties(
+            connector.getProperties(),
+            connectorPropertiesHandler.dynamicConnectionProperties(connectorId)
+        );
+        if (!dynamicProperties.isEmpty()) {
+            return connector.builder().putAllProperties(dynamicProperties).build();
+        }
+        return connector;
+    }
+
+    private static Map<String, ConfigurationProperty> enrichConfigurationPropertiesWithDynamicProperties(Map<String, ConfigurationProperty> inputProperties,
+                                                                                                         DynamicConnectionPropertiesMetadata dynamicConnectionProperties) {
         Map<String, ConfigurationProperty> dynamicProperties = new HashMap<>();
-        String dynamicPropertiesFromMeta = (String) this.properties(connector.getId().get())
-            .enrichWithDynamicProperties(connector.getId().get(), null)
-            .getEntity();
-        Iterator<Map.Entry<String, JsonNode>> iterator = mapper.readTree(dynamicPropertiesFromMeta).get("properties").fields();
-        while(iterator.hasNext()){
-            Map.Entry<String, JsonNode> next = iterator.next();
-            String propertyName = next.getKey();
-            JsonNode property = next.getValue();
+        for(Map.Entry<String, List<WithDynamicProperties.ActionPropertySuggestion>> entry: dynamicConnectionProperties.properties().entrySet()){
+            String propertyName = entry.getKey();
+            List<WithDynamicProperties.ActionPropertySuggestion> list = entry.getValue();
             List<ConfigurationProperty.PropertyValue> values = new ArrayList<>();
-            if (property.isArray()) {
-                for (final JsonNode value : property) {
-                    ConfigurationProperty.PropertyValue val = new ConfigurationProperty.PropertyValue.Builder()
-                        .label(value.get("displayValue").asText())
-                        .value(value.get("value").asText())
-                        .build();
-                    values.add(val);
-                }
+
+            for (WithDynamicProperties.ActionPropertySuggestion suggestion : list) {
+                ConfigurationProperty.PropertyValue val = ConfigurationProperty.PropertyValue.Builder.from(suggestion);
+                values.add(val);
             }
+
             if (!values.isEmpty()) {
                 ConfigurationProperty configurationProperty = new ConfigurationProperty.Builder()
-                    .createFrom(connector.getProperties().get(propertyName))
+                    .createFrom(inputProperties.get(propertyName))
                     .addEnum(values.toArray(new ConfigurationProperty.PropertyValue[0]))
                     .build();
                 dynamicProperties.put(propertyName, configurationProperty);
             }
         }
-        if (!dynamicProperties.isEmpty()) {
-            return connector.builder().properties(dynamicProperties).build();
-        }
-        return connector;
+
+        return dynamicProperties;
     }
 
-    @Path("/{id}/actions")
-    public ConnectorActionHandler getActions(@PathParam("id") final String connectorId) {
+    @Path("/{connectorId}/actions")
+    public ConnectorActionHandler getActions(@PathParam("connectorId") final String connectorId) {
         return new ConnectorActionHandler(getDataManager(), connectorId);
     }
 
@@ -204,16 +207,16 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
     }
 
     @Path("/{id}/properties")
-    public ConnectorPropertiesHandler properties(@NotNull @PathParam("id") final String connectorId) {
-        return new ConnectorPropertiesHandler(config);
+    public ConnectorPropertiesHandler properties() {
+        return connectorPropertiesHandler;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value = "/{connectorId}/actions/{actionId}/filters/options")
-    public FilterOptions getFilterOptions(@PathParam("connectorId") @ApiParam(required = true) final String connectorId,
-                                          @PathParam("actionId") @ApiParam(required = true) final String actionId) {
-        final FilterOptions.Builder builder = new FilterOptions.Builder().addOps(Op.DEFAULT_OPTS);
+    @Path(value = "/{id}/actions/{actionId}/filters/options")
+    public FilterOptions getFilterOptions(@PathParam("id") @Parameter(required = true) final String connectorId,
+                                          @PathParam("actionId") @Parameter(required = true) final String actionId) {
+        final FilterOptions.Builder builder = new FilterOptions.Builder().addAllOps(Op.DEFAULT_OPTS);
         final Connector connector = getDataManager().fetch(Connector.class, connectorId);
 
         if (connector == null) {
@@ -230,11 +233,64 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
         return builder.build();
     }
 
-    @Override
-    public ListResult<Connector> list(final UriInfo uriInfo) {
-        final List<Connector> connectors = Lister.super.list(uriInfo).getItems().stream()
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public ListResult<Connector> list(
+        @Parameter(required = false, description = "Filter by connector's name")
+        @QueryParam("name") String name,
+        @Parameter(required = false, description = "Filter by connector's group id")
+        @QueryParam("connectorGroupId") String connectorGroupId,
+        @Parameter(required = false, description = "Page number to return")
+        @QueryParam("page") @DefaultValue("1") int page,
+        @Parameter(required = false, description = "Number of records per page")
+        @QueryParam("per_page") @DefaultValue("20") int perPage
+    ) {
+
+        ListResult<Connector> listResult = getDataManager().fetchAll(
+            Connector.class,
+            new PredicateFilter<>(connector -> name == null || connector.getName().equalsIgnoreCase(name)),
+            new PredicateFilter<>(connector ->
+                connectorGroupId == null || (connector.getConnectorGroupId().isPresent()
+                    && connector.getConnectorGroupId().get().equals(connectorGroupId))
+            ),
+            new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage))
+        );
+
+        return augmentedList(listResult);
+    }
+
+    private ListResult<Connector> augmentedList(ListResult<Connector> list) {
+        final List<Connector> connectors = list.getItems().stream()
             .map(c -> {
-                final APISummary summary = new APISummary.Builder().createFrom(c).build();
+                final APISummary summary = APISummary.Builder.createFrom(c).build();
+                return c.builder().actionsSummary(summary.getActionsSummary()).build();
+            })
+            .collect(Collectors.toList());
+
+        return ListResult.of(augmentedWithUsage(connectors));
+    }
+
+    @GET
+    @Path("/apiConnectors")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ListResult<Connector> listApiConnectors(
+        @Parameter(required = true, description = "Filter by matching connector group ids")
+        @QueryParam("connectorGroupIdList") List<String> connectorGroupIdList,
+        @Parameter(required = false, description = "Page number to return")
+        @QueryParam("page") @DefaultValue("1") int page,
+        @Parameter(required = false, description = "Number of records per page")
+        @QueryParam("per_page") @DefaultValue("20") int perPage) {
+
+        List<Connector> connectors = getDataManager().fetchAll(
+                Connector.class,
+                new PredicateFilter<>(connector -> connector.getConnectorGroupId().isPresent()
+                        && connectorGroupIdList.contains(connector.getConnectorGroupId().get())
+                ),
+                new PaginationFilter<>(new PaginationOptionsFromQueryParams(page, perPage)))
+            .getItems().stream()
+            .map(c -> {
+                final APISummary summary = APISummary.Builder.createFrom(c).build();
 
                 return c.builder().actionsSummary(summary.getActionsSummary()).build();
             })
@@ -253,14 +309,18 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{id}/verifier")
     public List<Verifier.Result> verifyConnectionParameters(@NotNull @PathParam("id") final String connectorId, final Map<String, String> props) {
-        return verifier.verify(connectorId, encryptionComponent.decrypt(props));
+        final Connector connector = get(connectorId);
+        Map<String, String> verifierProperties = new HashMap<>();
+        verifierProperties.putAll(connector.getConfiguredProperties());
+        // User properties will override configured properties with same name
+        verifierProperties.putAll(props);
+        return verifier.verify(connectorId, encryptionComponent.decrypt(verifierProperties));
     }
 
     Connector augmentedWithUsage(final Connector connector) {
         if (connector == null) {
             return null;
         }
-
         return augmentedWithUsage(Collections.singletonList(connector)).get(0);
     }
 
@@ -280,7 +340,7 @@ public class ConnectorHandler extends BaseHandler implements Lister<Connector>, 
     @PUT
     @Path(value = "/{id}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public void update(@NotNull @PathParam("id") @ApiParam(required = true) String id, @MultipartForm ConnectorFormData connectorFormData) {
+    public void update(@MultipartForm ConnectorFormData connectorFormData) {
         if (connectorFormData.getConnector() == null) {
             throw new IllegalArgumentException("Missing connector parameter");
         }

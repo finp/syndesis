@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating integrations :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-creating-integrations.html">Creating integrations</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating integrations</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>After some planning and preparation, you are ready to create an
+integration. In the {prodname} web interface, when you
+click <strong>Create Integration</strong>, {prodname} guides you
+through the procedure to create an integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#plan_ready">Considerations for planning your integrations</a></p>
+</li>
+<li>
+<p>According to the kind of integration that you want to create:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>An understanding of the <a href="{LinkSyndesisIntegrationGuide}#workflow-overview_ready">general workflow for creating a simple integration</a></p>
+</li>
+<li>
+<p>An understanding of the <a href="{LinkSyndesisIntegrationGuide}#overview-benefit-api-provider-integrations_api-provider">general workflow for creating an API provider integration</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following topics provide information and instructions for creating
+an integration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#preparing-to-create-an-integration_create">[preparing-to-create-an-integration_create]</a></p>
+</li>
+<li>
+<p><a href="#alternatives-for-triggering-integration-execution_create">[alternatives-for-triggering-integration-execution_create]</a></p>
+</li>
+<li>
+<p><a href="#procedure-for-creating-an-integration_create">[procedure-for-creating-an-integration_create]</a></p>
+</li>
+<li>
+<p><a href="#add-timer-connection_create">[add-timer-connection_create]</a></p>
+</li>
+<li>
+<p><a href="#how-to-process-a-collection-in-a-flow_create">Integration behavior when the data is in a collection</a></p>
+</li>
+<li>
+<p><a href="#about-adding-steps_create">[about-adding-steps_create]</a></p>
+</li>
+<li>
+<p><a href="#evaluating-integration-data-to-determine-execution-flow_create">Evaluating integration data to determine the execution flow</a></p>
+</li>
+<li>
+<p><a href="#add-data-mapping-step_create">[add-data-mapping-step_create]</a></p>
+</li>
+<li>
+<p><a href="#add-basic-filter-step_create">[add-basic-filter-step_create]</a></p>
+</li>
+<li>
+<p><a href="#add-advanced-filter-step_create">[add-advanced-filter-step_create]</a></p>
+</li>
+<li>
+<p><a href="#add-template-step_create">[add-template-step_create]</a></p>
+</li>
+<li>
+<p><a href="#add-custom-step_create">[add-custom-step_create]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/con-preparing-to-create-an-integration.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/ref-alternatives-for-triggering-integration-execution.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/proc-procedure-for-creating-an-integration.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/proc-add-timer-connection.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-process-a-collection-in-a-flow_create"><a class="anchor" href="#how-to-process-a-collection-in-a-flow_create"></a>Integration behavior when the data is in a collection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes, a connection returns a collection, which contains
+multiple values that are all the same type.
+When a connection returns a collection, the flow can
+operate on the collection in a number of ways, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Execute each step once for the collection.</p>
+</li>
+<li>
+<p>Execute each step once for each element in the collection.</p>
+</li>
+<li>
+<p>Execute some steps once for the collection and execute other
+steps once for each element in the collection.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To decide how to operate on a collection in a flow, you need to
+know which applications the flow connects to, whether they can
+handle collections, and what you want the flow to accomplish.
+You can then use the information in the
+following topics to add steps to a flow that processes a collection:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#about-processing-collections_collection">[about-processing-collections_collection]</a></p>
+</li>
+<li>
+<p><a href="#using-data-mapper-to-process-collections_collection">[using-data-mapper-to-process-collections_collection]</a></p>
+</li>
+<li>
+<p><a href="#add-split-step_collection">[add-split-step_collection]</a></p>
+</li>
+<li>
+<p><a href="#add-aggregate-step_collection">[add-aggregate-step_collection]</a></p>
+</li>
+<li>
+<p><a href="#example-processing-collection_collection">[example-processing-collection_collection]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-how-to-process-a-collection-in-a-flow.adoc - include::../../modules/integrating-applications/con-about-processing-collections.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-how-to-process-a-collection-in-a-flow.adoc - include::../../modules/integrating-applications/proc-using-data-mapper-to-process-collections.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-how-to-process-a-collection-in-a-flow.adoc - include::../../modules/integrating-applications/proc-add-split-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-how-to-process-a-collection-in-a-flow.adoc - include::../../modules/integrating-applications/proc-add-aggregate-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-how-to-process-a-collection-in-a-flow.adoc - include::../../modules/integrating-applications/ref-example-processing-collection.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/con-about-adding-steps.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="evaluating-integration-data-to-determine-execution-flow_create"><a class="anchor" href="#evaluating-integration-data-to-determine-execution-flow_create"></a>Evaluating integration data to determine the execution flow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a flow, a <strong>Conditional Flows</strong> step evaluates integration data
+against conditions that you specify. For each specified condition,
+you add connections and other steps to the flow associated with
+that condition. During execution, a <strong>Conditional Flows</strong> step
+evaluates incoming data to determine which flow to execute.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#behavior-of-conditional-flows-step_condition">[behavior-of-conditional-flows-step_condition]</a></p>
+</li>
+<li>
+<p><a href="#example-of-a-conditional-flows-step_condition">[example-of-a-conditional-flows-step_condition]</a></p>
+</li>
+<li>
+<p><a href="#general-procedure-for-configuring-conditional-flows-step_condition">[general-procedure-for-configuring-conditional-flows-step_condition]</a></p>
+</li>
+<li>
+<p><a href="#using-basic-expression-builder_condition">[using-basic-expression-builder_condition]</a></p>
+</li>
+<li>
+<p><a href="#using-advanced-expression-builder_condition">[using-advanced-expression-builder_condition]</a></p>
+</li>
+<li>
+<p><a href="#adding-steps-to-conditional-flows_condition">[adding-steps-to-conditional-flows_condition]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-evaluating-integration-data-to-determine-execution-flow.adoc - include::../../modules/integrating-applications/con-behavior-of-conditional-flows-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-evaluating-integration-data-to-determine-execution-flow.adoc - include::../../modules/integrating-applications/ref-example-of-a-conditional-flows-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-evaluating-integration-data-to-determine-execution-flow.adoc - include::../../modules/integrating-applications/ref-general-procedure-for-configuring-conditional-flows-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-evaluating-integration-data-to-determine-execution-flow.adoc - include::../../modules/integrating-applications/proc-using-basic-expression-builder.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-evaluating-integration-data-to-determine-execution-flow.adoc - include::../../modules/integrating-applications/proc-using-advanced-expression-builder.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-evaluating-integration-data-to-determine-execution-flow.adoc - include::../../modules/integrating-applications/proc-adding-steps-to-conditional-flows.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/proc-add-data-mapping-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/proc-add-basic-filter-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/proc-add-advanced-filter-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/proc-add-template-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-creating-integrations.adoc - include::../../modules/integrating-applications/proc-add-custom-step.adoc[]</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 import { useExtensionHelpers } from '@syndesis/api';
-import { Action } from '@syndesis/models';
+import { Action, Extension } from '@syndesis/models';
 import {
   Breadcrumb,
   ButtonLink,
@@ -15,6 +15,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { UIContext } from '../../../app';
+import { PageTitle } from '../../../shared';
 import resolvers from '../../resolvers';
 import { getExtensionTypeName } from '../utils';
 
@@ -34,7 +35,7 @@ export const ExtensionImportPage: React.FunctionComponent = () => {
     dndUploadSuccessMessage,
     setDndUploadSuccessMessage,
   ] = React.useState();
-  const [extension, setExtension] = React.useState();
+  const [extension, setExtension] = React.useState<Extension>();
   const [i18nAlertMessage, setI18nAlertMessage] = React.useState();
 
   /**
@@ -150,6 +151,7 @@ export const ExtensionImportPage: React.FunctionComponent = () => {
         </Link>
         <span>{t('extension.extensionImportPageTitle')}</span>
       </Breadcrumb>
+      <PageTitle title={t('extension.extensionImportPageTitle')}/>
       <SimplePageHeader
         i18nTitle={t('extension.ImportExtension')}
         i18nDescription={t('extension.importUpdateMessage')}

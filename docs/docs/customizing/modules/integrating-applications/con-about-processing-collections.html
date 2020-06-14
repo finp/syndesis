@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>About processing collections :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-about-processing-collections.html">About processing collections</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/con-about-processing-collections.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">About processing collections</h1>
+<div class="paragraph">
+<p>The easiest way for a flow to process a collection is to
+use the data mapper to map fields that are in a source collection
+to fields that are in a target collection. For many
+flows, this is all that is required. For example, a flow
+might obtain a collection of employee records from a
+database and then insert those records into a spreadsheet.
+Between the database connection and the Google Sheets
+connection, a data mapper step maps the database fields
+to the Google Sheets fields. Since both the
+source and the target are collections, when {prodname}
+executes the flow, it calls the Google Sheets connection once.
+In that call, {prodname} iterates
+through the records and correctly populates the spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>In some flows, you might need to split a collection into
+individual objects. For example, consider a flow that
+connects to a database and obtains
+a collection of employees who will lose allotted time off
+if they do not use it before a certain date.
+The flow then needs to send an email notification to each
+of these employees. In this flow, you would add a split
+step after the database connection. You would then add a
+data mapper step that maps the source fields for an employee
+record to target fields in a Gmail connection that sends a message.
+When {prodname} executes the flow, it executes the data mapper
+step and the Gmail connection once for each employee.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, after you split a collection in a flow, and after
+the flow executes some steps once for each element that was in the collection,
+you want the flow to operate on the collection again. Consider the
+example in the previous paragraph. Suppose that after a Gmail
+connection sends a message to each employee, you want to add
+a list of the employees who were notified to a spreadsheet.
+In this scenario, after the Gmail connection, add an aggregate
+step to create a collection of employee names. Then add a
+data mapper step that maps fields in the source collection
+to fields in the target Google Sheets connection. When
+{prodname} executes the flow, it executes the new data mapper
+step and the Google Sheets connection once for the collection.</p>
+</div>
+<div class="paragraph">
+<p>These are the most common scenarios for processing a collection
+in a flow. However, much more complex processing is also possible.
+For example, when the elements in a collection are themselves collections,
+you can nest split and aggregate steps inside other split and
+aggregate steps.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

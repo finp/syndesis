@@ -34,9 +34,9 @@ func CreateOrUpdate(ctx context.Context, cl client.Client, o runtime.Object, ski
 	updatedYaml := ""
 
 	createdCopy := desired.DeepCopy()
-	modType, err := controllerutil.CreateOrUpdate(ctx, cl, createdCopy, func(o runtime.Object) error {
+	modType, err := controllerutil.CreateOrUpdate(ctx, cl, createdCopy, func() error {
 
-		existing := o.(*unstructured.Unstructured)
+		existing := createdCopy
 		originalYaml = Dump(existing)
 
 		mergePath := desired.GetAPIVersion() + "/" + desired.GetKind()
@@ -166,9 +166,9 @@ func mergeValue(path string, to interface{}, from interface{}, skip map[string]b
 		toI, _ := toQ.AsInt64()
 		if fromI == toI {
 			return to
-		} else {
-			return from
 		}
+
+		return from
 	}
 
 	fromT := reflect.TypeOf(from)
@@ -177,9 +177,9 @@ func mergeValue(path string, to interface{}, from interface{}, skip map[string]b
 		from = reflect.ValueOf(from).Convert(toT).Interface()
 		if from == to {
 			return to
-		} else {
-			return from
 		}
+
+		return from
 	}
 
 	return from

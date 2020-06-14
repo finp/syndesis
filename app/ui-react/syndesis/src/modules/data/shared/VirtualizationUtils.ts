@@ -4,13 +4,15 @@ import {
   SchemaNode,
   SchemaNodeInfo,
   ViewDefinition,
+  ViewDefinitionDescriptor,
   ViewInfo,
   ViewSourceInfo,
   Virtualization,
   VirtualizationPublishingDetails,
   VirtualizationSourceStatus,
 } from '@syndesis/models';
-import { ITableInfo } from '@syndesis/ui';
+import { IActiveFilter, ITableInfo } from '@syndesis/ui';
+import { toDateAndTimeString, toShortDateAndTimeString } from '@syndesis/utils';
 import i18n from '../../../i18n';
 
 interface IColumn {
@@ -18,11 +20,43 @@ interface IColumn {
   label: string;
 }
 
+export interface IPublishStateLabelInfo {
+  message: string;
+  style: 'primary' | 'danger' | 'default';
+  text: string;
+}
+
 export enum DvConnectionStatus {
   ACTIVE = 'ACTIVE',
   FAILED = 'FAILED',
   INACTIVE = 'INACTIVE',
 }
+
+const VIRTUALIZATION_PLACEHOLDER = '$dv';
+
+/**
+ * Get the date and time display
+ * @param numericTimestamp the numeric timestamp
+ * @returns the formatted date as, for example, Jan 1st 23:42:11
+ */
+export function getDateAndTimeDisplay(numericTimestamp: number): string {
+  if(numericTimestamp > 0) {
+    return toDateAndTimeString(numericTimestamp);
+  }
+  return 'Unknown';
+};
+
+/**
+ * Get the short date and time display (without secs)
+ * @param numericTimestamp the numeric timestamp
+ * @returns the formatted date as, for example, Jan 1st 23:42
+ */
+export function getShortDateAndTimeDisplay(numericTimestamp: number): string {
+  if(numericTimestamp > 0) {
+    return toShortDateAndTimeString(numericTimestamp);
+  }
+  return 'Unknown';
+};
 
 /**
  * Recursively flattens the tree structure of SchemaNodes,
@@ -142,6 +176,7 @@ export function generateSchemaNodeInfos(
       // Create SchemaNodeInfo
       const view: SchemaNodeInfo = {
         connectionName: schemaNode.connectionName,
+        isVirtualizationSchema: false,
         name: schemaNode.name,
         nodePath: sourcePath,
         teiidName: schemaNode.teiidName,
@@ -149,7 +184,7 @@ export function generateSchemaNodeInfos(
       schemaNodeInfos.push(view);
     }
     // Update path for next level
-    if (schemaNode.type !== 'root') {
+    if (schemaNode.type !== 'teiidSource') {
       sourcePath.push(schemaNode.name);
     }
     // Process this nodes children
@@ -189,9 +224,10 @@ function loadPaths(schemaNodeInfo: SchemaNodeInfo[]): string[] {
 
   let index = 0;
   schemaNodeInfo.map(
-    item =>
-      (srcPaths[index++] =
-        'schema=' + item.connectionName + '/table=' + item.teiidName)
+    item => {
+      const connName = item.isVirtualizationSchema ? VIRTUALIZATION_PLACEHOLDER : item.connectionName;
+      return srcPaths[index++] = 'schema=' + connName + '/table=' + item.teiidName;
+    }
   );
 
   return srcPaths;
@@ -235,12 +271,12 @@ function getViewDefinition(
  * based on the Virtualization connection status and selection state
  * @param conns the connections
  * @param virtualizationsSourceStatuses the available virtualization sources
- * @param selectedConn name of a selected connection
+ * @param selectedConn name of a selected connection (optional)
  */
 export function generateDvConnections(
   conns: Connection[],
   virtualizationsSourceStatuses: VirtualizationSourceStatus[],
-  selectedConn: string
+  selectedConn?: string
 ): Connection[] {
   const dvConns: Connection[] = [];
   for (const conn of conns) {
@@ -250,6 +286,7 @@ export function generateDvConnections(
     // If defined, a corresponding virtualization source was found
     if (virtSrcStatus) {
       let connStatus = DvConnectionStatus.INACTIVE;
+      let lastSchemaLoad = String(0);
       let schemaLoading = String(false);
       let selectionState = String(false);
       // status (ACTIVE, FAILED, INACTIVE)
@@ -266,21 +303,42 @@ export function generateDvConnections(
         default:
           break;
       }
+      // last schema load
+      lastSchemaLoad = String(virtSrcStatus.lastLoad);
       // loading (true/false)
       schemaLoading = String(virtSrcStatus.loading);
       // selection
-      if (conn.name === selectedConn) {
+      if (selectedConn && conn.name === selectedConn) {
         selectionState = String(true);
       }
       conn.options = {
+        dvLastSchemaLoad: lastSchemaLoad,
         dvLoading: schemaLoading,
         dvSelected: selectionState,
+        dvSourceError: virtSrcStatus.errors[0],
         dvStatus: connStatus,
+        dvVirtualizationSource: virtSrcStatus.isVirtualizationSource ? 'true' : 'false',
       };
       dvConns.push(conn);
     }
   }
   return dvConns;
+}
+
+/**
+ * Get the Connection DV status message (used for tooltip display of error messages).  If options not found or no error message,
+ * the empty string is returned
+ * @param connection the connection
+ */
+export function getDvConnectionStatusMessage(conn: Connection): string {
+  if (conn.options && conn.options.dvStatus === DvConnectionStatus.ACTIVE) {
+    return i18n.t('data:dvConnectionActive');
+  } else if(conn.options && conn.options.dvStatus === DvConnectionStatus.INACTIVE) {
+    return i18n.t('data:dvConnectionInactive');
+  } else if(conn.options && conn.options.dvStatus === DvConnectionStatus.FAILED && conn.options.dvSourceError) {
+    return conn.options.dvSourceError;
+  }
+  return '';
 }
 
 /**
@@ -291,6 +349,16 @@ export function getDvConnectionStatus(conn: Connection): string {
   return conn.options && conn.options.dvStatus
     ? conn.options.dvStatus
     : DvConnectionStatus.INACTIVE;
+}
+
+/**
+ * Get the last schema load timestamp
+ * @param connection the connection
+ */
+export function getDvConnectionLastSchemaLoad(conn: Connection) {
+  return conn.options && conn.options.dvLastSchemaLoad
+    ? Number(conn.options.dvLastSchemaLoad)
+    : 0;
 }
 
 /**
@@ -313,6 +381,18 @@ export function isDvConnectionLoading(conn: Connection) {
   return conn.options &&
     conn.options.dvLoading &&
     conn.options.dvLoading === String(true)
+    ? true
+    : false;
+}
+
+/**
+ * Determine if the Connection is a virtualization source.  DV uses the options on a connection to set virtualization source
+ * @param connection the connection
+ */
+export function isDvConnectionVirtualizationSource(conn: Connection) {
+  return conn.options &&
+    conn.options.dvVirtualizationSource &&
+    conn.options.dvVirtualizationSource === String(true)
     ? true
     : false;
 }
@@ -354,10 +434,13 @@ export function getPublishingDetails(
 ): VirtualizationPublishingDetails {
   // Determine published state
   const publishStepDetails: VirtualizationPublishingDetails = {
+    modified: virtualization.modified,
     state: virtualization.publishedState,
+    stateMessage: virtualization.publishedMessage,
     stepNumber: 0,
     stepText: i18n.t('data:buildStatus.' + virtualization.publishedState),
     stepTotal: 3,
+    version: virtualization.publishedRevision,
   };
   switch (virtualization.publishedState) {
     case 'CONFIGURING':
@@ -383,64 +466,51 @@ export function getPublishingDetails(
 }
 
 /**
- *
  * @param currDetails the current publishing details
- * @returns a suitable `Label` style for the publishing state
+ * @returns info (style/text/message) for label representing the publish state
  */
-export function getStateLabelStyle(
+export function getPublishStateLabelInfo(
   currDetails: VirtualizationPublishingDetails
-): 'primary' | 'danger' | 'default' {
-  let result: 'primary' | 'danger' | 'default';
+): IPublishStateLabelInfo {
+  const info: IPublishStateLabelInfo = {
+    message: '',
+    style: 'default',
+    text: ''
+  };
   switch (currDetails.state) {
     case 'RUNNING':
-      result = 'primary';
+      info.style = 'primary';
+      info.text = i18n.t('data:publishedDataVirtualization');
+      info.message = i18n.t('data:publishedDataVirtualizationMessage');
       break;
     case 'FAILED':
-      result = 'danger';
-      break;
-    default:
-      // in-progress
-      result = 'default';
-      break;
-  }
-  return result;
-}
-
-/**
- * @param currDetails the current publishing details
- * @returns the `Label` text representing the publish state
- */
-export function getStateLabelText(
-  currDetails: VirtualizationPublishingDetails
-): string {
-  let result = '';
-  switch (currDetails.state) {
-    case 'RUNNING':
-      result = i18n.t('data:publishedDataVirtualization');
-      break;
-    case 'FAILED':
-      result = i18n.t('shared:Error');
+      info.style = 'danger';
+      info.text = i18n.t('shared:Error');
+      info.message = currDetails.stateMessage ? currDetails.stateMessage : i18n.t('data:publishErrorMessage');
       break;
     case 'NOTFOUND':
-      result = i18n.t('data:stoppedDataVirtualization');
+      info.text = i18n.t('data:stoppedDataVirtualization');
+      info.message = i18n.t('data:stoppedDataVirtualizationMessage');
       break;
     case 'BUILDING':
     case 'CONFIGURING':
     case 'DEPLOYING':
     case 'SUBMITTED':
-      result = i18n.t('data:publishInProgress');
+      info.text = i18n.t('data:publishInProgress');
+      info.message = i18n.t('data:publishInProgressMessage');
       break;
     case 'CANCELLED':
     case 'DELETE_SUBMITTED':
     case 'DELETE_REQUEUE':
     case 'DELETE_DONE':
-      result = i18n.t('data:stopInProgress');
+      info.text = i18n.t('data:stopInProgress');
+      info.message = i18n.t('data:stopInProgressMessage');
       break;
     default:
       // should not get here as exhausted all cases
       break;
   }
-  return result;
+  return info;
 }
 
 /**
@@ -487,11 +557,11 @@ export function isStateOperationInProgress(
 
 /**
  * Generate preview SQL for the specified view definition
- * @param viewDefinition the ViewDefinition
+ * @param viewDefinitionName the viewDefinitionName
  */
-export function getPreviewSql(viewDefinition: ViewDefinition): string {
+export function getPreviewSql(viewDefinitionName: string): string {
   // replace any double quotes in name with 2 double quotes and wrap in double quotes
-  return 'SELECT * FROM "' + viewDefinition.name.replace(/"/g, '""') + '"';
+  return 'SELECT * FROM "' + viewDefinitionName.replace(/"/g, '""') + '"';
 }
 
 /**
@@ -500,9 +570,8 @@ export function getPreviewSql(viewDefinition: ViewDefinition): string {
  */
 export function getQueryRows(qResults: QueryResults): string[][] {
   const allRows = qResults.rows ? qResults.rows : [];
-  return allRows
-    .map(row => row.row);
-} 
+  return allRows.map(row => row.row);
+}
 
 /**
  * Get columns from the query results
@@ -611,4 +680,35 @@ export function canStart(
 export function canStop(virtualization: Virtualization): boolean {
   // TODO: Fix logic if necessary. Do we need to check if any integrations are using it?
   return virtualization.publishedState === 'RUNNING';
+}
+
+/**
+ * Sort and Filter the passed Virtulization or ViewDefinitionDescriptor array and the filteredAndSorted 
+ * @param {ViewDefinitionDescriptor[] | Virtualization[]} resourceArray the virtualization being checked
+ * @param {IActiveFilter[]} activeFilters list of filter used to search on
+ * @param {boolean} isSortAscending to toggle between ascending and descending order of name 
+ * @returns filtered and sorted Virtulization or ViewDefinitionDescriptor array
+ */
+export function getFilteredAndSortedByName(resourceArray: ViewDefinitionDescriptor[] | Virtualization[],
+  activeFilters: IActiveFilter[],
+  isSortAscending: boolean): any[] {
+  let filteredAndSorted = [...resourceArray];
+    activeFilters.forEach((filter: IActiveFilter) => {
+      const valueToLower = filter.value.toLowerCase();
+      filteredAndSorted = filteredAndSorted.filter(
+        (resource: ViewDefinitionDescriptor | Virtualization) =>
+        resource.name.toLowerCase().includes(valueToLower)
+      );
+    });
+
+    filteredAndSorted = filteredAndSorted.sort((thisResource, thatResource) => {
+      if (isSortAscending) {
+        return thisResource.name.localeCompare(thatResource.name);
+      }
+
+      // sort descending
+      return thatResource.name.localeCompare(thisResource.name);
+    });
+
+    return filteredAndSorted;
 }

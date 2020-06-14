@@ -15,6 +15,7 @@
  */
 package io.syndesis.server.endpoint.v1.handler.integration;
 
+import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +24,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
 import io.fabric8.openshift.api.model.DeploymentConfig;
 import io.syndesis.common.model.ListResult;
 import io.syndesis.common.model.integration.Integration;
@@ -34,28 +31,21 @@ import io.syndesis.common.model.integration.IntegrationDeployment;
 import io.syndesis.common.model.integration.IntegrationDeploymentState;
 import io.syndesis.server.dao.manager.DataManager;
 import io.syndesis.server.endpoint.util.PaginationFilter;
-import io.syndesis.server.endpoint.util.ReflectiveSorter;
 import io.syndesis.server.endpoint.v1.handler.integration.IntegrationDeploymentHandler.TargetStateRequest;
 import io.syndesis.server.endpoint.v1.handler.user.UserConfigurationProperties;
 import io.syndesis.server.openshift.OpenShiftService;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.ArgumentMatcher;
 
 import static io.syndesis.common.model.integration.IntegrationDeployment.compositeId;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({IntegrationDeploymentHandler.class})
 public class IntegrationDeploymentHandlerTest {
 
     private static final String INTEGRATION_ID = "integration-id";
@@ -90,22 +80,18 @@ public class IntegrationDeploymentHandlerTest {
         when(dataManager.fetchAll(eq(IntegrationDeployment.class), args.capture()))
             .thenReturn(ListResult.of(deployment1, deployment2, deployment3));
 
-        final UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<>());
-
-        final ListResult<IntegrationDeployment> results = handler.list(INTEGRATION_ID, uriInfo);
+        final ListResult<IntegrationDeployment> results = handler.list(INTEGRATION_ID, 1, 20);
 
         assertThat(results).containsExactly(deployment1, deployment2, deployment3);
 
         final List<Function<ListResult<IntegrationDeployment>, ListResult<IntegrationDeployment>>> filters = args
             .getAllValues();
 
-        assertThat(filters).hasSize(3);
+        assertThat(filters).hasSize(2);
 
         assertThat(filters.get(0)).isInstanceOf(IntegrationIdFilter.class)
             .satisfies(f -> assertThat(((IntegrationIdFilter) f).integrationId).isEqualTo(INTEGRATION_ID));
-        assertThat(filters.get(1)).isInstanceOf(ReflectiveSorter.class);
-        assertThat(filters.get(2)).isInstanceOf(PaginationFilter.class);
+        assertThat(filters.get(1)).isInstanceOf(PaginationFilter.class);
     }
 
     @Test
@@ -114,8 +100,6 @@ public class IntegrationDeploymentHandlerTest {
         final Principal principal = mock(Principal.class);
         when(security.getUserPrincipal()).thenReturn(principal);
         when(principal.getName()).thenReturn("user");
-        PowerMockito.mockStatic(System.class);
-        PowerMockito.when(System.currentTimeMillis()).thenReturn(52l);
 
         final Integration integration = new Integration.Builder().build();
         when(dataManager.fetch(Integration.class, INTEGRATION_ID)).thenReturn(integration);
@@ -128,9 +112,18 @@ public class IntegrationDeploymentHandlerTest {
         handler.update(security, INTEGRATION_ID);
 
         final IntegrationDeployment expected = new IntegrationDeployment.Builder().id(compositeId(INTEGRATION_ID, 1))
-            .spec(integration).version(1).userId("user").createdAt(System.currentTimeMillis()).build();
+            .spec(integration).version(1).userId("user").build();
 
-        verify(dataManager).create(expected);
+        verify(dataManager).create(argThat(new ArgumentMatcher<IntegrationDeployment>() {
+            @Override
+            public boolean matches(IntegrationDeployment given) {
+                return expected.builder()
+                    .createdAt(given.getCreatedAt()) // ignore created at and
+                    .updatedAt(given.getUpdatedAt()) // updated at
+                    .build()
+                .equals(given);
+            }
+        }));
     }
 
     @Test
@@ -139,8 +132,6 @@ public class IntegrationDeploymentHandlerTest {
         final Principal principal = mock(Principal.class);
         when(security.getUserPrincipal()).thenReturn(principal);
         when(principal.getName()).thenReturn("user");
-        PowerMockito.mockStatic(System.class);
-        PowerMockito.when(System.currentTimeMillis()).thenReturn(52l);
 
         final Integration integration = new Integration.Builder().build();
         when(dataManager.fetch(Integration.class, INTEGRATION_ID)).thenReturn(integration);
@@ -160,7 +151,16 @@ public class IntegrationDeploymentHandlerTest {
 
         verify(dataManager).update(unpublished(1));
         verify(dataManager).update(unpublished(2));
-        verify(dataManager).create(expected);
+        verify(dataManager).create(argThat(new ArgumentMatcher<IntegrationDeployment>() {
+            @Override
+            public boolean matches(IntegrationDeployment given) {
+                return expected.builder()
+                    .createdAt(given.getCreatedAt()) // ignore created at and
+                    .updatedAt(given.getUpdatedAt()) // updated at
+                    .build()
+                .equals(given);
+            }
+        }));
     }
 
     @Test

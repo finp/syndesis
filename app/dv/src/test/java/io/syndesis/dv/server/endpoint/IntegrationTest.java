@@ -17,13 +17,16 @@
 package io.syndesis.dv.server.endpoint;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +51,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -59,6 +63,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.syndesis.dv.datasources.DefaultSyndesisDataSource;
 import io.syndesis.dv.metadata.internal.DefaultMetadataInstance;
 import io.syndesis.dv.metadata.internal.TeiidDataSourceImpl;
+import io.syndesis.dv.metadata.internal.TeiidServer;
 import io.syndesis.dv.metadata.query.QSResult;
 import io.syndesis.dv.model.ViewDefinition;
 import io.syndesis.dv.model.export.v1.DataVirtualizationV1Adapter;
@@ -67,19 +72,29 @@ import io.syndesis.dv.openshift.SyndesisConnectionSynchronizer;
 import io.syndesis.dv.openshift.TeiidOpenShiftClient;
 import io.syndesis.dv.rest.JsonMarshaller;
 import io.syndesis.dv.server.Application;
+import io.syndesis.dv.server.DvConfigurationProperties;
+import io.syndesis.dv.server.SSOConfigurationProperties;
 import io.syndesis.dv.server.endpoint.IntegrationTest.IntegrationTestConfiguration;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {IntegrationTestConfiguration.class, Application.class})
+@TestPropertySource(properties = "spring.config.name=application-test")
 @SuppressWarnings("nls")
 public class IntegrationTest {
 
     //inject simple auth bypass
     @TestConfiguration
     static class IntegrationTestConfiguration {
+        @MockBean
+        @SuppressWarnings("UnusedVariable")
+        private SSOConfigurationProperties ssoConfigurationProperties;
+        @MockBean
+        @SuppressWarnings("UnusedVariable")
+        private DvConfigurationProperties dvConfigurationProperties;
         /* Stub out the connectivity to syndesis / openshift */
         @MockBean
+        @SuppressWarnings("UnusedVariable")
         private SyndesisConnectionMonitor syndesisConnectionMonitor;
     }
 
@@ -90,18 +105,23 @@ public class IntegrationTest {
     private SyndesisConnectionSynchronizer syndesisConnectionSynchronizer;
     @Autowired
     private TeiidOpenShiftClient teiidOpenShiftClient;
+    @Autowired
+    private TeiidServer teiidServer;
 
     @Autowired DataSource datasource;
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static final Class<List<Map<String, ?>>> GENERIC_RESPONSE_TYPE = (Class) List.class;
+
     //for some reason dirtiescontext does not seem to work, so clear manually
-    @After public void after() throws Exception {
+    @After public void after() throws SQLException {
         try (Connection c = datasource.getConnection();) {
             c.createStatement().execute("delete from data_virtualization");
         }
     }
 
     @Test
-    public void testError() throws Exception {
+    public void testError() {
         QueryAttribute kqa = new QueryAttribute();
         ResponseEntity<String> response = restTemplate.postForEntity("/v1/metadata/query", kqa, String.class);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
@@ -112,10 +132,9 @@ public class IntegrationTest {
 
     /**
      * Tests a simple view layering with no sources
-     * @throws Exception
      */
     @Test
-    public void testViewLayers() throws Exception {
+    public void testViewLayers() {
         RestDataVirtualization rdv = new RestDataVirtualization();
         String dvName = "dv";
         rdv.setName(dvName);
@@ -218,10 +237,9 @@ public class IntegrationTest {
 
     /**
      * Tests an update to source metadata
-     * @throws Exception
      */
     @Test
-    public void testSourceRefresh() throws Exception {
+    public void testSourceRefresh() throws InterruptedException, SQLException, CloneNotSupportedException {
         RestDataVirtualization rdv = new RestDataVirtualization();
         String dvName = "testSourceRefresh";
         rdv.setName(dvName);
@@ -235,7 +253,7 @@ public class IntegrationTest {
         //directly with the synchronizer
 
         DefaultSyndesisDataSource dsd = new DefaultSyndesisDataSource();
-
+        dsd.setId("test");
         //invalid, but should silently fail
         syndesisConnectionSynchronizer.addConnection(dsd, false);
 
@@ -289,12 +307,14 @@ public class IntegrationTest {
         //test that unqualified does not work
         query("select col from t union select 1 as col", dvName, false);
 
-        ResponseEntity<List> sourceStatusResponse = restTemplate.getForEntity("/v1/metadata/syndesisSourceStatuses", List.class);
+        ResponseEntity<List<Map<String, ?>>> sourceStatusResponse = restTemplate.getForEntity("/v1/metadata/sourceStatuses", GENERIC_RESPONSE_TYPE);
         assertEquals(HttpStatus.OK, sourceStatusResponse.getStatusCode());
-        Map status = (Map)sourceStatusResponse.getBody().get(0);
-        assertEquals(0, ((List)status.get("errors")).size());
+        Map<String, ?> status = sourceStatusResponse.getBody().get(0);
+        assertEquals(0, ((List<?>)status.get("errors")).size());
         assertEquals("ACTIVE", status.get("schemaState"));
         assertEquals(Boolean.FALSE, status.get("loading"));
+        Long last = (Long)status.get("lastLoad");
+        assertNotNull(last);
 
         //add another source table
         c.createStatement().execute("create table DV.t2 (col integer)");
@@ -347,18 +367,34 @@ public class IntegrationTest {
             }
         }
 
-        sourceStatusResponse = restTemplate.getForEntity("/v1/metadata/syndesisSourceStatuses", List.class);
+        sourceStatusResponse = restTemplate.getForEntity("/v1/metadata/sourceStatuses", GENERIC_RESPONSE_TYPE);
         assertEquals(HttpStatus.OK, sourceStatusResponse.getStatusCode());
-        status = (Map)sourceStatusResponse.getBody().get(0);
-        assertEquals(1, ((List)status.get("errors")).size());
+        status = sourceStatusResponse.getBody().get(0);
+        assertEquals(1, ((List<?>)status.get("errors")).size());
         assertEquals("FAILED", status.get("schemaState"));
         assertEquals(Boolean.FALSE, status.get("loading"));
+        Long errorLast = (Long)status.get("lastLoad");
+        assertNotNull(errorLast);
+        assertTrue(errorLast.longValue() > last);
 
-        ResponseEntity<List> virts = restTemplate.getForEntity("/v1/virtualizations", List.class);
+        ResponseEntity<List<Map<String, ?>>> virts = restTemplate.getForEntity("/v1/virtualizations", GENERIC_RESPONSE_TYPE);
         assertEquals(HttpStatus.OK, virts.getStatusCode());
         assertEquals(1, virts.getBody().size());
-        Map virt = (Map)virts.getBody().get(0);
+        Map<String, ?> virt = virts.getBody().get(0);
         assertEquals("testSourceRefresh", virt.get("name"));
+
+        //should stay the same instance if nothing has changed
+        TeiidDataSourceImpl impl = this.teiidServer.getDatasources().get(dsd.getTeiidName());
+        syndesisConnectionSynchronizer.addConnection(dsd, true);
+        TeiidDataSourceImpl impl1 = this.teiidServer.getDatasources().get(dsd.getTeiidName());
+        assertSame(impl, impl1);
+
+        //should change as the name is different
+        DefaultSyndesisDataSource nameChange = dsd.clone();
+        nameChange.setSyndesisName("new-name");
+        syndesisConnectionSynchronizer.addConnection(nameChange, true);
+        impl1 = this.teiidServer.getDatasources().get(nameChange.getTeiidName());
+        assertNotEquals(impl.getSyndesisDataSource().getSyndesisName(),  impl1.getSyndesisDataSource().getSyndesisName());
     }
 
     @Test
@@ -431,17 +467,17 @@ public class IntegrationTest {
 
         assertEquals(HttpStatus.OK, importResponse.getStatusCode());
 
-        ResponseEntity<List> views = restTemplate.getForEntity(
-                "/v1/virtualizations/{name}/views", List.class, "newName");
+        ResponseEntity<List<Map<String, ?>>> views = restTemplate.getForEntity(
+                "/v1/virtualizations/{name}/views", GENERIC_RESPONSE_TYPE, "newName");
 
         assertEquals(HttpStatus.OK, views.getStatusCode());
         assertEquals(1, views.getBody().size());
-        Map view = (Map)views.getBody().get(0);
+        Map<String, ?> view = views.getBody().get(0);
         assertEquals(Boolean.TRUE, view.get("valid"));
     }
 
     @Test
-    public void testSwagger() throws Exception {
+    public void testSwagger() {
         ResponseEntity<String> response = restTemplate.getForEntity("/v1/swagger.json", String.class);
         assertTrue(response.getBody().contains("Editor Service"));
     }

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Updating API client connectors by creating new ones :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-updating-api-connectors.html">Updating API client connectors by creating new ones</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-updating-api-connectors.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Updating API client connectors by creating new ones</h1>
+<div class="paragraph">
+<p>When there is an update to an OpenAPI document from which you created an
+API client connector, and you want your API client connector to use those
+updates, you must create a new API client connector.
+You cannot directly update an API client connector. After you create
+the new API client connector, you use it to create a new connection and
+then you edit each integration that uses a connection that was created
+from the out-of-date connector.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites</div>
+<p>Be prepared to do one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Upload the updated OpenAPI document.</p>
+</li>
+<li>
+<p>Upload the out-of-date schema again and update it in API Designer.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create a new API client connector based on the updated OpenAPI document.
+To easily distinguish between the old connector and the new connector,
+you  might want to specify a version number in the connector name or
+the connector description.</p>
+<div class="paragraph">
+<p>See <a href="{LinkSyndesisIntegrationGuide}#creating-api-connectors_add-client-connector">Creating REST API client connectors</a>.</p>
+</div>
+</li>
+<li>
+<p>Create a new connection from the new connector. Again, you want to be
+able to easily distinguish between connections created from the old
+connector and connections created from the new connector. A version number
+in the connection name or connection description is helpful.</p>
+</li>
+<li>
+<p>Edit each integration that uses a connection that was created from the
+old connector by removing the old connection and adding the new connection.</p>
+</li>
+<li>
+<p>Publish each updated integration.</p>
+</li>
+<li>
+<p>Recommended, but not required: delete the old connector and the old
+connections.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

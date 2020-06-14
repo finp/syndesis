@@ -26,15 +26,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsValuesApiMethod;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import io.syndesis.connector.sheets.model.RangeCoordinate;
 import io.syndesis.connector.support.util.ConnectorOptions;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 public class GoogleSheetsRetrieveValuesCustomizerTest extends AbstractGoogleSheetsCustomizerTestSupport {
 
@@ -109,7 +109,7 @@ public class GoogleSheetsRetrieveValuesCustomizerTest extends AbstractGoogleShee
         Assert.assertEquals(expectedValueModel.size(), model.size());
         Iterator<String> modelIterator = model.iterator();
         for (String expected : expectedValueModel) {
-            JSONAssert.assertEquals(String.format(expected, getSpreadsheetId()), modelIterator.next(), JSONCompareMode.STRICT);
+            assertThatJson(modelIterator.next()).isEqualTo(String.format(expected, getSpreadsheetId()));
         }
     }
 
@@ -147,7 +147,7 @@ public class GoogleSheetsRetrieveValuesCustomizerTest extends AbstractGoogleShee
         Assert.assertEquals(expectedValueModel.size(), model.size());
         Iterator<String> modelIterator = model.iterator();
         for (String expected : expectedValueModel) {
-            JSONAssert.assertEquals(String.format(expected, getSpreadsheetId()), modelIterator.next(), JSONCompareMode.STRICT);
+            assertThatJson(modelIterator.next()).isEqualTo(String.format(expected, getSpreadsheetId()));
         }
     }
 }

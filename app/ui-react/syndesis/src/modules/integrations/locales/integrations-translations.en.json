@@ -21,6 +21,8 @@
   "ConfirmRemoveTagDetail": "Removing a tag unassociates it from any integrations that have been marked with it and then deletes the tag. No integrations are deleted.",
   "AddTagDialogTitle": "Add Tag Name",
   "AddTagDialogDescription": "The following changes will be applied to all integrations.",
+  "Edit": "Edit",
+  "View": "View",
   "EditIntegration": "Edit Integration",
   "EditTagDialogTitle": "Edit Tag",
   "EditTagDialogDescription": "The following changes will be applied to all integrations.",
@@ -44,6 +46,7 @@
   "ImportUploadFailedAlertMessage": "<span>File <strong>'{{fileName}}'</strong> could not be uploaded</span>.",
   "ImportUploadFailedMessage": "Upload failed for {{fileName}}.",
   "ImportUploadSuccessMessage": "Successfully imported {{fileName}}.",
+  "IntegrationsListAriaLabel": "Integrations",
   "PublishingIntegrationMessage": "Starting integration. Your integration will start running in a few moments.",
   "UnpublishingIntegrationMessage": "Stopping integration. It takes a few moments to stop the integration.",
   "DeletingIntegrationMessage": "Deleting integration.  It takes a few moments to delete the integration.",
@@ -59,6 +62,16 @@
     "noDescription": "No description set...",
     "pageTitle": "Integration Summary",
     "replaceDraft": "Replace Draft"
+  },
+  "detailActivity": {
+    "error": "Error",
+    "headerDuration": "Duration",
+    "headerOutput": "Output",
+    "headerStatus": "Status",
+    "headerStep": "Step",
+    "headerTime": "Time",
+    "noOutput": "No output",
+    "success": "Success"
   },
   "metrics": {
     "lastProcessed": "Last Processed",
@@ -86,6 +99,8 @@
     "confirmDeleteStepDialogTitle": "Confirm Delete",
     "endpoint": {
       "configureAction": {
+        "chooseAction": "Choose Action",
+        "noProperties": "There are no properties to configure for this action.",
         "descriptorFetchError": {
           "title": "Connection Configuration Required",
           "info": "A connection associated with this integration is no longer valid.",
@@ -93,17 +108,35 @@
         }
       }
     },
+    "extensions": {
+      "description": "Description",
+      "lastUpdated": "Last Updated",
+      "name": "Name",
+      "tableDescription": "Select the library extensions that you want to associate with this integration.",
+      "tableName": "Library Extensions"
+    },
     "selectStep": {
       "title": "Choose a connection",
       "startDescription": "Click the connection that starts the integration. If the connection you need is not available, click Create Connection.",
       "finishDescription": "Click the connection that completes the integration. If the connection you need is not available, click Create Connection.",
       "middleDescription": "A step specifies an operation on the data in the integration. Click one to add it."
     },
+    "configureStep": {
+      "noProperties": "There are no properties to configure for this step."
+    },
     "saveOrAddStep": "Save or Add Step",
     "save": {
       "title": "Save the integration",
       "description": "Update details about this integration.",
       "saveAndPublish": "Save and publish"
+    },
+    "selectChoiceMode": {
+      "basicDescription": "Provides preselected properties and condition operators for simple expressions.",
+      "basicName": "Basic expression builder",
+      "advancedDescription": "User provides condition language expressions for more advanced use cases.",
+      "advancedName": "Advanced expression builder",
+      "ConfigureConditionalFlows": "Configure Conditional",
+      "pageDescription": "Choose how to configure the conditional flows step."
     },
     "choiceForm": {
       "conditionDescription": "Provide a condition that you want to evaluate (for example, ${header.type} == 'note' or ${body.title} contains 'Important').",
@@ -138,10 +171,14 @@
     }
   },
   "errorKeys": {
-    "SqlEntityNotFoundError": "SQL Entity Not Found",
-    "SqlDataAccessError": "SQL Data Access Error",
-    "SqlConnectorError": "SQL Connector Error",
-    "ServerError": "Server Error"
+    "ServerError": "Server Error",
+    "ConnectorError": "Connector Error",
+    "EntityNotFoundError": "Entity Not Found Error",
+    "DataAccessError": "Data Access Error",
+    "NonTransientDataAccessError": "Non Transient Error",
+    "DataIntegrityViolationError": " Data Integrity Violation Error",
+    "DuplicateKeyError": "Duplicate Key Error",
+    "TransientDataAccessError": "Retryable Error"
   },
   "apiProvider": {
     "editSpecification": {
@@ -231,13 +268,13 @@
     "OperationName": "Operation name"
   },
   "linter": {
-    "linter-wrong-symbol-format": "'{{0}}' does not conform to the format {{1}} at line: {{2}}, column: {{3}}",
-    "linter-illegal-open-symbol": "Illegal open symbol at line: {{0}}, column: {{1}}",
-    "linter-too-many-open-symbols": "Too many open symbols at line: {{0}}, column: {{1}}",
-    "linter-illegal-close-symbol": "Illegal close symbol at line: {{0}}, column: {{1}}",
-    "linter-too-many-close-symbols": "Too many close symbols at line: {{0}}, column: {{1}}",
-    "linter-expected-open-symbol": "Expected open symbol at line: {{0}}, column: {{1}}",
-    "linter-expected-close-symbol": "Expected close symbol at line: {{0}}, column: {{1}}",
+    "linter-wrong-symbol-format": "'__0__' does not conform to the format __1__ at line: __2__, column: __3__",
+    "linter-illegal-open-symbol": "Illegal open symbol at line: __0__, column: __1__",
+    "linter-too-many-open-symbols": "Too many open symbols at line: __0__, column: __1__",
+    "linter-illegal-close-symbol": "Illegal close symbol at line: __0__, column: __1__",
+    "linter-too-many-close-symbols": "Too many close symbols at line: __0__, column: __1__",
+    "linter-expected-open-symbol": "Expected open symbol at line: __0__, column: __1__",
+    "linter-expected-close-symbol": "Expected close symbol at line: __0__, column: __1__",
     "linter-no-symbols": "The editor contains no data-mappable symbols",
     "linter-no-content": "The editor has no content"
   },

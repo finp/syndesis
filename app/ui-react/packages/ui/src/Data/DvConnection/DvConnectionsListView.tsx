@@ -22,7 +22,7 @@ export const DvConnectionsListView: React.FunctionComponent<
   return (
     <PageSection noPadding={true}>
       {props.resultsCount > 0 ? (
-        <PageSection>
+        <PageSection variant={'light'}>
           <ListViewToolbar {...props}>
             <div className="form-group">
               <ButtonLink
@@ -30,7 +30,7 @@ export const DvConnectionsListView: React.FunctionComponent<
                   'dv-connections-list-view-create-connection-button'
                 }
                 href={props.linkToConnectionCreate}
-                as={'primary'}
+                as={'default'}
               >
                 {props.i18nLinkCreateConnection}
               </ButtonLink>

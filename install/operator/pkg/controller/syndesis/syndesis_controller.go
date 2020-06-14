@@ -8,18 +8,17 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/client-go/kubernetes"
 
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	syndesisv1alpha1 "github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1alpha1"
+	syndesisv1beta1 "github.com/syndesisio/syndesis/install/operator/pkg/apis/syndesis/v1beta1"
 	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/action"
+	"github.com/syndesisio/syndesis/install/operator/pkg/syndesis/clienttools"
 )
 
 var log = logf.Log.WithName("controller")
@@ -40,14 +39,13 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) (*ReconcileSyndesis, error) {
-	clientset, err := kubernetes.NewForConfig(mgr.GetConfig())
-	if err != nil {
-		return nil, err
-	}
+
+	clientTools := &clienttools.ClientTools{}
+	clientTools.SetRuntimeClient(mgr.GetClient())
+
 	return &ReconcileSyndesis{
-		apis:   clientset,
-		client: mgr.GetClient(),
-		scheme: mgr.GetScheme(),
+		clientTools: clientTools,
+		scheme:    mgr.GetScheme(),
 	}, nil
 }
 
@@ -60,12 +58,12 @@ func add(mgr manager.Manager, r *ReconcileSyndesis) error {
 	}
 
 	// Watch for changes to primary resource Syndesis
-	err = c.Watch(&source.Kind{Type: &syndesisv1alpha1.Syndesis{}}, &handler.EnqueueRequestForObject{})
+	err = c.Watch(&source.Kind{Type: &syndesisv1beta1.Syndesis{}}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
 	}
 
-	actions = action.NewOperatorActions(mgr, r.apis)
+	actions = action.NewOperatorActions(mgr, r.clientTools)
 	return nil
 }
 
@@ -73,11 +71,10 @@ var _ reconcile.Reconciler = &ReconcileSyndesis{}
 
 // ReconcileSyndesis reconciles a Syndesis object
 type ReconcileSyndesis struct {
-	// This client, initialized using mgr.Client() above, is a split client
+	// This client kit contains a split client, initialized using mgr.Client() above,
 	// that reads objects from the cache and writes to the apiserver
-	client client.Client
-	apis   kubernetes.Interface
-	scheme *runtime.Scheme
+	clientTools *clienttools.ClientTools
+	scheme    *runtime.Scheme
 }
 
 // Reconcile the state of the Syndesis infrastructure elements
@@ -89,11 +86,12 @@ func (r *ReconcileSyndesis) Reconcile(request reconcile.Request) (reconcile.Resu
 	reqLogger.V(2).Info("Reconciling Syndesis")
 
 	// Fetch the Syndesis syndesis
-	syndesis := &syndesisv1alpha1.Syndesis{}
+	syndesis := &syndesisv1beta1.Syndesis{}
 
 	ctx := context.TODO()
 
-	err := r.client.Get(ctx, request.NamespacedName, syndesis)
+	client, _ := r.clientTools.RuntimeClient()
+	err := client.Get(ctx, request.NamespacedName, syndesis)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
@@ -103,22 +101,31 @@ func (r *ReconcileSyndesis) Reconcile(request reconcile.Request) (reconcile.Resu
 		}
 		// Error reading the object - requeue the request.
 		log.Error(err, "Cannot read object", request.NamespacedName)
-		return reconcile.Result{}, err
-	}
-
-	// Don't want to do anything if the syndesis resource has been updated in the meantime
-	// This happens when a processing takes more tha the resync period
-	if latest, err := r.isLatestVersion(ctx, syndesis); err != nil || !latest {
-		log.Error(err, "Cannot get latest version")
-		return reconcile.Result{}, err
+		return reconcile.Result{
+			Requeue:      true,
+			RequeueAfter: 10 * time.Second,
+		}, err
 	}
 
 	for _, a := range actions {
+		// Don't want to do anything if the syndesis resource has been updated in the meantime
+		// This happens when a processing takes more tha the resync period
+		if latest, err := r.isLatestVersion(ctx, syndesis); err != nil || !latest {
+			log.Info("syndesis resource changed in the meantime, requeue and rerun in 5 seconds", "name", syndesis.Name)
+			return reconcile.Result{
+				Requeue:      true,
+				RequeueAfter: 5 * time.Second,
+			}, nil
+		}
+
 		if a.CanExecute(syndesis) {
 			log.V(2).Info("Running action", "action", reflect.TypeOf(a))
 			if err := a.Execute(ctx, syndesis); err != nil {
 				log.Error(err, "Error reconciling", "action", reflect.TypeOf(a), "phase", syndesis.Status.Phase)
-				return reconcile.Result{}, err
+				return reconcile.Result{
+					Requeue:      true,
+					RequeueAfter: 10 * time.Second,
+				}, nil
 			}
 		}
 	}
@@ -130,9 +137,10 @@ func (r *ReconcileSyndesis) Reconcile(request reconcile.Request) (reconcile.Resu
 	}, nil
 }
 
-func (r *ReconcileSyndesis) isLatestVersion(ctx context.Context, syndesis *syndesisv1alpha1.Syndesis) (bool, error) {
+func (r *ReconcileSyndesis) isLatestVersion(ctx context.Context, syndesis *syndesisv1beta1.Syndesis) (bool, error) {
 	refreshed := syndesis.DeepCopy()
-	if err := r.client.Get(ctx, types.NamespacedName{Name: refreshed.Name, Namespace: refreshed.Namespace}, refreshed); err != nil {
+	client, _ := r.clientTools.RuntimeClient()
+	if err := client.Get(ctx, types.NamespacedName{Name: refreshed.Name, Namespace: refreshed.Namespace}, refreshed); err != nil {
 		return false, err
 	}
 	return refreshed.ResourceVersion == syndesis.ResourceVersion, nil

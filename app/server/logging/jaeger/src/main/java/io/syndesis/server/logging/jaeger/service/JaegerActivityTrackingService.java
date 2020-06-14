@@ -15,12 +15,10 @@
  */
 package io.syndesis.server.logging.jaeger.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import io.opentracing.tag.Tags;
 import io.syndesis.server.endpoint.v1.handler.activity.Activity;
 import io.syndesis.server.endpoint.v1.handler.activity.ActivityStep;
@@ -47,7 +45,8 @@ public class JaegerActivityTrackingService implements ActivityTrackingService {
 
     // NOPMD
     @Override
-    public List<Activity> getActivities(String integrationId, String from, Integer requestedLimit) throws IOException {
+    @SuppressWarnings({"PMD.NPathComplexity"})
+    public List<Activity> getActivities(String integrationId, String from, Integer requestedLimit) {
 
         int lookbackDays = 30;
         int limit = 10;
@@ -59,10 +58,7 @@ public class JaegerActivityTrackingService implements ActivityTrackingService {
         }
 
         // http://localhost:16686/api/traces?end=1548280423588000&limit=20&lookback=1h&maxDuration&minDuration&service=io.syndesis.integration.runtime.tracing.ActivityTracingWithSplitTest&start=1548276823588000
-        ArrayList<JaegerQueryAPI.Trace> traces = jaegerQueryApi.tracesForService(integrationId, lookbackDays, limit);
-
-
-        LOG.debug("traces: {}", traces);
+        List<JaegerQueryAPI.Trace> traces = jaegerQueryApi.tracesForService(integrationId, lookbackDays, limit);
 
         ArrayList<Activity> rc = new ArrayList<>();
         for (JaegerQueryAPI.Trace trace : traces) {
@@ -74,7 +70,7 @@ public class JaegerActivityTrackingService implements ActivityTrackingService {
                 for (JaegerQueryAPI.Span span : trace.spans) {
                     String kind = span.findTag(Tags.SPAN_KIND.getKey(), String.class);
                     if (kind == null) {
-                        LOG.debug("Cannot find tag 'span.kind' in span: {}", span);
+                        LOG.debug("Cannot find tag 'span.kind' in trace: {} and span: {}", trace.traceID, span);
                         continue;
                     }
                     switch (kind) {
@@ -98,11 +94,12 @@ public class JaegerActivityTrackingService implements ActivityTrackingService {
                         case "step": {
                             ActivityStep step = new ActivityStep();
                             step.setId(span.operationName);
-                            step.setAt(span.startTime/1000);
+                            // use microseconds precision to improve accuracy for ordering purposes
+                            // do not divide to 1000 at this moment, as the span can run in the same millisecond moment
+                            step.setAt(span.startTime);
                             step.setDuration(span.duration*1000);
 
                             List<String> messages = span.findLogs("event");
-
                             Boolean failed = span.findTag(Tags.ERROR.getKey(), Boolean.class);
                             if (failed != null && failed) {
                                 String msg = messages != null && !messages.isEmpty() ? messages.get(0) : "";
@@ -110,7 +107,6 @@ public class JaegerActivityTrackingService implements ActivityTrackingService {
                             } else {
                                 step.setMessages(messages);
                             }
-
                             steps.add(step);
                         }
                         break;
@@ -124,6 +120,10 @@ public class JaegerActivityTrackingService implements ActivityTrackingService {
 
             if (activity != null) {
                 steps.sort(Comparator.comparing(ActivityStep::getAt));
+                // set time to milliseconds to correctly display in UI
+                for (ActivityStep step: steps) {
+                    step.setAt(step.getAt()/1000);
+                }
                 activity.setSteps(steps);
                 rc.add(activity);
             }

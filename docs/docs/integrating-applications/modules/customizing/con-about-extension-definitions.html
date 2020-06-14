@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Requirements in an extension definition JSON file :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-about-extension-definitions.html">Requirements in an extension definition JSON file</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/customizing/con-about-extension-definitions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Requirements in an extension definition JSON file</h1>
+<div class="paragraph">
+<p>Each extension must have a <code>.json</code> file that defines the extension
+by specifying values for data structures such as name, description,
+supported actions, and dependencies. For each extension type, the
+following table indicates whether Maven can generate the
+extension definition JSON file and which data structures are required.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Extension Type</th>
+<th class="tableblock halign-left valign-top">Maven Can Generate Extension Definition</th>
+<th class="tableblock halign-left valign-top">Required Data Structures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Step extension in Java</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>schemaVersion</code><br>
+<code>name</code><br>
+<code>description</code><br>
+<code>version</code><br>
+<code>extensionId</code><br>
+<code>extensionType</code><br>
+<code>actions</code><br>
+<code>dependencies</code> *</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Step extension in XML</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>schemaVersion</code><br>
+<code>name</code><br>
+<code>description</code><br>
+<code>version</code><br>
+<code>extensionId</code><br>
+<code>extensionType</code><br>
+<code>actions</code><br>
+<code>dependencies</code> *</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Connector extension</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>schemaVersion</code><br>
+<code>name</code><br>
+<code>description</code><br>
+<code>version</code><br>
+<code>extensionId</code><br>
+<code>extensionType</code><br>
+<code>properties</code><br>
+<code>actions</code><br>
+<code>dependencies</code> *<br>
+<code>componentScheme</code><br>
+<code>connectorCustomizers</code><br>
+<code>connectorFactory</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Library extension</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>schemaVersion</code><br>
+<code>name</code><br>
+<code>description</code><br>
+<code>version</code><br>
+<code>extensionId</code><br>
+<code>extensionType</code><br>
+<code>dependencies</code> *</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>*While specification of <code>dependencies</code> is not strictly required,
+in practice, there are almost always dependencies that you need
+to specify.</p>
+</div>
+<div class="paragraph">
+<p>Typically, an extension definition file has the following layout:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "schemaVersion": "v1",
+  "name": "",
+  "description": "",
+  "version": "",
+  "extensionId": "",
+  "extensionType": "",
+  "properties": {
+  },
+  "actions": [
+  ],
+  "dependencies": [
+  ],
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>schemaVersion</strong> defines the version of the extension definition schema.
+Internally, Syndesis uses <strong>schemaVersion</strong> to determine how to map the
+extension definition to the
+internal model. This allows extensions that were developed against an old version of
+Syndesis to be deployed on newer versions of Syndesis.</p>
+</li>
+<li>
+<p><strong>name</strong> is the name of the extension. When you upload an extension
+to {prodname}, this name appears.</p>
+</li>
+<li>
+<p><strong>description</strong> is any useful information that you want to specify.
+{prodname} does not operate on this value.</p>
+</li>
+<li>
+<p><strong>version</strong> is for your convenience to help you distinguish updates
+to an extension. {prodname} does not operate on this value.</p>
+</li>
+<li>
+<p><strong>extensionId</strong> defines a unique ID for the extension. This should be unique
+at least across a Syndesis environment.</p>
+</li>
+<li>
+<p><strong>extensionType</strong> indicates to Syndesis what the extension provides. As of
+Syndesis version 1.3, the following extension types are supported:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Steps</code></p>
+</li>
+<li>
+<p><code>Connectors</code></p>
+</li>
+<li>
+<p><code>Libraries</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>properties</strong> at the top level in a connector extension is required. It controls
+what {prodname} displays when a {prodname} user selects the connector
+to create a connection. This <code>properties</code> object contains a set
+of properties for each form control for creating a connection.
+For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"myControlName": {
+  "deprecated": true|false,
+  "description": "",
+  "displayName": "",
+  "group": "",
+  "kind": "",
+  "label": "",
+  "required": true|false,
+  "secret": true|false,
+  "javaType": "",
+  "type": "",
+  "defaultValue": "",
+  "enum": {
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In connector extensions, nested <code>properties</code> objects define HTML form controls for
+configuring connection actions.
+In step extensions, the <code>actions</code> object contains a <code>properties</code>
+object. The <code>properties</code> object defines a set of properties for
+each form control for configuring the step. See also:
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</p>
+</div>
+</li>
+<li>
+<p><strong>actions</strong> defines the operations that a connector can perform or the
+operation that a step between connections can perform. Only connector
+and step extensions use actions that you specify.
+The format for an action specification looks like this:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "",
+    "name": "",
+    "description": "",
+    "actionType": "step|connector",
+    "descriptor": {
+    }
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>id</strong> is a unique ID for the action. This should be unique at least
+within a Syndesis environment.</p>
+</li>
+<li>
+<p><strong>name</strong> is the action name that appears in {prodname}. An integrator
+sees this value as the name of a connection action or as the name of a step
+that operates on integration data between connections.</p>
+</li>
+<li>
+<p><strong>description</strong> is the action description that appears in {prodname}.
+Use this field to help the integrator understand what the action does.</p>
+</li>
+<li>
+<p><strong>actionType</strong> indicates whether the action is performed by a connection
+or a step that is between connections.</p>
+</li>
+<li>
+<p><strong>descriptor</strong> specifies nested attributes such as <code>kind</code>, <code>entrypoint</code>,
+<code>inputDataType</code>, <code>outputDatatype</code> and more.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>dependencies</strong> defines the resources that this extension
+requires {prodname} to provide.</p>
+<div class="paragraph">
+<p>Define a dependency as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "type": "MAVEN",
+  "id"   : "org.apache.camel:camel-telegram:jar:2.21.0"
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>type</strong> indicates the type of the dependency. Specify <strong>MAVEN</strong>. (It is
+expected that other types will be supported in the future.)</p>
+</li>
+<li>
+<p><strong>id</strong> is the ID of the Maven dependency, which is a Maven GAV.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -67,7 +67,7 @@ func WaitForDeploymentReady(ctx context.Context, client dynamic.Interface, names
 func WaitForResourceCondition(ctx context.Context, client dynamic.Interface, gvr schema.GroupVersionResource, namespace string, name string, timeout time.Duration, condition func(resource *unstructured.Unstructured) (bool, error)) (bool, error) {
 	options := metav1.ListOptions{FieldSelector: "metadata.name=" + name}
 	r := client.Resource(gvr).Namespace(namespace)
-	watcher, err := r.Watch(options)
+	watcher, err := r.Watch(ctx, options)
 	if err != nil {
 		return false, err
 	}
@@ -107,8 +107,8 @@ func WaitForResourceCondition(ctx context.Context, client dynamic.Interface, gvr
 	}
 }
 
-func GetPodWithLabelSelector(api kubernetes.Interface, namespace string, LabelSelector string) (*v1.Pod, error) {
-	podList, err := api.CoreV1().Pods(namespace).List(metav1.ListOptions{
+func GetPodWithLabelSelector(ctx context.Context, api kubernetes.Interface, namespace string, LabelSelector string) (*v1.Pod, error) {
+	podList, err := api.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{
 		LabelSelector: LabelSelector,
 	})
 	if err != nil {
@@ -126,7 +126,7 @@ func GetPodWithLabelSelector(api kubernetes.Interface, namespace string, LabelSe
 
 func ListInChunks(ctx context.Context, c client.Client, options *client.ListOptions, list *unstructured.UnstructuredList, handler func([]unstructured.Unstructured) error) (err error) {
 	for {
-		if err := c.List(ctx, options, list); err != nil {
+		if err := c.List(ctx, list, options); err != nil {
 			return err
 		}
 		err = handler(list.Items)
@@ -145,7 +145,7 @@ func ListInChunks(ctx context.Context, c client.Client, options *client.ListOpti
 
 type ExecOptions struct {
 	Config    *rest.Config
-	Api       kubernetes.Interface
+	API       kubernetes.Interface
 	Namespace string
 	Pod       string
 	Container string
@@ -154,7 +154,7 @@ type ExecOptions struct {
 }
 
 func Exec(o ExecOptions) error {
-	req := o.Api.CoreV1().RESTClient().Post().
+	req := o.API.CoreV1().RESTClient().Post().
 		Resource("pods").
 		Name(o.Pod).
 		Namespace(o.Namespace).

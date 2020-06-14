@@ -1,6 +1,5 @@
 import { action } from '@storybook/addon-actions';
 import { boolean, text } from '@storybook/addon-knobs';
-import { withNotes } from '@storybook/addon-notes';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -24,29 +23,21 @@ const virtualizationName2 = 'Virtualization_2';
 const virtualizationDescription2 = 'Virtualization 2 description ...';
 const virtualizationName3 = 'Virtualization_3';
 const virtualizationDescription3 = 'Virtualization 3 description ...';
-const cancelText = 'Cancel';
 const editText = 'Edit';
 const viewOData = 'View OData';
 const editTip1 = 'Edit ' + virtualizationName1 + ' virtualization';
 const editTip2 = 'Edit ' + virtualizationName2 + ' virtualization';
+const popoverHeading = 'Data permission is applied';
+const popover= 'This virtual database has one or more data permissions set.';
 const draftText = 'Draft';
 const publishedText = 'Published';
 const deleteText = 'Delete';
-const unpublishText = 'Unpublish';
-const publishText = 'Publish';
-const confirmDeleteTitle = 'Delete Virtualization';
-const confirmDeleteMessage =
-  'This will permanently delete the Virtualization.  Proceed with the delete?';
-const confirmUnpublishTitle = 'Unpublish Virtualization';
-const confirmUnpublishMessage =
-  'This Virtualization has been published.  Please unpublish the Virtualization first.';
-const deleteInProgressText = 'Deleting...';
 const publishInProgressText = 'Publishing...';
-const stopInProgressText = 'Stopping...';
 const publishLogUrlText = 'View Logs';
 const currentStatusPublished = 'RUNNING';
 const currentStatusDraft = 'NOTFOUND';
 const currentStatusBuilding = 'BUILDING';
+const virtualizationActions: JSX.Element = <div>VirtActions</div>;
 
 const viewItems = [
   <ViewListItem
@@ -57,11 +48,12 @@ const viewItems = [
     viewEditPageLink={''}
     i18nCancelText={'Cancel'}
     i18nDelete={deleteText}
-    i18nDeleteTip={deleteText}
     i18nDeleteModalMessage={'Do you really want to delete the view?'}
     i18nDeleteModalTitle={'Confirm Delete'}
     i18nEdit={editText}
     i18nEditTip={editTip1}
+    i18nInvalid={'Invalid'}
+    isValid={true}
     onDelete={action(deleteText)}
   />,
   <ViewListItem
@@ -72,11 +64,12 @@ const viewItems = [
     viewEditPageLink={''}
     i18nCancelText={'Cancel'}
     i18nDelete={deleteText}
-    i18nDeleteTip={deleteText}
     i18nDeleteModalMessage={'Do you really want to delete the view?'}
     i18nDeleteModalTitle={'Confirm Delete'}
     i18nEdit={editText}
     i18nEditTip={editTip1}
+    i18nInvalid={'Invalid'}
+    isValid={true}
     onDelete={action(deleteText)}
   />,
 ];
@@ -84,141 +77,105 @@ const viewItems = [
 const virtItem = [
   <VirtualizationListItem
     key="virtualizationListItem1"
+    dropdownActions={virtualizationActions}
     isProgressWithLink={false}
-    i18nDeleteInProgressText={deleteInProgressText}
-    i18nPublishInProgressText={publishInProgressText}
-    i18nStopInProgressText={stopInProgressText}
     i18nPublishState={draftText}
+    i18nPublishStateMessage={'The virtualization is in a draft state'}
     labelType={'primary'}
-    hasViews={true}
     virtualizationName={virtualizationName1}
     virtualizationDescription={virtualizationDescription1}
     detailsPageLink={''}
-    i18nCancelText={cancelText}
-    i18nDelete={deleteText}
-    i18nDeleteModalMessage={confirmDeleteMessage}
-    i18nDeleteModalTitle={confirmDeleteTitle}
     i18nEdit={editText}
     i18nViewODataUrlText={viewOData}
     i18nEditTip={editTip1}
     i18nInUseText={'Used by 1 integrations'}
-    i18nStop={unpublishText}
-    i18nPublish={publishText}
     i18nPublishLogUrlText={publishLogUrlText}
-    i18nStopModalMessage={confirmUnpublishMessage}
-    i18nStopModalTitle={confirmUnpublishTitle}
     modified={boolean('modified', false)}
-    onDelete={action(deleteText)}
-    onStop={action(unpublishText)}
-    onPublish={action(publishText)}
     currentPublishedState={currentStatusDraft}
     publishingLogUrl=""
+    i18nLockPopoverHeading={popoverHeading}
+    i18nLockPopover={popover}
+    i18nSecuredText={'Secured'}
     children={viewItems}
     usedBy={['MyVirt']}
+    secured={true}
   />,
 ];
 
 const virtualizationItems = [
   <VirtualizationListItem
     key="virtualizationListItem1"
+    dropdownActions={virtualizationActions}
     isProgressWithLink={false}
-    i18nDeleteInProgressText={deleteInProgressText}
-    i18nPublishInProgressText={publishInProgressText}
-    i18nStopInProgressText={stopInProgressText}
     i18nPublishState={draftText}
+    i18nPublishStateMessage={'The virtualization is in a draft state'}
     labelType={'default'}
-    hasViews={true}
     virtualizationName={virtualizationName1}
     virtualizationDescription={virtualizationDescription1}
     detailsPageLink={''}
-    i18nCancelText={cancelText}
-    i18nDelete={deleteText}
-    i18nDeleteModalMessage={confirmDeleteMessage}
-    i18nDeleteModalTitle={confirmDeleteTitle}
     i18nEdit={editText}
     i18nViewODataUrlText={viewOData}
     i18nEditTip={editTip1}
     i18nInUseText={'Used by 0 integrations'}
-    i18nStop={unpublishText}
-    i18nPublish={publishText}
     i18nPublishLogUrlText={publishLogUrlText}
-    i18nStopModalMessage={confirmUnpublishMessage}
-    i18nStopModalTitle={confirmUnpublishTitle}
     modified={boolean('modified', false)}
-    onDelete={action(deleteText)}
-    onStop={action(unpublishText)}
-    onPublish={action(publishText)}
     currentPublishedState={currentStatusDraft}
     publishingLogUrl=""
+    i18nLockPopoverHeading={popoverHeading}
+    i18nLockPopover={popover}
+    i18nSecuredText={'Secured'}
     usedBy={[]}
+    secured={true}
   />,
   <VirtualizationListItem
     key="virtualizationListItem2"
+    dropdownActions={virtualizationActions}
     isProgressWithLink={false}
-    i18nDeleteInProgressText={deleteInProgressText}
-    i18nPublishInProgressText={publishInProgressText}
-    i18nStopInProgressText={stopInProgressText}
     i18nPublishState={publishInProgressText}
+    i18nPublishStateMessage={'The virtualization publishing is in progress'}
     labelType={'default'}
-    hasViews={true}
     virtualizationName={virtualizationName2}
     virtualizationDescription={virtualizationDescription2}
     detailsPageLink={''}
-    i18nCancelText={cancelText}
-    i18nDelete={deleteText}
-    i18nDeleteModalMessage={confirmDeleteMessage}
-    i18nDeleteModalTitle={confirmDeleteTitle}
     i18nEdit={editText}
     i18nViewODataUrlText={viewOData}
     i18nEditTip={editTip2}
     i18nInUseText={'Used by 0 integrations'}
-    i18nStop={unpublishText}
-    i18nPublish={publishText}
     i18nPublishLogUrlText={publishLogUrlText}
-    i18nStopModalMessage={confirmUnpublishMessage}
-    i18nStopModalTitle={confirmUnpublishTitle}
     modified={boolean('modified', false)}
-    onDelete={action(deleteText)}
-    onStop={action(unpublishText)}
-    onPublish={action(publishText)}
     currentPublishedState={currentStatusPublished}
+    i18nLockPopoverHeading={popoverHeading}
+    i18nLockPopover={popover}
+    i18nSecuredText={'Secured'}
     usedBy={[]}
+    secured={true}
   />,
   <VirtualizationListItem
     key="virtualizationListItem3"
+    dropdownActions={virtualizationActions}
     isProgressWithLink={true}
-    i18nDeleteInProgressText={deleteInProgressText}
-    i18nPublishInProgressText={publishInProgressText}
-    i18nStopInProgressText={stopInProgressText}
     i18nPublishState={publishedText}
+    i18nPublishStateMessage={'The virtualization is running'}
     labelType={'primary'}
-    hasViews={true}
     virtualizationName={virtualizationName3}
     virtualizationDescription={virtualizationDescription3}
     detailsPageLink={''}
-    i18nCancelText={cancelText}
-    i18nDelete={deleteText}
-    i18nDeleteModalMessage={confirmDeleteMessage}
-    i18nDeleteModalTitle={confirmDeleteTitle}
     i18nEdit={editText}
     i18nViewODataUrlText={viewOData}
     i18nEditTip={editTip2}
     i18nInUseText={'Used by 0 integrations'}
-    i18nStop={unpublishText}
-    i18nPublish={publishText}
     i18nPublishLogUrlText={publishLogUrlText}
-    i18nStopModalMessage={confirmUnpublishMessage}
-    i18nStopModalTitle={confirmUnpublishTitle}
     modified={boolean('modified', false)}
-    onDelete={action(deleteText)}
-    onStop={action(unpublishText)}
-    onPublish={action(publishText)}
     currentPublishedState={currentStatusBuilding}
     publishingLogUrl={'log/usl/goes/here'}
     publishingCurrentStep={2}
     publishingTotalSteps={4}
     publishingStepText={'Building'}
+    i18nLockPopoverHeading={popoverHeading}
+    i18nLockPopover={popover}
+    i18nSecuredText={'Secured'}
     usedBy={[]}
+    secured={true}
   />,
 ];
 
@@ -285,7 +242,7 @@ stories
 
   .add(
     'empty list',
-    withNotes(noVirtualizationsTestNotes)(() => (
+    () => (
       <Router>
         <VirtualizationList
           activeFilters={[]}
@@ -303,8 +260,8 @@ stories
           currentValue={''}
           filterTypes={[]}
           isSortAscending={true}
-          linkCreateHRef={action('/data/create')}
-          linkImportHRef={action('/data/import')}
+          linkCreateHRef={'/data/create'}
+          linkImportHRef={'/data/import'}
           resultsCount={0}
           sortTypes={[]}
           onUpdateCurrentValue={action('onUpdateCurrentValue')}
@@ -345,12 +302,13 @@ stories
           hasListData={false}
         />
       </Router>
-    ))
+    ),
+    { notes: noVirtualizationsTestNotes }
   )
 
   .add(
     '3 virtualizations',
-    withNotes(threeVirtualizationsTestNotes)(() => (
+    () => (
       <Router>
         <VirtualizationList
           activeFilters={[]}
@@ -368,8 +326,8 @@ stories
           currentValue={''}
           filterTypes={[]}
           isSortAscending={true}
-          linkCreateHRef={action('/data/create')}
-          linkImportHRef={action('/data/import')}
+          linkCreateHRef={'/data/create'}
+          linkImportHRef={'/data/import'}
           resultsCount={0}
           sortTypes={[]}
           onUpdateCurrentValue={action('onUpdateCurrentValue')}
@@ -412,12 +370,13 @@ stories
           hasListData={true}
         />
       </Router>
-    ))
+    ),
+    { notes: threeVirtualizationsTestNotes }
   )
 
   .add(
     'single virtualization - expand views',
-    withNotes(singleVirtualizationWithViewsTestNotes)(() => (
+    () => (
       <Router>
         <VirtualizationList
           activeFilters={[]}
@@ -435,8 +394,8 @@ stories
           currentValue={''}
           filterTypes={[]}
           isSortAscending={true}
-          linkCreateHRef={action('/data/create')}
-          linkImportHRef={action('/data/import')}
+          linkCreateHRef={'/data/create'}
+          linkImportHRef={'/data/import'}
           resultsCount={0}
           sortTypes={[]}
           onUpdateCurrentValue={action('onUpdateCurrentValue')}
@@ -479,5 +438,6 @@ stories
           hasListData={true}
         />
       </Router>
-    ))
+    ),
+    { notes: singleVirtualizationWithViewsTestNotes }
   );

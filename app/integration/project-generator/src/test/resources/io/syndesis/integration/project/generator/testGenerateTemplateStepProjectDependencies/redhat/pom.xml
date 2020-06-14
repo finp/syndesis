@@ -51,7 +51,7 @@
     <!-- atlasmap runtime -->
     <dependency>
       <groupId>io.atlasmap</groupId>
-      <artifactId>camel-atlasmap</artifactId>
+      <artifactId>camel3-atlasmap</artifactId>
     </dependency>
 
     <!-- dependencies used in this integration -->
@@ -62,7 +62,7 @@
 
     <!-- spring-boot as runtime -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
     <dependency>

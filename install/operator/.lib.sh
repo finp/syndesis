@@ -46,13 +46,14 @@ build_operator()
     shift
     local source_gen="$1"
     shift
+    local go_proxy_url="$1"
+    shift
 
     local hasgo=$(go_is_available)
     local hasdocker=$(docker_is_available)
 
     if [ "$strategy" == "auto" ] ; then
         if [ "$hasgo" == "OK" ]; then
-            # Prefer go over docker - TODO: do we prefer this?
             strategy="go"
         elif [ "$hasdocker" == "OK" ]; then
             # go not available so try docker
@@ -75,6 +76,7 @@ build_operator()
         echo Building executable with go tooling
         echo ======================================================
         export GO111MODULE=on
+        export GOPROXY="$go_proxy_url"
 
         if [[ ( "$source_gen" == "on" ) || ( "$source_gen" == "verify-none" ) ]]; then
         	echo "generating sources"
@@ -83,17 +85,19 @@ build_operator()
 	        local hassdk=$(operatorsdk_is_available)
 	        if [ "$hassdk" == "OK" ]; then
 	            operator-sdk generate k8s
-	            operator-sdk generate openapi
+	            operator-sdk generate crds
 	        else
 	            # display warning message and move on
 	            printf "$hassdk\n\n"
 	        fi
+
+	        openapi_gen
 	        go generate ./pkg/...
     	    go mod tidy
 
             if [ "$source_gen" == "verify-none" ]; then
         	    echo "verifying no sources have been generated"
-        	    for file in pkg/apis/syndesis/v1alpha1/zz_generated.deepcopy.go pkg/generator/assets_vfsdata.go; do
+        	    for file in pkg/apis/syndesis/v1beta1/zz_generated.deepcopy.go pkg/generator/assets_vfsdata.go; do
                     if [ "$(git diff $file)" != "" ] ; then
                         echo ===========================================
                         echo   Looks like some generated source code
@@ -112,13 +116,22 @@ build_operator()
         echo building executable
         go test -test.short -mod=vendor ./cmd/... ./pkg/...
 
+        if [ -z "${GOOSLIST}" ]; then
+            GOOSLIST="linux darwin windows"
+        fi
+
         for GOARCH in amd64 ; do
-          for GOOS in linux darwin windows ; do
+          for GOOS in ${GOOSLIST} ; do
             export GOARCH GOOS
             echo building ./dist/${GOOS}-${GOARCH}/syndesis-operator executable
             go build  "$@" -o ./dist/${GOOS}-${GOARCH}/syndesis-operator \
                 -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -mod=vendor \
                 ./cmd/manager
+
+            echo building ./dist/${GOOS}-${GOARCH}/platform-detect executable
+            go build -o ./dist/${GOOS}-${GOARCH}/platform-detect \
+                -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -mod=vendor \
+                ./cmd/detect
           done
         done
         mkdir -p ./build/_output/bin
@@ -144,10 +157,12 @@ build_operator()
         done
 
         cat > "${BUILDER_IMAGE_NAME}.tmp" <<EODockerfile
-FROM golang:1.12.0
+FROM golang:1.13.7
 WORKDIR /go/src/${OPERATOR_GO_PACKAGE}
 ENV GO111MODULE=on
+ENV GOPROXY=$go_proxy_url
 COPY . .
+RUN go generate ./pkg/...
 RUN go test -test.short -mod=vendor ./cmd/... ./pkg/...
 RUN GOOS=linux   GOARCH=amd64 go build $OPTS -o /dist/linux-amd64/syndesis-operator    -gcflags all=-trimpath=\${GOPATH} -asmflags all=-trimpath=\${GOPATH} -mod=vendor github.com/syndesisio/syndesis/install/operator/cmd/manager
 RUN GOOS=darwin  GOARCH=amd64 go build $OPTS -o /dist/darwin-amd64/syndesis-operator   -gcflags all=-trimpath=\${GOPATH} -asmflags all=-trimpath=\${GOPATH} -mod=vendor github.com/syndesisio/syndesis/install/operator/cmd/manager
@@ -212,13 +227,18 @@ build_image()
         echo Building image with S2I
         echo ======================================================
         if [ -z "$(oc get bc -o name | grep ${S2I_STREAM_NAME})" ]; then
-            echo "Creating BuildConfig ${S2I_STREAM_NAME}"
-            oc new-build --strategy=docker --binary=true --name ${S2I_STREAM_NAME}
+            echo "Creating BuildConfig ${S2I_STREAM_NAME} with tag ${OPERATOR_IMAGE_TAG}"
+            oc new-build --strategy=docker --binary=true --to=${OPERATOR_IMAGE_NAME}:${OPERATOR_IMAGE_TAG} --name ${S2I_STREAM_NAME}
         fi
         local arch="$(mktemp -t ${S2I_STREAM_NAME}-dockerXXX).tar"
         echo $arch
         trap "rm $arch" EXIT
         tar --exclude-from=.dockerignore -cvf $arch build
+        if [ ! -d build ]; then
+            echo "No build directory. Something failed with building image"
+            exit 1
+        fi
+
         cd build
         tar uvf $arch Dockerfile
         oc start-build --from-archive=$arch ${S2I_STREAM_NAME}
@@ -241,4 +261,16 @@ build_image()
         echo invalid build strategy: $1
         exit 1
     esac
+}
+
+openapi_gen() {
+    if hash openapi-gen 2>/dev/null; then
+        openapi-gen --logtostderr=true -o "" \
+            -i ./pkg/apis/syndesis/v1alpha1 -O zz_generated.openapi -p ./pkg/apis/syndesis/v1alpha1
+
+        openapi-gen --logtostderr=true -o "" \
+            -i ./pkg/apis/syndesis/v1beta1 -O zz_generated.openapi -p ./pkg/apis/syndesis/v1beta1
+    else
+        echo "skipping go openapi generation"
+    fi
 }
