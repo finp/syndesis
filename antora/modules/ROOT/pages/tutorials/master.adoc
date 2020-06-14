@@ -1,0 +1,30 @@
+include::attributes.adoc[]
+
+:parent-context: tutorials
+
+
+= {prodname} Sample Integration Tutorials
+:context: tutorials
+
+{prodname} lets you obtain data from an
+application or service, operate on that data if you need to, and then send the
+data to a completely different application or service. You can do all this
+without writing code.
+
+Explore {prodname} by creating sample integrations. 
+A <<comparison-of-sample-integrations_{context},comparison table>>
+can help you decide which of these integrations to create first: 
+
+* <<twitter-to-salesforce_{context}>>
+* <<salesforce-to-db_{context}>>
+* <<amq-to-rest-api_{context}>>
+
+See also: link:{LinkSyndesisIntegrationGuide}[{NameOfSyndesisIntegrationGuide}]
+
+include::modules/tutorials/ref-comparison-of-sample-integrations.adoc[leveloffset=+1]
+
+include::assemblies/tutorials/assembly-t2sf-intro.adoc[leveloffset=+1]
+
+include::assemblies/tutorials/assembly-sf2db-intro.adoc[leveloffset=+1]
+
+include::assemblies/tutorials/assembly-amq2api-intro.adoc[leveloffset=+1]

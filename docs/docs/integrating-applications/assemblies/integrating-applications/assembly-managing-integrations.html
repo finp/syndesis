@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Managing integrations :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-managing-integrations.html">Managing integrations</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assemblies/integrating-applications/assembly-managing-integrations.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Managing integrations</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A common set up is to have
+a {prodname} development environment, a {prodname} test environment,
+and a {prodname} deployment environment.
+To facilitate this, {prodname} provides the ability to export an
+integration from one {prodname} environment and then import that integration
+into another {prodname} environment.
+The information and procedures for managing integrations are the same
+in each kind of {prodname} environment, unless specifically noted.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide information to help you manage your
+integrations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#about-integration-lifecycle-handling_manage">About integration lifecycle handling</a></p>
+</li>
+<li>
+<p><a href="#putting-integrations-into-service_manage">Putting integrations into and out of service</a></p>
+</li>
+<li>
+<p><a href="#add-log-step_manage">Logging information about integration execution</a></p>
+</li>
+<li>
+<p><a href="#monitoring-integrations_manage">Monitoring integrations</a></p>
+</li>
+<li>
+<p><a href="#testing-integrations_manage">Testing integrations</a></p>
+</li>
+<li>
+<p><a href="#troubleshooting-integration-execution_manage">Tips for troubleshooting integration execution</a></p>
+</li>
+<li>
+<p><a href="#updating-integrations_manage">Updating integrations</a></p>
+</li>
+<li>
+<p><a href="#deleting-integrations_manage">Deleting integrations</a></p>
+</li>
+<li>
+<p><a href="#copying-integrations-to-other-environments_manage">Copying an integration to another environment</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="about-integration-lifecycle-handling_manage"><a class="anchor" href="#about-integration-lifecycle-handling_manage"></a>About integration lifecycle handling</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you create and publish an integration, you might want to update
+what the integration does. You can edit a draft of the published integration
+and then replace the running version with the updated version.
+To facilitate this, for each integration, {prodname} maintains multiple
+versions as well as each version&#8217;s state.
+An understanding of integration versions and states helps you to
+manage your integrations.</p>
+</div>
+<div class="paragraph">
+<div class="title">Description of integration versions</div>
+<p>In each {prodname} environment, each integration can have multiple
+versions. Support for multiple integration versions has several benefits:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you publish a version that does not work correctly, then you
+can return to running a correct version of the integration. To do that, you
+stop the incorrect version and start a version
+that runs the way you want it to.</p>
+</li>
+<li>
+<p>As requirements or tools change, you can incrementally update an
+integration. You do not need to create a new integration.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>{prodname} assigns a new version number each time it starts running
+a new version of an integration. For example, suppose you publish the
+Twitter to Salesforce sample integration. After it has been
+running, you update the integration to use a different
+account to connect to Twitter. You then publish the updated integration.
+{prodname} stops the running version of the integration, and
+publishes the updated version of the integration with an incremented
+version number.</p>
+</div>
+<div class="paragraph">
+<p>The initial integration that was running
+is version 1. The updated integration that is now running is
+version 2. If you edit version 2, for example to
+use a different account to connect to Salesforce, and you publish that
+version then it becomes version 3 of the integration.</p>
+</div>
+<div class="paragraph">
+<p>There can be exactly one draft version of an integration.
+{prodname} has a definition for the draft version of an integration but it
+has never run this version of the integration. The draft version of an integration
+does not have a number. When you edit an integration,
+you are updating the draft version of the integration.</p>
+</div>
+<div class="paragraph">
+<p>In {prodname}, you can see a list of the versions of an integration in the
+integration&#8217;s summary page. To view this page, in the left navigation
+panel, click <strong>Integrations</strong>. In the entry for the integration that you
+are interested in, click <strong>View</strong>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Description of integration states</div>
+<p>In {prodname}, in the list of integration versions, each entry
+indicates the state of that version, which is one of the following:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>State</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Description</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Running</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <strong>Running</strong> version is executing; it is in service. Only one version
+of an integration can be running. That is, only one
+version at a time can be in the <strong>Running</strong> state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Stopped</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <strong>Stopped</strong> version is not running. The draft version of an integration
+is in the <strong>Stopped</strong> state. Each integration that was running at one time
+and then stopped is in the <strong>Stopped</strong> state.</p>
+<p class="tableblock">If no version of this integration is in the <strong>Running</strong> state,
+then you can start a version that is stopped.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Pending</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <strong>pending</strong> version is in transition. {prodname} is in the process
+of either starting this version of the integration or stopping
+this version of the integration, but
+the integration is not yet running or stopped.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Error</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An integration version that is in the <strong>Error</strong> state
+encountered an OpenShift error while being started or while running.
+The error suspended start-up or execution.  If this happens, try
+starting an earlier integration version that ran correctly.
+Alternatively, contact technical support for help.
+To do that, in any {prodname} page, in the upper right, click the
+<span class="image"><img src="../../../_images/images/tutorials/InfoIcon.png" alt="InfoIcon" title="Help"></span> icon and select <strong>Support</strong>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="putting-integrations-into-service_manage"><a class="anchor" href="#putting-integrations-into-service_manage"></a>Putting integrations into and out of service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you create an integration, you can save it as a draft or
+publish it to start running it. When you publish
+an integration, {prodname} assembles the needed resources,
+builds the integration runtime, deploys the OpenShift pod that will
+run the integration, and then starts running the integration.</p>
+</div>
+<div class="paragraph">
+<p>At any time, you can click a button to stop running the integration.
+When you want to start the integration again, {prodname} already
+has what it needs so starting it takes less time
+than when you published it to run it for the first time.</p>
+</div>
+<div class="paragraph">
+<p>The process of starting a version of an integration for the first time is
+referred to as publishing the integration. The following topics
+provide details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#publishing-integrations_service">About publishing integrations</a></p>
+</li>
+<li>
+<p><a href="#stopping-integrations_service">Stopping integrations</a></p>
+</li>
+<li>
+<p><a href="#starting-integrations_service">Starting integrations</a></p>
+</li>
+<li>
+<p><a href="#restarting-older-integration-versions_service">Restarting older integration versions</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="publishing-integrations_service"><a class="anchor" href="#publishing-integrations_service"></a>About publishing integrations</h3>
+<div class="paragraph">
+<p>To run a version of an integration for the first time, you publish it.
+Publishing an integration builds and deploys the integration runtime.
+The integration starts running. After publishing an integration, you can
+stop it and restart it. Exactly one version of an integration
+can be running at one time.</p>
+</div>
+<div class="paragraph">
+<div class="title">Alternatives for publishing</div>
+<p>To run an integration for the first time, publish it by doing
+one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>At the end of the procedure in which you create or edit the integration,
+in the upper right, click <strong>Publish</strong>.</p>
+</li>
+<li>
+<p>Publish the draft version of an integration:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the left {prodname} panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations,
+to the right of the draft entry, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Three Vertical Dots"></span> and
+select <strong>Publish</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">About the publication progress</div>
+<p>{prodname} displays the progress of the publication process, which has
+several stages:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Assembling</strong> creates pod resources needed to build the integration.</p>
+</li>
+<li>
+<p><strong>Building</strong> gets the integration ready to deploy.</p>
+</li>
+<li>
+<p><strong>Deploying</strong> waits for deployment of the pod that will run the integration.</p>
+</li>
+<li>
+<p><strong>Starting</strong> waits for the pod to start running the integration.</p>
+</li>
+<li>
+<p><strong>Deployed</strong> indicates that the integration is running.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>During start-up, you can click <strong>View Logs</strong> to display OpenShift logs that
+provide start-up information.</p>
+</div>
+<div class="paragraph">
+<div class="title">Integration status after publication</div>
+<p>When publishing the integration is complete, the <strong>Running</strong> status appears next to
+the integration name. The pod is running the integration.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="stopping-integrations_service"><a class="anchor" href="#stopping-integrations_service"></a>Stopping integrations</h3>
+<div class="paragraph">
+<p>Each integration can have exactly one version that is running. A running
+version is in the <strong>Running</strong> state. At any time, you can stop
+running an integration.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>The integration that you want to stop is in the <strong>Running</strong> state.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left {prodname} panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations, identify the entry for the integration that you
+want to stop running. The entry shows that this integration is <strong>Running</strong>.</p>
+</li>
+<li>
+<p>On the far right of this integration&#8217;s entry, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span>
+and select <strong>Stop</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} stops running the integration. <strong>Stopping</strong> and then
+<strong>Stopped</strong> appears in the
+integration&#8217;s entry in the list of integrations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="starting-integrations_service"><a class="anchor" href="#starting-integrations_service"></a>Starting integrations</h3>
+<div class="paragraph">
+<p>The first time that you start an integration, the process is
+referred to as publishing the integration because {prodname} has to build
+the integration runtime before it can run the integration. At any time,
+you can stop running an integration and then start it again.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>The integration that you want to start is in the <strong>Stopped</strong> state.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left navigation panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations, on the right of the entry for the
+integration that you want to start, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span>.</p>
+</li>
+<li>
+<p>Select <strong>Start</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} displays <strong>Starting</strong> as the status of that integration version,
+and then <strong>Running</strong> when the integration is running again.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="restarting-older-integration-versions_service"><a class="anchor" href="#restarting-older-integration-versions_service"></a>Restarting older integration versions</h3>
+<div class="paragraph">
+<p>You might publish an integration that does not work the way you want it to.
+In this situation, you can stop the incorrect version
+and replace it with a version that you published previously and that
+runs correctly.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A version of the integration is running but you want to stop it.</p>
+</li>
+<li>
+<p>You have another version of the integration and you want to run that one.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong> to display a list of the
+the integrations in this environment.</p>
+</li>
+<li>
+<p>Click the entry for the integration for which you want to publish
+an older version. {prodname} displays a list of the versions of the
+integration.</p>
+</li>
+<li>
+<p>In the entry for the version that is running, at the far right, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span> and select
+<strong>Stop</strong>.</p>
+</li>
+<li>
+<p>Click <strong>OK</strong> to confirm that you want to stop running this version.</p>
+</li>
+<li>
+<p>Wait for <strong>Stopped</strong> to appear to the right of the integration name near
+the top of the page.</p>
+</li>
+<li>
+<p>To publish the older version as is, skip to the next step. Or,
+before you publish the older version, you can update it:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the entry for the integration version that you want to update,
+at the far right, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span> and select <strong>Replace Draft</strong>.</p>
+</li>
+<li>
+<p>Update the integration as needed.</p>
+</li>
+<li>
+<p>When updates are complete, in the upper right, click <strong>Publish</strong>,
+and then click <strong>Publish</strong> to confirm. This takes the place of the next two steps.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To publish the older version as is, in the entry for the integration
+version that you want to start
+running again, at the far right, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span>
+and select <strong>Start</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Start</strong> to confirm that you want to start this version of the
+integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} starts
+the integration, which takes a few minutes. When the integration
+is running, then <strong>Running version <em>n</em></strong> appears to the right
+of the integration&#8217;s name.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-log-step_manage"><a class="anchor" href="#add-log-step_manage"></a>Logging information about integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For each execution of an integration,
+for each step in a flow, {prodname} provides the following activity
+information:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The date and time that the step was executed</p>
+</li>
+<li>
+<p>How long it took to execute the step</p>
+</li>
+<li>
+<p>Whether execution was successful</p>
+</li>
+<li>
+<p>The error message if execution was not successful</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To view this information in {prodname}, display the integration&#8217;s summary
+and then click the <strong>Activity</strong> tab.</p>
+</div>
+<div class="paragraph">
+<p>To obtain further details about integration execution, you can
+log information about the messages that an integration processes by
+adding a log step to an integration flow.
+For each message that an integration receives, a log step can provide
+one or more of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The message&#8217;s context, which provides metadata about the message,
+including the message&#8217;s header.</p>
+</li>
+<li>
+<p>The message&#8217;s body, which provides the content of the message.</p>
+</li>
+<li>
+<p>Text that you specify either explicitly or through evaluation of an
+<a href="http://camel.apache.org/simple.html">Apache Camel Simple language</a> expression.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The Log connection that was available in previous releases is no longer
+available to be added to integrations. Add a log step instead of a log
+connection.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the plus sign where you want to add a log step.
+Skip this step if {prodname} is prompting you to choose a finish connection.</p>
+</li>
+<li>
+<p>Click <strong>Log</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Configure Log Step</strong> page, select the content that you want
+to log. If you select <strong>Custom Text</strong>, then in the text input field,
+enter one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The text that you want to log</p>
+</li>
+<li>
+<p>A Camel Simple language expression</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you enter an expression, {prodname} resolves the
+expression and logs the resulting text.</p>
+</div>
+</li>
+<li>
+<p>When log step configuration is complete, click <strong>Next</strong> to add the step
+to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>When the flow is complete, publish the integration to start seeing output
+from the new log step.</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resources</div>
+<p>After a flow that has a log step has been executed, output from
+the log step appears in the integration&#8217;s <strong>Activity</strong> tab. See
+<a href="{LinkSyndesisIntegrationGuide}#viewing-integration-activity-information_monitor">Viewing integration activity information</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitoring-integrations_manage"><a class="anchor" href="#monitoring-integrations_manage"></a>Monitoring integrations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} provides various ways for you to monitor the execution
+of your integrations. See:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#viewing-integration-history_monitor">Viewing integration history</a></p>
+</li>
+<li>
+<p><a href="#viewing-integration-activity-information_monitor">Viewing information about an integration&#8217;s activity</a></p>
+</li>
+<li>
+<p><a href="#viewing-integration-metrics_monitor">Viewing metrics for a particular integration</a></p>
+</li>
+<li>
+<p><a href="#viewing-system-metrics_monitor">Viewing metrics for a {prodname} environment</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="viewing-integration-history_monitor"><a class="anchor" href="#viewing-integration-history_monitor"></a>Viewing integration history</h3>
+<div class="paragraph">
+<p>{prodname} maintains each version of an integration. You can always view a list
+of the versions of each integration.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong> to display a list of the
+integrations in your environment.</p>
+</li>
+<li>
+<p>At the right of the entry for the integration whose versions you want to see,
+click <strong>View</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>In the page that appears, the <strong>History</strong> section lists the versions
+of the integration. The
+<span class="image"><img src="../../../_images/images/tutorials/GreenCircleCheckmark.png" alt="Current Version"></span> icon
+identifies the current version, which is the most recently,
+successfully running version.
+For each version, you can also see the date on which it was last started.</p>
+</div>
+<div class="paragraph">
+<p>To edit, start, or stop a particular version, click the
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span> to the right of the
+version&#8217;s entry. Select the operation that you want to perform.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="viewing-integration-activity-information_monitor"><a class="anchor" href="#viewing-integration-activity-information_monitor"></a>Viewing information about an integration&#8217;s activity</h3>
+<div class="paragraph">
+<p>{prodname} provides activity information for each execution of an integration.
+This information is part of the integration&#8217;s log.
+For each step in a flow, {prodname} provides:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The date and time that the step was executed</p>
+</li>
+<li>
+<p>How long it took to execute the step</p>
+</li>
+<li>
+<p>Whether execution was successful</p>
+</li>
+<li>
+<p>The error message if execution was not successful</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>At any time, you can view this information.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>There is or was a running integration for which you want to view activity
+information.</p>
+</li>
+<li>
+<p>This integration has been executed at least once.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>At the right of the entry for the integration for which you want to view activity
+information, click <strong>View</strong>.</p>
+</li>
+<li>
+<p>In the integration&#8217;s summary page, click the <strong>Activity</strong> tab.</p>
+</li>
+<li>
+<p>Optionally, enter date and/or keyword filters to limit the executions
+listed.</p>
+</li>
+<li>
+<p>Click the integration execution for which you want to view activity information.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>To obtain additional information between any two steps, you can
+add a log step to the
+integration. A log step provides information about each message it
+receives and can provide custom text that you specify.
+If you add a log step, then it appears as one of the integration&#8217;s
+steps when you expand the integration execution that you want to view activity
+information for. You view {prodname} information for a log step in the
+same way that you view {prodname} information for any other step. See
+<a href="{LinkSyndesisIntegrationGuide}#add-log-step_manage">Logging information about integration execution</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="viewing-integration-metrics_monitor"><a class="anchor" href="#viewing-integration-metrics_monitor"></a>Viewing metrics for a particular integration</h3>
+<div class="paragraph">
+<p>{prodname} provides the following metrics for each integration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Total Errors</strong> indicates the number of runtime errors that all
+executions of this integration
+encountered during the past 30 days.</p>
+</li>
+<li>
+<p><strong>Last Processed</strong> displays the most recent date and time that this
+integration processed a message. The message might have been successfully
+processed or there might have been an error.</p>
+</li>
+<li>
+<p><strong>Total Messages</strong> is the number of messages that all executions
+of this integration processed in the last 30 days. This includes
+message failures.</p>
+</li>
+<li>
+<p><strong>Uptime</strong> indicates when this integration started running and how long
+it has been running without an error.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>The integration that you want to view metrics for is running or has been
+running.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>At the right of the entry for the integration for which you want to view metrics,
+click <strong>View</strong>.</p>
+</li>
+<li>
+<p>In the integration&#8217;s summary page, click <strong>Metrics</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="viewing-system-metrics_monitor"><a class="anchor" href="#viewing-system-metrics_monitor"></a>Viewing metrics for a {prodname} environment</h3>
+<div class="paragraph">
+<p>Metrics for your {prodname} environment appear on the {prodname} home page.</p>
+</div>
+<div class="paragraph">
+<div class="title">Procedure</div>
+<p>In the left panel, click <strong>Home</strong>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>{prodname} updates the following metrics
+every 5 seconds:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The number of integrations that are defined in this environment as
+well as the number of integrations that are running, the number
+of integrations that are stopped, and the number of integrations that
+are pending. {prodname} is either stopping or starting pending integrations.
+A red cross indicates any integrations that
+were running but that encountered an error that suspended execution.</p>
+</li>
+<li>
+<p>The number of connections that are defined in this environment.</p>
+</li>
+<li>
+<p>Total number of messages that have been processed by integrations in
+this environment in
+the last 30 days. This includes messages that were processed by
+integrations that might no longer be running or that might have been
+deleted from this environment.</p>
+</li>
+<li>
+<p>Uptime indicates how long there has been at least one integration that
+is running. The date and time when uptime started appears as well.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="testing-integrations_manage"><a class="anchor" href="#testing-integrations_manage"></a>Testing integrations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you create an integration and it is running correctly in a {prodname}
+development environment, you might want to run it in a different {prodname}
+environment to test it.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You have a {prodname} development environment and a {prodname} test
+environment.</p>
+</li>
+<li>
+<p>You have an integration that is running correctly in your {prodname}
+development environment.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Learn about <a href="{LinkSyndesisIntegrationGuide}#about-copying-integrations_copy">copying an integration to another environment</a>.</p>
+</li>
+<li>
+<p>Export the integration from the development environment. See
+<a href="{LinkSyndesisIntegrationGuide}#exporting-integrations_copy">Exporting an integration</a>.</p>
+</li>
+<li>
+<p>Import the integration into the test environment. See
+<a href="{LinkSyndesisIntegrationGuide}#importing-integrations_copy">Importing an integration</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="troubleshooting-integration-execution_manage"><a class="anchor" href="#troubleshooting-integration-execution_manage"></a>Tips for troubleshooting integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If an integration stops working, check its activity and history details.
+See <a href="{LinkSyndesisIntegrationGuide}#viewing-integration-activity-information_monitor">Viewing integration activity information</a>
+and <a href="{LinkSyndesisIntegrationGuide}#viewing-integration-history_monitor">Viewing integration history</a>.</p>
+</div>
+<div class="paragraph">
+<p>For a connection to an application that uses OAuth,
+you might see an error message that indicates
+that the access token for the application has expired. Sometimes,
+you might get a less explicit  <code>403 - Access denied</code> message.
+The information in the message depends on the application that the
+integration is connecting to.
+In this situation, try reconnecting to the application and
+then republishing the integration:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations, at the right of the entry for the integration
+that stopped running, click <strong>View</strong>.</p>
+</li>
+<li>
+<p>In the integration&#8217;s summary page, in the flow visualization,
+click the icon for the application that you want to reconnect to.</p>
+<div class="paragraph">
+<p>If this is an API provider integration, then in the integration&#8217;s
+summary page, click its flow icon to display the operations list.
+Then click the operation whose path contains the connection
+that is failing and then click the failing connection in the
+operation&#8217;s path visualization.</p>
+</div>
+</li>
+<li>
+<p>In the connection&#8217;s details page, click <strong>Reconnect</strong>.</p>
+</li>
+<li>
+<p>Respond to that application&#8217;s OAuth workflow prompts.</p>
+<div class="paragraph">
+<p>{prodname} displays a message to indicate that its access to that
+application has been authorized.
+For some applications, this takes a few seconds but it can take longer
+for other applications.</p>
+</div>
+</li>
+<li>
+<p>After reconnecting to the application, start the integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If reconnection is not successful, try this:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Re-register {prodname} as a client of the application. See
+<a href="{LinkSyndesisIntegrationGuide}#general-procedure-for-obtaining-authorization_connections">General procedure for obtaining authorization</a>.</p>
+</li>
+<li>
+<p>Create a new connection.</p>
+</li>
+<li>
+<p>Edit each integration that was using the old connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Remove the old connection.</p>
+</li>
+<li>
+<p>Replace it with the new connection.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Publish each updated integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="updating-integrations_manage"><a class="anchor" href="#updating-integrations_manage"></a>Updating integrations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you create an integration, you might need to update it to
+add, edit or remove a step.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>In your {prodname} environment, there is a version of the integration
+that you want to update.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left {prodname} panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations, click <strong>View</strong> for the integration that
+you want to update.</p>
+</li>
+<li>
+<p>On the integration&#8217;s summary page, in the upper right corner, click
+<strong>Edit Integration</strong>.</p>
+<div class="paragraph">
+<p>If this is a simple integration, {prodname} displays the
+integration&#8217;s flow.  If this is an API provider integration, {prodname}
+displays the operations list. To update the flow for a particular
+operation, click <strong>Edit flow</strong> on the right of that
+operation to display its flow.</p>
+</div>
+</li>
+<li>
+<p>Update the flow as needed:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>To add a step, in the flow visualization, click the plus
+sign that is where you want to add the step.
+Then click the card that represents the step that you want to add.</p>
+</li>
+<li>
+<p>To delete a step, in the flow visualization, click
+<span class="image"><img src="../../../_images/images/integrating-applications/TrashIcon.png" alt="TrashIcon" title="Delete"></span>
+on the step that you want to delete.</p>
+</li>
+<li>
+<p>To change the configuration of a step, in the flow visualization,
+click <strong>Configure</strong> on the step that you want to update. In the
+configuration page, update the parameter settings as needed.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deleting-integrations_manage"><a class="anchor" href="#deleting-integrations_manage"></a>Deleting integrations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you delete an integration, {prodname} still has the history of
+that integration. If you import a version of the deleted integration,
+then {prodname} associates the history of the deleted integration with
+the imported integration.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left {prodname} panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations, at the right of the entry for the integration
+that you want to delete, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab"></span> and select
+<strong>Delete</strong>.</p>
+</li>
+<li>
+<p>In the popup, click <strong>OK</strong> to confirm that you want to delete the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="copying-integrations-to-other-environments_manage"><a class="anchor" href="#copying-integrations-to-other-environments_manage"></a>Copying an integration to another environment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To run integrations across development, staging and
+production environments, you can export and import integrations.
+The environments can all be on a single OpenShift cluster,
+or they can be spread out across multiple OpenShift clusters.</p>
+</div>
+<div class="paragraph">
+<p>The procedures described here instruct you to export
+and import integrations in the {prodname} console.</p>
+</div>
+<div class="paragraph">
+<p>See the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#about-copying-integrations_copy">About copying integrations</a></p>
+</li>
+<li>
+<p><a href="#exporting-integrations_copy">Exporting integrations</a></p>
+</li>
+<li>
+<p><a href="#importing-integrations_copy">Importing integrations</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="about-copying-integrations_copy"><a class="anchor" href="#about-copying-integrations_copy"></a>About copying integrations</h3>
+<div class="paragraph">
+<p>Each {prodname} installation is an environment from which you
+can export an integration. Exporting an integration downloads a zip file
+that contains the information needed to recreate the integration in a
+different {prodname} environment.</p>
+</div>
+<div class="paragraph">
+<p>In an environment, each integration can have only one <strong>Draft</strong> version.</p>
+</div>
+<div class="paragraph">
+<p>The result of importing an integration depends on:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Whether the integration was previously imported</p>
+</li>
+<li>
+<p>Whether a connection that the integration uses was previously imported</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>{prodname} uses an internal identifier for each integration and each
+connection to determine whether it already exists in the environment that
+it is being imported into. If you change the name of an integration or
+connection, {prodname} recognizes it as the same integration or connection,
+which just has a different name.</p>
+</div>
+<div class="paragraph">
+<p>The following table describes the possible results of importing
+an integration:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">In the importing environment:</th>
+<th class="tableblock halign-left valign-top">What the import operation does:</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The integration has not been previously imported.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Creates the integration. The integration is in the <strong>Draft</strong> state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The integration has been previously imported.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{prodname} updates the integration. The updated integration is in
+the <strong>Draft</strong> state. If there was a <strong>Draft</strong> version of this integration,
+it is lost.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The imported integration uses a connection that did not exist in the
+environment before the import operation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{prodname} creates a connection that has the same settings except for
+secrets. You must review each new connection. If a connection is not
+completely configured for its new environment then you must add the
+missing settings. For example, you might need to obtain secret settings by
+registering this {prodname} environment as a client of the application that this
+connection accesses.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="exporting-integrations_copy"><a class="anchor" href="#exporting-integrations_copy"></a>Exporting integrations</h3>
+<div class="paragraph">
+<p>When {prodname} exports an integration it downloads a zip file
+to your local <code>Downloads</code> folder. This zip file
+contains the information needed to recreate the integration in a
+different {prodname} environment.</p>
+</div>
+<div class="paragraph">
+<p>Exporting an integration is also a way to have a backup of the integration.
+However, {prodname} maintains the versions of an integration so exporting
+an integration is not required for having a backup copy.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel of {prodname}, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations, identify the entry for the integration
+that you want to export.</p>
+</li>
+<li>
+<p>At the right of the entry, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Three Vertical Dots"></span> and
+select <strong>Export</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>To import
+the integration into another {prodname} environment, open that environment
+and import the exported zip file.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="importing-integrations_copy"><a class="anchor" href="#importing-integrations_copy"></a>Importing integrations</h3>
+<div class="paragraph">
+<p>In a {prodname} environment, you can import an integration that was
+exported from another {prodname} environment.
+Exporting an integration downloads the zip file that you upload
+to import the integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have a zip file that contains an integration that was exported from another
+{prodname} environment.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Open the {prodname} environment that you want to import the integration into.</p>
+</li>
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Import</strong>.</p>
+</li>
+<li>
+<p>Drag and drop one or more exported integration zip files,
+or navigate to a zip file that contains an exported integration and select it.</p>
+<div class="paragraph">
+<p>{prodname} imports the file(s) and display a message when importing
+is successful.</p>
+</div>
+</li>
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the list of integrations, on the entry for the integration
+that you just imported, click <strong>View</strong>.</p>
+</li>
+<li>
+<p>In the integration summary, if there is a notification that
+configuration is required, in the upper right, click <strong>Edit integration</strong>.</p>
+</li>
+<li>
+<p>For each connection that requires configuration:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click its <strong>Configure</strong> button to display its details.</p>
+</li>
+<li>
+<p>Enter or change connection details as needed. It is possible that every
+field on this page is correct and that only security configuration is required.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+<div class="paragraph">
+<p>The <strong>Settings</strong> page displays entries for applications that use the OAuth
+protocol.</p>
+</div>
+</li>
+<li>
+<p>For each connection that requires configuration and that accesses an
+application that uses the OAuth protocol, register your {prodname}
+environment with the application. The steps vary for each application.
+See the appropriate topic:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-dropbox_dropbox">Registering with Dropbox</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-google_google">Registering with Google</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#registering-with-jira_jira">Registering with Jira</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-rest-api_rest">Registering with a REST API</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-salesforce_salesforce">Registering with Salesforce</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#connecting-to-concur_connectors">Connecting to SAP Concur</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-twitter_twitter">Registering with Twitter</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the left panel, click <strong>Connections</strong> and confirm that there are no
+longer any connections that require configuration.</p>
+</li>
+<li>
+<p>In the left panel, click <strong>Integrations</strong>. In the list of integrations,
+imported integrations have a
+green triangle in the upper left corner of their entries.</p>
+</li>
+<li>
+<p>In the list of integrations, at the right of the entry for the
+integration that you imported, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Three Vertical Dots"></span> and
+select <strong>Edit</strong>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Save</strong> or, if you want to start
+running the imported integration, click <strong>Publish</strong>. Regardless of whether
+you save the integration as a draft or you publish the integration,
+{prodname} updates the integration to use the updated connections.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

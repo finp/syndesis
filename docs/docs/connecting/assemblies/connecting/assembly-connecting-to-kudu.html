@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Apache Kudu :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-kudu.html">Connecting to Apache Kudu</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-kudu.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Apache Kudu</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Kudu is a columnar storage manager developed for the Apache Hadoop platform.
+A {prodname} integration can connect to a Kudu data store to scan a table,
+which returns all records in the table to the integration, or to insert
+records into a table. Details are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-kudu-connections_kudu">Creating a connection to an Apache Kudu data store</a></p>
+</li>
+<li>
+<p><a href="#add-kudu-connection-get-records_kudu">Triggering an integration when scanning returns records from a Kudu table</a></p>
+</li>
+<li>
+<p><a href="#add-kudu-connection-add-records_kudu">Inserting records into a Kudu table</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-kudu-connections_kudu"><a class="anchor" href="#create-kudu-connections_kudu"></a>Creating a connection to an Apache Kudu data store</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to obtain records from or insert records into
+a Kudu table, create a connection to a Kudu master host
+and then add that connection to an integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You must know the IP address or the hostname for the Kudu master host that you want
+to connect to.</p>
+</li>
+<li>
+<p>You must know the port that Kudu is listening on.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Apache Kudu</strong> connector.</p>
+</li>
+<li>
+<p>To configure the connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Address of Kudu master host</strong> field, enter the
+hostname or the IP address of the Kudu master host.</p>
+</li>
+<li>
+<p>In the <strong>Port to establish connection to</strong> field, enter the
+port that Kudu is listening on. The default is <code>7051</code>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, you might enter <code>Kudu North</code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you
+entered the example name, you would
+see that <strong>Kudu North</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-kudu-connection-get-records_kudu"><a class="anchor" href="#add-kudu-connection-get-records_kudu"></a>Triggering an integration when scanning returns records from a Kudu table</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration upon obtaining data from a
+Kudu table, add a Kudu connection to a simple integration as its start
+connection. When the integration is running, the Kudu connection
+scans the table that you specified at the interval that you specified,
+obtains all records in the table, and passes a collection of the
+records to the next step in the integration.</p>
+</div>
+<div class="paragraph">
+<p>A Kudu connection can obtain data from only one table.
+Between scans, if there are no changes to the data in the table that
+the connection scans, then the next scan returns the same data
+as the previous scan.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You created a Kudu connection.</p>
+</li>
+<li>
+<p>The table that you want to obtain records from exists.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Kudu connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Scan a Kudu table</strong> action.</p>
+</li>
+<li>
+<p>In the <strong>Table</strong> field, enter the name of the table that you want to
+obtain records from.</p>
+</li>
+<li>
+<p>In the <strong>Period</strong> field, accept the default of one minute, or enter
+the interval at which you want the connection to scan the table and
+return the records that are in the table.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection is the simple integration&#8217;s start connection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>Add the integration&#8217;s finish connection and any other connections
+that you want to include in the integration.
+When the integration contains all the connections that are needed,
+consider whether you need to split the collection of records that
+the Kudu connection returns. If you want to execute integration steps
+for each record that you obtained from the Kudu table, then after the
+Kudu connection, add a split step. Also,
+you probably need to follow the Kudu connection with a data
+mapping step that maps data obtained from Kudu to fields in
+subsequent connections in the integration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-kudu-connection-add-records_kudu"><a class="anchor" href="#add-kudu-connection-add-records_kudu"></a>Inserting records into a Kudu table</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can add records to a Kudu table in the middle
+of a flow or to finish
+a simple integration. To do this, add a Kudu connection to the middle of
+a flow or as a simple integration&#8217;s
+finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Kudu connection.</p>
+</li>
+<li>
+<p>You are creating or editing an integration and {prodname} is
+prompting you to add to the integration. Or, {prodname} is
+prompting you to choose a finish connection.</p>
+</li>
+<li>
+<p>The table that you want to add records to exists.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Kudu connection that you want to use. Note that when
+a Kudu connection inserts data, the connection does not return anything.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Insert data into a Kudu table</strong>.</p>
+</li>
+<li>
+<p>To configure the action, in the <strong>Table</strong> field, specify the name of the
+table to add records to.</p>
+<div class="paragraph">
+<p>It is important for you to have an understanding of how the
+Kudu table that you are adding records to is set up. For example,
+a Kudu table that you are adding records to might have
+a unique key. If you try to add a record that contains a key value that
+is already in the table, the Kudu connection does not add that record.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization where you added it.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>Consider whether you need to split a collection of records
+into individual records that a Kudu connection can add to a table.
+To do this, add a split step to the integration. The split step
+executes the subsequent steps in the integration once for each record.
+Also, you probably need a data mapper step before a Kudu
+connection that adds records to a table.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

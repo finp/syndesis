@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating an integration that is triggered by a REST API call :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-trigger-integrations-with-api-calls.html">Creating an integration that is triggered by a REST API call</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/assemblies/integrating-applications/assembly-trigger-integrations-with-api-calls.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating an integration that is triggered by a REST API call</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration on demand, start the integration
+with a REST API description document that you provide.
+Integrations that start this way are referred to as <em>API provider integrations</em>.
+An API provider integration allows REST API clients to invoke
+commands that trigger execution of the integration.</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} publishes an API provider integration, any client with
+network access to the integration endpoints can trigger execution of
+the integration.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide information and
+instructions for creating API provider integrations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#overview-benefit-api-provider-integrations_api-provider">Benefit, overview, and workflow for creating API provider integrations</a></p>
+</li>
+<li>
+<p><a href="#requirements-for-api-provider-integrations_api-provider">How OpenAPI operations relate to API provider integration flows</a></p>
+</li>
+<li>
+<p><a href="#create-api-provider-integration_api-provider">Creating an API provider integration</a></p>
+</li>
+<li>
+<p><a href="#define-integration-operation-flows_api-provider">Defining the operation flows for an API provider integration</a></p>
+</li>
+<li>
+<p><a href="#configure-publish-api-provider-quickstart_api-provider">Importing and publishing the example API provider quickstart integration</a></p>
+</li>
+<li>
+<p><a href="#try-api-provider-quickstart_api-provider">Testing the example API provider quickstart integration</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For a video that shows how to create, publish and test an API provider integration, see
+<a href="https://youtu.be/sox8SSqJ0zQ" class="bare">https://youtu.be/sox8SSqJ0zQ</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="overview-benefit-api-provider-integrations_api-provider"><a class="anchor" href="#overview-benefit-api-provider-integrations_api-provider"></a>Benefit, overview, and workflow for creating API provider integrations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An API provider integration starts with a REST API service.
+This REST API service is defined by an OpenAPI 3 (or 2)
+document that you provide when you create an API provider integration.
+After you publish an API provider integration,
+{prodname} deploys the REST API service on OpenShift.
+The benefit of an API provider integration
+is that REST API clients can invoke calls that trigger execution of the integration.</p>
+</div>
+<div class="paragraph">
+<div class="title">Multiple execution flows</div>
+<p>An API provider integration has multiple execution paths, referred to as flows.
+Each operation that the OpenAPI document defines has its own flow.
+In {prodname}, for each operation that the OpenAPI
+document defines, you add connections and other steps to the execution flow for that
+operation. These steps process the data
+as required for the particular operation.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example execution flow</div>
+<p>For example, consider a human
+resources application that calls a REST API service that {prodname} has
+made available. Suppose the call invokes the operation that adds a new
+employee. The operation flow that handles this call could:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Connect to an application that creates an expense report for new employee
+equipment.</p>
+</li>
+<li>
+<p>Connect to a SQL database to add an internal ticket for setting up new
+equipment.</p>
+</li>
+<li>
+<p>Connect to Google mail to send a message to the new employee that provides
+orientation information.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Ways to trigger execution</div>
+<p>There are many ways to call the REST APIs that trigger integration execution,
+including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A web browser page that takes data input and generates the call.</p>
+</li>
+<li>
+<p>An application that explicitly calls the REST APIs, such as the <code>curl</code> utility.</p>
+</li>
+<li>
+<p>Other APIs that call the REST API, for example, a webhook.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Ways to edit a flow</div>
+<p>For each operation, you can edit its flow by:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Adding connections to the applications that need to process the data.</p>
+</li>
+<li>
+<p>Adding steps between connections, including split, aggregate, and data mapping steps.</p>
+</li>
+<li>
+<p>Mapping connection error messages to return codes in the HTTP response that finishes the flow. The
+response goes to the application that invoked the call that triggered
+execution of the integration.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Workflow for creating an API provider integration</div>
+<p>The <strong>general</strong> workflow for creating an API provider integration is shown
+in the following diagram:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/ApiProviderCreateIntegrationWorkflow.png" alt="General workflow for creating an API provider integration"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">Publishing an API provider integration</div>
+<p>After you publish an API provider integration, in the integration&#8217;s
+summary page, {prodname} displays the external URL for your REST API service.
+This external URL is the base URL that clients use to
+call your REST API services.</p>
+</div>
+<div class="paragraph">
+<p>For {prodname} environments on OCP, Red Hat 3scale discovery of API provider integrations might be enabled. In this case, 3scale publishes the URL for invoking services.</p>
+</div>
+<div class="paragraph">
+<div class="title">Testing an API provider integration</div>
+<p>To test an API provider integration&#8217;s flows, you can use the <code>curl</code> utility.
+For example, the following <code>curl</code> command triggers execution of the
+flow for the <strong>Get Task by ID</strong> operation for the REST API service URL: <a href="https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api/" class="bare">https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api/</a>.</p>
+</div>
+<div class="paragraph">
+<p>The HTTP <code>GET</code> command is the
+default request so there is no requirement to specify <code>GET</code>.
+The last part of the URL specifies the ID of the task to get:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api/todo/1</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="requirements-for-api-provider-integrations_api-provider"><a class="anchor" href="#requirements-for-api-provider-integrations_api-provider"></a>How OpenAPI operations relate to API provider integration flows</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An API provider integration&#8217;s OpenAPI document defines the
+operations that REST API clients can call.
+Each OpenAPI operation has its own API provider integration flow.
+Consequently, each operation can also have its own
+REST API service URL. Each URL is defined by the API service&#8217;s base URL
+and optionally by a subpath. REST API calls specify an operation&#8217;s
+URL to trigger execution of the flow for that operation.</p>
+</div>
+<div class="paragraph">
+<p>Your OpenAPI document determines which HTTP verbs (such as
+<code>GET</code>, <code>POST</code>, <code>DELETE</code> and so on) you can specify
+in calls to your REST API service URLs. Examples of calls to
+API provider URLs are in the
+<a href="{LinkSyndesisIntegrationGuide}#try-api-provider-quickstart_api-provider">instructions for trying out the API provider quickstart example</a>.</p>
+</div>
+<div class="paragraph">
+<p>Your OpenAPI document also determines the possible HTTP status codes
+that an operation can return. An operation’s return path can handle
+only the responses that the OpenAPI document defines.
+For example, an operation that deletes an
+object based on its ID might define these possible responses:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"responses": {
+  "204": {
+           "description": "Task deleted"
+         },
+  "404": {
+           "description": "No Record found with this ID"
+         },
+  "500": {
+            "description": "Server Error"
+        }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">Illustration of an API provider integration example</div>
+<p>The following diagram shows an API provider integration that processes data
+about people. An external REST API client invokes the REST API URLs that are
+deployed by the API provider integration. Invocation of a URL triggers
+execution of the
+flow for one REST operation. This API provider integration has 3 flows.
+Each flow can use any connection or step that
+is available in {prodname}. The REST API along with its flows
+is one {prodname} API provider integration, which is deployed in one OpenShift pod.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/api-provider.png" alt="API provider integration with 3 flows"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">Editing the OpenAPI document while creating an API provider integration</div>
+<p>After you specify an OpenAPI document for your API provider
+integration, you can update the document as needed while you define
+the execution flows for the API operations. To do this, click
+<strong>View/Edit API Definition</strong> in the upper right of a page in
+which you are editing the API provider integration. This displays
+your OpenAPI document in the API Designer editor. Edit and
+save the document to make changes that are reflected in
+{prodname}.</p>
+</div>
+<div class="paragraph">
+<p>Considerations while editing the OpenAPI document:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><code>operationId</code> properties for synchronization</strong></p>
+<div class="paragraph">
+<p>Synchronization between the versions of the OpenAPI document in the API Designer
+editor and in the {prodname} integration editor depend on a unique <code>operationId</code>
+property that is assigned to each operation that is defined in the document.
+You can assign a specific <code>operationId</code> property value to each operation,
+or use the one that {prodname} generates automatically.</p>
+</div>
+</li>
+<li>
+<p><strong>Request and response definitions</strong></p>
+<div class="paragraph">
+<p>In each operation&#8217;s definition, you can supply a JSON schema that
+defines the operation&#8217;s request and response.
+{prodname} uses the JSON schema:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>As the basis for the operation&#8217;s input and output data shapes</p>
+</li>
+<li>
+<p>To display operation fields in the data mapper</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>No cyclic schema references</strong></p>
+<div class="paragraph">
+<p>A JSON schema for an API provider integration operation cannot have cyclic
+schema references.
+For example, a JSON schema that specifies a request or response
+body cannot reference itself as a whole nor reference any part
+of itself through intermediate JSON schemas.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-api-provider-integration_api-provider"><a class="anchor" href="#create-api-provider-integration_api-provider"></a>Creating an API provider integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create an API provider integration, provide
+an OpenAPI document (<code>.json</code>, <code>.yaml</code>, or <code>.yml</code> file) that defines the operations that the integration
+can perform. {prodname} creates an execution flow for each operation.
+Edit the flow for each operation to
+add connections and steps that
+process integration data according to the requirements for that operation.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are able to provide or define an OpenAPI document for the REST API
+operations that you want the integration to perform.</p>
+<div class="paragraph">
+<p>To experiment,
+<a href="{syndesis-quickstart-url}/api-provider/task-api.json">download the raw version of the <code>task-api.json</code> file</a>,
+which is an OpenAPI document for an API provider quickstart. You can
+upload this file when {prodname} prompts you to provide an OpenAPI
+document. Alternatively, you can specify the URL for the raw <code>task-api.json</code> file,
+which is <a href="https://raw.githubusercontent.com/syndesisio/syndesis-quickstarts/1.9/api-provider/task-api.json" class="bare">https://raw.githubusercontent.com/syndesisio/syndesis-quickstarts/1.9/api-provider/task-api.json</a>.</p>
+</div>
+</li>
+<li>
+<p>You have a plan for the flow for each OpenAPI operation.</p>
+</li>
+<li>
+<p>You created a connection for each application or service that you want
+to add to an operation&#8217;s flow.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left navigation panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click <strong>API Provider</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Start integration with an API call</strong> page:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you have an OpenAPI document that defines the REST API
+operations, upload the OpenAPI document.</p>
+</li>
+<li>
+<p>If you need to define the OpenAPI document, select <strong>Create a new OpenAPI 3.x document</strong> or <strong>Create a new OpenAPI 2.x document</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you uploaded a document, review or edit it:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click <strong>Review/Edit</strong> to open the API Designer editor.</p>
+</li>
+<li>
+<p>Review and edit as needed.</p>
+<div class="paragraph">
+<p>Optionally, if your document uses the OpenAPI 2 specification, you can click <strong>Convert to OpenAPI 3</strong> if you want the API Designer to convert your document to conform with the OpenAPI 3 specification.</p>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Save</strong> or <strong>Cancel</strong> to close the editor.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If you are creating a document, then in the API Designer editor
+that {prodname} opens:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Define the OpenAPI document as described in
+<a href="{LinkDesigningAPIs}#create-api-definition">Design and develop an API definition with API Designer</a>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Save</strong>, which closes the editor.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} displays a list of the operations that the OpenAPI
+document defines.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>For each operation,
+<a href="{LinkSyndesisIntegrationGuide}#define-integration-operation-flows_api-provider">define a flow that executes that operation</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="define-integration-operation-flows_api-provider"><a class="anchor" href="#define-integration-operation-flows_api-provider"></a>Defining the operation flows for an API provider integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The OpenAPI document that defines your REST API service defines
+the operations that the service can perform. After you create an API
+provider integration, you can edit the flow for each operation.</p>
+</div>
+<div class="paragraph">
+<p>Each operation has exactly one flow.
+In an operation flow, you can add connections
+to other applications and services, as well as steps that operate on data
+between connections.</p>
+</div>
+<div class="paragraph">
+<p>As you add to operation flows, you might find that you need to update
+the OpenAPI document that the API provider integration is based on. To do this,
+click <strong>View/Edit API Definition</strong> in the upper right of a page in which
+you are editing your API provider integration. This displays your document
+in the API Designer editor. In your OpenAPI
+definition, as long as each operation has a unique <code>operationId</code> property,
+you can save your updates in API Designer and {prodname} can synchronize the
+API provider integration&#8217;s flow definitions to have your updates.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an API provider integration, gave it a name, and saved it.</p>
+</li>
+<li>
+<p>You created a connection to each application or service that you want
+an operation flow to connect to. For details, see the
+<a href="{LinkSyndesisIntegrationGuide}#about-creating-connections_connections">information about creating connections</a>.</p>
+</li>
+<li>
+<p>{prodname} is displaying the list of operations that the API defines.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the <strong>Operations</strong> list page, for the operation
+whose flow you want to define, click <strong>Create flow</strong>.</p>
+</li>
+<li>
+<p>For each connection that you want to add to this flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign to add a connection
+at that location.</p>
+</li>
+<li>
+<p>Click the connection that you want to add.</p>
+</li>
+<li>
+<p>Select the action that you want this connection to perform.</p>
+</li>
+<li>
+<p>Configure the action by entering data in the labeled fields.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Add all desired connections to the flow
+before you continue.</p>
+</div>
+</li>
+<li>
+<p>In this operation flow, to process data between connections:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the
+plus sign where you want to add a step.</p>
+</li>
+<li>
+<p>Click the step that you want to add.</p>
+</li>
+<li>
+<p>Configure the step by entering data in the labeled fields.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+<div class="paragraph">
+<p>For help, see
+<a href="{LinkSyndesisIntegrationGuide}#about-adding-steps_create">Adding steps between connections</a>.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If you want to add another step that processes
+data between connections, repeat this subset of instructions.</p>
+</div>
+</li>
+<li>
+<p>Map data to fields in the next connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, check for data type mismatch
+<span class="image"><img src="../../../_images/images/integrating-applications/DataTypeMismatchWarning.png" alt="data mismatch"></span> icons, which
+indicate that the connection cannot process the incoming data. You need
+to add a data mapper step here.</p>
+</li>
+<li>
+<p>For each data mismatch icon in the flow visualization:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Click the plus sign that is just before that step.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>Define the needed mappings. For help, see
+<a href="{LinkSyndesisIntegrationGuide}#mapping-data_ug">Mapping integration data to fields in the next connection</a>.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the data mapper step to the flow.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the flow visualization, on the
+<strong>Provided API Return Path</strong> step, click <strong>Configure</strong>.</p>
+<div class="paragraph">
+<p>Every API provider integration finishes each operation flow by
+sending a response to the REST API caller that triggered execution of
+the operation flow. The response contains one of the return codes
+that you configure for the <strong>Provided API Return Path</strong> step that
+finishes the operation’s flow. Configure the return path step as follows:</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Under <strong>Default Response</strong>, in the <strong>Return Code</strong> field, accept
+the default response that {prodname} displays, or click the down
+caret and scroll to select the default response that you want.
+The flow sends this response when execution of the operation
+flow does not return any of the configured error responses.
+Typically, the default response return code indicates a successful operation.</p>
+</li>
+<li>
+<p>Under <strong>Error Handling</strong>, indicate whether you want to include
+the error message in the body of the returned message.</p>
+<div class="paragraph">
+<p>During development, you typically want to return the error message.
+In production, however, you might want to hide the error message if
+it contains sensitive or proprietary information. The error message
+is a JSON formatted string that contains <code>responseCode</code>, <code>category</code>,
+and <code>message</code> elements, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">   {
+      responseCode: 404,
+      category:  "SQL_ENTITY_NOT_FOUND_ERROR",
+      message: "SQL SELECT did not SELECT any records"
+    }</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Under <strong>Error Response Codes</strong>, {prodname} displays an entry for
+each error that a connection in the flow might return. For each
+error, accept the <strong>200 All is good</strong> default return code or click to
+select another HTTP status return code.</p>
+<div class="paragraph">
+<p>The return codes that you
+can select from, are the return codes that the OpenAPI document
+defines for the operation that this flow executes.
+If {prodname} does not display a return code that you need, you can
+edit the OpenAPI document to add it.</p>
+</div>
+<div class="paragraph">
+<p>To do this, in the upper right,
+click <strong>View/Edit API Definition</strong>. Edit the OpenAPI document as needed.
+When you are done, save the OpenAPI document. {prodname} returns to
+editing the <strong>Provided API Return Path</strong> and reflects any changes that you saved.</p>
+</div>
+</li>
+<li>
+<p>Click Next to complete configuration of the return path.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>When this flow has all needed
+connections and steps and there are no data mismatch icons, or when
+you no longer want to edit the flow for now, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Publish</strong>&#8201;&#8212;&#8201;To start running the integration, in the upper right, click <strong>Publish</strong>.
+This builds the integration, deploys the REST API service to
+OpenShift, and makes the integration available to be executed.
+You can publish the integration each time that you
+complete the creation of an operation&#8217;s flow or each
+time that you edit an operation&#8217;s flow.</p>
+</li>
+<li>
+<p><strong>Save</strong>&#8201;&#8212;&#8201;To display the list of operations, in the upper right,
+click <strong>Save</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Repeat this procedure to edit another operation&#8217;s flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Testing API provider integrations</div>
+<ul>
+<li>
+<p>Testing API provider integrations running on one of these platforms:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift Online</p>
+</li>
+<li>
+<p>OpenShift Dedicated</p>
+</li>
+<li>
+<p>OpenShift Container Platform when <strong>API discovery is disabled</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can use the <code>curl</code> utility to confirm that the integration is working as
+expected. In the <code>curl</code> command, specify the external URL that {prodname} displays
+after it publishes the API provider integration.
+For examples of doing this, see
+<a href="{LinkSyndesisIntegrationGuide}#try-api-provider-quickstart_api-provider">Testing the example API provider quickstart integration</a>.</p>
+</div>
+</li>
+<li>
+<p>Testing API provider integrations running on OpenShift Container Platform
+when <strong>API discovery is enabled</strong></p>
+<div class="paragraph">
+<p>Red Hat 3scale publishes your API provider integration. To test the integration, open the 3scale dashboard to obtain the integration’s URL.</p>
+</div>
+<div class="paragraph">
+<p>You can disable discovery for an API provider integration if, for example, you do not want Red Hat 3scale to control access to the integration’s API or you want to test the API provider integration in {prodname}. If you disable discovery, {prodname} republishes the integration and provides an external URL for invoking and testing integration execution. To do this, in {prodname} go to the integration’s summary page. On this page, click <strong>Disable discovery</strong>. {prodname} republishes the integration and provides the integration’s URL. For examples of how to test an integration, see
+<a href="{LinkSyndesisIntegrationGuide}#try-api-provider-quickstart_api-provider">Testing the example API provider quickstart integration</a>. After testing, you can re-enable discovery for the API provider integration so that 3scale publishes it.</p>
+</div>
+<div class="paragraph">
+<p>You can enable or disable discovery for each API provider integration.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-publish-api-provider-quickstart_api-provider"><a class="anchor" href="#configure-publish-api-provider-quickstart_api-provider"></a>Importing and publishing the example API provider quickstart integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} provides an API provider quickstart integration that you can
+import into your {prodname} environment. This quickstart includes
+an OpenAPI document for a task management API. After importing
+the quickstart integration, you can examine the flows and then publish
+the integration. After you complete the procedure described below,
+the <strong>TaskAPI</strong> integration is running and ready
+to be executed.</p>
+</div>
+<div class="paragraph">
+<p>The API provider quickstart helps you quickly learn how to configure, publish, and
+test an API provider integration. But it is not a real-world example of
+how useful an API provider integration can be. For a real-world
+example, suppose that you already
+used {prodname} to publish several simple integrations. You could define an OpenAPI
+document for triggering execution of those integrations. To do this, you
+would edit the flow for each OpenAPI operation to be almost the
+same as the simple integrations that you already published.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>{prodname} is open in a browser.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Import the <strong>TaskAPI</strong> quickstart integration:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Go to
+<a href="{syndesis-quickstart-url}/api-provider" class="bare">{syndesis-quickstart-url}/api-provider</a>
+and download <code>TaskAPI-export.zip</code>.</p>
+</li>
+<li>
+<p>In {prodname}, in the left navigation panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Import</strong>.</p>
+</li>
+<li>
+<p>Drag the <code>TaskAPI-export.zip</code> file that you downloaded to the <strong>Import</strong> page. {prodname} indicates
+that it has successfully imported the file.</p>
+</li>
+<li>
+<p>In the left navigation panel, click <strong>Integrations</strong> to see
+an entry for the <strong>TaskAPI</strong> integration that you just imported. Although the entry
+indicates that configuration is required, this integration is ready to publish.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the <strong>TaskAPI</strong> entry, click <span class="image"><img src="../../../_images/images/integrating-applications/ThreeVerticalDotsKebab.png" alt="Three Vertical Dots"></span> and
+then click <strong>Edit</strong> to display a list
+of the operations that this API provides.</p>
+</li>
+<li>
+<p>To examine the flows for each operation:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click its <strong>Edit flow</strong> button to display the visualization for that flow.</p>
+<div class="paragraph">
+<p>Each flow already has a database connection, one or more data mapper
+steps, and a <strong>Provided API Return Path</strong> step that finishes the flow.</p>
+</div>
+</li>
+<li>
+<p>For the <strong>Invoke SQL</strong> step, click <strong>Configure</strong> to see the SQL statement that the
+connection executes. Then click <strong>Cancel</strong> to return to that operation&#8217;s visualization flow.</p>
+</li>
+<li>
+<p>For a data mapper step, click <strong>Configure</strong> to see the mappings. Then click
+<strong>Cancel</strong> to return to the visualization.</p>
+</li>
+<li>
+<p>For the <strong>Provided API Return Path</strong> step, which is the last step in every
+operation&#8217;s flow, click <strong>Configure</strong> to
+see the HTTP return codes that the operation might send to the caller.
+Click <strong>Cancel</strong> to return to the visualization.</p>
+</li>
+<li>
+<p>After examining one operation&#8217;s flow, click the <strong>Integrations</strong>&gt; <strong>TaskAPI</strong>&gt; <strong>Operation</strong> drop down menu and then select another operation.</p>
+</li>
+<li>
+<p>Repeat this subset of steps to examine each flow.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>After examining the flows, click <strong>Publish</strong>, edit the integration
+name if you want to, and then click <strong>Save and publish</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the summary page for this integration and shows
+publication progress as it assembles, builds, deploys, and
+starts the integration.</p>
+</div>
+</li>
+<li>
+<p>When the <strong>TaskAPI</strong> integration summary page displays <strong>Running</strong>,
+{prodname} displays the external URL for the Task API service.
+It looks something like this:</p>
+<div class="paragraph">
+<p><code>https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api/</code></p>
+</div>
+<div class="paragraph">
+<p>This is where {prodname} makes the Task API service available. REST
+API calls specify URLs that start with this base URL.</p>
+</div>
+<div class="paragraph">
+<p>If you are using {prodname} on OpenShift Container
+Platform, if the external URL is not on the integration’s summary page,
+then an administrator has enabled Red Hat 3scale discovery.
+This means that Red Hat 3scale controls access to the integration&#8217;s API
+and also publishes your API provider integration.
+To test the integration,
+open the 3scale dashboard to obtain the integration’s URL.</p>
+</div>
+<div class="paragraph">
+<p>If you do not want Red Hat 3scale to control access to the integration’s
+API, you can disable discovery. You do this in {prodname} by viewing the
+integration’s summary page. On this page, click <strong>Disable discovery</strong>.
+{prodname} republishes the integration and provides an external URL
+for invoking integration execution.</p>
+</div>
+<div class="paragraph">
+<p>You can enable or disable discovery for each API provider integration.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="try-api-provider-quickstart_api-provider"><a class="anchor" href="#try-api-provider-quickstart_api-provider"></a>Testing the example API provider quickstart integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When the {prodname} <strong>TaskAPI</strong> quickstart integration is running, you can
+invoke <code>curl</code> utility commands that send HTTP requests to the Task API service.
+How you specify the HTTP request determines the flow that the call
+triggers.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>{prodname} indicates that the <strong>TaskAPI</strong> integration is <strong>Running</strong>.</p>
+</li>
+<li>
+<p>If your {prodname} environment is running on OCP,
+{prodname} is not configured to expose APIs to 3scale or
+you disabled discovery for the <strong>TaskAPI</strong> integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left navigation panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the <strong>TaskAPI</strong> integration entry, click <strong>View</strong> to display the
+integration&#8217;s summary.</p>
+</li>
+<li>
+<p>Copy the integration&#8217;s external URL.</p>
+</li>
+<li>
+<p>In a terminal, invoke a command such as the following to assign the
+integration&#8217;s external URL to the <code>externalURL</code> environment variable.
+Be sure to replace the URL in this sample command with the URL that you copied.</p>
+<div class="listingblock">
+<div class="content">
+<pre>export externalURL="https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api"</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Invoke a <code>curl</code> command that triggers execution of the
+flow for the <strong>Create new task</strong> operation:</p>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k --header "Content-Type: application/json" --request POST --data '{ "task":"my new task!"}' $externalURL/todo</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-k</code> allows <code>curl</code> to proceed and operate even for server connections
+that are otherwise considered insecure.</p>
+</li>
+<li>
+<p><code>--header</code> indicates that the command is sending JSON format data.</p>
+</li>
+<li>
+<p><code>--request</code> specifies the HTTP <code>POST</code> command, which stores data.</p>
+</li>
+<li>
+<p><code>--data</code> specifies the JSON format content to be stored. In this example the
+content is <code>{ "task":"my new task!"}</code>.</p>
+</li>
+<li>
+<p><code>$externalURL/todo</code> is the URL to invoke.</p>
+<div class="paragraph">
+<p>This command sends an HTTP <code>POST</code> request to the Task API service, which
+triggers execution of the <strong>Create new task</strong> operation&#8217;s flow. Flow
+execution adds a new task to the sample database and returns a message
+such as the following to indicate what it did:</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{"completed":false,"id":1,"task":"my new task!"}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Invoke a <code>curl</code> command that triggers execution of the
+flow for the <strong>Fetch task</strong> by ID operation:</p>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k $externalURL/todo/1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To obtain a task, the <code>curl</code> command needs to specify only the URL. The
+HTTP <code>GET</code> command is the default request. The last part of the URL
+specifies the ID of the task to get.</p>
+</div>
+</li>
+<li>
+<p>Invoke a <code>curl</code> command that triggers execution of the
+flow for the <strong>Delete task</strong> for ID operation:</p>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k -X DELETE $externalURL/todo/1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command invokes the HTTP <code>DELETE</code> command with the same URL as the
+command that obtained a task by its ID.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

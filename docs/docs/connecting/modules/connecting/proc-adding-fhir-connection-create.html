@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating a resource on a FHIR server :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-fhir-connection-create.html">Creating a resource on a FHIR server</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-fhir-connection-create.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating a resource on a FHIR server</h1>
+<div class="paragraph">
+<p>In an integration, you can create and add a resource to a FHIR server.
+When you configure the connection&#8217;s <strong>Create</strong> action, you specify the
+type of the resource that you want to create.
+For example, you might want to add a new patient resource to a FHIR server.
+To create a resource,
+add a FHIR connection to the middle of a flow, or as a simple
+integration&#8217;s finish connection.</p>
+</div>
+<div class="paragraph">
+<p>To populate the values in the new resource, add a data mapper
+step to the flow just before the FHIR connection that you are
+adding in this procedure. It is expected that the previous steps
+in the flow provide the data that you want the new resource to
+contain. Map fields in the previous steps to fields in the target
+resource that this FHIR connection is creating. The new resource
+contains only the fields that you map to.</p>
+</div>
+<div class="paragraph">
+<p>When a connection performs the <strong>Create</strong> action to create a new resource on a FHIR server,
+the new resource has an automatically-generated FHIR resource ID.
+If you want to specify the resource
+ID for a new resource, instead of selecting the <strong>Create</strong> action choose the
+<a href="#adding-fhir-connection-update_fhir"><strong>Update</strong> action</a> for the connection to perform.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that you want to add
+a resource to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to add a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection to the server that you want to add a resource to.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Create</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of resource
+that you want to create.</p>
+</li>
+<li>
+<p>In the <strong>Contained Resource Types</strong> field, if the resource type
+that you want to create contains other resource types, select
+them. Use the <strong>Ctrl</strong> key if you need to select more than one.</p>
+<div class="paragraph">
+<p>Identifying contained resource types lets the data mapper display
+the fields that are in the contained resources. If you do not specify
+a contained resource type then you cannot map to or from any fields that are
+in the contained resource. There is no harm in selecting a resource
+that is not actually contained.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution, the connection
+creates a new resource on the FHIR server.
+The connection returns a <strong>MethodOutcome</strong> resource that includes
+an <code>id.idPart</code> field. This field contains the new resource’s
+resource ID, which you might want to map to a
+subsequent step in the flow.</p>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>If this flow needs additional steps to obtain the data that you want
+the new resource to contain, add them before this FHIR connection.
+After those steps are in place,
+add a data mapper step to the flow just before the FHIR connection
+that creates a new resource. In the data mapper step, map to the
+fields in the resource to be created.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+Without a data mapper step just
+before a FHIR connection that creates a new resource, the connection
+tries to create an empty resource. Depending on the FHIR server configuration,
+this might or might not work.
+</td>
+</tr>
+</table>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

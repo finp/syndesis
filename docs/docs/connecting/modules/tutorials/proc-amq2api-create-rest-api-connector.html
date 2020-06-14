@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating a REST API connector :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-amq2api-create-rest-api-connector.html">Creating a REST API connector</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/tutorials/proc-amq2api-create-rest-api-connector.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating a REST API connector</h1>
+<div class="paragraph">
+<p>{prodname} can create connectors for REST APIs
+that support Hypertext Transfer Protocol (HTTP)/1.0 or HTTP/1.1.
+To do this, {prodname} requires a valid
+OpenAPI 3 (or 2) document that describes a REST API that you want to connect to.</p>
+</div>
+<div class="paragraph">
+<p>Your {prodname} environment provides the To Do app, which has a REST API
+for accessing a database that contains tasks. Your environment also provides
+an OpenAPI document for this API.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Identify the URL for your {prodname} environment&#8217;s copy of the
+OpenAPI document:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the {prodname} navigation panel, click <strong>Home</strong>.</p>
+</li>
+<li>
+<p>Copy the URL into a text editor.</p>
+</li>
+<li>
+<p>At the beginning of the URL, insert <code><strong>todo-</strong></code>.</p>
+</li>
+<li>
+<p>At the end of the URL, add <code><strong>openapi.json</strong></code>.</p>
+</li>
+<li>
+<p>Use the <code>http</code> scheme instead of <code>https</code>.</p>
+<div class="paragraph">
+<p>The result is something like this:
+<code>http://todo-app-proj217402.6a63.fuse-ignite.openshiftapps.com/openapi.json</code></p>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Specification of <code>http</code> rather than <code>https</code> avoids a runtime error
+if TLS certificates are not valid.  In production
+environments, ensure that valid certificates are in place,
+and always specify secure URLs (<code>https</code>) to obtain an OpenAPI document.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>In the {prodname} navigation panel, click <strong>Customizations</strong> &gt; <strong>API Client Connectors</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create API Connector</strong>.</p>
+</li>
+<li>
+<p>Select <strong>Use a URL</strong>.</p>
+</li>
+<li>
+<p>In the input box, paste the URL for your OpenAPI document and
+click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Review Actions</strong> page, click <strong>Next</strong>. If you see
+a warning, you can ignore it.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> again to accept <strong>HTTP Basic Authentication</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Review/Edit Connector Details</strong> page:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If you want to, you can
+change the values in the <strong>Name</strong> and <strong>Description</strong> fields.</p>
+</li>
+<li>
+<p>In the <strong>Host</strong> field, enter the name of the service host,
+which is something like this:
+<code>https://todo-app-proj217402.6a63.fuse-ignite.openshiftapps.com</code>.</p>
+</li>
+<li>
+<p>In the <strong>Base URL</strong> field, enter the part of the URL that follows the
+host name in service requests: <code>/api</code>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the <strong>API Client Connectors</strong>. There is a new entry for
+the <strong>Todo App API</strong> that you just created.</p>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Example of using a Camel bean :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-example-camel-bean.html">Example of using a Camel bean</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/customizing/ref-example-camel-bean.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Example of using a Camel bean</h1>
+<div class="paragraph">
+<p>You can implement a custom step by developing an action as a Camel bean processor.
+To implement the example that creates a step that logs the body of a
+message with an optional prefix, you can write something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.apache.camel.Body;
+import org.apache.camel.Handler;
+import org.apache.camel.Header;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+
+@Action(
+    id = "log-body-with-prefix",
+    name = "Log body with prefix",
+    description = "A simple body log with a prefix")
+public class LogAction  {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogAction.class);
+
+    @ConfigurationProperty(
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")
+    private String prefix;
+
+    @Handler <i class="conum" data-value="1"></i><b>(1)</b>
+    public void process(@Header("prefix") String prefix, @Body Object body) {
+        if (prefix == null) {
+            LOGGER.info("Output {}", body);
+        } else {
+            LOGGER.info("{} {}", prefix, body);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is the function that implements the action.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This Java code uses Syndesis annotations, which means that the
+<code>extension-maven-plugin</code> can automatically generate the action definition.
+In the extension definition JSON file, the action definition will look
+like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "log-body-with-prefix",
+  "name": "Log body with prefix",
+  "description": "A simple body log with a prefix",
+  "descriptor": {
+    "kind": "BEAN", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "io.syndesis.extension.log.LogAction::process", <i class="conum" data-value="2"></i><b>(2)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+    "propertyDefinitionSteps": [ {
+      "description": "extension-properties",
+      "name": "extension-properties",
+      "properties": {
+        "prefix": { <i class="conum" data-value="3"></i><b>(3)</b>
+          "componentProperty": false,
+          "deprecated": false,
+          "description": "The Log body prefix message",
+          "displayName": "Log Prefix",
+          "javaType": "java.lang.String",
+          "kind": "parameter",
+          "required": false,
+          "secret": false,
+          "type": "string",
+          "raw": false
+        }
+      }
+    } ]
+  },
+  "actionType": "step"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of the action is <code>BEAN</code>. The runtime invokes a Camel bean processor
+to execute the action in this custom step.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the Camel bean to invoke.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>These are the properties that the action defined in this custom step
+exposes to the integrator who will be adding this step to an integration. In
+{prodname}, each value that the integrator specifies in the user interface
+gets mapped to a message header that has the same name as the property.
+In this example, the integrator will see one input field, with the
+<strong>Log Prefix</strong> display name. For more details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When you use beans, you might find it convenient to
+inject user properties into the bean
+instead of retrieving them from the exchange header. To do this, implement
+getter and setter methods for the properties that you want to get injected.
+The action implementation would look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.apache.camel.Body;
+import org.apache.camel.Handler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.syndesis.extension.api.annotations.Action;
+import io.syndesis.extension.api.annotations.ConfigurationProperty;
+
+@Action(
+    id = "log-body-with-prefix",
+    name = "Log body with prefix",
+    description = "A simple body log with a prefix")
+public class LogAction  {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogAction.class);
+
+    @ConfigurationProperty(
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")
+    private String prefix;
+
+    public void setPrefix(String prefix) { <i class="conum" data-value="1"></i><b>(1)</b>
+        this.prefix = prefix;
+    }
+
+    public String getPrefix() { <i class="conum" data-value="2"></i><b>(2)</b>
+        return prefix;
+    }
+
+    @Handler
+    public void process(@Body Object body) {
+        if (this.prefix == null) {
+            LOGGER.info("Output {}", body);
+        } else {
+            LOGGER.info("{} {}", this.prefix, body);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is the property setter method.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the property getter method.</td>
+</tr>
+</table>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

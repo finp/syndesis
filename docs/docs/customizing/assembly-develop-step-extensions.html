@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Examples of developing step extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-develop-step-extensions.html">Examples of developing step extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Examples of developing step extensions</h1>
+<div class="paragraph">
+<p>A step extension implements one or more custom steps.
+Each custom step implements one action for processing integration data
+between connections.
+The following examples demonstrate the alternatives for developing
+step extensions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#example-route-xml-fragment_step-alternatives">[example-route-xml-fragment_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-route-builder_step-alternatives">[example-route-builder_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-route-builder-spring-boot_step-alternatives">[example-route-builder-spring-boot_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-camel-bean_step-alternatives">[example-camel-bean_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-step-api_step-alternatives">[example-step-api_step-alternatives]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Syndesis provides custom Java annotations that you can use in
+conjunction with the <code>syndesis-extension-plugin</code>.  When you implement
+a step extension or a connector extension in Java, you can specify annotations
+that enable Maven to add action definitions to the extension definition JSON file.
+To enable annotation processing,  add
+the following dependency to your Maven project:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;io.syndesis.extension&lt;/groupId&gt;
+  &lt;artifactId&gt;extension-annotation-processor&lt;/artifactId&gt;
+  &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because Spring Boot is the integration runtime, to inject beans
+into a Camel context, be sure to follow standard Spring Boot
+practices. For example,
+<a href="https://docs.spring.io/spring-boot/docs/1.5.11.RELEASE/reference/html/boot-features-developing-auto-configuration.html">create an auto configuration class</a>
+and create beans there. However, the default behavior is that
+extension code is not subject to package scanning. Consequently,
+you must create and populate the <code>META-INF/spring.factories</code> file
+in a step extension.</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-route-xml-fragment.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-route-builder.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-route-builder-spring-boot.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-camel-bean.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-step-api.adoc[]</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

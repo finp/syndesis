@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Developing {prodname} extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-developing-extensions.html">Developing {prodname} extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/assembly-developing-extensions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Developing {prodname} extensions</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>If {prodname} does not provide a feature that is needed to create an
+integration, then an expert developer
+can code an extension that provides the needed behavior.  The Syndesis
+extension repository,
+<a href="https://github.com/syndesisio/syndesis-extensions" class="bare">https://github.com/syndesisio/syndesis-extensions</a>,
+contains examples of extensions.</p>
+</div>
+<div class="paragraph">
+<p>A business integrator shares requirements with a developer who codes the
+extension. The developer provides a <code>.jar</code> file that contains the extension.
+The business integrator uploads the <code>.jar</code> file in {prodname} to make the
+custom connector, custom step(s), or library resource available for use
+in {prodname}.</p>
+</div>
+<div class="paragraph">
+<p>The Fuse Tooling plugin to Red Hat Developer Studio provides a wizard
+that helps you develop a step extension or a connector extension. It is
+a matter of personal preference whether you choose to develop a step
+extension or a connector extension in Developer Studio or in some other
+IDE. For information about using the Developer Studio plugin, see
+<a href="{LinkToolingUserGuide}#FuseOnlineExtension">Developing extensions for {prodname} integrations</a>.</p>
+</div>
+<div class="paragraph">
+<p>In this document, the following topics outline the
+procedure, describe the requirements, and provide additional examples for
+developing extensions in an IDE that you choose.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#procedure-for-developing-extensions_extensions">[procedure-for-developing-extensions_extensions]</a></p>
+</li>
+<li>
+<p><a href="#description-kinds-extensions_extensions">[description-kinds-extensions_extensions]</a></p>
+</li>
+<li>
+<p><a href="#overview-extension-content-structure_extensions">[overview-extension-content-structure_extensions]</a></p>
+</li>
+<li>
+<p><a href="#about-extension-definitions_extensions">[about-extension-definitions_extensions]</a></p>
+</li>
+<li>
+<p><a href="#descriptions-of-user-interface-properties-in-extension-definitions_extensions">[descriptions-of-user-interface-properties-in-extension-definitions_extensions]</a></p>
+</li>
+<li>
+<p><a href="#using-maven-to-generate-extension-definitions_extensions">[using-maven-to-generate-extension-definitions_extensions]</a></p>
+</li>
+<li>
+<p><a href="#how-to-specify-data-shapes_extensions">[how-to-specify-data-shapes_extensions]</a></p>
+</li>
+<li>
+<p><a href="#develop-step-extensions_extensions">Examples of developing step extensions</a></p>
+</li>
+<li>
+<p><a href="#develop-connector-extensions_extensions">[develop-connector-extensions_extensions]</a></p>
+</li>
+<li>
+<p><a href="#develop-library-extensions_extensions">[develop-library-extensions_extensions]</a></p>
+</li>
+<li>
+<p><a href="#creating-jdbc-driver-library-extensions_extensions">[creating-jdbc-driver-library-extensions_extensions]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/proc-developing-extensions.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/con-description-kinds-extensions.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/con-overview-extension-content-structure.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/con-about-extension-definitions.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/ref-descriptions-of-user-interface-properties-in-extension-definitions.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/proc-using-maven-to-generate-extension-definitions.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/ref-how-to-specify-data-shapes.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="develop-step-extensions_extensions"><a class="anchor" href="#develop-step-extensions_extensions"></a>Examples of developing step extensions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A step extension implements one or more custom steps.
+Each custom step implements one action for processing integration data
+between connections.
+The following examples demonstrate the alternatives for developing
+step extensions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#example-route-xml-fragment_step-alternatives">[example-route-xml-fragment_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-route-builder_step-alternatives">[example-route-builder_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-route-builder-spring-boot_step-alternatives">[example-route-builder-spring-boot_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-camel-bean_step-alternatives">[example-camel-bean_step-alternatives]</a></p>
+</li>
+<li>
+<p><a href="#example-step-api_step-alternatives">[example-step-api_step-alternatives]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Syndesis provides custom Java annotations that you can use in
+conjunction with the <code>syndesis-extension-plugin</code>.  When you implement
+a step extension or a connector extension in Java, you can specify annotations
+that enable Maven to add action definitions to the extension definition JSON file.
+To enable annotation processing,  add
+the following dependency to your Maven project:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;io.syndesis.extension&lt;/groupId&gt;
+  &lt;artifactId&gt;extension-annotation-processor&lt;/artifactId&gt;
+  &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because Spring Boot is the integration runtime, to inject beans
+into a Camel context, be sure to follow standard Spring Boot
+practices. For example,
+<a href="https://docs.spring.io/spring-boot/docs/1.5.11.RELEASE/reference/html/boot-features-developing-auto-configuration.html">create an auto configuration class</a>
+and create beans there. However, the default behavior is that
+extension code is not subject to package scanning. Consequently,
+you must create and populate the <code>META-INF/spring.factories</code> file
+in a step extension.</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-route-xml-fragment.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-route-builder.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-route-builder-spring-boot.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-camel-bean.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-develop-step-extensions.adoc - include::../../modules/customizing/ref-example-step-api.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/ref-develop-connector-extensions.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/ref-develop-library-extensions.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/customizing/assembly-developing-extensions.adoc - include::../../modules/customizing/proc-creating-jdbc-driver-library-extensions.adoc[]</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

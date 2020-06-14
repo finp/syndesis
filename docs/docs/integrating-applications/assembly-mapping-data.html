@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Mapping integration data to fields for the next connection :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-mapping-data.html">Mapping integration data to fields for the next connection</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Mapping integration data to fields for the next connection</h1>
+<div class="paragraph">
+<p>In most flows, you need to map data fields that have already
+been obtained or processed to data fields that the next connection in the
+flow can process.
+{prodname} provides a data mapper to help you do this. In a flow,
+at each point where you need to map data fields, add a data mapper step.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The data mapper displays the largest possible set of source fields that can
+be provided by the previous integration step. However, not all connections
+provide data in each displayed source field. For example, a change to a
+third-party application might discontinue providing data in a particular field.
+As you create an integration, if you notice that data mapping is not behaving
+as you expect, ensure that a source field that you want to map contains the
+data that you expect.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Details for mapping data fields are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#identify-where-data-mapping-is-needed_map">[identify-where-data-mapping-is-needed_map]</a></p>
+</li>
+<li>
+<p><a href="#find-the-field-you-want-to-map_map">[find-the-field-you-want-to-map_map]</a></p>
+</li>
+<li>
+<p><a href="#map-one-source-field-to-one-target-field_map">[map-one-source-field-to-one-target-field_map]</a></p>
+</li>
+<li>
+<p><a href="#example-missing-unwanted-data_map">[example-missing-unwanted-data_map]</a></p>
+</li>
+<li>
+<p><a href="#combine-multiple-source-fields-into-one-target-field_map">[combine-multiple-source-fields-into-one-target-field_map]</a></p>
+</li>
+<li>
+<p><a href="#separate-one-source-field-into-multiple-target-fields_map">[separate-one-source-field-into-multiple-target-fields_map]</a></p>
+</li>
+<li>
+<p><a href="#using-data-mapper-to-process-collections_map">[using-data-mapper-to-process-collections_map]</a></p>
+</li>
+<li>
+<p><a href="#mapping-between-collections-and-non-collections_map">[mapping-between-collections-and-non-collections_map]</a></p>
+</li>
+<li>
+<p><a href="#transform-target-data_map">[transform-target-data_map]</a></p>
+</li>
+<li>
+<p><a href="#applying-conditions-to-mappings_map">[applying-conditions-to-mappings_map]</a></p>
+</li>
+<li>
+<p><a href="#view-mappings-in-a-step_map">[view-mappings-in-a-step_map]</a></p>
+</li>
+<li>
+<p><a href="#available-transformations_map">[available-transformations_map]</a></p>
+</li>
+<li>
+<p><a href="#about-transformations-on-multiple-source-values_map">[about-transformations-on-multiple-source-values_map]</a></p>
+</li>
+<li>
+<p><a href="#troubleshooting-data-mapping_map">[troubleshooting-data-mapping_map]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-identify-where-data-mapping-is-needed.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/ref-find-data-field-you-want-to-map.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-map-one-source-field-to-one-target-field.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/ref-example-missing-unwanted-data.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-combine-multiple-source-fields-into-one-target-field.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-separate-one-source-field-into-multiple-target-fields.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-using-data-mapper-to-process-collections.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/ref-mapping-between-collections-and-non-collections.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-transform-target-data.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-applying-conditions-to-mappings.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/proc-view-mappings-in-a-step.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/ref-available-transformations.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/ref-about-transformations-on-multiple-source-values.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/integrating-applications/assembly-mapping-data.adoc - include::../../modules/integrating-applications/ref-troubleshooting-data-mapping.adoc[]</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>How to develop library extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-develop-library-extensions.html">How to develop library extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/customizing/ref-develop-library-extensions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">How to develop library extensions</h1>
+<div class="paragraph">
+<p>A library extension provides a resource that an
+integration requires at runtime. A library extension does not contribute steps or
+connectors to {prodname}.</p>
+</div>
+<div class="paragraph">
+<p>When you save an integration, you can optionally select one or more imported library extensions that you want to include with the integration.</p>
+</div>
+<div class="paragraph">
+<p>A library extension does not define any actions.
+Here is a sample definition for a library extension:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "schemaVersion" : "v1",
+  "name" : "Example Library Extension",
+  "description" : "Syndesis Extension for adding a runtime library",
+  "extensionId" : "io.syndesis.extensions:syndesis-library",
+  "version" : "1.0.0",
+  "tags" : [ "my-libraries-extension" ],
+  "extensionType" : "Libraries"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See also the sample library extension here:  <a href="https://github.com/syndesisio/syndesis-extensions" class="bare">https://github.com/syndesisio/syndesis-extensions</a></p>
+</div>
+<div class="paragraph">
+<p>Other than the lack of actions, the structure of a library extension
+is the same as the structure of a step or connector extension.</p>
+</div>
+<div class="paragraph">
+<p>In a Maven project that creates a library extension, to add dependencies
+that are not available from a Maven repository,
+specify a <code>system</code> dependency, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.company&lt;/groupId&gt;
+    &lt;artifactId&gt;my-library-extension&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+    &lt;scope&gt;system&lt;/scope&gt;
+    &lt;systemPath&gt;${project.basedir}/lib/my-library-extension.jar&lt;/systemPath&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

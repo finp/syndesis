@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Google Sheets :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-google-sheets.html">Connecting to Google Sheets</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-google-sheets.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Google Sheets</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration when a Google Sheets connection
+returns spreadsheet data or spreadsheet properties, add a Google Sheets
+connection to a simple integration as its start connection. To finish a
+simple integration by updating
+spreadsheet values or properties, or by inserting a chart or pivot table
+into a spreadsheet, add a Google Sheets connection to a simple
+integration as its finish connection.</p>
+</div>
+<div class="paragraph">
+<p>In the middle of a flow, you can add a
+Google Sheets connection that obtains, creates or updates values in a spreadsheet,
+or that inserts a chart or pivot table into a spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>Details for connecting to Google Sheets are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-google-sheets-connection_sheets">Creating a Google Sheets connection</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-get-sheet-values_sheets">Obtaining spreadsheet data to trigger an integration or in the middle of a flow</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-get-properties_sheets">Triggering an integration when polling returns spreadsheet properties</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-create-spreadsheet_sheets">Creating a spreadsheet</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-update-sheet-values_sheets">Updating data in a sheet</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-append-sheet-values_sheets">Appending data to a sheet</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-update-properties_sheets">Updating spreadsheet properties</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-add-chart_sheets">Adding a chart to a sheet</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-add-pivot-table_sheets">Adding a pivot table to a sheet</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-google-sheets-connection_sheets"><a class="anchor" href="#create-google-sheets-connection_sheets"></a>Creating a Google Sheets connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you create a Google Sheets connection, you authorize the connection to access
+the Google Sheets spreadsheets that are associated with one
+particular Google account, which you choose. After you create a Google Sheets connection, you can
+add it to multiple integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You
+<a href="{LinkSyndesisConnectorGuide}#register-with-google_google">registered {prodname} as a Google client application</a>
+and enabled the Google Sheets API.</p>
+</li>
+<li>
+<p>The {prodname} <strong>Settings</strong> page entry for Google Sheets has values for the client ID and client secret, which
+you obtained by registering {prodname} as a Google client application.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors. A connector is a template that
+you use to create one or more connections.</p>
+</li>
+<li>
+<p>Click the <strong>Google Sheets</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Configure Connection</strong> page, click <strong>Connect Google Sheets</strong>,
+which takes you to a Google sign-in page.</p>
+<div class="paragraph">
+<p>If <strong>Connect Google Sheets</strong> does not display, then your {prodname} environment
+is not registered as a Google client application with the Google Sheets API
+enabled. See
+<a href="{LinkSyndesisConnectorGuide}#register-with-google_google">Registering {prodname} as a Google client application</a>.
+When your environment is not registered with
+Google, then when you try to create a Google Sheets connection, {prodname} displays
+multiple fields that prompt for authorization information. While you can
+create a Google Sheets connection by entering values in these fields,
+it is not recommended.</p>
+</div>
+</li>
+<li>
+<p>In the Google sign-in page,
+select the Google account that you want this connection to
+access from {prodname} and click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In response to the <strong>openshiftapps.com wants to access your Google Account</strong>
+prompt, click <strong>Allow</strong> to return to {prodname}.</p>
+</li>
+<li>
+<p>In the {prodname} <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from other connections.
+For example, enter <code><strong>Google Sheets Work Connection</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Google Sheets connection
+that uses my Google work account.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection that you
+created is now available. If you entered the example name, you would
+see that <strong>Google Sheets Work Connection</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-get-sheet-values_sheets"><a class="anchor" href="#add-google-sheets-connection-get-sheet-values_sheets"></a>Obtaining spreadsheet data to trigger an integration or in the middle of a flow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration upon obtaining data from a
+Google Sheets spreadsheet, add a Google Sheets connection to a simple integration
+as its start connection. When the integration is running, the Google Sheets
+connection polls the spreadsheet at the interval that you specified, obtains
+the data that you identified, and passes the data to the next step in the
+integration.</p>
+</div>
+<div class="paragraph">
+<p>To obtain spreadsheet data in the middle of a flow, add a Google Sheets
+connection as a middle connection. During execution, {prodname} polls
+the spreadsheet for the specified data as soon as it starts processing
+this connection. In other words, the connection does not wait for an
+interval to elapse before polling the spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>To obtain data from a particular sheet in a spreadsheet, you specify the
+sheet name when you configure the action for the
+Google Sheets connection. A particular connection can obtain data from
+only one sheet.</p>
+</div>
+<div class="paragraph">
+<p>Between polls, if there are no changes to the sheet values that the
+connection is configured to return, then
+the next poll returns the same values as the previous poll.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access
+the spreadsheet that you want to obtain data from.</p>
+</li>
+<li>
+<p>If this Google Sheets connection is triggering integration execution,
+then you are creating an integration and {prodname} is prompting you
+to choose the start connection.</p>
+</li>
+<li>
+<p>If this Google Sheets connection is in the middle of a flow,
+then the integration already has a start connection and a finish
+connection, and {prodname} is prompting you to add to the integration by choosing a step.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click the Google Sheets connection that you want to use.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, for a start connection, select the
+<strong>Get sheet values</strong> action or for a middle connection, select the
+<strong>Retrieve sheet values</strong> action.</p>
+</li>
+<li>
+<p>To configure the action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, enter the ID of a Google spreadsheet that is
+accessible from the Google account that this Google Sheets connection
+is authorized to access.</p>
+<div class="paragraph">
+<p>To obtain a spreadsheet ID, display the spreadsheet in a browser.
+The ID is the part of the URL between <code>d/</code> and <code>/edit</code>.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Range</strong> field, enter Google A1 notation that identifies
+the data that you want to obtain. The default is <strong>A:A</strong>.</p>
+<div class="paragraph">
+<p>For example, suppose that you want all data from a spreadsheet that
+has one sheet with 4 columns. Specify <code>A:D</code>. Or, to obtain data from
+rows 5 through 15, specify <code>A5:D15</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the spreadsheet from which you are
+obtaining data has more than one sheet, specify the sheet name as well
+as the start cell coordinate and the end cell coordinate. If there is more
+than one sheet, and you do not
+specify a sheet name, then the connection obtains data from the first
+sheet in the spreadsheet. For example, specification of <code>2019!A1:D5</code> specifies
+that you want to obtain data from the sheet whose name is <code>2019</code>. In that
+sheet, you want the data that is in columns A through D for rows 1 through 5.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Major dimension</strong> field, accept <strong>Rows</strong>, which is the default, or
+select <strong>Columns</strong>.</p>
+<div class="paragraph">
+<p><strong>Rows</strong> configures the action to return a collection
+of row objects where each row object contains a value for each desired column.
+When <strong>Major dimension</strong> is <strong>Rows</strong>, {prodname} can display meaningful column
+headings as field names in the data mapper, rather than <strong>A</strong>, <strong>B</strong>, <strong>C</strong>, and so on.</p>
+</div>
+<div class="paragraph">
+<p><strong>Columns</strong> configures the action to return a collection of column objects
+where each column object contains a value for each desired row.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Header row number</strong> field, if <strong>Major dimension</strong> is set to <strong>Rows</strong>,
+optionally enter the number of the row that contains the column headings in
+the data that the connection obtains. Specification of a header row enables
+{prodname} to obtain the headings from the spreadsheet. If you do not
+specify a header row, column headings default to a letter heading for
+each column in the range of data that the connection obtains.
+You can edit obtained headings or letter headings in the subsequent page.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you are configuring a Google Sheets middle connection, the rest of
+the configuration options are not needed and {prodname} does not
+prompt for them. Skip to step 4.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>In the <strong>Split results</strong> field, accept <strong>No</strong>, which is the default, or
+select <strong>Yes</strong>. A setting of <strong>No</strong> configures the action to
+return data as a collection of values. That is,
+the connection passes a collection of row objects or a collection of
+column objects to the next step in the flow.
+Select <strong>Yes</strong> to enable the connection to split the returned data
+according to the setting of <strong>Major dimension</strong>. For example, if
+<strong>Major dimension</strong> is set to <strong>Rows</strong> then the connection returns row
+objects. Each row object triggers a separate execution of the flow.
+That is, {prodname} executes the flow once for each returned row
+object. For example, if the poll returns 5 rows then {prodname} executes
+the flow 5 times.</p>
+<div class="paragraph">
+<p>{prodname} also provides discrete split and aggregate steps, which
+you can add to a flow.
+If you want to process individual objects in one or more steps and
+then aggregate the row or column objects, do not split the Google Sheets
+connection result. Instead, accept the default, <strong>No</strong>, and then add a
+split step to the flow after this connection. A split step is
+required if you want an aggregate step in the flow.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 30 seconds or
+specify how often you want the connection to obtain spreadsheet data.</p>
+</li>
+<li>
+<p>In the <strong>Max results</strong> field, accept the default of <strong>0</strong> if you do not
+want to restrict how many rows or columns polling can return. The setting
+of <strong>Max results</strong> applies to the setting of the major dimension in the
+result matrix. To limit the data that the connection returns for the
+major dimension, specify an integer.</p>
+<div class="paragraph">
+<p>For example, suppose that the major dimension is rows and that <strong>Max results</strong>
+is set to <strong>25</strong>. The poll returns no more than 25 rows of values.</p>
+</div>
+<div class="paragraph">
+<p>When <strong>Range</strong> specifies the major dimension and you also specify
+<strong>Max results</strong>, polling uses the lower number to determine how much
+data to return. Consequently, setting a value for <strong>Max results</strong> is
+more helpful when you specify only the minor dimension for <strong>Range</strong>.
+For example, consider a sheet that has 30 rows with three columns of
+values in each row. Suppose that <strong>Major dimension</strong> is <strong>Rows</strong> and
+<strong>Range</strong> is <strong>A:C</strong>. If you set <strong>Max results</strong> to <strong>10</strong>, polling returns
+10 rows of data. If you accept <strong>0</strong> as the setting of <strong>Max results</strong>,
+polling returns 30 rows. However, if you specify <strong>Range</strong> as <strong>A1:C15</strong>
+and you also specify <strong>Max results</strong> as <strong>25</strong>, polling returns 15
+rows. If you specify <strong>Range</strong> as <strong>A1:C30</strong> and you also
+specify <strong>Max results</strong> as <strong>25</strong>, polling returns 25 rows.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to view the column names in the data that the connection
+obtains when <strong>Major dimension</strong> is set to <strong>Rows</strong>. If <strong>Major dimension</strong> is
+<strong>Columns</strong>, content in this field is ignored and you can click <strong>Next</strong>
+now to complete this procedure.</p>
+<div class="paragraph">
+<p>The values that appear in the <strong>Column names</strong> field become the
+field names that a data mapper step displays. If you specified a
+header row number, {prodname} displays the headings from that
+row in the sheet that you are obtaining data from. If you left
+the header row number field blank, {prodname} displays a letter
+(<strong>A</strong>, <strong>B</strong>, <strong>C</strong>, and so on) for each column in the range of
+data that you are obtaining.</p>
+</div>
+</li>
+<li>
+<p>Optionally, edit the <strong>Column names</strong> field so it contains the
+field names that you want to see in a data mapper step.
+The field must contain a comma-separated list with no spaces,
+for example, <code>Name,Address,City,State,Zip</code>.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this Google Sheets connection to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next steps</div>
+<p>If you added a Google Sheets connection as a start connection, {prodname}
+prompts you to add the
+integration&#8217;s finish connection. With the start and finish connections
+in the integration, add any other connections that you want in the
+integration.</p>
+</div>
+<div class="paragraph">
+<p>After the connection that obtains sheet values,
+add a data mapper step. In the data mapper, {prodname} displays
+source fields according to how you configure the action that obtains spreadsheet values.
+That is, if the major dimension is <strong>Rows</strong>, then the data mapper lists
+the column names as fields that you can map to the target. If the major
+dimension is <strong>Columns</strong>, then the data mapper lists row indexes as
+fields that you can map to the target.</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p><a href="https://developers.google.com/sheets/api/guides/concepts#a1_notation">Google A1 notation</a>
+for specifying groups of cells in a spreadsheet</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-get-properties_sheets"><a class="anchor" href="#add-google-sheets-connection-get-properties_sheets"></a>Triggering an integration when polling returns spreadsheet properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration upon obtaining properties from
+a Google Sheets spreadsheet, add a Google Sheets connection to a simple integration as
+its start connection. When the integration is running, the Google Sheets
+connection polls the spreadsheet at the interval that you specified,
+obtains the spreadsheet properties, and passes the result to the
+next step in the integration.</p>
+</div>
+<div class="paragraph">
+<p>Properties include the spreadsheet&#8217;s title, locale, and time zone.
+Between polls, if there are no changes to the sheet properties, then
+the next poll returns the same values as the previous poll.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access
+the spreadsheet that you want to obtain properties from.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Google Sheets
+connection that you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Get spreadsheet properties</strong> action.</p>
+</li>
+<li>
+<p>To configure the <strong>Get spreadsheet properties</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, enter the ID of a Google spreadsheet that is
+accessible from the Google account that this Google Sheets connection
+is authorized to access.</p>
+<div class="paragraph">
+<p>To obtain a spreadsheet ID, display the spreadsheet in a browser.
+The ID is the part of the URL between <code>d/</code> and <code>/edit</code>.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 30 seconds or
+specify how often you want the connection to obtain properties.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this Google Sheets connection as the integration&#8217;s
+start connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The integration now has a start connection and {prodname} is
+prompting you to choose the integration&#8217;s finish connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-create-spreadsheet_sheets"><a class="anchor" href="#add-google-sheets-connection-create-spreadsheet_sheets"></a>Creating a spreadsheet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create a new spreadsheet in the middle of a flow,
+add a Google Sheets connection between the start and finish connections.
+While you can also finish a simple integration with a Google Sheets
+connection that creates a spreadsheet, you cannot add data to a
+new spreadsheet in the same connection. Therefore, when you want to
+create a spreadsheet and add data to the spreadsheet in the same
+flow, the flow requires two Google Sheets connections.
+One connection creates the spreadsheet and then a subsequent connection
+adds data to the spreadsheet.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to
+access the Google account in which you want to create the
+spreadsheet.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the Google account that you want to use to create the spreadsheet.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Create spreadsheet</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Create spreadsheet</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Title</strong> field, enter the title of the new spreadsheet.</p>
+</li>
+<li>
+<p>In the <strong>Time Zone</strong> field, enter the time zone that the
+new spreadsheet should use, for example, <code>India Standard Time</code>, or <code>Tokyo</code>.</p>
+</li>
+<li>
+<p>In the <strong>Locale</strong> field, enter the locale of the
+new spreadsheet, for example, <code>Canada</code>, or <code>Hong Kong</code>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization where you added it.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>A connection that creates a spreadsheet returns the spreadsheet ID for
+the new spreadsheet. In subsequent steps, you can map
+this spreadsheet ID to the spreadsheet ID in a connection
+that accesses the new spreadsheet, for example, to update it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-update-sheet-values_sheets"><a class="anchor" href="#add-google-sheets-connection-update-sheet-values_sheets"></a>Updating data in a sheet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can update data in a spreadsheet
+in the middle of a flow or to finish a simple integration.
+To do this, add a Google Sheets connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access the
+Google spreadsheet that you want to update.</p>
+</li>
+<li>
+<p>You have access to the spreadsheet ID for the spreadsheet that you want
+to update.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the spreadsheet that you want to update.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Update sheet values</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Update sheet values</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter the ID of the spreadsheet that you want to update.</p>
+</li>
+<li>
+<p>Leave the field blank. In this case, after you add this connection
+to the flow, you must add a data mapper step
+before this connection. In the data mapper step, map the spreadsheet ID from
+a previous connection to this connection. The previous connection must
+access the spreadsheet that you want to update in this connection.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Range</strong> field, use Google A1 notation to specify the spreadsheet
+cells that you want to update. Specify the start and end coordinates,
+for example, <code>A1:D4</code> updates the first 4 columns in the first 4 rows in
+the first sheet in the spreadsheet.</p>
+<div class="paragraph">
+<p>The default is <code>A:A</code>, which updates the first column in the first sheet
+in the spreadsheet.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Major dimension</strong> field, accept <strong>Rows</strong>, which is the default, or
+select <strong>Columns</strong>. <strong>Rows</strong> configures the action to use row objects to update
+the sheet. Each row object contains a value for each column that you want to update.
+<strong>Columns</strong> configures the action to use column objects to update the sheet.
+Each column object contains a value for each row that you want to update.</p>
+</li>
+<li>
+<p>In the <strong>Value input option</strong> field, indicate how you want Google sheets
+to interpret the data that it receives for updating the sheet.
+<strong>Unspecified</strong>, which is the default, enables Google Sheets to automatically
+convert data that it recognizes. For example, if the input data is a date, then
+Google Sheets formats it as a date. If the input data is a decimal, then
+Google Sheets formats it as a decimal.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Unspecified</strong> defaults to the Google Sheets API setting,
+which defaults to <strong>User entered</strong>.</p>
+</li>
+<li>
+<p><strong>Raw</strong> causes Google Sheets to insert the input data as is.</p>
+</li>
+<li>
+<p><strong>User entered</strong> enables automatic conversion of recognizable data.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization in the
+location where you added it.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If you want to add any other connections to the flow, add
+them now and then return to these instructions.</p>
+</li>
+<li>
+<p>After the flow has all desired connections,
+in the integration visualization, click the plus sign that is
+just before the Google Sheets connection that updates sheet values.</p>
+</li>
+<li>
+<p>Click the <strong>Data Mapper</strong> card to add a data mapping step to
+the flow.</p>
+</li>
+<li>
+<p>In the data mapper:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If you did not specify the spreadsheet ID when you configured the
+<strong>Update sheet values</strong> action, then map a source <code>spreadsheetId</code>
+to the target <code>spreadsheetId</code>.</p>
+</li>
+<li>
+<p>Specify the data that you want to use to update the sheet by
+mapping fields from a source step to the target spreadsheet. For example,
+you might map fields from another spreadsheet or from a database.</p>
+<div class="paragraph">
+<p>If you need to, you can edit the Google Sheets connection that updates
+sheet values and change the settings for <strong>Range</strong> or <strong>Major dimension</strong>.
+Changing these settings causes the data mapper to display different
+target fields according to your changes.</p>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-append-sheet-values_sheets"><a class="anchor" href="#add-google-sheets-connection-append-sheet-values_sheets"></a>Appending data to a sheet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can append data to a sheet
+in the middle of a flow or to finish a simple integration.
+To do this, add a Google Sheets connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access the
+Google spreadsheet in which you want to append data.</p>
+</li>
+<li>
+<p>You have access to the ID for the spreadsheet in which
+you want to append data.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the spreadsheet in which you want to append data.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Append values to a sheet</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Append values to a sheet</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter the ID of the spreadsheet that you want to append values to.</p>
+</li>
+<li>
+<p>Leave the field blank. In this case, after you add this connection
+to the flow, you must add a data mapper step
+before this connection. In the data mapper step, map the spreadsheet ID from
+a previous connection to this connection. The previous connection must
+access the spreadsheet that you want to append data to in this connection.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Range</strong> field, use Google A1 notation to specify the spreadsheet
+range that you want to append data to. Specify the start and end coordinates,
+for example, <code>A3:D3</code> appends data to the first sheet, after the third
+row for 4 columns. The default is <code>A:A</code>, which appends data to the first
+column in the first sheet in the spreadsheet.</p>
+<div class="paragraph">
+<p>The connection never overwrites data. The connection starts appending
+data after the range you specify, and then always appends data to the
+content that is in place.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Major dimension</strong> field, accept <strong>Rows</strong>, which is the default, or
+select <strong>Columns</strong>. <strong>Rows</strong> configures the action to use row objects to append
+data. Each row object contains a value for each column that you want to append
+data to. <strong>Columns</strong> configures the action to use column objects to append data.
+Each column object contains a value for each row that you want to append.</p>
+</li>
+<li>
+<p>In the <strong>Value input option</strong> field, indicate how you want Google sheets
+to interpret the data that it receives for appending to a sheet.
+<strong>Unspecified</strong>, which is the default, enables Google Sheets to automatically
+convert data that it recognizes. For example, if the input data is a date, then
+Google Sheets formats it as a date. If the input data is a decimal, then
+Google Sheets formats it as a decimal.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Unspecified</strong> defaults to the Google Sheets API setting,
+which defaults to <strong>User entered</strong>.</p>
+</li>
+<li>
+<p><strong>Raw</strong> does nothing. Google Sheets inserts the input data as is.</p>
+</li>
+<li>
+<p><strong>User entered</strong> enables automatic conversion of recognizable data.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization where you added it.</p>
+<div class="paragraph">
+<p>The values that you specify to configure the <strong>Append values to a sheet</strong>
+action determine the fields that the data mapper displays for mapping
+to or from this connection.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If you want to add any other connections to the flow, add them now
+and then return to these instructions.</p>
+</li>
+<li>
+<p>After the flow has all desired connections,
+in the integration visualization, click the plus sign that is
+just before the Google Sheets connection that appends data to a sheet.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> to add a data mapping step to the flow.</p>
+</li>
+<li>
+<p>In the data mapper:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If you did not specify the spreadsheet ID when you configured the
+<strong>Append values to a spreadsheet</strong> action, then map a source <code>spreadsheetId</code>
+to the target <code>spreadsheetId</code>.</p>
+</li>
+<li>
+<p>Specify the data to append to the sheet by mapping fields from
+a source step to the target spreadsheet. For example,
+you might map fields from another spreadsheet or from a database.</p>
+<div class="paragraph">
+<p>If you need to, you can edit the Google Sheets connection that appends
+sheet values and change the settings for <strong>Range</strong> or <strong>Major dimension</strong>.
+Changing these settings causes the data mapper to display different
+target fields according to your changes.</p>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-update-properties_sheets"><a class="anchor" href="#add-google-sheets-connection-update-properties_sheets"></a>Updating spreadsheet properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can update the properties of a spreadsheet
+in the middle of a flow or to finish a simple integration.
+To do this, add a Google Sheets connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="paragraph">
+<p>Properties include the spreadsheet&#8217;s title, locale, and time zone.</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} prompts you to configure the <strong>Update spreadsheet properties</strong>
+action, you can leave some or all fields blank. If you leave a field blank, then
+in a data mapper step that
+is in the flow (you add it later) before this connection, you map
+fields from previous steps to
+blank <strong>Update spreadsheet properties</strong> action configuration fields.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access the
+Google spreadsheet whose properties you want to update.</p>
+</li>
+<li>
+<p>You have access to the spreadsheet ID for the spreadsheet whose properties
+you want to update.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the spreadsheet whose properties you want to update.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Update spreadsheet properties</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Update spreadsheet properties</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter the ID of the spreadsheet whose properties you want to update.</p>
+</li>
+<li>
+<p>Leave the field blank. In this case, after you add this connection
+to the flow, you must add a data mapper step that is
+before this connection. In the data mapper step, map the spreadsheet ID from
+a previous connection to this connection. The previous connection must
+access the spreadsheet that you want to update in this connection.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the other fields, enter a value only if you want to change the property.
+Alternatively, you can leave the fields blank. If you do, then in a data mapper
+step that you add later, just before this connection, you can map the fields that
+you want to change.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization where you added it.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If you want to add any other connections to the flow, add
+them now and then return to these instructions.</p>
+</li>
+<li>
+<p>After the flow has all desired connections, you might want to
+use a data mapper step to update spreadsheet properties:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the integration visualization, click the plus sign that is
+just before the Google Sheets connection that updates properties.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> to add a data mapping step to
+the flow.</p>
+</li>
+<li>
+<p>In the data mapper, if you did not specify a spreadsheet ID when
+you configured the <strong>Update spreadsheet properties</strong> action, map a
+source <code>spreadsheetId</code> to the target <code>spreadsheetId</code>.</p>
+</li>
+<li>
+<p>For each spreadsheet property that you want to change and for which
+you did not specify an updated value when you configured the
+<strong>Update spreadsheet properties</strong> action, map a field from a source step
+to the target spreadsheet property that you want to change.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-add-chart_sheets"><a class="anchor" href="#add-google-sheets-connection-add-chart_sheets"></a>Adding a chart to a sheet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration,
+you can add a basic chart or a pie chart to a Google Sheets spreadsheet.
+To do this, add a Google Sheets connection to the middle of a flow
+or as a simple integration&#8217;s finish connection. Then add a data mapper
+step just before the connection. In the data mapper step, set
+options that determine the location, properties, and content of the chart.</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} prompts you to configure the <strong>Add charts</strong>
+action, you can leave some or all fields blank. If you leave a field blank,
+you can map a value to that field in the data mapper step that you
+will add just before this connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access
+the Google spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>You have access to the ID for the spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose the finish
+connection for a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Add charts</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Add charts</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter the ID of the spreadsheet that you want to add a chart to.</p>
+</li>
+<li>
+<p>Leave the field blank. In the data mapper step that will be just
+before this connection, map the spreadsheet ID from
+a previous connection to this connection. The previous connection must
+access the spreadsheet that you want to add a chart to in this connection.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Chart Title</strong> field, enter a title.</p>
+<div class="paragraph">
+<p>Alternatively, leave the field blank. In the data mapper step that is
+just before this connection, map the chart title from a source field or
+property to the <code>title</code> target field.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Subtitle</strong> field, enter a subtitle.</p>
+<div class="paragraph">
+<p>Alternatively, leave the field blank. In the data mapper step that is
+just before this connection, map the chart subtitle from a source field or
+property to the <code>subtitle</code> target field.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization where you added it.</p>
+</li>
+<li>
+<p>If you want to add any other connections to the flow, add them now.
+Then return to these instructions.</p>
+</li>
+<li>
+<p>In the integration visualization, click the plus sign that is
+just before the connection that adds a chart.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+<div class="paragraph">
+<p>In the data mapper, map source properties, source fields, or source constants to the target
+Google Sheets connection, which is adding a chart. The following instructions
+assume that there is a source field, a source property, or a source constant that contains the
+value that you want to map to each target field.</p>
+</div>
+<div class="paragraph">
+<p>If there is no source for
+the required value, then create a source property
+in the data mapper by clicking the + sign that is to the right of the
+<strong>Properties</strong> folder. In the <strong>Create Property</strong> dialog, give the property
+a name that makes it easy to map to the correct target field, for example,
+specify <strong><code>overlayPosition</code></strong> as the property name. For the property value,
+specify the value that
+you want the connection to use to create the chart. The chart’s overlay
+position field requires A1 notation that identifies a cell. That is,
+it specifies a start position but an end position specification is not
+required, and it is ignored if it is present. For example,
+specify something like <code>D4</code> as the value of the <strong>overlayPosition</strong>
+source property. Save the new property.</p>
+</div>
+<div class="paragraph">
+<p>When you configured the <strong>Add charts</strong> action, you might have specified
+a value for the spreadsheet ID, the chart title, and/or the chart subtitle.
+If you did, then do not map a value to that field.</p>
+</div>
+</li>
+<li>
+<p>To add a chart to a sheet, map source properties, source fields
+or source constants to target fields as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Set the location of the chart by mapping an A1 notation value,
+which identifies a cell, to the <strong>overlayPosition</strong> target field.
+An end position is not required and it is ignored if present.
+The mapped value identifies the cell where Google Sheets places
+the chart. This cell is the upper left corner of the chart display.</p>
+<div class="paragraph">
+<p>If you do not map a value to the <strong>overlayPosition</strong> field,
+and you also do not map a value to the <strong>sheetId</strong> field, which identifies
+the sheet that you want to add the chart to, then the default behavior
+is that Google Sheets creates a new sheet and places the chart in A1.</p>
+</div>
+<div class="paragraph">
+<p>You must map a value to the <strong>overlayPosition</strong> field if you plan to map
+a value to the <strong>sheetId</strong> field.</p>
+</div>
+</li>
+<li>
+<p>Map a source <strong>spreadsheetId</strong> field to the target <strong>spreadsheetId</strong> field.
+The connection uses source data in this spreadsheet to add the chart
+to a sheet in this same spreadsheet. The source data and the chart
+can be in two different sheets in the same spreadsheet but they
+cannot be in two different spreadsheets.</p>
+</li>
+<li>
+<p>Set a chart title by mapping to the target <strong>title</strong> field. The connection inserts
+this string as the title of the chart.</p>
+</li>
+<li>
+<p>Set a chart subtitle by mapping to the target <strong>subtitle</strong> field. The connection inserts
+this string as a chart subtitle.</p>
+</li>
+<li>
+<p>Identify the sheet to add the chart to by mapping an integer to the <strong>sheetId</strong> field.</p>
+<div class="paragraph">
+<p>If you map a value to the <strong>sheetId</strong> field then you must also map a value to the <strong>overlayPosition</strong> field.</p>
+</div>
+<div class="paragraph">
+<p>If you do not map a value to the <strong>sheetId</strong> field and you also do not map a value to
+the <strong>overlayPosition</strong> field, then the connection creates a new sheet and adds
+the chart to the new sheet.</p>
+</div>
+<div class="paragraph">
+<p>If you do not map a value to the <strong>sheetId</strong> field but you do map
+a value to the <strong>overlayPosition</strong> field, then the connection places
+the chart on the sheet identified by the <strong>sourceSheetId</strong> field.
+This is the sheet that provides the data for the chart.</p>
+</div>
+<div class="paragraph">
+<p><code>0</code> identifies the first sheet in the spreadsheet.
+For subsequent sheets, the sheet ID is at the end of the URL when the
+sheet is visible in a browser. For example, at the end of the following
+URL, you can see <code>gid=206589330</code>:</p>
+</div>
+<div class="paragraph">
+<p><code>https://docs.google.com/spreadsheets/d/1pa&#8230;&#8203;ngQbKkM/edit#gid=206589330</code></p>
+</div>
+<div class="paragraph">
+<p>This indicates that the sheet ID is <code>206589330</code> and that is the value
+that you would map to <strong>sheetId</strong>.</p>
+</div>
+</li>
+<li>
+<p>Identify the sheet that provides the data for the chart by mapping
+its integer sheet ID to the target <strong>sourceSheetId</strong> field.
+The default is <code>0</code>, which identifies the first sheet in the spreadsheet.</p>
+<div class="paragraph">
+<p>You can add a basic chart or a pie chart. Follow one of the following
+sets of instructions according to the kind of chart that you want to add.</p>
+</div>
+</li>
+<li>
+<p>To add basic chart, in the target panel, expand the <strong>basicChart</strong> folder
+and map source fields to target fields that are in the <strong>basicChart</strong> folder:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Set the chart type (<code>BAR</code>, <code>LINE</code>, <code>AREA</code>, or <code>COLUMN</code>) by mapping
+to the target <strong>type</strong> field. The default is <code>COLUMN</code>.</p>
+</li>
+<li>
+<p>Set the title for the bottom axis of the chart by mapping to the
+target <strong>axisTitleBottom</strong> field.</p>
+</li>
+<li>
+<p>Set the title for the left axis of the chart by mapping to the
+target <strong>axisTitleLeft</strong> field.</p>
+</li>
+<li>
+<p>Set the high level category of information that the chart shows by
+mapping to the target <strong>domainRange</strong> field.
+This field uses the Google Sheets A1 notation. For example, suppose that the first
+column in a source sheet provides a list of 5 products in <code>A2</code> through <code>A6</code> ,
+and you want the chart to provide some data for each product. In this column,
+the first cell (<code>A1</code>) must contain a label, such as  <code>Products</code>.
+The setting of <strong>domainRange</strong> would be <code>A1:A6</code>. The chart will contain
+the data that is in <code>A2</code> through <code>A6</code>. The chart does not display the label.</p>
+</li>
+<li>
+<p>Identify the location of the source data that the chart shows by mapping to the
+target <strong>dataRange</strong> field. This field uses the Google Sheets A1 notation.
+A chart can provide only one series of data. Continuing with the <strong>domainRange</strong>
+example, suppose that the second column in a source sheet shows the number
+sold for each of the 5 products that are listed in the first column and
+this is the data that you want the chart to show. In this column,
+the first cell (<code>B1</code>) must contain a label, such as  <code>Number Sold</code>.
+The setting of <strong>dataRange</strong> would be <code>B1:B6</code>. The chart will contain
+the data that is in <code>B2</code> through <code>B6</code>. The chart does not display the label.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To add a pie chart, in the target panel, expand the <strong>pieChart</strong> folder
+and map source fields to target fields that are in the <strong>pieChart</strong> folder:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Set the location of the pie chart legend by mapping to the target
+<strong>legendPosition</strong> field. The default is <code>LEFT_LEGEND</code>.
+The value must be <code>BOTTOM_LEGEND</code>, <code>LEFT_LEGEND</code>,
+<code>RIGHT_LEGEND</code>, <code>TOP_LEGEND</code>, or <code>NO_LEGEND</code>.</p>
+</li>
+<li>
+<p>Set the high level category of information that the pie chart shows
+by mapping to the target <strong>domainRange</strong> field.
+This field uses the Google Sheets A1 notation. For example, suppose that the first
+column in a source sheet provides a list of 5 products in <code>A2</code> through <code>A6</code> ,
+and you want the chart to provide some data for each product. In this column,
+the first cell (<code>A1</code>) must contain a label, such as  <code>Products</code>.
+The setting of <strong>domainRange</strong> would be <code>A1:A6</code>. The chart will contain
+the data that is in <code>A2</code> through <code>A6</code>. The chart does not display the label.</p>
+</li>
+<li>
+<p>Identify the location of the source data that the chart shows by
+mapping to the target  <strong>dataRange</strong> field. This field uses the Google Sheets
+A1 notation. A chart can provide only one series of data. Continuing with the <strong>domainRange</strong>
+example, suppose that the second column in a source sheet shows the number
+sold for each of the 5 products that are listed in the first column and
+this is the data that you want the chart to show. In this column,
+the first cell (<code>B1</code>) must contain a label, such as  <code>Number Sold</code>.
+The setting of <strong>dataRange</strong> would be B1:B6. The chart will contain
+the data that is in <code>B2</code> through <code>B6</code>. The chart does not display the label.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-google-sheets-connection-add-pivot-table_sheets"><a class="anchor" href="#add-google-sheets-connection-add-pivot-table_sheets"></a>Adding a pivot table to a sheet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration,
+you can add a pivot table to a Google Sheets spreadsheet.
+A pivot table lets you aggregate, sort, or apply a function to
+spreadsheet data and display the results in the same spreadsheet.
+To add a pivot table, add a Google Sheets connection to the middle of a flow
+or as a simple integration&#8217;s finish connection. Then add a data mapping
+step before the connection. In the data mapping step, you set
+options that determine the location, properties, and content of the
+pivot table.</p>
+</div>
+<div class="paragraph">
+<p>In this release, the <strong>Add pivot table</strong> action is limited to defining
+one value group, one row pivot group, and one column pivot group.
+Support for multiple groups in a single action is expected to be
+added in a future release. As a workaround, you can add multiple
+Google Sheets connections that add pivot tables based on the same
+source spreadsheet.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection that is authorized to access
+the Google spreadsheet that you want to add a pivot table to.</p>
+</li>
+<li>
+<p>You have access to the ID for the spreadsheet that contains the source
+data for the pivot table.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.  Or, {prodname} is prompting you to choose the finish
+connection for a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click a Google Sheets connection that is authorized to access
+the spreadsheet that you want to add the pivot table to.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Add pivot tables</strong>.</p>
+</li>
+<li>
+<p>To configure the <strong>Add pivot tables</strong> action, in the
+<strong>SpreadsheetId</strong> field, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter the ID of the spreadsheet that you want to add a pivot table to.</p>
+</li>
+<li>
+<p>Leave the field blank. In the data mapper step that you will add just
+before this connection, you will map the spreadsheet ID from
+a previous connection to this connection. The previous connection must
+access the spreadsheet that you want to add a pivot table to in this connection.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.
+The connection appears in the integration visualization
+where you added it.</p>
+</li>
+<li>
+<p>If you want to add any other connections to this flow, add them
+now. Then return to these instructions.</p>
+</li>
+<li>
+<p>In the integration visualization, click the plus sign that is
+just before the connection that adds a pivot table to a sheet.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+<div class="paragraph">
+<p>In the data mapper, map source properties, source fields, or source constants to the target
+Google Sheets connection, which is adding a pivot table. The following instructions
+assume that there is a source field, source property, or source constant that contains the
+value that you want to map to each target field.</p>
+</div>
+<div class="paragraph">
+<p>If there is no source
+for the required value, then create a source property
+in the data mapper by clicking the + sign that is to the right of the
+<strong>Properties</strong> folder. In the <strong>Create Property</strong> dialog, give the property
+a name that makes it easy to map to the correct target field, for example,
+specify <strong><code>valueLayout</code></strong> as the property name.
+Specify the value that you want the connection to use to create the
+pivot table. The pivot table&#8217;s value layout field requires a value of <code>HORIZONTAL</code>
+or <code>VERTICAL</code> so you might specify <code>VERTICAL</code> as the value of the
+<strong>valueLayout</strong> property. Save the new property.</p>
+</div>
+</li>
+<li>
+<p>In the data mapper, configure a new pivot table as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Map a source <strong>spreadsheetId</strong> field to the target <strong>spreadsheetId</strong> field.
+The connection uses source data in this spreadsheet to add the pivot
+table to a sheet in this same spreadsheet. The source data and the pivot
+table can be in two different sheets in the same spreadsheet but they
+cannot be in two different spreadsheets.</p>
+</li>
+<li>
+<p>Identify the sheet to add the pivot table to by mapping an integer to the
+<strong>sheetId</strong> field. The default is <code>0</code>, which identifies the first sheet
+in the spreadsheet.
+For subsequent sheets, the sheet ID is at the end of the URL when the
+sheet is visible in a browser. For example, at the end of the following URL,
+you can <code>gid=206589330</code>:</p>
+<div class="paragraph">
+<p><code>https://docs.google.com/spreadsheets/d/1pa&#8230;&#8203;ngQbKkM/edit#gid=206589330</code>.</p>
+</div>
+<div class="paragraph">
+<p>This indicates that the sheet ID is <code>206589330</code> and that is the value
+that you would map to <strong>sheetId</strong>.</p>
+</div>
+</li>
+<li>
+<p>Identify the sheet that provides the data for generating the pivot table by mapping
+its integer sheet ID to the target <strong>sourceSheetId</strong> field.
+If you do not map a value to <strong>sourceSheetId</strong>,
+the connection uses the <strong>sheetId</strong> value, or <code>0</code> if no value is mapped
+to <strong>sheetId</strong>. <code>0</code> identifies the first sheet in the spreadsheet.</p>
+</li>
+<li>
+<p>Set the source data range for generating the pivot table
+by mapping an A1 notation value to the target <strong>sourceRange</strong> field.
+For example, <strong>A2:D5</strong>.</p>
+</li>
+<li>
+<p>Set the value layout to be used on the pivot table by mapping to the
+target <strong>valueLayout</strong> field. The value must be <code>VERTICAL</code> or <code>HORIZONTAL</code>, which
+is the default. <code>HORIZONTAL</code> specifies that values are laid out as columns.</p>
+</li>
+<li>
+<p>Set the top left cell of the pivot table by mapping an A1 notation
+cell coordinate to the target <strong>start</strong> field.
+When the connection adds the pivot table to the sheet that contains
+the source data, if you do not map a value to the <strong>start</strong> field,
+the default is that the top left cell of the pivot table is the cell
+that is in the first row of the source data range and in the first
+empty column after the source data range. When the source data is
+in one sheet and the pivot table will be in another sheet, the default is <strong>A1</strong>.</p>
+</li>
+<li>
+<p>To add a value group, expand <strong>valueGroups</strong>
+in the target panel, and map values to the
+fields under <strong>valueGroups</strong>:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Map a value group name to the target <strong>name</strong> field.</p>
+</li>
+<li>
+<p>Map a function, which you want to apply to the value group, to the target <strong>function</strong> field.
+The value must be <code>SUM</code>, <code>COUNT</code>, <code>AVERAGE</code>, <code>MAX</code>, <code>MIN</code>, or <code>CUSTOM</code>.
+The default is <code>SUM</code>. Map <code>CUSTOM</code> to <strong>function</strong> when you are defining a formula.</p>
+</li>
+<li>
+<p>Map a custom formula, which you want to apply to the value group, to the target
+<strong>formula</strong> field if you mapped the <code>CUSTOM</code> value to the <strong>function</strong> field.</p>
+</li>
+<li>
+<p>Map a column name, which is the coordinate that builds the value group,
+to the target <strong>sourceColumn</strong> field.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To add a row pivot group, expand <strong>columnGroups</strong>
+in the target panel, and map values to the
+fields under <strong>columnGroups</strong>:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Map a row pivot group name to the target <strong>label</strong> field.</p>
+</li>
+<li>
+<p>Map the sort order that you want to apply to the row pivot group to the
+target <strong>sortOrder</strong> field. The value must be <code>ASCENDING</code> or <code>DESCENDING</code>.
+The default is <code>ASCENDING</code>.</p>
+</li>
+<li>
+<p>Map <code>true</code> or <code>false</code> to the target <strong>showTotals</strong> field. The default
+is <code>true</code>, which enables the display of totals for the row pivot group.</p>
+</li>
+<li>
+<p>Map a column name, which is the coordinate that builds the row pivot group,
+to the target <strong>sourceColumn</strong> field.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To add a column pivot group, expand <strong>rowGroups</strong>
+in the target panel, and map values to the
+fields under <strong>rowGroups</strong>:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Map a column pivot group name to the target <strong>label</strong> field.</p>
+</li>
+<li>
+<p>Map the sort order that you want to apply to the column pivot group to the
+target <strong>sortOrder</strong> field. The value must be <code>ASCENDING</code> or <code>DESCENDING</code>.
+The default is <code>ASCENDING</code>.</p>
+</li>
+<li>
+<p>Map <code>true</code> or <code>false</code> to the target <strong>showTotals</strong> field. The default
+is <code>true</code>, which enables the display of totals for the column pivot group.</p>
+</li>
+<li>
+<p>Map a column name, which is the coordinate that builds the column pivot group,
+to the target <strong>sourceColumn</strong> field.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p><a href="https://developers.google.com/sheets/api/guides/pivot-tables">Google developers documentation for pivot tables</a></p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

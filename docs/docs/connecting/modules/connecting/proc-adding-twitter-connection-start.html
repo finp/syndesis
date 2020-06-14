@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding a Twitter connection to trigger integration execution :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-twitter-connection-start.html">Adding a Twitter connection to trigger integration execution</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-twitter-connection-start.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding a Twitter connection to trigger integration execution</h1>
+<div class="paragraph">
+<p>In a simple integration, the start connection can be a Twitter
+connection that triggers execution of the integration when
+it finds certain tweets or direct messages.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Twitter connection.</p>
+</li>
+<li>
+<p>You are creating or editing a simple integration and {prodname} is
+prompting you to choose the start connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click the Twitter
+connection that starts the integration. When the integration
+uses the selected connection to connect to Twitter, {prodname} uses the
+credentials defined in that connection.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform.
+A Twitter connection that you add to an integration performs only
+the action that you choose:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Mention</strong> monitors Twitter for tweets that contain the Twitter
+handle for the Twitter account that the connection is authorized to access.
+Upon finding such a tweet, the connection returns it to {prodname}, which triggers
+execution of the integration.</p>
+</li>
+<li>
+<p><strong>Retrieve</strong> periodically polls Twitter for direct messages sent
+to the Twitter account that the Twitter connection is authorized
+to access. Upon finding such messages, the connection returns them to {prodname},
+which triggers execution of the integration.</p>
+</li>
+<li>
+<p><strong>Search</strong>  periodically polls Twitter for tweets that match criteria
+that you specify. Upon finding such tweets, the connection returns them
+to {prodname}, which triggers execution of the integration.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Configure the action that you selected:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Mention</strong> does not require any configuration.</p>
+</li>
+<li>
+<p><strong>Retrieve</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Count</strong> has a default of 100 and you should not need to change
+this value, which affects internal behavior. However, do not set
+this value to less than 50 because doing so might decrease performance.</p>
+<div class="paragraph">
+<p>The <strong>Retrieve</strong> action always returns all previously unreturned
+direct messages received in the last 30 days. If you do not select
+<strong>Ignore direct messages previously found</strong>, then the <strong>Retrieve</strong> action
+returns all messages that have been received in the last 30 days.</p>
+</div>
+</li>
+<li>
+<p><strong>Delay</strong> is the period of time between polls. Twitter enforces
+rate limits, so you should not poll too often. The default
+interval is 5 seconds.</p>
+</li>
+<li>
+<p><strong>Ignore direct messages previously found</strong> returns only new
+messages when selected.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Search</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Delay</strong> is the period of time between polls. Twitter enforces
+rate limits, so you should not poll too often. The default
+interval is 5 seconds.</p>
+</li>
+<li>
+<p><strong>Ignore tweets previously found</strong> returns only new
+tweets when selected.</p>
+</li>
+<li>
+<p><strong>Query</strong> is a Twitter-formatted search expression that specifies
+the tweets that you want the connection to return. The following
+table provides examples of what you can enter. More details are in this
+<a href="https://developer.twitter.com/en/docs/tweets/rules-and-filtering/overview/standard-operators.html">Twitter document for search operators</a>.</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Results</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>My Product</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain both <code>My</code> and <code>Product</code>,
+but not necessarily <code>My Product</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"My Product”</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain an instance of <code>My Product</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>My OR Product</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain an instance of <code>My</code> or <code>Product</code> or
+an instance of each one.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>My -Product</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain an instance of <code>My</code> and do not contain
+an instance of <code>Product</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#MyProduct</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtains tweets that contain the <code>MyProduct</code> hashtag.</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The integration now has a start connection and {prodname} is
+prompting you to choose the finish connection.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

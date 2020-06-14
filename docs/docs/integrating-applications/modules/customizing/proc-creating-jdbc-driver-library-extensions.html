@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating JDBC driver library extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-creating-jdbc-driver-library-extensions.html">Creating JDBC driver library extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/customizing/proc-creating-jdbc-driver-library-extensions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating JDBC driver library extensions</h1>
+<div class="paragraph">
+<p>To connect to a SQL database other than Apache Derby, MySQL, and
+PostgreSQL, you can create a library extension that wraps a JDBC driver for
+the database you want to connect to.
+After uploading this extension to {prodname}, the {prodname}-provided
+<strong>Database</strong> connector can access the driver to validate and create connections
+to the proprietary database. You do not create
+a new connector for your particular database.</p>
+</div>
+<div class="paragraph">
+<p>The Syndesis open source community provides a project for creating an
+extension that wraps a JDBC driver.</p>
+</div>
+<div class="paragraph">
+<p>Package one driver only in an extension. This makes
+it easier to manage the extension as part of managing your particular database.
+However, it is possible to create a library extension that wraps more than one driver.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites</div>
+<p>To use the Syndesis project, you must have a GitHub account.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Ensure access to the JDBC driver for the database you want to connect to
+by doing one of the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Confirm that the driver is in a Maven repository.</p>
+</li>
+<li>
+<p>Download the driver.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In a browser tab, go to
+<a href="https://github.com/syndesisio/syndesis-extensions" class="bare">https://github.com/syndesisio/syndesis-extensions</a></p>
+</li>
+<li>
+<p>Fork the <code>syndesis-extensions</code> repository to your GitHub account.</p>
+</li>
+<li>
+<p>Create a local clone from your fork.</p>
+</li>
+<li>
+<p>In your <code>syndesis-extensions</code> clone:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If the driver is not in a Maven repository, copy the
+driver into the <code>syndesis-library-jdbc-driver/lib</code> folder.</p>
+</li>
+<li>
+<p>Edit the <code>syndesis-library-jdbc-driver/pom.xml</code> file:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Update the value of the <code>Name</code> element to be a name that you choose
+for this extension.</p>
+</li>
+<li>
+<p>Update the value of the <code>Description</code> element to provide helpful
+information about this extension.</p>
+</li>
+<li>
+<p>If you have copied the driver into <code>syndesis-library-jdbc-driver/lib</code>
+ensure that the <code>systemPath</code> in <code>pom.xml</code> points to that driver file. Optionally change
+the <code>groupId</code>, <code>artifactId</code> and <code>version</code> to reflect proper values according to the driver.</p>
+</li>
+<li>
+<p>If the driver is in a Maven repository, ensure that a reference to
+that Maven dependency is in the <code>pom.xml</code> file.</p>
+</li>
+<li>
+<p>Examine the rest of the content of the <code>pom.xml</code> file and change
+any relevant metadata as needed.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Execute <code>./mvnw -pl :syndesis-library-jdbc-driver clean package</code> to build the extension.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The generated <code>.jar</code> file is in the <code>syndesis-library-jdbc-driver/target</code>
+folder. Import this <code>.jar</code> file as an extension in {prodname}.</p>
+</div>
+<div class="paragraph">
+<p>After you import a library extension, when you save an integration in {prodname} you can optionally select the imported library extension and associate it with the integration.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

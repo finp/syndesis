@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to ServiceNow :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-servicenow.html">Connecting to ServiceNow</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-servicenow.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to ServiceNow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>An integration can retrieve records from a ServiceNow table or add records to
+a ServiceNow import set, which ServiceNow uses to update a table.
+In an integration, to connect to ServiceNow,
+create a ServiceNow connection and then add that connection to an integration.
+For details, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-servicenow-connection_servicenow">Creating a ServiceNow connection</a></p>
+</li>
+<li>
+<p><a href="#add-servicenow-connection-start_servicenow">Obtaining records from ServiceNow to trigger integration execution</a></p>
+</li>
+<li>
+<p><a href="#create-servicenow-import-set_servicenow">Creating an import set in ServiceNow</a></p>
+</li>
+<li>
+<p><a href="#add-servicenow-connection-finish_servicenow">Copying records to ServiceNow during or to finish an integration</a></p>
+</li>
+<li>
+<p><a href="#example-sf-servicenow-integration_servicenow">Example Salesforce to ServiceNow integrations</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-servicenow-connection_servicenow"><a class="anchor" href="#create-servicenow-connection_servicenow"></a>Creating a ServiceNow connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to connect to your company&#8217;s ServiceNow instance,
+you must create a ServiceNow connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A ServiceNow administrator at your site must have created a
+ServiceNow account for you.</p>
+</li>
+<li>
+<p>You must know the URL for your ServiceNow instance and
+your ServiceNow user name and password.</p>
+</li>
+<li>
+<p>If the ServiceNow administrator also created a ServiceNow
+client ID and client secret for you, you must know these values.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>ServiceNow</strong> connector.</p>
+</li>
+<li>
+<p>Configure this ServiceNow connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Instance Name</strong> field, enter the name of the ServiceNow instance
+that you want to obtain records from or copy records to. For example,
+if the URL for your ServiceNow instance is
+<code>https://abc12345.service-now.com</code>, the instance name is <code>abc12345</code>.</p>
+</li>
+<li>
+<p>In the <strong>User Name</strong> field, enter your ServiceNow user name.</p>
+</li>
+<li>
+<p>In the <strong>User Password</strong> field, enter your ServiceNow password.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Client ID</strong> field, enter your client ID if you
+received one from your ServiceNow administrator.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Client Secret</strong> field, enter your client secret if you
+received one from your ServiceNow administrator.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, update the configuration
+details as needed and try again.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter a name that
+helps you distinguish this connection from other connections.
+For example, enter <code><strong>ServiceNow Con 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>ServiceNow connection that uses administrative credentials.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>ServiceNow Con 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-servicenow-connection-start_servicenow"><a class="anchor" href="#add-servicenow-connection-start_servicenow"></a>Obtaining records from ServiceNow to trigger integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration upon receiving records from ServiceNow,
+add a ServiceNow connection to a simple integration as its start connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a ServiceNow connection.</p>
+</li>
+<li>
+<p>You know the name of the table that you want to retrieve
+records from.</p>
+</li>
+<li>
+<p>You should have already defined a ServiceNow query that obtains
+only the records that you want.
+You can find information about ServiceNow queries here:
+<a href="https://docs.servicenow.com/bundle/jakarta-platform-user-interface/page/use/using-lists/concept/c_EncodedQueryStrings.html">ServiceNow encoded queries</a>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the ServiceNow connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Retrieve Record</strong> to
+obtain records from a ServiceNow table that you select.</p>
+</li>
+<li>
+<p>Configure the <strong>Retrieve Record</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click in the <strong>Table name</strong> field and select the table that you want
+to obtain records from.</p>
+</li>
+<li>
+<p>In the <strong>Query to filter the result set</strong> field, enter a ServiceNow
+query. For example, consider the <code>state=1^impact=2</code> query on a table
+that keeps records about incidents. This query returns records for  new
+incidents (<code>state=1</code>) that have a medium impact (<code>impact=2</code>).
+If you do not enter a query and the records in the table do not change,
+the connection obtains the same records every time.</p>
+</li>
+<li>
+<p>In the <strong>Limit of elements per page</strong> field, enter the maximum number of
+records that you want the connection to obtain. In this release,
+you must enter a value, the recommendation is to enter <code>1000</code> or less,
+and pagination is not supported.</p>
+</li>
+<li>
+<p>In the <strong>Period</strong> field, indicate how often you want to obtain records.
+The default is every minute. In other words, by default, {prodname} executes this
+integration every 60 seconds.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>{prodname} generates a JSON schema that defines the structure of the
+obtained records. This enables you to add a data mapping step before the next
+connection in the integration if data mapping is needed.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} prompts you to choose a finish connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-servicenow-import-set_servicenow"><a class="anchor" href="#create-servicenow-import-set_servicenow"></a>Creating an import set in ServiceNow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a {prodname} integration, a ServiceNow connection cannot directly
+update a ServiceNow table. To update ServiceNow data in an integration,
+a prerequisite is an import set that stages updates for a ServiceNow table.</p>
+</div>
+<div class="paragraph">
+<p>Often, the easiest way to create an import set is for
+a ServiceNow administrator to create a ServiceNow
+inbound web service. This implicitly creates a ServiceNow import set. The
+import set is based on the ServiceNow target table that the administrator
+selects when creating the web service. A ServiceNow connection updates
+this import set, and ServiceNow uses the import set to update the
+corresponding ServiceNow table.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites</div>
+<p>You must have ServiceNow administrative privileges.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure in ServiceNow</div>
+<ol class="arabic">
+<li>
+<p>In ServiceNow, search for <code>web services</code>.</p>
+</li>
+<li>
+<p>In the results, under <strong>System Web Services</strong> &gt; <strong>Inbound</strong>, click <strong>Create New</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Create Web Service</strong> page:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Label</strong> field, specify the display name for the web service.
+The web service&#8217;s import set will also have this name.</p>
+</li>
+<li>
+<p>In the <strong>Target table</strong> field, select the ServiceNow table that this service updates.</p>
+</li>
+<li>
+<p>Select <strong>Copy fields from target table</strong>. This creates an import set that has
+the same schema as the target table. The import set is a staging area for
+updating the target table.</p>
+</li>
+<li>
+<p>Select <strong>Create transform map</strong>. This map enables ServiceNow to copy and
+transform data from the import set to the target table.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Create</strong>.</p>
+</li>
+<li>
+<p>In the next display, under <strong>Related Links</strong>, click <strong>Auto Map Matching Fields</strong> to
+display a list of fields in the target table that you selected.</p>
+</li>
+<li>
+<p>Select one target table field to be the correlation (or coalesce) field.</p>
+<div class="paragraph">
+<p>When the value of the correlation field in a record in the import set
+matches the value of a correlation field in the target table,
+ServiceNow updates that record in the target table rather than creating a new record.</p>
+</div>
+</li>
+<li>
+<p>Select <strong>Coalesce</strong> to identify the field that you just selected
+as the correlation field. Without a correlation field, ServiceNow adds each
+record in the import set to the target table.</p>
+</li>
+<li>
+<p>Click <strong>Update</strong>.</p>
+</li>
+<li>
+<p>Confirm that the transform map was created:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In ServiceNow, search for <code>transform map</code>.</p>
+</li>
+<li>
+<p>Under <strong>System Import Sets</strong>, click <strong>Transform Maps</strong> to display a list of transform maps.</p>
+</li>
+<li>
+<p>In this list, confirm that there is a transform map whose name is
+the value that you specified for the label of the web service that you created.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p><a href="https://docs.servicenow.com/bundle/london-platform-administration/page/administer/import-sets/reference/import-sets-landing-page.html">ServiceNow documentation for import sets</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-servicenow-connection-finish_servicenow"><a class="anchor" href="#add-servicenow-connection-finish_servicenow"></a>Copying records to ServiceNow during or to finish an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can copy records to ServiceNow in the middle of a flow
+or to finish a simple integration.
+To do this, add a ServiceNow connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a ServiceNow connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+<li>
+<p>You know the name of the ServiceNow import set that you want to
+add records to. Your ServiceNow administrator can
+help you identify the appropriate import set. If the import set
+does not exist, see
+<a href="{LinkSyndesisConnectorGuide}#create-servicenow-import-set_servicenow">Creating an import set in ServiceNow</a>.</p>
+</li>
+<li>
+<p>The ServiceNow import set is configured to handle the addition
+of records.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the ServiceNow connection that you
+want to add to the integration.</p>
+</li>
+<li>
+<p>Select the <strong>Add Record</strong> action.</p>
+</li>
+<li>
+<p>Click in the <strong>Import Set</strong> field and select the import set that
+you want to add records to.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>{prodname} adds the connection to the flow.</p>
+</div>
+<div class="paragraph">
+<p>Typically, a data mapper step is needed before this connection.
+In the integration visualization,
+{prodname} displays
+<span class="image"><img src="../../../_images/images/tutorials/WarningIcon.png" alt="Data Type Mismatch"></span> on the
+connection. In most integrations, you need to map a source field
+to the target field used as the correlation field in the
+ServiceNow table.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-sf-servicenow-integration_servicenow"><a class="anchor" href="#example-sf-servicenow-integration_servicenow"></a>Example Salesforce to ServiceNow integrations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This example describes two simple integrations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>One integration obtains new
+cases from Salesforce and adds them as incidents to ServiceNow.</p>
+</li>
+<li>
+<p>The other integration obtains updated
+cases from Salesforce and updates a corresponding
+incident in ServiceNow.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites (in ServiceNow)</div>
+<p>For both integrations, a prerequisite is for a ServiceNow
+administrator to create an inbound web service.
+This implicitly creates a ServiceNow import set, which is required for
+an integration to add data to ServiceNow. For this example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The name of the web service is <strong>Cases from Salesforce</strong>.</p>
+</li>
+<li>
+<p>The service&#8217;s target table is <strong>Incidents</strong>. This table
+contains the data to be updated.</p>
+</li>
+<li>
+<p>The import set has the same schema as the <strong>Incidents</strong> table
+because of the selection of <strong>Copy fields from target table</strong>. The name of the
+import set is also <strong>Cases from Salesforce</strong>.</p>
+</li>
+<li>
+<p>ServiceNow can copy and transform data from the <strong>Cases from Salesforce</strong>
+import set to the <strong>Incidents</strong> target table because of the selection of
+<strong>Create transform map</strong>.</p>
+</li>
+<li>
+<p>In the import set, the correlation field is <code>correlation_Id</code> because
+of the selection of the <code>correlation_Id</code> field followed by selection of
+<strong>Coalesce</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Procedure overview (in {prodname})</div>
+<p>In {prodname}, you create the Salesforce and ServiceNow connections.</p>
+</div>
+<div class="paragraph">
+<p>The two integrations are the same except for the action performed
+by the Salesforce connection, as noted in the following steps.
+To create the integrations, you would perform these steps twice,
+that is, once to create each integration:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the Salesforce connection as the start connection.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>To create the integration that obtains new cases, select the
+<strong>On create</strong> action.</p>
+</li>
+<li>
+<p>To create the integration that obtains updated cases, select the
+<strong>On update</strong> action.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Select the <strong>Case</strong> object for the action to operate on.
+This Salesforce connection returns new <strong>Case</strong> objects or
+updated <strong>Case</strong> objects according to the chosen action.</p>
+</li>
+<li>
+<p>Add the ServiceNow connection as the finish connection.</p>
+</li>
+<li>
+<p>Select the <strong>Create Record</strong> action, and then select <strong>Cases from Salesforce</strong>
+as the import set that the integration updates.</p>
+<div class="paragraph">
+<p>This ServiceNow connection adds new or updated Salesforce cases to the
+<strong>Cases from Salesforce</strong> import set.</p>
+</div>
+</li>
+<li>
+<p>Add a data mapper step that maps:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Salesforce case <code>id</code> to the ServiceNow import set&#8217;s <code>correlation_Id</code></p>
+</li>
+<li>
+<p>Salesforce <code>subject</code> to the ServiceNow <code>short_description</code></p>
+</li>
+<li>
+<p>Salesforce <code>description</code> to the ServiceNow <code>description</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Give the integration a name and then publish it.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For the integration that obtains new cases, use <strong>On SF Create Case</strong>.</p>
+</li>
+<li>
+<p>For the integration that obtains updated cases, <strong>On SF Update Case</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Confirm that the integrations work</div>
+<p>When both integrations are
+running, you can confirm that the integrations work:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In Salesforce, create a case.</p>
+</li>
+<li>
+<p>In {prodname}, view the summary for the <strong>On SF Create Case</strong> integration.
+Click its <strong>Activity</strong> tab to see that {prodname} executed the integration once.</p>
+</li>
+<li>
+<p>In ServiceNow, view the <strong>Incidents</strong> table. You should see a new incident that
+has the subject and description that you specified in Salesforce.</p>
+</li>
+<li>
+<p>Back in Salesforce, update the case that you just created by changing
+its subject.</p>
+</li>
+<li>
+<p>In {prodname}, view the summary for the <strong>On SF Update Case</strong> integration.
+Click its <strong>Activity</strong> tab to see that {prodname} executed the integration once.</p>
+</li>
+<li>
+<p>In ServiceNow, view the <strong>Incidents</strong> table and expand the entry for the
+incident that was previously new. You should
+see that this incident has an updated <code>short_description</code> value.
+ServiceNow checks the import set entry for the value of its <code>correlation_Id</code>. If
+this value already exists in the <strong>Incidents</strong> table, ServiceNow updates
+the incident that has that value.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

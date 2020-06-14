@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating a Dropbox connection :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-create-dropbox-connection.html">Creating a Dropbox connection</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-create-dropbox-connection.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating a Dropbox connection</h1>
+<div class="paragraph">
+<p>In an integration, to download or upload Dropbox files, create a
+Dropbox connection, which you can add
+to an integration. You can add the same connection to any number of
+integrations.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You registered your {prodname} environment as an application that can
+access Dropbox.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a new browser tab, go  to <code><a href="https://www.dropbox.com" class="bare">https://www.dropbox.com</a></code>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Sign in to the Dropbox account in which you created the app that
+registers access from your {prodname} environment.</p>
+</li>
+<li>
+<p>Go to <a href="https://www.dropbox.com/developers/apps" class="bare">https://www.dropbox.com/developers/apps</a>.</p>
+</li>
+<li>
+<p>Click the {prodname} app to display its settings.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, in {prodname}, do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Dropbox</strong> connector.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Go back to the Dropbox settings display for your app and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Scroll down to see <strong>Generated Access Token</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Generate</strong>.</p>
+</li>
+<li>
+<p>Copy the generated access token to the clipboard.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Back in {prodname}, in the <strong>Configure Connection</strong> page, in the
+<strong>Access Token</strong> field, paste the generated
+access token.</p>
+</li>
+<li>
+<p>In the <strong>Client Identifier</strong> field, enter the name that you specified
+when you created the Dropbox app.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} displays a message that indicates whether
+it can validate this connection. If validation fails, try again and
+be sure to enter the correct values.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Dropbox Connect 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Dropbox connection
+that can access all content in our company Dropbox account.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Dropbox Connect 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

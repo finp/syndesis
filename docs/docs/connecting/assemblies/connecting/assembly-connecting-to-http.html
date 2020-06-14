@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to HTTP and HTTPS endpoints :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-http.html">Connecting to HTTP and HTTPS endpoints</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-http.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to HTTP and HTTPS endpoints</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can connect to HTTP and HTTPS endpoints to execute
+the <code>GET</code>, <code>PUT</code>, <code>POST</code>, <code>DELETE</code>, <code>HEAD</code>, <code>OPTIONS</code>, <code>TRACE</code>,
+or <code>PATCH</code> method. To do this, create
+an HTTP or HTTPS connection and then add it to an integration flow.
+The following topics provide details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-http-connections_http">Creating a connection to an HTTP or HTTPS endpoint</a></p>
+</li>
+<li>
+<p><a href="#adding-http-connections_http">Adding an HTTP or HTTPS connection to an integration</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-http-connections_http"><a class="anchor" href="#creating-http-connections_http"></a>Creating a connection to an HTTP or HTTPS endpoint</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to execute the HTTP <code>GET</code>, <code>PUT</code>, <code>POST</code>, <code>DELETE</code>,
+<code>HEAD</code>, <code>OPTIONS</code>, <code>TRACE</code>, or <code>PATCH</code> method, create a connection to
+an HTTP or HTTPS endpoint. You can then add the connection to one
+or more integrations.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You must know the URL for the endpoint that you want to connect to.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedures</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>If you want to use Hyper Text Transfer Protocol to connect to the endpoint,
+then click the <strong>HTTP</strong> connector. If you want to use
+Hyper Text Transfer Protocol Secure, then click the
+<strong>HTTPS</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Base URL</strong> field, enter the endpoint path. For example,
+<code>www.mycompany.com/sales</code>.</p>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, revise specification
+of the base URL and try again.</p>
+</li>
+<li>
+<p>If validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>HTTPS My Company Sales</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>HTTPS My Company Sales</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="adding-http-connections_http"><a class="anchor" href="#adding-http-connections_http"></a>Adding an HTTP or HTTPS connection to an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can add an HTTP or HTTPS connection to
+any number of integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You created an HTTP or HTTPS connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a
+start connection, or to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the HTTP or HTTPS connection that you want to add to the
+flow.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you are adding a start connection, then <strong>Periodic invoke URL</strong>
+is the only available action. This action invokes the endpoint at intervals
+that you specify and triggers the integration if the endpoint returns
+any data.</p>
+</li>
+<li>
+<p>If you are adding a middle or finish connection, then <strong>Invoke URL</strong>
+is the only available action. This action invokes the endpoint once.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>URL Path</strong> field, specify the location of the endpoint that you
+want to invoke.</p>
+</li>
+<li>
+<p>In the <strong>HTTP Method</strong> field, select the method that you want the
+connection to perform. The default method is <code>GET</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>GET</code> obtains the content at the URL path.</p>
+</li>
+<li>
+<p><code>PUT</code> replaces the content at the URL path with the integration data.</p>
+</li>
+<li>
+<p><code>POST</code> stores the integration data at the URL path to create new
+content.</p>
+</li>
+<li>
+<p><code>DELETE</code> removes content at the URL path.</p>
+</li>
+<li>
+<p><code>HEAD</code> obtains metadata about the content at the URL path.</p>
+</li>
+<li>
+<p><code>OPTIONS</code> obtains communication option settings at the URL path.</p>
+</li>
+<li>
+<p><code>TRACE</code> obtains information for testing and diagnostic purposes.</p>
+</li>
+<li>
+<p><code>PATCH</code> partially updates the content at the URL path according to
+the integration data.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If you are adding a start connection, which periodically invokes the
+URL, then in the  <strong>Period</strong> field, accept the default interval of <strong>1</strong> second
+or specify a number and its unit (milliseconds, seconds, minutes, or hours)
+to indicate how long to wait between invocations.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to specify the action&#8217;s input or output type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input/output in a data mapper step then you must specify
+the data type. The data mapper cannot dislay fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

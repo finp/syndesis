@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>High level overview of {prodname} :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-high-level-overview.html">High level overview of {prodname}</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assemblies/integrating-applications/assembly-high-level-overview.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">High level overview of {prodname}</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>With {prodname}, you can obtain data from an
+application or service, operate on that data if you need to, and then
+send the data to a completely different application or service.  No coding is
+required to accomplish this.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide a high-level overview of {prodname}:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#how-it-works_high">How {prodname} works</a></p>
+</li>
+<li>
+<p><a href="#user-types_high">Who {prodname} is for</a></p>
+</li>
+<li>
+<p><a href="#benefits_high">Benefits of using {prodname}</a></p>
+</li>
+<li>
+<p><a href="#description-of-constructs_high">Descriptions of {prodname} constructs</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-it-works_high"><a class="anchor" href="#how-it-works_high"></a>How {prodname} works</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} provides a web browser interface that lets you integrate two or
+more different applications or services without writing code. It also provides
+features that allow you to introduce code if it is needed for complex
+use cases.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} lets you enable data transfer between different applications.
+For example, a business analyst can use {prodname} to capture
+tweets that mention customers and then leverage the data obtained from
+Twitter to update Salesforce accounts. Another example is a service
+that makes stock trade recommendations. You can use {prodname} to
+capture recommendations for buying or selling stocks of interest
+and forward those recommendations to a service that automates stock transfers.</p>
+</div>
+<div class="paragraph">
+<p>To create and run a simple integration, the main steps are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a connection to each application that you want to integrate.</p>
+</li>
+<li>
+<p>Select the start connection. This connection is to the application that
+contains the data that you want to share with another application.</p>
+<div class="paragraph">
+<p>Alternatively, you can start the integration with a timer or a webhook
+that accepts an HTTP request.</p>
+</div>
+</li>
+<li>
+<p>Select the finish connection. This connection is to the application
+that receives data from the start connection and that completes the
+integration.</p>
+</li>
+<li>
+<p>Map data fields from the start connection to data fields in the
+finish connection.</p>
+</li>
+<li>
+<p>Give the integration a name.</p>
+</li>
+<li>
+<p>Click <strong>Publish</strong> to start running the integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Another kind of integration is an API provider integration.
+An API provider integration allows REST API clients to invoke
+commands that trigger execution of the integration. To create
+and run an API provider integration, you upload an OpenAPI 3 (or 2)
+document to {prodname}. This document specifies the operations
+that clients can call. For each operation, you specify and
+configure the flow of connections and steps, such as data mapper
+or filter steps, that executes
+that operation. A simple integration has one primary flow while an
+API provider integration has a primary flow for each operation.</p>
+</div>
+<div class="paragraph">
+<p>The {prodname} dashboard lets you monitor and manage integrations. You can
+see which integrations are running, and you can start, stop, and edit integrations.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user-types_high"><a class="anchor" href="#user-types_high"></a>Who {prodname} is for</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} is for business experts in, for example,
+finance, human resources, or
+marketing, who do not want to write code in order
+to share data between two different applications. Their use of a
+variety of software-as-a-service (SaaS) applications gives them an
+understanding of business requirements, workflows, and relevant data.</p>
+</div>
+<div class="paragraph">
+<p>As a business user, you can use {prodname} to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Capture tweets that mention your company, filter them, and create new
+contacts in your Salesforce environment when the tweet is from an unknown
+source.</p>
+</li>
+<li>
+<p>Identify Salesforce lead updates and then execute a SQL stored procedure
+to keep your related database up to date.</p>
+</li>
+<li>
+<p>Subscribe for orders received by an AMQ broker and then operate on
+those orders with a custom API.</p>
+</li>
+<li>
+<p>Obtain data from an Amazon S3 bucket and add it to a Dropbox folder.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These are just a few examples of what a business user can do without
+writing code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="benefits_high"><a class="anchor" href="#benefits_high"></a>Benefits of using {prodname}</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} has a number of benefits:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Integrate data from different applications or services without writing code.</p>
+</li>
+<li>
+<p>Run the integration on OpenShift Online in the public cloud or on
+OpenShift Container Platform on site.</p>
+</li>
+<li>
+<p>Use the visual data mapper to map data fields in one application to data
+fields in another application.</p>
+</li>
+<li>
+<p>Leverage all the benefits of open source software. You can extend features,
+and customize interfaces. If {prodname} does not provide a connector for an
+application or service that you want to integrate then a developer can
+create the connector that you need.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="description-of-constructs_high"><a class="anchor" href="#description-of-constructs_high"></a>Descriptions of {prodname} constructs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To use {prodname}, you create an
+integration by working with connectors,
+connections, actions, steps, and flows. It is helpful to have a basic understanding
+each of these constructs.</p>
+</div>
+<div class="paragraph">
+<p>Each installation of {prodname} is referred to as a {prodname} environment.
+When Red Hat installs and manages your {prodname} environment, it is running
+on OpenShift Online or on OpenShift Dedicated. When you install and manage
+a {prodname} environment, it is usually running on OpenShift Container Platform,
+but it can be running on OpenShift Dedicated.</p>
+</div>
+<div class="paragraph">
+<div class="title">Integrations</div>
+<p>In {prodname}, there are simple integrations and API provider integrations.</p>
+</div>
+<div class="paragraph">
+<p>A simple integration is a set of ordered steps that {prodname} executes.
+This set includes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A step that connects to an application to start the integration. This
+connection provides the initial data that the integration
+operates on. A subsequent connection can provide additional data.</p>
+</li>
+<li>
+<p>A step that connects to an application to complete the integration. This
+connection receives any data that was output from previous steps
+and finishes the integration.</p>
+</li>
+<li>
+<p>Optional additional steps that connect to applications
+between the start and finish
+connections. Depending on the position of the additional connection
+in the sequence of integration steps, an additional connection can
+do any or all of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Provide additional data for the integration to operate on</p>
+</li>
+<li>
+<p>Process the integration data</p>
+</li>
+<li>
+<p>Output processing results to the integration</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Optional steps that operate on data between connections to
+applications. Typically,
+there is a step that maps data fields from the previous connection to
+data fields that the next connection uses.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>An API provider integration publishes a REST API service for which you
+provided an OpenAPI schema. A call from a REST API client triggers execution
+of an API provider integration. The call can invoke any operation that the
+REST API implements. While a simple integration has one primary flow of execution,
+an API provider integration has a primary flow for each operation. Each operation
+flow connects to the applications and processes the data according to the
+steps that you added to that operation&#8217;s flow when you created the integration.
+Each operation flow ends by returning a response that you specify
+to the client whose call triggered execution of the integration.</p>
+</div>
+<div class="paragraph">
+<div class="title">Connectors</div>
+<p>{prodname} provides a set of connectors. A connector represents a specific
+application that you want to obtain data from or send data to.
+Each connector is a template
+for creating a connection to that specific application. For example, you use the
+Salesforce connector to create a connection to
+Salesforce.</p>
+</div>
+<div class="paragraph">
+<p>An application that you want to connect to might use the OAuth protocol
+to authenticate users. In this case, you register your {prodname} environment
+as a client that can access that application. The registration is associated with the
+connector for that application. You need to register a particular {prodname}
+environment only once with each
+application that uses OAuth. The registration extends to each
+connection that you create from that connector.</p>
+</div>
+<div class="paragraph">
+<p>If {prodname} does not provide a connector that you need, a developer
+can create the required connector.</p>
+</div>
+<div class="paragraph">
+<div class="title">Connections</div>
+<p>Before you can create an integration, you must create a connection
+to each application or service
+that you want to obtain data from or send data to.
+To create a connection,
+you select a connector and add configuration information.
+For example, to connect to an AMQ broker in an integration, you create
+a connection by selecting the AMQ connector,
+and then following prompts to identify the broker to connect to and the
+account to use for the connection.</p>
+</div>
+<div class="paragraph">
+<p>A connection is one specific instance of the connector that
+it is created from. You can create any number of connections
+from one connector. For example,
+you can use the AMQ connector to create three AMQ connections where
+each connection accesses a different broker.</p>
+</div>
+<div class="paragraph">
+<p>To create a simple integration, you select a connection to start the integration,
+a connection to end the integration, and optionally one or more
+connections for accessing additional applications.
+To create an API provider integration, you can add one or more connections
+to each operation flow.
+Any number of integrations and operation flows can use the same connection. A particular
+integration or flow can use the same connection more than once.</p>
+</div>
+<div class="paragraph">
+<p>For details, see
+<a href="{LinkSyndesisIntegrationGuide}#connecting-to-applications_ug">About connections to applications that you want to integrate</a>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Actions</div>
+<p>In an integration, each connection performs exactly one action. As you create an
+integration, you choose a connection to add to the flow and then you
+choose the action that the connection performs. For example, when you
+add a Salesforce connection to a flow, you choose from
+a set of actions that includes, but is not limited to,
+creating a Salesforce account, updating a Salesforce account, and
+searching Salesforce.</p>
+</div>
+<div class="paragraph">
+<p>Some actions require additional configuration and {prodname}
+prompts you for this information.</p>
+</div>
+<div class="paragraph">
+<div class="title">Steps</div>
+<p>A simple integration is a set of ordered steps. In an API provider
+integration, each operation flow is a set of ordered steps.</p>
+</div>
+<div class="paragraph">
+<p>Each step operates on data.
+Some steps operate on data while connected to an application or service
+outside {prodname}. These steps are connections. Between connections, there can
+be other steps that operate on data in {prodname}.
+Typically, the set of steps includes a step that maps data fields used
+in a previous connection to data fields that are used in the next connection
+in the flow.
+Except for the start connection in a simple integration,
+each step operates on data it receives from the previous steps.</p>
+</div>
+<div class="paragraph">
+<p>To operate on data between connections, {prodname} provides steps for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Mapping data fields in one application to data fields in another
+application.</p>
+</li>
+<li>
+<p>Filtering data so that the integration continues only when the data
+being processed meets criteria that you define.</p>
+</li>
+<li>
+<p>Spliting a collection of records into individual records so that
+{prodname} executes subsequent steps iteratively, once for each record.</p>
+</li>
+<li>
+<p>Aggregating individual records into a collection so that
+{prodname} executes subsequent steps once for the collection.</p>
+</li>
+<li>
+<p>Generating equivalent, consistent output by inserting data into a
+Freemarker, Mustache, or Velocity template.</p>
+</li>
+<li>
+<p>Logging information in addition to the default logging that {prodname}
+automatically provides.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To operate on data between connections in a way that is not built into
+{prodname}, you can upload an extension that provides a custom step.
+See <a href="{LinkSyndesisIntegrationGuide}#developing-extensions_custom">Developing {prodname} extensions</a>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Flow</div>
+<p>A flow is a set of ordered steps that an integration executes.</p>
+</div>
+<div class="paragraph">
+<p>A simple integration has one primary flow.
+An API provider integration has a primary flow for each operation that the REST API
+defines. Each operation&#8217;s primary flow is the set of steps that processes
+a call that invokes that operation.</p>
+</div>
+<div class="paragraph">
+<p>A primary flow can have conditional flows. An integration evaluates a
+condition that you specify to determine whether to execute its
+associated flow.</p>
+</div>
+<div class="paragraph">
+<p>In a flow, each step can operate on the data that is output from
+the previous steps. To determine the steps that you need in a flow,
+see
+<a href="{LinkSyndesisIntegrationGuide}#plan_ready">Considerations for planning your integrations</a>.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

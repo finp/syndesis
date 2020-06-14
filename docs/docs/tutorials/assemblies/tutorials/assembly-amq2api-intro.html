@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Implementing the AMQ to REST API sample integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-amq2api-intro.html">Implementing the AMQ to REST API sample integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/tutorials/assemblies/tutorials/assembly-amq2api-intro.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Implementing the AMQ to REST API sample integration</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This sample integration connects to a Red Hat AMQ broker to obtain item
+delivery records for a hypothetical enterprise. The integration then executes
+a custom step that operates on the records to identify any
+items that were damaged when they were received. After a simple data mapping,
+the integration connects to
+a REST API to obtain contact information for vendors of
+damaged items.</p>
+</div>
+<div class="paragraph">
+<p>The other sample integrations use connectors and data operations that are built
+into {prodname}. This integration also does that, but in addition,
+it provides instructions for customizing
+and extending {prodname} by leading you through the procedures for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Adding a custom data operation by uploading an extension.</p>
+</li>
+<li>
+<p>Adding a custom REST API client connector by uploading an OpenAPI document.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>{prodname} provides the extension file and the OpenAPI document.</p>
+</div>
+<div class="paragraph">
+<p>To implement the AMQ to REST API sample integration, the main steps are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#amq2api-create-amq-connection_amq2api">Creating an AMQ connection</a></p>
+</li>
+<li>
+<p><a href="#amq2api-create-custom-step_amq2api">Making a custom step available</a></p>
+</li>
+<li>
+<p><a href="#amq2api-create-rest-api-connector_amq2api">Creating a REST API connector</a></p>
+</li>
+<li>
+<p><a href="#amq2api-upload-todo-app-icon_amq2api">Uploading the To Do app icon</a></p>
+</li>
+<li>
+<p><a href="#amq2api-create-rest-api-connection_amq2api">Creating a REST API connection</a></p>
+</li>
+<li>
+<p><a href="#amq2api-create-integration_amq2api">Creating and deploying the AMQ to REST API sample integration</a></p>
+</li>
+<li>
+<p><a href="#amq2api-confirm-works_amq2api">Confirming that the AMQ to REST API integration works</a></p>
+</li>
+<li>
+<p><a href="#cleanup_amq2api">Cleaning up your integration</a></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amq2api-create-amq-connection_amq2api"><a class="anchor" href="#amq2api-create-amq-connection_amq2api"></a>Creating an AMQ connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The AMQ to REST API sample integration starts by connecting to an
+AMQ broker (Red Hat AMQ) that is provided in your OpenShift Online
+project. Before you
+start to create the integration itself, you must start the broker
+and create a connection to that broker.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Start the broker:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In a browser, go to the
+<a href="https://console.fuse-ignite.openshift.com/console/">OpenShift Online Web Console</a>.
+Your {prodname} environment runs on OpenShift Online.</p>
+</li>
+<li>
+<p>In the console, on the right, under <strong>My Projects</strong>, click <strong>Fuse Online</strong> to
+display the project&#8217;s overview.</p>
+<div class="paragraph">
+<p>Your project&#8217;s name is something like <code>proj123456</code>.</p>
+</div>
+</li>
+<li>
+<p>In the overview, click the <strong>&gt;</strong> to the left of the first entry,
+<strong>broker-amq, #1</strong>, to expand the entry for the
+provided Red Hat AMQ broker.</p>
+</li>
+<li>
+<p>On the right, click the up caret to scale up to running 1 pod. This starts
+the AMQ broker.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Create the AMQ connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to display any
+available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Red Hat AMQ</strong> connector.</p>
+</li>
+<li>
+<p>Configure the connection by entering:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>In the <strong>Broker URL</strong> field, enter <code><strong>tcp://broker-amq-tcp:61616</strong></code>
+as the location to obtain data from.</p>
+</li>
+<li>
+<p>In the <strong>User name</strong> field, enter <code><strong>amq</strong></code> as the user name for
+the account that accesses this AMQ broker.</p>
+</li>
+<li>
+<p>In the <strong>Password</strong> field, enter <code><strong>topSecret</strong></code> as the password for
+the account that accesses this AMQ broker.</p>
+</li>
+<li>
+<p>Leave the other fields blank.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, check the values you
+entered and try again.</p>
+</li>
+<li>
+<p>When validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Red Hat AMQ Broker 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Connection to the provided Red Hat AMQ message broker.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Red Hat AMQ Broker 1</strong> is now available.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amq2api-create-custom-step_amq2api"><a class="anchor" href="#amq2api-create-custom-step_amq2api"></a>Making a custom step available</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} provides a number of steps that operate on
+integration data between connections. If {prodname} does not provide a
+between-connections step that meets your need,
+a developer can code an extension that defines one or more
+custom steps that operate on data between connections.
+The developer gives you a <code>.jar</code> file that contains the extension.
+You then upload the extension in {prodname} to make the custom step(s)
+available for use in integrations.</p>
+</div>
+<div class="paragraph">
+<p>The AMQ to REST API sample integration uses a custom step that
+operates on data between connections to
+identify items that were damaged when they were received.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a new browser tab, go to
+<a href="https://github.com/syndesisio/fuse-online-sample-extension/releases" class="bare">https://github.com/syndesisio/fuse-online-sample-extension/releases</a>.</p>
+</li>
+<li>
+<p>Download the extension’s <code>.jar</code> file.</p>
+</li>
+<li>
+<p>In {prodname}, in the left panel, click <strong>Customizations</strong> &gt; <strong>Extensions</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Import Extension</strong>.</p>
+</li>
+<li>
+<p>Click in the dotted-line box and select the downloaded <code>.jar</code> file that
+contains the extension.
+{prodname} validates the file, extracts and displays the extension&#8217;s
+ID, name, description, and type, and lists <strong>Damage Reporter</strong> as the custom step
+that the extension defines.</p>
+</li>
+<li>
+<p>Click <strong>Import Extension</strong>. {prodname} makes the custom step available and displays
+the list of extensions that have been imported.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional resources</div>
+<p>For information about coding an extension and creating its <code>.jar</code> file, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="{LinkToolingUserGuide}#FuseOnlineExtension">{NameOfToolingUserGuide} - Use Fuse tooling to develop an extension.</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#developing-extensions_custom">{NameOfSyndesisIntegrationGuide} - Manually code an extension.</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amq2api-create-rest-api-connector_amq2api"><a class="anchor" href="#amq2api-create-rest-api-connector_amq2api"></a>Creating a REST API connector</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} can create connectors for REST APIs
+that support Hypertext Transfer Protocol (HTTP)/1.0 or HTTP/1.1.
+To do this, {prodname} requires a valid
+OpenAPI 3 (or 2) document that describes a REST API that you want to connect to.</p>
+</div>
+<div class="paragraph">
+<p>Your {prodname} environment provides the To Do app, which has a REST API
+for accessing a database that contains tasks. Your environment also provides
+an OpenAPI document for this API.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Identify the URL for your {prodname} environment&#8217;s copy of the
+OpenAPI document:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the {prodname} navigation panel, click <strong>Home</strong>.</p>
+</li>
+<li>
+<p>Copy the URL into a text editor.</p>
+</li>
+<li>
+<p>At the beginning of the URL, insert <code><strong>todo-</strong></code>.</p>
+</li>
+<li>
+<p>At the end of the URL, add <code><strong>openapi.json</strong></code>.</p>
+</li>
+<li>
+<p>Use the <code>http</code> scheme instead of <code>https</code>.</p>
+<div class="paragraph">
+<p>The result is something like this:
+<code>http://todo-app-proj217402.6a63.fuse-ignite.openshiftapps.com/openapi.json</code></p>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Specification of <code>http</code> rather than <code>https</code> avoids a runtime error
+if TLS certificates are not valid.  In production
+environments, ensure that valid certificates are in place,
+and always specify secure URLs (<code>https</code>) to obtain an OpenAPI document.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>In the {prodname} navigation panel, click <strong>Customizations</strong> &gt; <strong>API Client Connectors</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create API Connector</strong>.</p>
+</li>
+<li>
+<p>Select <strong>Use a URL</strong>.</p>
+</li>
+<li>
+<p>In the input box, paste the URL for your OpenAPI document and
+click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Review Actions</strong> page, click <strong>Next</strong>. If you see
+a warning, you can ignore it.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> again to accept <strong>HTTP Basic Authentication</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Review/Edit Connector Details</strong> page:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If you want to, you can
+change the values in the <strong>Name</strong> and <strong>Description</strong> fields.</p>
+</li>
+<li>
+<p>In the <strong>Host</strong> field, enter the name of the service host,
+which is something like this:
+<code>https://todo-app-proj217402.6a63.fuse-ignite.openshiftapps.com</code>.</p>
+</li>
+<li>
+<p>In the <strong>Base URL</strong> field, enter the part of the URL that follows the
+host name in service requests: <code>/api</code>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the <strong>API Client Connectors</strong>. There is a new entry for
+the <strong>Todo App API</strong> that you just created.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amq2api-upload-todo-app-icon_amq2api"><a class="anchor" href="#amq2api-upload-todo-app-icon_amq2api"></a>Uploading the To Do app icon</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To show the flow of an integration, {prodname} displays icons that identify
+the applications that the integration is connecting to. Your {prodname}
+environment provides an icon for the To Do app. Follow these instructions
+to upload it.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Display the To Do app icon:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In a new browser tab, paste the URL for your OpenAPI document.</p>
+</li>
+<li>
+<p>At the end of the URL, replace <code>openapi.json</code> with <code>images/todo_icon.png</code>
+and click <strong>Enter</strong> to display the icon. For example:
+<code>https://todo-app-proj217402.6a63.fuse-ignite.openshiftapps.com/images/todo_icon.png</code>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Save the <code>todo_icon.png</code> image.</p>
+</li>
+<li>
+<p>In {prodname}, on the <strong>API Client Connectors</strong> page, on the entry for
+the <strong>Todo App API</strong>, click <strong>Details</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Connector Details</strong> page, below the <strong>Base URL</strong> field, click <strong>Edit</strong>.</p>
+</li>
+<li>
+<p>Next to the default connector icon, click <strong>Choose File</strong>.</p>
+</li>
+<li>
+<p>Navigate to <code>todo_icon.png</code>, select it, and click <strong>Open</strong>.
+The icon appears near the top of the connector details page.</p>
+</li>
+<li>
+<p>Below the <strong>Base URL</strong> field, click <strong>Save</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amq2api-create-rest-api-connection_amq2api"><a class="anchor" href="#amq2api-create-rest-api-connection_amq2api"></a>Creating a REST API connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, before you can connect to a REST API, you create a REST API
+client connector and then use that connector to create a connection.
+You already created a REST API connector for the To Do app. Follow the
+instructions here to use that connector to create a connection to the
+To Do app REST API.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You created the Todo App REST API connector.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+available connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Todo App API</strong> connector that you just created.</p>
+<div class="paragraph">
+<p>{prodname} populates the <strong>Host</strong> and <strong>Base Path</strong> fields from the
+OpenAPI document that you provided when you created the connector.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Username</strong> field, enter any value. For this sample integration,
+user name and password values are required but they are not used.</p>
+</li>
+<li>
+<p>In the <strong>Password</strong> field, enter any value.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Todo App API Client</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example, enter
+<code><strong>Connection to the provided Todo app REST API.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amq2api-create-integration_amq2api"><a class="anchor" href="#amq2api-create-integration_amq2api"></a>Creating and deploying the AMQ to REST API sample integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create and deploy the AMQ to REST API sample integration, the main steps are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#amq2api-choose-start-connection_create-amq">Choosing the start connection</a></p>
+</li>
+<li>
+<p><a href="#amq2api-choose-finish-connection_create-amq">Choosing the finish connection</a></p>
+</li>
+<li>
+<p><a href="#amq2api-add-damage-reporter-step_create-amq">Adding a damage reporter step</a></p>
+</li>
+<li>
+<p><a href="#amq2api-add-mapping-step_create-amq">Adding a data mapping step</a></p>
+</li>
+<li>
+<p><a href="#amq2api-name-and-publish_create-amq">Giving the integration a name and deploying it</a></p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the provided Red Hat AMQ broker.</p>
+</li>
+<li>
+<p>You created an API Client connection to the provided Todo app.</p>
+</li>
+<li>
+<p>You uploaded the extension that provides the Damage Reporter step.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="amq2api-choose-start-connection_create-amq"><a class="anchor" href="#amq2api-choose-start-connection_create-amq"></a>Choosing the start connection</h3>
+<div class="paragraph">
+<p>In {prodname}, to create the sample AMQ to REST API sample integration,
+the first task is to choose the start connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You started the provided Red Hat AMQ broker.</p>
+</li>
+<li>
+<p>You created a connection to that message broker.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click your
+AMQ connection. If you specified the example name,
+you would click <strong>Red Hat AMQ Broker 1</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Subscribe for messages</strong> action
+to receive messages from the queue you specify.</p>
+</li>
+<li>
+<p>In the <strong>Destination name</strong> field, enter <code><strong>inventoryReceived</strong></code> for
+the name of the queue to obtain data from.</p>
+</li>
+<li>
+<p>Click in the <strong>Destination type</strong> field and select <strong>Queue</strong>.</p>
+</li>
+<li>
+<p>Leave the other fields blank.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>. {prodname} prompts you to specify the output data type.
+This is not needed for this sample integration.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the start connection to the integration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>When the integration is running, after connecting to Red Hat AMQ, the integration watches for
+messages on the <code>inventoryReceived</code> queue. When a message is available,
+the integration passes it to the <strong>Damage Reporter</strong> step.
+However, before you can add that step to the integration, you must choose the
+integration&#8217;s finish connection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="amq2api-choose-finish-connection_create-amq"><a class="anchor" href="#amq2api-choose-finish-connection_create-amq"></a>Choosing the finish connection</h3>
+<div class="paragraph">
+<p>In {prodname}, to continue creating the AMQ to REST API sample
+integration, after you add the start connection, you add the finish connection
+to the integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You uploaded the provided OpenAPI document to create the Todo App API
+connector.</p>
+</li>
+<li>
+<p>You used the Todo App API connector to create a Todo App API connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, on the <strong>Choose a connection</strong> page, click the To Do app
+connection that you created. If you assigned the example name, you would
+click <strong>Todo App API Client</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Create new task</strong>,
+which provides information about who to contact to address
+a particular damaged item.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the finish connection to the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="amq2api-add-damage-reporter-step_create-amq"><a class="anchor" href="#amq2api-add-damage-reporter-step_create-amq"></a>Adding a damage reporter step</h3>
+<div class="paragraph">
+<p>With the start and finish connections in place, you are ready to
+add the custom step that receives the messages from the Red Hat AMQ broker
+and identifies any items that were damaged when they were received.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You uploaded the extension that provides the Damage Reporter custom step.</p>
+</li>
+<li>
+<p>You added the start and finish connections to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the integration visualization, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Damage Reporter</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the Damage Reporter step to the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="amq2api-add-mapping-step_create-amq"><a class="anchor" href="#amq2api-add-mapping-step_create-amq"></a>Adding a data mapping step</h3>
+<div class="paragraph">
+<p>To continue creating the AMQ to REST API sample integration, you need to add a
+data mapping step. This step correlates the <code>task</code> field in the
+output from the damage reporter step to the <code>task</code> field in the
+database that the REST API accesses.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You added the Damage Reporter step to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the integration visualization,
+click the plus sign that is between the Damage Reporter
+step and the finish connection.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>. In the data mapper,
+the <strong>Source</strong> panel on the left displays the fields in the
+output from the damage reporter step. The
+<strong>Target</strong> panel on the right displays the fields in the database that
+the API accesses.</p>
+</li>
+<li>
+<p>In the <strong>Source</strong> panel, click the <code>task</code> field.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> panel, expand the <code>body</code> field and click <code>task</code>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The integration is complete and it is ready to be published.
+On the left, in the integration visualization panel, you might see a
+<span class="image"><img src="../../../_images/images/tutorials/WarningIcon.png" alt="warning"></span> Data Type Mismatch
+warning icon. You can ignore it.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="amq2api-name-and-publish_create-amq"><a class="anchor" href="#amq2api-name-and-publish_create-amq"></a>Giving the integration a name and deploying it</h3>
+<div class="paragraph">
+<p>The AMQ to REST API sample integration is complete when it has a Red Hat AMQ start
+connection, a Damage Reporter step, a data mapper step, and it finishes
+with a Todo App Client API connection. Follow the instructions here to
+deploy it.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You added the start and finish connections to the integration.</p>
+</li>
+<li>
+<p>You added a Damager Reporter step between the start and finish connections.</p>
+</li>
+<li>
+<p>You added a data mapper step between the Damage Reporter step and
+the connection to the Todo App API.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the upper right, click <strong>Publish</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter a name for the
+integration. For example, <code><strong>AMQ to REST API Sample Integration</strong></code>.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Description</strong> field, enter information that might be
+helpful to know about this integration.</p>
+</li>
+<li>
+<p>In the upper right corner, click <strong>Save and publish</strong>.</p>
+<div class="paragraph">
+<p>{prodname} starts to deploy the integration and then displays the
+list of integrations in this environment. In the entry for your AMQ to
+REST API integration, you can see a progress
+indicator that shows the publishing stages.
+{prodname} is generating the runtime for the integration and
+will start it when the runtime is ready. This takes a few minutes.</p>
+</div>
+<div class="paragraph">
+<p>A {prodname} account is limited to a specific number of
+integrations that can be running at one time. For details,
+see the pricing plan. If you are already running the maximum
+number of integrations, then you must stop an integration
+before you can start running another one.</p>
+</div>
+<div class="paragraph">
+<p>If you are using a {prodname} evaluation
+account, then only one integration at a time can be running.
+If you already created one of the other sample integrations and that
+integration is running then this integration is automatically in the
+<strong>Stopped</strong> state. You must stop the running integration and
+then you can publish this integration.</p>
+</div>
+</li>
+<li>
+<p>If you are already running the maximum number of integrations, follow
+these steps to stop an integration:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the entry for the integration that you want to stop, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="ThreeVerticalDotsKebab" title="the three vertical dots"></span>
+on the far right.</p>
+</li>
+<li>
+<p>In the popup, click <strong>Stop</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>After stopping an integration, start another integration as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the entry for the integration that you want to start, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="ThreeVerticalDotsKebab" title="the three vertical dots"></span>
+on the far right.</p>
+</li>
+<li>
+<p>In the popup, click <strong>Start</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amq2api-confirm-works_amq2api"><a class="anchor" href="#amq2api-confirm-works_amq2api"></a>Confirming that the AMQ to REST API integration works</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you create and publish the AMQ to REST API sample integration,
+you can confirm that it works as defined.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>In {prodname}, in the list of integrations,
+<strong>Running</strong> appears next to the AMQ to REST API
+integration that you created and deployed.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a new browser window, go to the To Do app display by
+inserting <code><strong>todo-</strong></code> in front of the URL
+for your {prodname} environment. For example:
+<code>https://todo-app-proj761432.6a63.fuse-ignite.openshiftapps.com/</code>.</p>
+</li>
+<li>
+<p>In the To Do app display, click <strong>Show JMS Form</strong> to display an
+input box that contains an XML message.</p>
+</li>
+<li>
+<p>Click <strong>Send JMS Message</strong> to send that message
+to the Red Hat AMQ broker in your OpenShift project.</p>
+<div class="paragraph">
+<p>Successful execution returns a task from the To Do app client API. The task
+identifies the ID of the damaged item and the contact information for its
+vendor. If the task does not appear in a moment or two, try reloading the
+page.</p>
+</div>
+</li>
+<li>
+<p>Edit the XML message to specify two damaged items:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click <strong>Show JMS Form</strong> to display the message input box again.</p>
+</li>
+<li>
+<p>In the XML message, change the entry for the undamaged item to
+specify <code>damaged="true"</code>.</p>
+</li>
+<li>
+<p>Click <strong>Send JMS Message</strong>. The To Do app client API returns a new
+task that contains IDs for two damaged items and contact information for
+the two vendors.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Edit the XML message to specify an ID that you make up:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click <strong>Show JMS Form</strong>.</p>
+</li>
+<li>
+<p>In the XML message, for the item that has <code>damaged="true"</code>, change the item
+ID, for example, to <code>1234</code>.</p>
+</li>
+<li>
+<p>Click <strong>Send JMS Message</strong>. The To Do app client API returns a new
+task with the item ID that you just entered.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Optionally, view the integration log to troubleshoot an
+unexpected result or to learn more about integration execution:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>View the entry for your AMQ to REST API integration.</p>
+</li>
+<li>
+<p>In the integration&#8217;s summary page, click the <strong>Activity</strong> tab.</p>
+</li>
+<li>
+<p>Click the integration execution for which you want to view activity information.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cleanup_amq2api"><a class="anchor" href="#cleanup_amq2api"></a>Cleaning up your integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you are done working with a sample integration, you should stop it and
+delete it so that you can use the resources for another integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are finished working with a sample integration that you published.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the main panel, identify the entry for the sample integration that
+you want to stop.</p>
+</li>
+<li>
+<p>In that entry, to the right, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab Menu"></span> and then
+click <strong>Stop</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Stop</strong> to confirm that you want to stop running the integration.</p>
+</li>
+<li>
+<p>In the entry for the integration that you just stopped, to the right, click
+<span class="image"><img src="../../../_images/images/tutorials//ThreeVerticalDotsKebab.png" alt="Kebab Menu"></span> and then
+click <strong>Delete</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Delete</strong> to confirm that you want to delete the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

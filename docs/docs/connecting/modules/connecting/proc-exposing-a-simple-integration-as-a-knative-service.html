@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exposing a simple integration as a Knative service :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-exposing-a-simple-integration-as-a-knative-service.html">Exposing a simple integration as a Knative service</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-exposing-a-simple-integration-as-a-knative-service.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Exposing a simple integration as a Knative service</h1>
+<div class="paragraph">
+<p>In a simple integration, the start connection can be a Knative connection
+that exposes the integration as a Knative service. An integration that
+starts this way automatically scales down to 0 pods when there have
+been no calls to the service for a specified number of minutes.
+The default is 1 minute.</p>
+</div>
+<div class="paragraph">
+<p>This automatic scaling saves resources, which is an advantage over simple
+integrations that start with other kinds of connections, such as a
+connection to an AMQ broker.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Connections to Knative resources are enabled.</p>
+</li>
+<li>
+<p>Knative is installed in the same cluster that {prodname} is running in.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Knative connection.</p>
+</li>
+<li>
+<p>Select the <strong>Expose as Service</strong> action.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} prompts you to add the simple integration’s finish connection.</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} publishes the integration, the Camel K runtime creates a
+Knative <code>serving.knative.dev</code> service. This service:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Is an alternative to a Kubernetes deployment object</p>
+</li>
+<li>
+<p>Can automatically scale to 0 after a period of no activity</p>
+</li>
+<li>
+<p>Should not be confused with the Kubernetes Service</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Publication makes the integration available to be called at the root
+path ( / ). Clients can invoke execution of the integration by calling it
+as an HTTP endpoint and passing data as needed. Typically, the passed
+data is in JSON format.</p>
+</div>
+<div class="paragraph">
+<p>In this release, it is expected that the primary use for exposing an
+integration as a Knative service is that other {prodname} integrations
+call that service. In this scenario, the integration that calls the
+service selects the service name and does not need to specify a path.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

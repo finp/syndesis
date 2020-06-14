@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Benefit, overview, and workflow for creating API provider integrations :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-overview-benefit-api-provider-integrations.html">Benefit, overview, and workflow for creating API provider integrations</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/con-overview-benefit-api-provider-integrations.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Benefit, overview, and workflow for creating API provider integrations</h1>
+<div class="paragraph">
+<p>An API provider integration starts with a REST API service.
+This REST API service is defined by an OpenAPI 3 (or 2)
+document that you provide when you create an API provider integration.
+After you publish an API provider integration,
+{prodname} deploys the REST API service on OpenShift.
+The benefit of an API provider integration
+is that REST API clients can invoke calls that trigger execution of the integration.</p>
+</div>
+<div class="paragraph">
+<div class="title">Multiple execution flows</div>
+<p>An API provider integration has multiple execution paths, referred to as flows.
+Each operation that the OpenAPI document defines has its own flow.
+In {prodname}, for each operation that the OpenAPI
+document defines, you add connections and other steps to the execution flow for that
+operation. These steps process the data
+as required for the particular operation.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example execution flow</div>
+<p>For example, consider a human
+resources application that calls a REST API service that {prodname} has
+made available. Suppose the call invokes the operation that adds a new
+employee. The operation flow that handles this call could:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Connect to an application that creates an expense report for new employee
+equipment.</p>
+</li>
+<li>
+<p>Connect to a SQL database to add an internal ticket for setting up new
+equipment.</p>
+</li>
+<li>
+<p>Connect to Google mail to send a message to the new employee that provides
+orientation information.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Ways to trigger execution</div>
+<p>There are many ways to call the REST APIs that trigger integration execution,
+including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A web browser page that takes data input and generates the call.</p>
+</li>
+<li>
+<p>An application that explicitly calls the REST APIs, such as the <code>curl</code> utility.</p>
+</li>
+<li>
+<p>Other APIs that call the REST API, for example, a webhook.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Ways to edit a flow</div>
+<p>For each operation, you can edit its flow by:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Adding connections to the applications that need to process the data.</p>
+</li>
+<li>
+<p>Adding steps between connections, including split, aggregate, and data mapping steps.</p>
+</li>
+<li>
+<p>Mapping connection error messages to return codes in the HTTP response that finishes the flow. The
+response goes to the application that invoked the call that triggered
+execution of the integration.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">Workflow for creating an API provider integration</div>
+<p>The <strong>general</strong> workflow for creating an API provider integration is shown
+in the following diagram:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/ApiProviderCreateIntegrationWorkflow.png" alt="General workflow for creating an API provider integration"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">Publishing an API provider integration</div>
+<p>After you publish an API provider integration, in the integration&#8217;s
+summary page, {prodname} displays the external URL for your REST API service.
+This external URL is the base URL that clients use to
+call your REST API services.</p>
+</div>
+<div class="paragraph">
+<p>For {prodname} environments on OCP, Red Hat 3scale discovery of API provider integrations might be enabled. In this case, 3scale publishes the URL for invoking services.</p>
+</div>
+<div class="paragraph">
+<div class="title">Testing an API provider integration</div>
+<p>To test an API provider integration&#8217;s flows, you can use the <code>curl</code> utility.
+For example, the following <code>curl</code> command triggers execution of the
+flow for the <strong>Get Task by ID</strong> operation for the REST API service URL: <a href="https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api/" class="bare">https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api/</a>.</p>
+</div>
+<div class="paragraph">
+<p>The HTTP <code>GET</code> command is the
+default request so there is no requirement to specify <code>GET</code>.
+The last part of the URL specifies the ID of the task to get:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api/todo/1</pre>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

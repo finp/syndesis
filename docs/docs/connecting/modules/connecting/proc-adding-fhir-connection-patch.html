@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Updating specified fields in a resource on a FHIR server :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-fhir-connection-patch.html">Updating specified fields in a resource on a FHIR server</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-fhir-connection-patch.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Updating specified fields in a resource on a FHIR server</h1>
+<div class="paragraph">
+<p>In an integration, you can update individual fields in
+a resource that is on a FHIR server.
+To do this, add a FHIR connection to the middle of a flow
+or as a simple integration&#8217;s finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a connection to the FHIR server that has the
+resource that you want to update.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the FHIR connection that you want to use
+to update the resource.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Patch</strong>.</p>
+</li>
+<li>
+<p>Click in the <strong>Resource Type</strong> field to display a list
+of FHIR resource types. Select or enter the type of the
+resource whose fields you want to update.</p>
+</li>
+<li>
+<p>In the <strong>Number of Operations</strong> field, specify the number of fields
+that you want to update.</p>
+</li>
+<li>
+<p>Leave the <strong>Resource id</strong> field blank if you want to map the value
+from a previous step in the flow, which is typically what you want
+to do. Otherwise, specify the resource
+ID of the resource whose fields you want to update.</p>
+</li>
+<li>
+<p>Specify a JSON patch that describes the updates.
+The JSON patch must have the format described in
+<a href="http://jsonpatch.com/">What is a JSON Patch?</a>.</p>
+<div class="paragraph">
+<p><strong>Examples of patches for a <code>Patient</code> resource</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Set the <code>active</code> field to <code>true</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"replace", "path":"/active", "value": true }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace the value of the <code>name</code> field, which is an array of the patient’s names.
+In this example, the patient has one name. If the patient had more than one
+name, a similarly formatted patch could replace all of the patient’s names:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"replace", "path":"/name", "value": [{"given": ["Bob"]}] }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace the given name of a patient:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"replace", "path":"/name/0/given/0", "value": "John" }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add another name to a patient before the first name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{ "op":"add", "path":"/name/0", "value": {"given": ["Anthony"]} }]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For some updates, you must specify the JSON patch when you
+configure the <strong>Patch</strong> action. For example, if you want to copy the
+value of a resource field to another field. For other updates,
+you can leave the <strong>JSON Patch</strong> field blank and instead map values
+that define each update.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this connection to the flow.</p>
+</li>
+<li>
+<p>If you did not specify a JSON patch and/or a resource ID, then
+add a data mapper step:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign that is
+before the FHIR connection that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+<div class="paragraph">
+<p>The <strong>Target</strong> panel displays a numbered folder for each field
+that you want to update. When you configured the <strong>Patch</strong> action,
+you specified how many fields to update. The data mapper
+displays this number of folders in the <strong>Target</strong> panel. For example,
+if you specified 3 as the number of fields to update, you would see
+three target folders with the labels <code>1</code>, <code>2</code>, and <code>3</code>.</p>
+</div>
+</li>
+<li>
+<p>For each field that you want to update, map to the fields
+in one target folder:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>In the <strong>Target</strong> panel, expand a folder to display three fields
+for <code>op</code>, <code>path</code>, and <code>value</code>.</p>
+</li>
+<li>
+<p>Map a source field, constant, or property to the target
+<code>path</code> field. The path identifies the resource field
+that you want to update. In a path value, a number indicates the
+index of a list field, and a slash leads to a child field. For
+example, map this path <code>/name/1/given/1/value</code> to update the value
+of the given name field.</p>
+</li>
+<li>
+<p>Accept the default update operation, which replaces the current value
+of the field, or map a source field, constant, or property to the
+<code>op</code> field to indicate how you want to update the field.
+For details about possible operations, see
+<a href="ttp://jsonpatch.com/#operations">JSON patch operations</a>.</p>
+</li>
+<li>
+<p>If you are updating a field to have a new value, then map a
+source field, constant, or property to the target <code>value</code>.
+This is the new value that you want the field to contain.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If you did not specify a resource ID when you configured the
+<strong>Patch</strong> action, then map the resource ID to the target <strong>id</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the data mapper step to the flow.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration visualization
+where you added it. During execution,
+the connection updates the specified resource field(s)
+and returns a <strong>MethodOutcome</strong> resource that includes
+an <code>id.idPart</code> field. This field contains
+the ID of the resource that was updated.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Triggering an integration when polling returns an event from a Google Calendar :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-google-calendar-connection-start.html">Triggering an integration when polling returns an event from a Google Calendar</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-add-google-calendar-connection-start.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Triggering an integration when polling returns an event from a Google Calendar</h1>
+<div class="paragraph">
+<p>To trigger execution of an integration upon obtaining events from
+a Google Calendar that you specify, add a Google Calendar connection to a
+simple integration as
+its start connection. When the integration is running, the Google Calendar
+connection checks the Google Calendar for events at intervals that you
+control. When the connection finds events that comply with the way that
+you configured the Google Calendar <strong>Get Events</strong> action, the connection
+passes the events to the next step in the integration.</p>
+</div>
+<div class="paragraph">
+<p>When a Google Calendar connection returns more than one event,
+{prodname} executes the integration for each returned event.
+For example, if the poll returns 5 events then {prodname} executes
+the integration five times.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Calendar connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Google Calendar
+connection that you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the <strong>Get Events</strong> action.</p>
+</li>
+<li>
+<p>To configure the <strong>Get Events</strong> action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 30 seconds or
+specify how often you want the integration to check the calendar.</p>
+</li>
+<li>
+<p>In the <strong>Calendar name</strong> field, enter the name of a calendar that is
+accessible from the Google account that this Google Calendar connection
+is authorized to access.</p>
+</li>
+<li>
+<p>In the <strong>Max Results</strong> field, accept the default of <strong>5</strong> or
+indicate the maximum number of events that the connection
+can return for each poll.</p>
+</li>
+<li>
+<p>Select one of the following to indicate the date that you want the connection
+to use to start checking for events. The connection checks that date and
+subsequent dates.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Consume from the current date ahead</strong> starts on the current date.</p>
+<div class="paragraph">
+<p>For example, if you select this option, and if <strong>Max Results</strong> is 5, then the Google
+Calendar connection starts checking for events on the current date and
+returns no more than the first five events that it finds. It does not
+matter whether or not these events have been updated or added since the
+last poll.</p>
+</div>
+</li>
+<li>
+<p><strong>Consume from the last event update date on the next poll</strong> starts on the
+date of the most recently updated event that was returned in a previous poll.</p>
+<div class="paragraph">
+<p>For example, if you select this option, and if <strong>Max Results</strong> is 5, then the
+Google Calendar connection returns no more that 5 updated or new events. The
+connection starts checking for new or updated events on the date of the
+most recently updated event that was returned in a previous poll.</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Optionally, in the <strong>Query for events</strong> field, specify text to filter the
+events that the poll can return. The connection returns only
+events that contain the specified text in at least one event field.</p>
+<div class="paragraph">
+<p>For example,
+suppose that you specify <code>Standup meeting</code> in the query field. A poll would
+return only those events that have <code>Standup meeting</code> in an event
+field.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add this Google Calendar connection as the integration&#8217;s
+start connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears as the first step in the simple integration.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

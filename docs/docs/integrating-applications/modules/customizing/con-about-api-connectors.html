@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Requirements for REST API client connectors :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-about-api-connectors.html">Requirements for REST API client connectors</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/customizing/con-about-api-connectors.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Requirements for REST API client connectors</h1>
+<div class="paragraph">
+<p>After you upload an OpenAPI schema to {prodname}, a connector to the REST API
+becomes available. You can select the connector to create
+a REST API client connection. You can then create a new integration and
+add the REST API client connection, or you can edit an existing integration
+to add the REST API client connection.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} connectors support OAuth 2.0, HTTP basic
+authorization, and API keys. If access to the REST API requires Transport Layer Security (TLS)
+then the API needs to use a valid certificate that is issued by
+a recognized Certificate Authority (CA).</p>
+</div>
+<div class="paragraph">
+<p>A REST API that uses OAuth must have an authorization URL that takes a client
+callback URL as input. After {prodname} creates the connector and before you
+use the connector to create a connection, you must visit that URL to
+register your {prodname} environment as a client of the REST API.
+This authorizes your {prodname} environment to access the REST API. As part
+of registration, you provide the {prodname} callback URL.
+The details for doing this are described in
+<a href="{LinkSyndesisConnectorGuide}#register-with-rest-api_rest">{NameOfSyndesisConnectorGuide}, Registering {prodname} as a REST API client</a>.</p>
+</div>
+<div class="paragraph">
+<p>For a REST API that uses OAuth, {prodname} supports only the
+<strong>Authorization Code</strong> grant flow for obtaining authorization.
+In the OpenAPI document that you upload to
+create the connector, in the OAuth <code>securityDefinitions</code> object,
+you must set the <code>flow</code> attribute to <code>accessCode</code>, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>securityDefinitions:
+  OauthSecurity:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: 'https://oauth.simple.api/authorization'
+    tokenUrl: 'https://oauth.simple.api/token'</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You must not set
+<code>flow</code> to <code>implicit</code>, <code>password</code>, or <code>application</code>.</p>
+</div>
+<div class="paragraph">
+<p>The OpenAPI schema for a REST API client connector cannot have cyclic schema
+references. For example, a JSON schema that specifies a request or
+response body cannot reference itself as a whole nor reference any
+part of itself through any number of intermediate schemas.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} cannot create connectors for REST APIs that support the HTTP 2.0
+protocol.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

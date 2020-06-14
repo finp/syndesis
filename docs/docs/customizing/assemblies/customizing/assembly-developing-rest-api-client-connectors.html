@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Developing REST API client connectors :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-developing-rest-api-client-connectors.html">Developing REST API client connectors</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/assemblies/customizing/assembly-developing-rest-api-client-connectors.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Developing REST API client connectors</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} can create connectors for
+Representational State Transfer Application Programming Interfaces
+(REST APIs)
+that support Hypertext Transfer Protocol (HTTP).
+To do this, {prodname} requires a valid
+OpenAPI 3 (or 2) document that describes a REST API that you want to connect to.
+If the API service provider does not make an OpenAPI document available
+then an experienced developer must create the OpenAPI document.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide information and instructions for developing
+REST API connectors:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#about-api-client-connectors_dev-client-connector">Requirements for REST API client connectors</a></p>
+</li>
+<li>
+<p><a href="#guidelines-for-openapi-documents_dev-client-connector">Guidelines for OpenAPI schemas for REST API client connectors</a></p>
+</li>
+<li>
+<p><a href="#providing-client-credentials_dev-client-connector">Provide client credentials in parameters</a></p>
+</li>
+<li>
+<p><a href="#refreshing-access-tokens_dev-client-connector">Automatically refresh access tokens</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="about-api-client-connectors_dev-client-connector"><a class="anchor" href="#about-api-client-connectors_dev-client-connector"></a>Requirements for REST API client connectors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you upload an OpenAPI schema to {prodname}, a connector to the REST API
+becomes available. You can select the connector to create
+a REST API client connection. You can then create a new integration and
+add the REST API client connection, or you can edit an existing integration
+to add the REST API client connection.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} connectors support OAuth 2.0, HTTP basic
+authorization, and API keys. If access to the REST API requires Transport Layer Security (TLS)
+then the API needs to use a valid certificate that is issued by
+a recognized Certificate Authority (CA).</p>
+</div>
+<div class="paragraph">
+<p>A REST API that uses OAuth must have an authorization URL that takes a client
+callback URL as input. After {prodname} creates the connector and before you
+use the connector to create a connection, you must visit that URL to
+register your {prodname} environment as a client of the REST API.
+This authorizes your {prodname} environment to access the REST API. As part
+of registration, you provide the {prodname} callback URL.
+The details for doing this are described in
+<a href="{LinkSyndesisConnectorGuide}#register-with-rest-api_rest">{NameOfSyndesisConnectorGuide}, Registering {prodname} as a REST API client</a>.</p>
+</div>
+<div class="paragraph">
+<p>For a REST API that uses OAuth, {prodname} supports only the
+<strong>Authorization Code</strong> grant flow for obtaining authorization.
+In the OpenAPI document that you upload to
+create the connector, in the OAuth <code>securityDefinitions</code> object,
+you must set the <code>flow</code> attribute to <code>accessCode</code>, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>securityDefinitions:
+  OauthSecurity:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: 'https://oauth.simple.api/authorization'
+    tokenUrl: 'https://oauth.simple.api/token'</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You must not set
+<code>flow</code> to <code>implicit</code>, <code>password</code>, or <code>application</code>.</p>
+</div>
+<div class="paragraph">
+<p>The OpenAPI schema for a REST API client connector cannot have cyclic schema
+references. For example, a JSON schema that specifies a request or
+response body cannot reference itself as a whole nor reference any
+part of itself through any number of intermediate schemas.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} cannot create connectors for REST APIs that support the HTTP 2.0
+protocol.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="guidelines-for-openapi-documents_dev-client-connector"><a class="anchor" href="#guidelines-for-openapi-documents_dev-client-connector"></a>Guidelines for OpenAPI schemas for REST API client connectors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When {prodname} creates a REST API client connector, it maps each resource
+operation in the OpenAPI document to a connection action. The action name
+and action description come from documentation in the OpenAPI document.</p>
+</div>
+<div class="paragraph">
+<p>The more detail that the OpenAPI document provides, the more support
+{prodname} can offer when connecting to the API. For example,
+the API definition is not required to declare data types for requests
+and responses. Without type declarations, {prodname}
+defines the corresponding connection action as typeless. However, in an
+integration, you cannot add a data mapping step immediately before or
+immediately after an API connection that performs a typeless action.</p>
+</div>
+<div class="paragraph">
+<p>One remedy for this is to add more information to the OpenAPI document.
+Identify the OpenAPI resource operations that
+will map to the actions you want the API connection to perform. In the
+OpenAPI document, ensure that there is a YAML or JSON schema that specifies
+each operation&#8217;s request and response types.</p>
+</div>
+<div class="paragraph">
+<p>After you upload the schema, {prodname} gives you an opportunity
+to review and edit it in API Designer, which is a visual editor for
+designing APIs based on the OpenAPI document. You can add more detail,
+save  your updates, and {prodname} creates an API client connector that
+incorporates your updates.
+After {prodname} creates the client connector, you can no longer edit
+the OpenAPI document. To implement a change, you must create a new
+client connector.</p>
+</div>
+<div class="paragraph">
+<p>If the OpenAPI document for the API declares support for
+<code>application/json</code> content type and also <code>application/xml</code> content type
+then the connector uses the JSON format. If the OpenAPI document
+specifies <code>consumes</code> or <code>produces</code> parameters that define both
+<code>application/json</code> and <code>application/xml</code>,
+then the connector uses the JSON format.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="providing-client-credentials_dev-client-connector"><a class="anchor" href="#providing-client-credentials_dev-client-connector"></a>Provide client credentials in parameters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When {prodname} tries to obtain authorization to access an OAuth2
+application, it uses HTTP basic authentication to provide client
+credentials.
+If you need to, you can change this default behavior so that
+{prodname} passes client credentials to the provider as parameters instead of
+using HTTP basic authentication.
+This affects the use of the <code>tokenUrl</code> endpoint that is used to obtain an
+OAuth access token.</p>
+</div>
+<div class="paragraph">
+<p>To specify that {prodname} should pass client credentials as parameters,
+in the <code>securityDefinitions</code> section of the OpenAPI document,
+add the <code>x-authorize-using-parameters</code> vendor extension with a setting of
+<code>true</code>. In the example
+below, the last line specifies <code>x-authorize-using-parameters</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>securityDefinitions:
+  concur_oauth2:
+    type: 'oauth2'
+    flow: 'accessCode'
+    authorizationUrl: 'https://example.com/oauth/authorize'
+    tokenUrl: 'https://example.com/oauth/token'
+    scopes:
+      LIST: Access List API
+    x-authorize-using-parameters: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The setting of the <code>x-authorize-using-parameters</code> vendor extension is <code>true</code> or
+<code>false</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>true</code> indicates that client credentials are in parameters.</p>
+</li>
+<li>
+<p><code>false</code>, the default, indicates that {prodname} uses HTTP
+basic authentication to provide client credentials.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="refreshing-access-tokens_dev-client-connector"><a class="anchor" href="#refreshing-access-tokens_dev-client-connector"></a>Automatically refresh access tokens</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If an access token has an expiration date, then {prodname} integrations
+that use that token to connect to an application stop running successfully
+when the token expires. To obtain a new access token, you must
+either reconnect to the application or re-register with the application.</p>
+</div>
+<div class="paragraph">
+<p>If you need to, you can change this default behavior so that
+{prodname} automatically requests a new access token in the
+following situations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When the expiration date has been reached.</p>
+</li>
+<li>
+<p>When HTTP response status codes that you specify are received.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To specify that {prodname} should automatically try to obtain a new
+access token in the situations described,
+in the <code>securityDefinitions</code> section of the OpenAPI document,
+add the <code>x-refresh-token-retry-statuses</code> vendor extension. The setting
+of this extension is a comma separated list that
+specifies HTTP response status codes. When an access token&#8217;s
+expiration date is reached or when {prodname} receives a message
+from an OAuth2 provider and the message has one of these response status
+codes, then {prodname} automatically tries to obtain a new access token.
+In the example
+below, the last line specifies <code>x-refresh-token-retry-statuses</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>securityDefinitions:
+  concur_oauth2:
+    type: 'oauth2'
+    flow: 'accessCode'
+    authorizationUrl: 'https://example.com/oauth/authorize'
+    tokenUrl: 'https://example.com/oauth/token'
+    scopes:
+      LIST: Access List API
+    x-refresh-token-retry-statuses: 401,402,403</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Sometimes, an API operation fails and a side effect of that
+failure is that the access token is refreshed. In this situation,
+even when obtaining a new access token is successful, the
+API operation still fails. In other words, {prodname} does
+not retry the failed API operation after it receives the new
+access token.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

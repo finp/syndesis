@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Giving the integration a name and deploying it :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-sf2db-name-and-publish.html">Giving the integration a name and deploying it</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/tutorials/modules/tutorials/proc-sf2db-name-and-publish.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Giving the integration a name and deploying it</h1>
+<div class="paragraph">
+<p>When the Salesforce to database sample integration is complete then you
+can deploy it and see how it works.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The integration&#8217;s start connection is Salesforce.</p>
+</li>
+<li>
+<p>The integration&#8217;s finish connection is to the sample database that
+is provided with {prodname}.</p>
+</li>
+<li>
+<p>You just added a data mapping step to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the upper right, click <strong>Publish</strong> to give it a name.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter a name for the
+integration. For example, <code><strong>Salesforce to Database Sample Integration</strong></code>.</p>
+</li>
+<li>
+<p>Click <strong>Save and publish</strong>.</p>
+<div class="paragraph">
+<p>{prodname} starts to deploy the integration and then displays the list of
+integrations in this environment. The entry for your Salesforce to
+database integration displays a progress
+indicator that shows the publishing stages.
+{prodname} is generating the runtime for the integration and
+will start it when the runtime is ready. This takes a few minutes.</p>
+</div>
+<div class="paragraph">
+<p>A {prodname} account is limited to a specific number of
+integrations that can be running at one time. For details,
+see the pricing plan. If you are already running the maximum
+number of integrations, then you must stop an integration
+before you can start running another one.</p>
+</div>
+<div class="paragraph">
+<p>If you are using a {prodname} evaluation
+account, then only one integration at a time can be running.
+If you already created one of the other sample integrations and that
+integration is running then this integration is automatically in the
+<strong>Stopped</strong> state. You must stop the running integration and
+then you can publish this integration.</p>
+</div>
+</li>
+<li>
+<p>If you are already running the maximum number of integrations, follow
+these steps to stop an integration:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the entry for the integration that you want to stop, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="ThreeVerticalDotsKebab" title="the three vertical dots"></span>
+on the far right.</p>
+</li>
+<li>
+<p>In the popup, click <strong>Stop</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>After stopping an integration, start another integration as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the entry for the integration that you want to start, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="ThreeVerticalDotsKebab" title="the three vertical dots"></span>
+on the far right.</p>
+</li>
+<li>
+<p>In the popup, click <strong>Publish</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding a custom step :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-add-custom-step.html">Adding a custom step</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-add-custom-step.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding a custom step</h1>
+<div class="paragraph">
+<p>If {prodname} does not provide a step that you need in a flow,
+a developer can define one or more custom steps in an extension. A custom
+step operates on data between connections in a flow.</p>
+</div>
+<div class="paragraph">
+<p>You add a custom step to a flow in the same way that you add
+a built-in step. For a simple integration, choose the start and finish
+connections, add other connections as needed and then add additional steps.
+For an API provider integration, select the operation whose flow executes
+the custom step, add connections as needed to the flow, and then add other steps.
+When you add a step, {prodname} operates on the data it receives from the
+previous step(s) in the flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You uploaded the custom step extension to {prodname}. See
+<a href="{LinkSyndesisIntegrationGuide}#making-extensions-available_add-extension">Making custom features available</a>.</p>
+</li>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>The flow already has all the connections that it requires.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, where you want to add a custom step, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click the custom step that you want to add.</p>
+<div class="paragraph">
+<p>The available steps includes any
+custom steps that are defined in extensions that were uploaded to
+your {prodname} environment.</p>
+</div>
+</li>
+<li>
+<p>Respond to prompts for any information that is required to perform the step.
+This information varies for each custom step.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

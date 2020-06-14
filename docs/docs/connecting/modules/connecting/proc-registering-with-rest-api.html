@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Registering {prodname} as a REST API client :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-registering-with-rest-api.html">Registering {prodname} as a REST API client</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-registering-with-rest-api.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Registering {prodname} as a REST API client</h1>
+<div class="paragraph">
+<p>Before {prodname} creates a REST API client
+connector, it prompts you to indicate the API&#8217;s security requirements.
+For APIs that use the OAuth protocol, when {prodname} creates the connector it also
+adds an entry for the API to the {prodname} <strong>Settings</strong> page. This is
+where you provide the API client ID and the API client secret that
+authorize {prodname} to access the API.</p>
+</div>
+<div class="paragraph">
+<p>If the API you want to connect to does not use OAuth, skip this
+section and see
+<a href="{LinkSyndesisConnectorGuide}#create-rest-api-connection_rest">Creating a REST API client connection</a>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You must know the URL for the OAuth custom application setting page for the
+REST API that you want to connect to.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL, click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your {prodname} environment to the clipboard.
+You will need this URL later in this procedure.</p>
+</li>
+<li>
+<p>Look for the name of the API you want to connect to and click it
+to display its client ID and client secret fields.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser window, you must register {prodname} as an OAuth
+client of the API you want to connect to. The exact steps for doing this
+vary for each API service. Typically, the API service provides an OAuth
+custom application setting page. Go to that page and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Provide the {prodname} callback URL, which you copied at the beginning
+of this procedure.</p>
+</li>
+<li>
+<p>Respond to any other prompts that require your input.</p>
+</li>
+<li>
+<p>Obtain the client ID and client secret that the API service assigns to
+your {prodname} environment.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to the {prodname} <strong>Settings</strong> page entry for the
+API service you are registering with and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Paste the assigned client ID.</p>
+</li>
+<li>
+<p>Paste the assigned client secret.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

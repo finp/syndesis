@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding a data mapping step :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-t2sf-add-mapping-step.html">Adding a data mapping step</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/tutorials/modules/tutorials/proc-t2sf-add-mapping-step.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding a data mapping step</h1>
+<div class="paragraph">
+<p>To continue creating the Twitter to Salesforce sample integration,
+add a data mapping step that correlates Twitter mention fields to
+Salesforce contact fields.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The integration&#8217;s start connection is to Twitter.</p>
+</li>
+<li>
+<p>The integration&#8217;s finish connection is to Salesforce.</p>
+</li>
+<li>
+<p>You just added the filter step between the two connections.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the integration visualization, click the plus sign that is between the filter
+step and the finish connection.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> and wait a few moments. When the data fields
+appear, the <strong>Sources</strong> panel on the left displays the Twitter fields
+and the <strong>Target</strong> panel on the right displays the Salesforce fields.</p>
+</li>
+<li>
+<p>Map the Twitter <code>name</code> field to the Salesforce
+<code>FirstName</code> and <code>LastName</code> fields:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Sources</strong> panel, click the magnifying
+glass <span class="image"><img src="../../../_images/images/tutorials/magnifying-glass.png" alt="magnifying glass" title="Magnifying Glass"></span>
+to display the search field and enter <code><strong>name</strong></code>.</p>
+</li>
+<li>
+<p>Under the <code>user</code> folder, click the <code>name</code> field.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> panel, scroll down and click <strong>FirstName</strong>. The
+data mapper displays a line from the source <strong>name</strong> field to the
+target <strong>FirstName</strong> field.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> panel, scroll down, hover over <strong>LastName</strong>, press
+<strong>CTRL-Mouse1</strong> (<strong>CMD-Mouse1</strong> on MacOS) and select <strong>LastName</strong>.
+The data mapper displays another line from the Twitter
+<strong>name</strong> field, but this time it goes to the Salesforce <strong>LastName</strong> field.
+The blue lines indicate the current focus.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you accidentally map the wrong fields then delete the incorrect mapping by
+selecting one of its fields to make it the current
+mapping. Then click the trash can icon in the top right of the data mapper&#8217;s
+<strong>Mapping Details</strong> panel.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Map the Twitter <code>screenName</code> field to the Salesforce
+<code>Title</code> field:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Sources</strong> panel, click
+the <strong>screenName</strong> field.</p>
+</li>
+<li>
+<p>On the right, at the top of the <strong>Target</strong> panel,
+click the magnifying
+glass <span class="image"><img src="../../../_images/images/tutorials/magnifying-glass.png" alt="magnifying glass" title="Magnifying Glass"></span>
+to display the search field and enter <code><strong>Title</strong></code>.</p>
+</li>
+<li>
+<p>Click the <strong>Title</strong> field. The data mapper displays a line
+from the Twitter <strong>screenName</strong> field to the Salesforce <strong>Title</strong> field.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Map the Twitter <code>text</code> field to the Salesforce
+<code>Description</code> field:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Sources</strong> search field, enter <code><strong>text</strong></code> and click the
+<strong>text</strong> field.
+Be sure to click the toplevel <strong>text</strong> field. Do not click one of
+the <strong>text</strong> fields that is contained in the <strong>user</strong> field.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> search field, enter <code><strong>description</strong></code>.</p>
+</li>
+<li>
+<p>Click the
+Salesforce <strong>Description</strong> field to create the mapping.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the upper right, click
+the grid icon <span class="image"><img src="../../../_images/images/tutorials/grid.png" alt="grid" title="Grid"></span> to
+display the list of mappings, which should look like this:
+<span class="image"><img src="../../../_images/images/tutorials/t2sf-mappings.png" alt="Data Mappings"></span></p>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

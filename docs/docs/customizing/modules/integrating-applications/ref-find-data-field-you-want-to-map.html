@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Finding the data field that you want to map :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-find-data-field-you-want-to-map.html">Finding the data field that you want to map</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/ref-find-data-field-you-want-to-map.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Finding the data field that you want to map</h1>
+<div class="paragraph">
+<p>In a flow with relatively few steps, mapping data fields is easy
+and intuitive. In more complex flows or in flows that handle
+large sets of data fields, mapping from source to target is easier when
+you have some background about how to use the data mapper.</p>
+</div>
+<div class="paragraph">
+<p>The data mapper displays two columns of data fields:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Sources</strong> is a list of the data fields that are obtained or
+processed in all previous steps in the flow.</p>
+</li>
+<li>
+<p><strong>Target</strong> is a list of the data fields that the next
+connection in the flow expects and can process.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To quickly find the data field that you
+want to map, you can do any of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Search for it.</p>
+<div class="paragraph">
+<p>The <strong>Sources</strong> panel and the <strong>Target</strong> panel each have
+a search field at the top. If the search field is not visible, click
+<span class="image"><img src="../../../_images/images/tutorials/magnifying-glass.png" alt="Magnifying Glass"></span> at the top
+right of the <strong>Sources</strong> or <strong>Target</strong> panel.</p>
+</div>
+</li>
+<li>
+<p>Enter the names of the fields that you want to map.</p>
+<div class="paragraph">
+<p>To do this,
+in the upper right of the <strong>Configure Mapper</strong> page, click the plus sign
+to display the <strong>Mapping Details</strong> panel. In the <strong>Sources</strong> section, enter
+the name of the source field. In the <strong>Target</strong> section, enter the name of the
+field that you want to map to.</p>
+</div>
+</li>
+<li>
+<p>Expand and collapse folders to limit the visible fields.</p>
+<div class="paragraph">
+<p>To view the data fields available in a particular step, expand the
+folder for that step.</p>
+</div>
+<div class="paragraph">
+<p>As you add steps to a flow, {prodname} numbers and renumbers them to
+indicate the order in which {prodname} processes the steps.
+When you are adding a data
+mapper step, the step numbers appear in the folder labels in the
+<strong>Sources</strong> panel and in the <strong>Target</strong> panel.</p>
+</div>
+<div class="paragraph">
+<p>The folder label also displays the name of the data type that is output
+by that step. Connections to applications such as Twitter, Salesforce,
+and SQL define their own data types. For connecting to applications
+such as Amazon S3, AMQ,
+AMQP, Dropbox, and FTP/SFTP, you define the connection&#8217;s input and/or output
+type when you add the connection to a flow and select the action
+that the connection performs.
+When you specify the data type, you also give the type a name.
+The type name you specify appears as the name of
+a folder in the data mapper. If you specified a description when you
+declared the data type, then the type description appears when you hover
+over the step folder in the mapper.</p>
+</div>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

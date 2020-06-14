@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Separating one source field into multiple target fields :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-separate-one-source-field-into-multiple-target-fields.html">Separating one source field into multiple target fields</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-separate-one-source-field-into-multiple-target-fields.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Separating one source field into multiple target fields</h1>
+<div class="paragraph">
+<p>In a data mapper step, you can separate a compound source field into multiple
+target fields. For  example, map the <code>Name</code> field to the <code>FirstName</code> and
+ <code>LastName</code> fields.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>For the source field, you must know what type of content is in each
+part of this compound field, the order and index of each part of the content,
+and the separator between parts, such as a space or comma. See
+<a href="{LinkSyndesisIntegrationGuide}#example-missing-unwanted-data_map">Example of missing or unwanted data</a>.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the <strong>Sources</strong> panel, click the field whose content you want to separate.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> panel, click the first field that you want to separate the
+source field data into.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> panel, for each additional target field that you want
+to contain some of the data from the source field, hover over the field and
+press <strong>CTRL-Mouse1</strong> (<strong>CMD-Mouse1</strong> on MacOS) to select it.</p>
+<div class="paragraph">
+<p>When you are done selecting target fields, you should see lines from the
+source field to each of the target fields that you selected.</p>
+</div>
+<div class="paragraph">
+<p>In the <strong>Mapping Details</strong> panel:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Under <strong>Sources</strong>, the data mapper displays
+<strong>Split</strong> to indicate that execution of the mapping splits the source
+field value and maps it to multiple target fields.</p>
+</li>
+<li>
+<p>Under <strong>Targets</strong>, there is an entry for each target field that
+you selected.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Mapping Details</strong> panel, configure the mapping as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Under <strong>Sources</strong>, in the <strong>Delimiter</strong> field, accept or select the
+character in the source field that indicates where to separate
+the source field values. The default is a space.</p>
+</li>
+<li>
+<p>Optional. Click <strong>Add Transformation</strong> to apply a transformation
+to the source field value before it gets mapped to the target field.</p>
+</li>
+<li>
+<p>Under <strong>Targets</strong>, check the order of the entries for the target
+fields that you selected. The entries must be in the same order
+as the corresponding content in the compound source field.
+It does not matter whether you did not specify a target field
+for one or more parts of the content in the source field.</p>
+<div class="paragraph">
+<p>If the entries are not in the correct order, drag and drop target
+field entries to achieve the same order. The data mapper automatically
+updates the index numbers to reflect the new order.</p>
+</div>
+<div class="paragraph">
+<p>If you mapped each part of the compound source field to a target
+field, then skip to the next step.</p>
+</div>
+</li>
+<li>
+<p>If the source field contains data that you do not need,
+then in the <strong>Mapping Details</strong> panel, edit the index of each
+target field that does not already have the same index as the
+corresponding data in the source field. Each target field entry
+must have the same index that the corresponding data has
+in the source field. The data mapper automatically adds
+padding fields as needed to indicate unwanted data.</p>
+<div class="paragraph">
+<p>See the example at the end of this procedure.</p>
+</div>
+</li>
+<li>
+<p>Optional. Click <strong>Add Transformation</strong> to map the content into
+the target field and then apply a transformation.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Optional. Preview the data mapping result:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the upper right of the data mapper, click
+<span class="image"><img src="../../../_images/images/tutorials/EditorSettings.png" alt="Editor settings"></span> and select
+<strong>Show Mapping Preview</strong> to display a text input field on the source
+field and read-only result fields on each target field.</p>
+</li>
+<li>
+<p>In the source field&#8217;s data input field, enter text. Be sure to enter
+the separator character between the parts of the field. Click outside
+the text box to display the mapping result in the read-only fields
+on the target fields.</p>
+<div class="paragraph">
+<p>If you reorder the target fields or add a transformation to a target field
+then the result fields on the target fields reflect this. If the data mapper
+detects any errors, it displays informative messages at the top of the
+<strong>Mapping Details</strong> panel.</p>
+</div>
+</li>
+<li>
+<p>Hide the preview fields by clicking
+<span class="image"><img src="../../../_images/images/tutorials/EditorSettings.png" alt="Editor settings"></span> again and selecting
+<strong>Show Mapping Preview</strong>.</p>
+<div class="paragraph">
+<p>If you redisplay the preview fields, any data that you entered in them is
+still there and it remains there until you exit the data mapper.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>To confirm that the mapping is correctly defined, click
+<span class="image"><img src="../../../_images/images/tutorials/grid.png" alt="Grid"></span> to display the mappings defined in
+this step. A mapping that separates the value of a source field into
+multiple target fields looks like this:
+<span class="image"><img src="../../../_images/images/integrating-applications/SeparateMapping.png" alt="Separate Fields Mapping"></span>.</p>
+<div class="paragraph">
+<p>You can also preview mapping results in this view. Click
+<span class="image"><img src="../../../_images/images/tutorials/EditorSettings.png" alt="Editor settings"></span>, select
+<strong>Show Mapping Preview</strong>, and enter text as described in the previous step.
+Preview fields appear for only the selected mapping. Click another
+mapping in the table to view preview fields for it.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Example of separating one field into multiple fields</div>
+<p>Suppose that the source data contains one address field and it uses
+commas to separate the content parts, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>77 Hill Street, Brooklyn, New York, United States, 12345, 6789</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In an address field, the parts of the content have these indexes:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 66.6666%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Content</th>
+<th class="tableblock halign-left valign-top">Index</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number and street</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">City</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">State</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Country</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zip code</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zip+4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Now suppose that the target data has four fields for an address:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>number-and-street
+city
+state
+zip</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To define the mapping, you do the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select the source field.</p>
+</li>
+<li>
+<p>In the <strong>Mapping Details</strong> panel, in the <strong>Sources</strong> section,
+select the delimiter, which is a comma in this example.</p>
+</li>
+<li>
+<p>Select the four target fields.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After you do this, in the <strong>Mapping Details</strong> panel under <strong>Targets</strong>,
+there is an entry for each target field that you selected, for example:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/Example-Adding-Padding-Mapping.png" alt="Example of initial entries"></span>.</p>
+</div>
+<div class="paragraph">
+<p>The data mapper displays the target entries in the order in which
+they appear in the data mapper, which is alphabetical. You need to
+change this order so that it mirrors the order in the source field.
+In this example, the source field contains the <code>number-and-street</code>
+content before the <code>city</code> content. To correct the order of the
+target entries, edit the <code>city</code> index field to be <code>2</code>
+or drag the <code>city</code> entry so that it is after the <code>number-and-street</code> entry.
+The result looks like this:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/Example-Adding-Padding-Mapping-2.png" alt="Example or reordered entries"></span>.</p>
+</div>
+<div class="paragraph">
+<p>In the target field entries, the index numbers indicate the part of
+the source field that will be mapped to this target field. One of
+the index values needs to change to achieve the correct target field value.
+Consider each target field:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>number-and-street</code> — In the source field, the number and street
+content has an index of 1.  It is correct to map the index 1 source
+to the <code>number-and-street</code> target field. No changes are needed
+in this target entry.</p>
+</li>
+<li>
+<p><code>city</code>  — In the source field, the city
+content has an index of 2. This target entry is also correct as it is.</p>
+</li>
+<li>
+<p><code>state</code>  — In the source field, the state content has an index of 3.
+This target entry is also correct as it is.</p>
+</li>
+<li>
+<p><code>zip</code>  — In the source field, the zip code content has an index of 5.
+The target field entry index of 4 is wrong. If you do not change it, during
+execution, the country part of the source field gets mapped to the <code>zip</code>
+target field. You need to change the index to 5.
+This instructs the data mapper to map the index 5 source
+content to the <code>zip</code> target field. After you change the index,
+the data mapper adds a padding field with an index of 4. The
+result looks like this:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/Example-Adding-Padding-Mapping-3.png" alt="Example entries with padding"></span>.</p>
+</div>
+<div class="paragraph">
+<p>This mapping is now complete. Although the source field has additional
+content at index 6, (zip+4), the target does not need the data and
+nothing needs to be done.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

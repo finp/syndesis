@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Obtaining database records to trigger integration execution :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-db-connection-start.html">Obtaining database records to trigger integration execution</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-db-connection-start.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Obtaining database records to trigger integration execution</h1>
+<div class="paragraph">
+<p>To trigger execution of an integration based on the result of invoking a SQL
+statement or a SQL stored procedure, choose a database connection as the
+integration&#8217;s start connection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You created a database connection.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the
+database connection that you want to use to start an integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Periodic SQL invocation</strong> obtains data by periodically invoking the
+SQL statement that you specify.</p>
+</li>
+<li>
+<p><strong>Periodic stored procedure invocation</strong> obtains data by periodically invoking
+the stored procedure that you specify or select.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If you selected <strong>Periodic SQL invocation</strong>, in the <strong>Query</strong> field,
+enter a SQL <code>SELECT</code> statement or some other standard SQL statement that
+obtains one or more records. For
+example: <code><strong>SELECT * from my_db_table</strong></code>.
+The database table that contains the data you want must already exist.</p>
+<div class="paragraph">
+<p>If you selected <strong>Periodic stored procedure invocation</strong>, in the
+<strong>Procedure name</strong> field, select or enter the stored procedure to
+invoke to obtain the data of interest. The stored procedure you specify must
+already exist. The database administrator should have created any stored
+procedures you need to use in an integration.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Period</strong> field, enter an integer and indicate whether the unit is
+milliseconds, seconds,
+minutes, hours, or days. For example, if you specify <code>5 minutes</code> then
+the connection invokes the specified statement or stored procedure every
+five minutes.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Limitations on the use of SQL extensions</div>
+<p>SQL statements that you enter in the <strong>Query</strong> field must be standard SQL constructs.
+{prodname} does not recognize or parse SQL extensions such as Procedural Language/PostgreSQL (PL/pgSQL)
+or Oracle Procedural Language Extensions to SQL (PL/SQL).
+However, you can use SQL extensions within stored procedures.</p>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>{prodname} tries to validate the connection, which includes
+checking that a specified SQL statement is syntactically correct and
+confirming that the statement or stored procedure target data exists. If
+verification is successful then {prodname} adds the start connection to
+the integration. If verification fails then {prodname} displays a message
+about the problem. Update your input as needed and try again.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

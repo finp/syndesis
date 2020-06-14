@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Slack :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-slack.html">Connecting to Slack</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assemblies/connecting/assembly-connecting-to-slack.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Slack</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a business user, you can create an integration that connects to Slack. A
+connection to Slack can do either one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Trigger execution of a simple integration when a Slack channel that you specify
+receives a message. The integration passes the message to the next
+step in the flow. For example, you can monitor a Slack channel
+for keyword instances such as product names. Upon finding messages that
+contain those product names, the integration can notify the appropriate contact
+in a Gmail connection.</p>
+</li>
+<li>
+<p>Deliver a message to a particular user or to a channel. For example, this
+behavior is useful when an integration downloads a file from an FTP server and
+processes it in some way. An integration flow can
+notify a Slack channel or user that the process was successful.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To connect to Slack in an integration, create a Slack
+connection and then add the connection to an integration flow.
+Details are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-slack-connections_slack">Creating a Slack connection</a></p>
+</li>
+<li>
+<p><a href="#add-slack-connection-start_slack">Adding a Slack connection to trigger integration execution upon receiving messages</a></p>
+</li>
+<li>
+<p><a href="#add-slack-connection-middle-finish_slack">Adding a Slack connection to send a message to a Slack channel or user</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-slack-connections_slack"><a class="anchor" href="#creating-slack-connections_slack"></a>Creating a Slack connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, a Slack connection can retrieve messages from a
+channel that you specify or send a message to a channel or user.
+You can use the same Slack connection in any number of integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Slack app for connecting {prodname} to Slack.</p>
+</li>
+<li>
+<p>You can obtain the Slack webhook URL for your Slack app.</p>
+</li>
+<li>
+<p>You can obtain a legacy token that authorizes access to your Slack app.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+{prodname} connectors.</p>
+</li>
+<li>
+<p>Click the <strong>Slack</strong> connector.</p>
+</li>
+<li>
+<p>In the <strong>Slack webhook URL</strong> field, enter the webhook URL for your
+Slack app.</p>
+</li>
+<li>
+<p>In the <strong>Token for accessing Slack API</strong> field, enter the Slack-provided token,
+which you can
+<a href="https://api.slack.com/custom-integrations/legacy-tokens">obtain from Slack.</a></p>
+</li>
+<li>
+<p>Optionally, enter values for additional parameters:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <strong>Sending username for messages</strong> field, enter the user name that
+the bot has when it sends messages to Slack.</p>
+</li>
+<li>
+<p>In the <strong>Message avatar emoji</strong> field, specify one emoji, which the bot
+uses as the message avatar when it sends a message. Examples:
+<strong><code>:smile:</code></strong>, <strong><code>:wave:</code></strong>, <strong><code>:question:</code></strong>.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Search the web for <strong>emoji cheat sheet</strong> to see some emoji codes.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>In the <strong>Message avatar icon URL</strong> field, specify the URL of
+the avatar that the bot uses when it sends messages to Slack.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you specify an emoji and an icon URL, then the integration uses the
+icon URL.  If you specify neither an emoji nor an icon URL, then the message
+is sent without an avatar.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Validate</strong>. {prodname} immediately tries to validate the
+connection and displays a message that indicates whether
+validation is successful. If validation fails, revise the
+connection configuration values and try again.</p>
+</li>
+<li>
+<p>If validation is successful, click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Slack for Tracking Company Sales</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see the updated list of available
+connections, including the connection that you just created.
+If you entered the example name, you would
+see that <strong>Slack for Tracking Company Sales</strong> appears as a connection that you can
+choose to add to an integration. You can add this connection to
+any number of integrations.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-slack-connection-start_slack"><a class="anchor" href="#add-slack-connection-start_slack"></a>Adding a Slack connection to trigger integration execution upon receiving messages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A Slack connection that starts an integration triggers execution of the
+integration when the connection finds messages on a Slack channel that
+you specify.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Slack connection.</p>
+</li>
+<li>
+<p>You are creating an integration and {prodname} is prompting you to
+choose how you want to start the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click the Slack connection that you want to use to start the integration.</p>
+</li>
+<li>
+<p>Select the <strong>Read Messages</strong> action.</p>
+</li>
+<li>
+<p>In the <strong>Channel</strong> field, specify the Slack channel from which you want to
+obtain messages.</p>
+</li>
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 500 milliseconds as the time
+that elapses between polls for messages. Or, to specify a different
+interval for checking for messages, enter a number and select its time unit.</p>
+</li>
+<li>
+<p>In the <strong>Maximum Messages to Retrieve</strong> field, accept the default of 10 or
+indicate the maximum number of messages that the connection can return for
+each poll. If the connection finds more than this number of unread messages,
+then it returns the most recent messages.
+The connection returns a particular message only once.</p>
+<div class="paragraph">
+<p>For example, if you accept the default of 10 and there are 15 messages at
+the time of a poll then the connection returns the 10 most recent messages.
+At the next poll, the connection checks for messages that have a time stamp
+that is after the most recent message that the connection previously returned.
+This means that the 5 messages that were not returned in the first example
+poll are never returned.</p>
+</div>
+<div class="paragraph">
+<p>When a Slack connection returns more than one message, the integration
+processes the messages as a batch. In other words, {prodname} executes
+the integration once for the batch.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-slack-connection-middle-finish_slack"><a class="anchor" href="#add-slack-connection-middle-finish_slack"></a>Adding a Slack connection to send a message to a Slack channel or user</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, you can send a message to a Slack channel or Slack user
+in the middle of a flow or to finish a simple integration. To do this, add
+a Slack connection to the middle of a flow or as a simple integration&#8217;s
+finish connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Slack connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration. Or, {prodname} is prompting you to choose a finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Slack connection that you want to add to the flow.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Select <strong>Username</strong> to send a message to one user. To configure this action,
+in the <strong>User name</strong> field, specify the Slack name of the user to send the message
+to.</p>
+</li>
+<li>
+<p>Select <strong>Channel</strong> to publish a message on a channel. To configure
+this action, in the <strong>Channel</strong> field, specify the channel to publish
+the message to.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the connection to the flow.</p>
+</li>
+<li>
+<p>Optionally, add additional connections to the flow. Whether
+additional connections are needed depends on what you want the flow
+to do. The important point is to add all connections before you
+continue.</p>
+</li>
+<li>
+<p>Add a data mapper step just before the Slack connection that you added
+in this procedure. In the mapping step, map a string
+from a data mapping source to the Slack <strong>message</strong> field. This string
+should contain the message that you want to send to the Slack
+user or channel. See
+<a href="{LinkSyndesisIntegrationGuide}#add-data-mapping-step_create">Adding a data mapper step</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

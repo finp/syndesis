@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Example of missing or unwanted data when combining or separating fields :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-example-missing-unwanted-data.html">Example of missing or unwanted data when combining or separating fields</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/ref-example-missing-unwanted-data.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Example of missing or unwanted data when combining or separating fields</h1>
+<div class="paragraph">
+<p>In a data mapping, you might need to identify missing or unwanted data when a source or
+target field contains compound data. For example, consider a
+<code>long_address</code> field that has this format:</p>
+</div>
+<div class="paragraph">
+<p><em>number street apartment city state zip zip+4 country</em></p>
+</div>
+<div class="paragraph">
+<p>Suppose that you want to separate the <code>long_address</code> field into discrete
+fields for <code>number</code>, <code>street</code>, <code>city</code>, <code>state</code>, and <code>zip</code>. To do this,
+you select <code>long_address</code> as the source field and then select
+the target fields. You then add padding fields at the locations for the
+parts of the source field that you do not want. In this example, the
+unwanted parts are <em>apartment</em>, <em>zip+4</em>, and <em>country</em>.</p>
+</div>
+<div class="paragraph">
+<p>To identify the unwanted parts, you need to know the order
+of the parts. The order indicates an index for
+each part of the content in the compound field. For example, the <code>long_address</code>
+field has 8 ordered parts. Starting at 1, the index of each part is:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 83.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>number</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>street</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>apartment</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>city</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>state</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>zip</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>zip+4</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>country</em></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>In the data mapper, to identify <em>apartment</em>, <em>zip+4</em>, and <em>country</em> as missing, you
+add padding fields at indexes 3, 7, and 8. See
+<a href="{LinkSyndesisIntegrationGuide}#combine-multiple-source-fields-into-one-target-field_map">Combining multiple source fields into one target field</a>.</p>
+</div>
+<div class="paragraph">
+<p>Now suppose that you want to combine source fields for
+<code>number</code>, <code>street</code>, <code>city</code>, <code>state</code>, and <code>zip</code> into a <code>long_address</code>
+target field. Further suppose that there are no source fields to provide content for
+<em>apartment</em>, <em>zip+4</em>, and <em>country</em>. In the data mapper, you need to
+identify these fields as missing. Again, you add padding fields
+at indexes 3, 7, and 8. See
+<a href="{LinkSyndesisIntegrationGuide}#separate-one-source-field-into-multiple-target-fields_map">Separating one source field into multiple target fields</a>.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>About parameter placeholders and values in SQL statements that update data :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-about-parameter-placeholders-and-values.html">About parameter placeholders and values in SQL statements that update data</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/con-about-parameter-placeholders-and-values.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">About parameter placeholders and values in SQL statements that update data</h1>
+<div class="paragraph">
+<p>A database connection that is in the middle of a flow, or
+that finishes a simple integration, can execute a SQL statement
+that updates data. When you add a database connection to an integration,
+you can specify placeholder parameters in the SQL statement to be
+executed. During execution, the connection can perform a batch update
+when the input parameter values are in a collection.</p>
+</div>
+<div class="paragraph">
+<div class="title">Specifying parameters in SQL statements</div>
+<p>When you create or edit an integration and you add a
+connection that updates a database, you can specify placeholder
+parameters in the SQL statement that the connection executes at
+runtime or there can be placeholders in the stored procedure
+that will be executed at runtime. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>INSERT INTO TODO(task, completed) VALUES(:#param_1, :#param_2)
+DELETE FROM TODO WHERE task LIKE :#param_3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To specify the values of these placeholders, add a data mapping step
+to the flow before the database connection. In the data mapping
+step, map the appropriate source data fields to the target data
+fields, for example, map source data to the <code>:#param_1</code>, <code>:#param_2</code>, and
+<code>:#param_3</code> target fields. See
+<a href="{LinkSyndesisIntegrationGuide}#add-data-mapping-step_create">Adding a data mapper step</a>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Batch update with a collection of parameter values</div>
+<p>At runtime, when a database connection executes a SQL statement that
+inserts, deletes, or updates data, the SQL statement being executed often
+specifies one or more
+placeholder parameters, for example, <code>:#task</code>. When it does,
+the input to the connection can be a single set of parameters
+or a collection of parameter sets, where each element in a set
+defines a value for the corresponding placeholder parameter.</p>
+</div>
+<div class="paragraph">
+<p>The input to the database connection comes from an earlier
+connection in the flow, for example, an HTTP request (Webhook)
+or a request sent to the REST API service for an API provider
+integration. When the input is a collection,
+the connection uses batch mode to update the table.
+For example, consider this SQL statement:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>insert into todo (task) values (:#task)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the input collection contains 3 values, the connection inserts
+three records, one for each value. Now consider a SQL statement
+with two placeholder parameters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>insert into todo (task, completed) values (:#task, :#completed)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the input to the connection that executes this SQL statement,
+a data shape specification could specify a single element, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{"task": "write some docs", "completed": 0}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or it could specify a collection, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[{"task": "write doc", "completed": 1},
+ {"task": "publish doc", "completed": 0}]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With a collection as input, the connection executes the insert operation
+once for each set of parameter values. In this example, the connection
+adds two records to the table, one for each set of parameter values.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

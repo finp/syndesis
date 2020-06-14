@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>About copying integrations :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-about-copying-integrations.html">About copying integrations</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/con-about-copying-integrations.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">About copying integrations</h1>
+<div class="paragraph">
+<p>Each {prodname} installation is an environment from which you
+can export an integration. Exporting an integration downloads a zip file
+that contains the information needed to recreate the integration in a
+different {prodname} environment.</p>
+</div>
+<div class="paragraph">
+<p>In an environment, each integration can have only one <strong>Draft</strong> version.</p>
+</div>
+<div class="paragraph">
+<p>The result of importing an integration depends on:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Whether the integration was previously imported</p>
+</li>
+<li>
+<p>Whether a connection that the integration uses was previously imported</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>{prodname} uses an internal identifier for each integration and each
+connection to determine whether it already exists in the environment that
+it is being imported into. If you change the name of an integration or
+connection, {prodname} recognizes it as the same integration or connection,
+which just has a different name.</p>
+</div>
+<div class="paragraph">
+<p>The following table describes the possible results of importing
+an integration:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">In the importing environment:</th>
+<th class="tableblock halign-left valign-top">What the import operation does:</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The integration has not been previously imported.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Creates the integration. The integration is in the <strong>Draft</strong> state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The integration has been previously imported.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{prodname} updates the integration. The updated integration is in
+the <strong>Draft</strong> state. If there was a <strong>Draft</strong> version of this integration,
+it is lost.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The imported integration uses a connection that did not exist in the
+environment before the import operation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{prodname} creates a connection that has the same settings except for
+secrets. You must review each new connection. If a connection is not
+completely configured for its new environment then you must add the
+missing settings. For example, you might need to obtain secret settings by
+registering this {prodname} environment as a client of the application that this
+connection accesses.</p></td>
+</tr>
+</tbody>
+</table>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

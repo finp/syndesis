@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>About transformations on multiple source values before mapping to one target field :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-about-transformations-on-multiple-source-values.html">About transformations on multiple source values before mapping to one target field</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/ref-about-transformations-on-multiple-source-values.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">About transformations on multiple source values before mapping to one target field</h1>
+<div class="paragraph">
+<p>There are some transformations that you can apply to multiple source fields
+or to the values in a source field that contains multiple values, such as a
+collection. The data mapper inserts the result of the transformation into
+the target field. The following table describes these multiplicity transformations.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Multiplicity transformation</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Add</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adds the numeric source values and inserts the sum into the target field.
+The values in the selected source fields or in the selected collection must be numeric.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Average</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Calculates the average of the numeric source values and inserts the result into the target field. The values in the selected source fields or in the selected collection must be numeric.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Concatenate</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Joins the source values and inserts the result into the target field.
+You can accept a space as the delimiter or specify another character.
+The data mapper inserts this character in the target field between the source
+values. A common use of this transformation is to combine multiple source
+field values, for example, <strong>FirstName</strong>, <strong>MiddleName</strong>, and <strong>LastName</strong>,
+in one target field, for example, <strong>CustomerName</strong>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Contains</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluates the source values to determine whether any value contains
+a parameter value that you specify. If any source value contains the
+specified parameter value, the data mapper inserts <strong>true</strong> into the target field.
+If no source value contains the parameter value then the data mapper
+inserts <strong>false</strong> into the target field.</p>
+<p class="tableblock">For example, suppose you want to track activity related to a particular
+customer. You can select a source collection field where each
+collection member contains customer information. For the <strong>Value</strong> parameter,
+you specify a particular email address. When the data mapper finds the
+specified email address in the collection, it inserts <strong>true</strong> in the target field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Count</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inserts the number of source values in the target field. This is useful
+when the source field is a collection. The data mapper inserts the size
+of the collection in the target field.</p>
+<p class="tableblock">For example, suppose you select an <strong>Order</strong> source field that is a
+collection of item objects. Applying the <strong>Count</strong> transformation inserts the
+number of items that are in the order into the target field.</p>
+<p class="tableblock">As another example, if you select 4 individual source fields,
+the data mapper inserts <strong>4</strong> in the target field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Divide</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Divides the first source value by the second source value and inserts
+the result in the target field.
+If there are more that two source values then execution continues to divide
+the result by the next number. For example, consider a <code>numbers[]</code> collection
+that contains <code>{1000, 100, 10}</code>. Execution divides <code>1000</code> by <code>100</code> to get <code>10</code>,
+and then divides <code>10</code> by <code>10</code> to get <code>1</code>. The mapper inserts <code>1</code> in the target field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Format</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replaces placeholders in a template that you specify with values
+from the source fields that you select. The data mapper inserts the
+resulting string in the target field. For example, suppose you select
+three source fields:</p>
+<p class="tableblock"><strong>time</strong><br>
+<strong>name</strong><br>
+<strong>text</strong><br></p>
+<p class="tableblock">You select the <strong>Format</strong> transformation and in the <strong>Template</strong> parameter
+you could specify:</p>
+<p class="tableblock"><code><strong>At $time, $name tweeted: $text</strong></code></p>
+<p class="tableblock">In the target field, the result would be something like:</p>
+<p class="tableblock"><strong>At 8:00 AM, Aslan tweeted: ROAR!</strong></p>
+<p class="tableblock">This is similar to mechanisms that are available in programming languages
+such as Java and C.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Item At</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For the source field that you select, the data mapper finds the value at
+the index that you specify and inserts that value in the target field.
+The source field must be a collection or a field that
+contains multiple values with delimiters.</p>
+<p class="tableblock">For example, suppose the selected source field is a collection of customer
+email addresses. After you select the <strong>Item At</strong> transformation, in the <strong>Index</strong>
+parameter field, you specify <strong>0.</strong> The data mapper inserts the first email
+address, which is at index 0, in the target field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Maximum</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluates the source values and inserts the highest value in the target field.
+The source values must be numeric.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Minimum</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluates the source values and inserts the lowest value in the target field.
+The source values must be numeric.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Multiply</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multiplies the first source value by the second source value and inserts
+the result in the target field.
+If there are more that two source values then execution continues to multiply
+the result by the next number. For example, consider a <code>numbers[]</code> collection
+that contains <code>{10, 100, 1000}</code>. Execution multiplies <code>10</code> by <code>100</code> to get <code>1000</code>,
+and then multiplies <code>1000</code> by <code>1000</code> to get <code>1000000</code>. The mapper inserts
+<code>1000000</code> in the target field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Subtract</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subtracts the second source value from the first source value and inserts
+the result in the target field.
+If there are more that two source values then execution continues to subtract
+the next number from the previous result. For example, consider a <code>numbers[]</code>
+collection that contains <code>{100, 90, 9}</code>. Execution subtracts <code>90</code> from <code>100</code>
+to get <code>10</code>, and then subtracts <code>9</code> from <code>10</code> to get <code>1</code>. The mapper inserts
+<code>1</code> in the target field.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#combine-multiple-source-fields-into-one-target-field_map">Combining multiple source fields into one target field</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#example-missing-unwanted-data_map">Separating one source field into multiple target fields</a></p>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

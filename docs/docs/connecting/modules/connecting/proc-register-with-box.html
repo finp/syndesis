@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Registering {prodname} as a Box client :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-register-with-box.html">Registering {prodname} as a Box client</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-register-with-box.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Registering {prodname} as a Box client</h1>
+<div class="paragraph">
+<p>You must register your {prodname} environment as a client application
+that can access Box.
+This lets you create any number of integrations that connect
+to Box. In other words, you need to register a particular
+{prodname} environment with Box only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Box client application. However, while each Box
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have a Box developer account, which you can obtain at
+<a href="https://app.box.com/developers/console" class="bare">https://app.box.com/developers/console</a>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL,
+click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your {prodname} environment to the clipboard.
+You will need this URL toward the end of this procedure.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, go to the Box developer portal at
+<a href="https://app.box.com/developers/console" class="bare">https://app.box.com/developers/console</a>
+and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Sign in.</p>
+</li>
+<li>
+<p>Click <strong>Create New App</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Custom App</strong> and then <strong>Next</strong>.</p>
+</li>
+<li>
+<p>For <strong>Authentication Method</strong>, click <strong>Standard OAuth 2.0 (User Authentication)</strong>
+and then <strong>Next</strong>.</p>
+</li>
+<li>
+<p>Enter an app name, for example, <strong>{prodname} Client</strong> and click <strong>Create App</strong>.</p>
+</li>
+<li>
+<p>Click <strong>View Your App</strong>.</p>
+</li>
+<li>
+<p>Optional. In the <strong>OAuth 2.0 Credentials</strong> section, copy the client
+ID and the client secret to a safe location. These values are
+needed to create a connection to Box.</p>
+</li>
+<li>
+<p>Click <strong>Save Changes</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>Your {prodname} environment is now registered as a Box client, which
+means that {prodname} can access content in the Box account that
+you signed into.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

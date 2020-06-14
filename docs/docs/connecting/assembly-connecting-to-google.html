@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connecting to Google applications :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Docs</a></li>
+    <li><a href="assembly-connecting-to-google.html">Connecting to Google applications</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/assembly-connecting-to-google.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Connecting to Google applications</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>An integration can connect to these Google applications: Gmail, Calendar, Sheets.
+See the following topics for details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#register-with-google_google">[register-with-google_google]</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-gmail_google">Connecting to Gmail</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-google-calendar_google">Connecting to Google Calendar</a></p>
+</li>
+<li>
+<p><a href="#connecting-to-google-sheets_google">Connecting to Google Sheets</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google.adoc - include::../../modules/connecting/proc-register-with-google.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-gmail_google"><a class="anchor" href="#connecting-to-gmail_google"></a>Connecting to Gmail</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration when a particular Gmail
+account receives an email, add a Gmail connection to a simple integration as its
+start connection. In an integration, to send an email from a
+particular Gmail account, do either of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add a Gmail connection to the middle of a flow.</p>
+</li>
+<li>
+<p>Add a Gmail connection to finish a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The general steps for connecting to Gmail in an integration are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-google_google">Registering {prodname} as a Google client application</a>.</p>
+</li>
+<li>
+<p>Creating a Gmail connection. When you do this you choose the Gmail account that
+the connection is authorized to access.</p>
+</li>
+<li>
+<p>If your integration sends an email from a Gmail account,
+decide how to populate an email to send.</p>
+</li>
+<li>
+<p>Adding a Gmail connection to an integration flow.</p>
+</li>
+<li>
+<p>For a Gmail connection that sends an email, optionally mapping integration
+data to the email fields.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Information and instructions are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-gmail-connection_gmail">[create-gmail-connection_gmail]</a></p>
+</li>
+<li>
+<p><a href="#alternatives-for-populating-email-to-send_gmail">[alternatives-for-populating-email-to-send_gmail]</a></p>
+</li>
+<li>
+<p><a href="#add-gmail-connection-start_gmail">[add-gmail-connection-start_gmail]</a></p>
+</li>
+<li>
+<p><a href="#add-gmail-connection-finish-middle_gmail">[add-gmail-connection-finish-middle_gmail]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-gmail.adoc - include::../../modules/connecting/proc-create-gmail-connection.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-gmail.adoc - include::../../modules/connecting/ref-alternatives-for-populating-email-to-send.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-gmail.adoc - include::../../modules/connecting/proc-add-gmail-connection-start.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-gmail.adoc - include::../../modules/connecting/proc-add-gmail-connection-finish-middle.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-google-calendar_google"><a class="anchor" href="#connecting-to-google-calendar_google"></a>Connecting to Google Calendar</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger integration execution when a poll returns an update to a
+Google calendar, add a Google Calendar connection to a simple integration
+as its start connection. To add an event to a calendar or update an
+event in a calendar, you can do either of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add a Google Calendar connection to the middle of a flow.</p>
+</li>
+<li>
+<p>Add a Google Calendar connection to finish a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Details for connecting to Google Calendar are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-google-calendar-connection_calendar">[create-google-calendar-connection_calendar]</a></p>
+</li>
+<li>
+<p><a href="#add-google-calendar-connection-start_calendar">[add-google-calendar-connection-start_calendar]</a></p>
+</li>
+<li>
+<p><a href="#add-google-calendar-connection-to-get-one-event_calendar">[add-google-calendar-connection-to-get-one-event_calendar]</a></p>
+</li>
+<li>
+<p><a href="#add-google-calendar-connection-update-event_calendar">[add-google-calendar-connection-update-event_calendar]</a></p>
+</li>
+<li>
+<p><a href="#add-google-calendar-connection-add-event_calendar">[add-google-calendar-connection-add-event_calendar]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-calendar.adoc - include::../../modules/connecting/proc-create-google-calendar-connection.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-calendar.adoc - include::../../modules/connecting/proc-add-google-calendar-connection-start.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-calendar.adoc - include::../../modules/connecting/proc-add-google-calendar-connection-to-get-one-event.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-calendar.adoc - include::../../modules/connecting/proc-add-google-calendar-connection-add-event.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-calendar.adoc - include::../../modules/connecting/proc-add-google-calendar-connection-update-event.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connecting-to-google-sheets_google"><a class="anchor" href="#connecting-to-google-sheets_google"></a>Connecting to Google Sheets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration when a Google Sheets connection
+returns spreadsheet data or spreadsheet properties, add a Google Sheets
+connection to a simple integration as its start connection. To finish a
+simple integration by updating
+spreadsheet values or properties, or by inserting a chart or pivot table
+into a spreadsheet, add a Google Sheets connection to a simple
+integration as its finish connection.</p>
+</div>
+<div class="paragraph">
+<p>In the middle of a flow, you can add a
+Google Sheets connection that obtains, creates or updates values in a spreadsheet,
+or that inserts a chart or pivot table into a spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>Details for connecting to Google Sheets are in the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#create-google-sheets-connection_sheets">[create-google-sheets-connection_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-get-sheet-values_sheets">[add-google-sheets-connection-get-sheet-values_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-get-properties_sheets">[add-google-sheets-connection-get-properties_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-create-spreadsheet_sheets">[add-google-sheets-connection-create-spreadsheet_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-update-sheet-values_sheets">[add-google-sheets-connection-update-sheet-values_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-append-sheet-values_sheets">[add-google-sheets-connection-append-sheet-values_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-update-properties_sheets">[add-google-sheets-connection-update-properties_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-add-chart_sheets">[add-google-sheets-connection-add-chart_sheets]</a></p>
+</li>
+<li>
+<p><a href="#add-google-sheets-connection-add-pivot-table_sheets">[add-google-sheets-connection-add-pivot-table_sheets]</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-create-google-sheets-connection.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-get-sheet-values.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-get-properties.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-create-spreadsheet.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-update-sheet-values.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-append-sheet-values.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-update-properties.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-add-chart.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/connecting/assembly-connecting-to-google-sheets.adoc - include::../../modules/connecting/proc-add-google-sheets-connection-add-pivot-table.adoc[]</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

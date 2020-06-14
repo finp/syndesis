@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Enabling connections to Knative resources :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-enabling-connections-to-knative-resources.html">Enabling connections to Knative resources</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-enabling-connections-to-knative-resources.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Enabling connections to Knative resources</h1>
+<div class="paragraph">
+<p>You must enable Knative connections before you can add them to
+simple integrations.</p>
+</div>
+<div class="paragraph">
+<p>Knative connections might have been enabled when {prodname} was
+installed. To check this, view the content of the <code>syndesis</code> custom resource.
+If the <code>camelk</code> and <code>knative</code> add-ons specify <code>enabled: true</code> then Knative
+connections are already enabled.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The <code>oc</code> client tool is installed in, and connected to, the OCP
+cluster in which {prodname} is running.</p>
+</li>
+<li>
+<p>{prodname} is running on OpenShift Container Platform on-site in a
+customer-managed environment.</p>
+</li>
+<li>
+<p>The {prodname} runtime is Camel K.</p>
+</li>
+<li>
+<p>In the cluster in which {prodname} is installed, each Knative resource
+that you want an integration to connect to is also installed.
+Before you can install Knative resources, you must install the
+<a href="https://docs.openshift.com/container-platform/4.3/serverless/installing-openshift-serverless.html">OpenShift Serverless Operator</a>
+and the
+<a href="https://openshift-knative.github.io/docs/docs/proc_knative-eventing.html">Knative Eventing Operator</a>.</p>
+</li>
+<li>
+<p>You have permission to install {prodname}.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Log in to OpenShift with an account that has permission to install {prodname}.
+For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ oc login -u developer -p developer</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Switch to the project in which {prodname} is running, for example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ oc project my-integration-project</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Edit the <code>syndesis</code> custom resource:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Invoke the following command, which typically opens the resource in an editor:</p>
+<div class="listingblock">
+<div class="content">
+<pre>oc edit syndesis</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Update the resource to specify the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>spec:
+  addons:
+     camelk:
+       enabled: true
+     knative:
+       enabled: true</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Save the resource.</p>
+<div class="paragraph">
+<p>Saving this change to the <code>syndesis</code> custom resource triggers
+<code>syndesis-operator</code>, which is responsible for installing {prodname},
+to redeploy <code>syndesis-server</code>.</p>
+</div>
+<div class="paragraph">
+<p>If <code>camelk</code> and <code>knative</code> are already enabled, you can close the file.
+Connections to Knative resources are enabled.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>In the {prodname} console, on the <strong>Connections</strong> page, a Knative connection
+is now available. You can add the same Knative connection to any number of
+simple integrations. Configuration of the connection action,
+specifies the Knative resource that the connection accesses.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

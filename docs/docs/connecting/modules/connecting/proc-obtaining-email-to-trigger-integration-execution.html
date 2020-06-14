@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Obtaining email to trigger integration execution :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-obtaining-email-to-trigger-integration-execution.html">Obtaining email to trigger integration execution</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-obtaining-email-to-trigger-integration-execution.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Obtaining email to trigger integration execution</h1>
+<div class="paragraph">
+<p>To trigger execution of an integration upon receiving email,
+add an IMAP or POP3 email server connection
+as a simple integration&#8217;s start connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an IMAP or POP3 email server connection that is configured to access
+the account that you want to obtain email from.</p>
+</li>
+<li>
+<p>You know the name of the folder to retrieve messages from.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} panel on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the email server connection that
+you want to use to start the integration.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Receive Email</strong>
+to periodically retrieve messages from the email account
+that the connection is authorized to access.</p>
+</li>
+<li>
+<p>Configure the action:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Leave the <strong>Folder</strong> field blank to obtain email from the inbox. Or,
+to obtain messages from a particular folder, enter the name of that folder.</p>
+<div class="paragraph">
+<p>If this connection accesses a POP3 email server, only standard folders,
+such as <strong>Inbox</strong> or <strong>Sent</strong> are supported.</p>
+</div>
+</li>
+<li>
+<p>Select the <strong>Unseen Only</strong> checkbox to obtain
+only messages that are marked as unread on the email server.</p>
+</li>
+<li>
+<p>In the <strong>Delay</strong> field, accept the default of 5 seconds as the time
+that elapses between polls for messages. Or, to specify a different polling interval,
+enter a number and select its time unit.</p>
+</li>
+<li>
+<p>In the <strong>Maximum Emails</strong> field, enter the largest number
+of messages that one poll operation can return. The default is 5.
+If the inbox or folder contains more than the maximum number of messages
+that can be returned, the connection returns the oldest
+messages up to the number set for <strong>Maximum Emails</strong>.</p>
+<div class="paragraph">
+<p>Set <strong>Maximum Emails</strong> to <strong><code>-1</code></strong> if you want each poll to obtain:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>All new messages in the specified folder when <strong>Unseen Only</strong> is selected.</p>
+</li>
+<li>
+<p>All messages in the specified folder when <strong>Unseen Only</strong> is NOT selected.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears at the beginning of the integration flow.
+During execution, if a poll returns email, the connection passes
+the messages to the next step in the integration. If a poll does not
+return any email, the integration continues to run but {prodname}
+does not trigger the rest of the integration steps.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example</div>
+<p>Consider a <strong>Receive Email</strong> action that is configured as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>Folder</strong> field is blank so the connection polls the inbox.</p>
+</li>
+<li>
+<p><strong>Unseen Only</strong> is selected.</p>
+</li>
+<li>
+<p>The defaults for <strong>Delay</strong> (5 seconds) and <strong>Maximum Emails</strong> (5) are accepted.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Suppose that 10 messages arrive in the inbox during the delay before the
+next poll. The connection returns the 5 oldest messages. At the next
+poll, 5 seconds later, the connection returns the other 5 messages.
+Even if new messages arrived, this is the case because the connection returns
+the oldest messages if there are more messages than the number set for
+<strong>Maximum Emails</strong>.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

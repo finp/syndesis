@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding and managing REST API client connectors :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-adding-api-connectors.html">Adding and managing REST API client connectors</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/assemblies/integrating-applications/assembly-adding-api-connectors.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding and managing REST API client connectors</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} can create a REST API client connector from an OpenAPI
+document. For information about the content of the OpenAPI document, see
+<a href="{LinkSyndesisIntegrationGuide}#developing-rest-api-client-connectors_custom">Developing REST API client connectors</a>.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide information and instructions for adding
+and managing REST API client connectors:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#creating-api-connectors_add-client-connector">Creating REST API client connectors</a></p>
+</li>
+<li>
+<p><a href="#updating-api-connectors_add-client-connector">Updating API client connectors by creating new ones</a></p>
+</li>
+<li>
+<p><a href="#deleting-api-connectors_add-client-connector">Deleting API client connectors</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After you create a REST API client connector, for details about using
+that connector, see
+<a href="{LinkSyndesisConnectorGuide}#connecting-to-rest-apis_connectors">{NameOfSyndesisConnectorGuide}, Connecting to REST APIs</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-api-connectors_add-client-connector"><a class="anchor" href="#creating-api-connectors_add-client-connector"></a>Creating REST API client connectors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Upload an OpenAPI document to enable {prodname} to create a REST API
+client connector.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You have an OpenAPI document for the connector that you want
+{prodname} to create.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} navigation panel, click <strong>Customizations</strong> &gt;
+<strong>API Client Connectors</strong>. Any API client connectors that are
+already available are listed here.</p>
+</li>
+<li>
+<p>Click <strong>Create API Connector</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Create API Client Connector</strong> page, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Click in the dotted-line box and select the OpenAPI file that you want to upload.</p>
+</li>
+<li>
+<p>Select <strong>Use a URL</strong> and paste the URL for your OpenAPI document
+in the input field.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>. If there is invalid or missing content, {prodname}
+displays information about what needs to be corrected. Select a different
+OpenAPI file to upload or click <strong>Cancel</strong>,
+revise the OpenAPI file, and upload the updated file.</p>
+<div class="paragraph">
+<p>If the schema is valid, {prodname} displays a summary of
+the actions that the connector provides. This might include errors and
+warnings about the action definitions.</p>
+</div>
+</li>
+<li>
+<p>If you are satisfied with the action summary, click <strong>Next</strong>.</p>
+<div class="paragraph">
+<p>Or, to revise the OpenAPI document, in the lower right, click <strong>Review/Edit</strong>
+to open the API Designer editor. Update the schema as needed.
+In the upper right, click <strong>Save</strong> to incorporate your updates into the
+new API client connector. Then click <strong>Next</strong> to continue creating the
+API client connector.</p>
+</div>
+<div class="paragraph">
+<p>For details about using the API editor, see
+<a href="{LinkDesigningAPIs}#create-api-definition">Design and develop an API definition with API Designer</a>.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, if you provide a URL for the OpenAPI document, {prodname}
+can upload it but  cannot open it for editing. Typically, this is caused by
+settings on the file’s host. To open the schema for editing,
+{prodname} requires that the file host has:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An <code>https</code> URL. An <code>http</code> URL does not work.</p>
+</li>
+<li>
+<p>Enabled CORS.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Indicate the API&#8217;s security requirements. {prodname} reads the
+OpenAPI definition to determine the information needed to
+configure the connector to meet the API’s security requirements.
+{prodname} can display any of the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>No Security</strong></p>
+</li>
+<li>
+<p><strong>HTTP Basic Authorization</strong> — If the API service uses
+HTTP basic authorization,
+select this checkbox. Later, when you use this
+connector to create a connection, {prodname} prompts you to
+enter a user name and password.</p>
+</li>
+<li>
+<p><strong>OAuth 2.0</strong>  — {prodname} prompts you to enter:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><strong>Authorization URL</strong> is the location for registering {prodname} as
+a client of the API. Registration authorizes {prodname} to access the API.
+See <a href="{LinkSyndesisConnectorGuide}#register-with-rest-api_rest">{NameOfSyndesisConnectorGuide}, Registering {prodname} as a REST API client</a>.
+The OpenAPI document or other
+documentation for the API should specify this URL. If it does not then
+you must contact the service provider to obtain this URL.</p>
+</li>
+<li>
+<p><strong>Access Token URL</strong> is required for OAuth authorization. Again, the
+OpenAPI document or other documentation for the API should provide
+this URL. If it does not then you must contact the service provider.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>API Key</strong> — If the API service requires an API key, {prodname}
+prompts for any information that it needs to create the connector.
+Prompts are based on the OpenAPI definition. For example,
+you might need to indicate if the API key is in message headers
+or in query parameters. If the OpenAPI definition specifies
+API key security, as well as another security type, select the
+checkbox to indicate that you want to use API key security in
+connections based on this connector. Later, when you use this
+connector to create a connection, {prodname} prompts you to
+enter the value of an API key.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>. {prodname} displays the connector&#8217;s name,
+description, host, and base URL as indicated by the OpenAPI document.
+For connections that you create from this connector,</p>
+<div class="ulist">
+<ul>
+<li>
+<p>{prodname}
+concatenates the host and base URL values to define the endpoint for
+the connection. For example, if the host is <code>https://example.com</code> and
+the base URL is <code>/api/v1</code> then the connection endpoint is
+<code>https://example.com/api/v1</code>.</p>
+</li>
+<li>
+<p>{prodname} applies the OpenAPI document to data
+mapping steps. If the OpenAPI document supports more than one schema then {prodname}
+uses the TLS (HTTPS) schema.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Review the connector details and optionally upload an icon for the connector.
+If you do not upload an icon, {prodname} generates one.
+You can upload an icon at a later time. When {prodname} displays
+the flow of an integration, it displays a connector&#8217;s icon
+to represent connections that are created from that connector.</p>
+</li>
+<li>
+<p>To override a value obtained from
+the OpenAPI file, edit the field value that you want to change.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+After {prodname} creates a connector,
+<strong>you cannot change it</strong>. To effect a change, you need to upload an updated
+OpenAPI document so that {prodname} can create a new connector
+or you can upload the same schema and then edit it in the API editor.
+You then continue the process for creating a new API client connector.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>When you are satisfied with the connector details, click <strong>Create API Connector</strong>.
+{prodname} displays the new connector with the other connectors.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>For details about using your new API connector, see
+<a href="{LinkSyndesisConnectorGuide}#connecting-to-rest-apis_connectors">{NameOfSyndesisConnectorGuide}, Connecting to REST APIs</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="updating-api-connectors_add-client-connector"><a class="anchor" href="#updating-api-connectors_add-client-connector"></a>Updating API client connectors by creating new ones</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When there is an update to an OpenAPI document from which you created an
+API client connector, and you want your API client connector to use those
+updates, you must create a new API client connector.
+You cannot directly update an API client connector. After you create
+the new API client connector, you use it to create a new connection and
+then you edit each integration that uses a connection that was created
+from the out-of-date connector.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites</div>
+<p>Be prepared to do one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Upload the updated OpenAPI document.</p>
+</li>
+<li>
+<p>Upload the out-of-date schema again and update it in API Designer.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create a new API client connector based on the updated OpenAPI document.
+To easily distinguish between the old connector and the new connector,
+you  might want to specify a version number in the connector name or
+the connector description.</p>
+<div class="paragraph">
+<p>See <a href="{LinkSyndesisIntegrationGuide}#creating-api-connectors_add-client-connector">Creating REST API client connectors</a>.</p>
+</div>
+</li>
+<li>
+<p>Create a new connection from the new connector. Again, you want to be
+able to easily distinguish between connections created from the old
+connector and connections created from the new connector. A version number
+in the connection name or connection description is helpful.</p>
+</li>
+<li>
+<p>Edit each integration that uses a connection that was created from the
+old connector by removing the old connection and adding the new connection.</p>
+</li>
+<li>
+<p>Publish each updated integration.</p>
+</li>
+<li>
+<p>Recommended, but not required: delete the old connector and the old
+connections.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deleting-api-connectors_add-client-connector"><a class="anchor" href="#deleting-api-connectors_add-client-connector"></a>Deleting API client connectors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You cannot delete a connector when there is a connection that was
+created from that connector and this connection is being used in
+an integration. After you delete an API client connector,
+you cannot use a connection that was created from that
+connector.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel, click <strong>Customizations</strong> &gt; <strong>API Client Connectors</strong>.</p>
+</li>
+<li>
+<p>To the right of the name of the
+connector that you want to delete, click <strong>Delete</strong>.</p>
+</li>
+<li>
+<p>In the confirmation popup, if you sure that you want to delete the
+connector, click <strong>Delete</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

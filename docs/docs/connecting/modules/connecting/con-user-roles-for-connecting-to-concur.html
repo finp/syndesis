@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>User roles for connecting to SAP Concur :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="con-user-roles-for-connecting-to-concur.html">User roles for connecting to SAP Concur</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/con-user-roles-for-connecting-to-concur.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">User roles for connecting to SAP Concur</h1>
+<div class="paragraph">
+<p>SAP Concur has an implementation site for development work and a production
+site for live use. The implementation site simulates
+the production site. This lets you create and refine an integration
+before you use it in production with the live SAP Concur site.</p>
+</div>
+<div class="paragraph">
+<p>At any one time, a {prodname} environment can connect to the SAP Concur implementation site
+or the SAP Concur production site. In other words, a particular
+{prodname} environment does not support connections to both SAP Concur
+sites at the same time. Each {prodname} environment requires its own
+credentials for accessing each SAP Concur site and the credentials for
+the implementation site are different from the credentials for the
+production site.</p>
+</div>
+<div class="paragraph">
+<p>Consequently, the expectation is that someone in a system administrator-like
+role would do the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Obtain two sets of OAuth credentials from SAP Concur:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>One set for access to the SAP Concur implementation site</p>
+</li>
+<li>
+<p>Another set for access to the SAP Concur production site</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Configure the SAP Concur connector for access to the appropriate SAP Concur site.</p>
+</li>
+<li>
+<p>Create a SAP Concur connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A business user can then create an integration that uses the
+SAP Concur connection.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>General procedure for obtaining authorization :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-general-procedure-for-obtaining-authorization.html">General procedure for obtaining authorization</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/proc-general-procedure-for-obtaining-authorization.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">General procedure for obtaining authorization</h1>
+<div class="paragraph">
+<p>In an integration, you might want to connect to an application that uses
+the OAuth protocol to authenticate access requests. To do this,
+you must register your installation of {prodname} for access to that application.
+Registration authorizes all connections from your {prodname} installation
+to a given application. For example, if you register your {prodname}
+installation with Salesforce, all connections from your {prodname}
+installation to Salesforce use the same Salesforce client ID and the same
+Salesforce client secret that registration provided.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, for each application that uses OAuth,
+only one registration of {prodname} as a client is required. This
+registration lets you create multiple connections and each connection can
+use different user credentials.</p>
+</div>
+<div class="paragraph">
+<p>While the specific steps vary for each OAuth application that you want to connect to,
+registration always provides your {prodname} environment with a client ID and
+a client secret. Some applications use other labels for the client ID
+and client secret. For example, Salesforce generates a consumer key and
+a consumer secret.</p>
+</div>
+<div class="paragraph">
+<p>For some OAuth applications, {prodname} provides an entry in its <strong>Settings</strong>
+page for adding the client ID and client secret that registration provides. To see which
+applications this applies to, in the left panel of {prodname}, click
+<strong>Settings</strong>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>In the {prodname} <strong>Settings</strong> page, there is an entry for the application
+that uses the OAuth protocol to authorize access.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure overview</div>
+<ol class="arabic">
+<li>
+<p>In the {prodname} <strong>OAuth Application Management</strong> page, expand the entry for the
+application with which you want to register {prodname}.
+This displays the client ID and client secret fields.</p>
+</li>
+<li>
+<p>Near the top of the <strong>OAuth Application Management</strong> page, where you see
+<code><strong>During registration, enter this callback URL:</strong></code>, copy that URL to the
+clipboard.</p>
+</li>
+<li>
+<p>In another browser tab, go to the web site for the application that you
+want to register with and perform the steps that are required to obtain
+a client ID and secret. One of these steps requires you to enter
+the callback URL for your {prodname} environment. Paste the
+URL that you copied to the clipboard in the second step.</p>
+</li>
+<li>
+<p>In {prodname}, on the <strong>Settings</strong> page, paste the
+client ID and client secret and save the settings.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>Examples of registering applications that have entries in the <strong>Settings</strong> page:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-salesforce_salesforce">Registering {prodname} as a Salesforce client</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisConnectorGuide}#register-with-twitter_twitter">Registering {prodname} as a Twitter client</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Example of registering with an application that does not have
+an entry in the {prodname} <strong>Settings</strong> page:
+<a href="{LinkSyndesisConnectorGuide}#register-with-dropbox_dropbox">Registering {prodname} as a Dropbox client</a></p>
+</li>
+<li>
+<p>Information about using custom connectors that let
+you access applications that use the
+OAuth protocol:
+<a href="{LinkSyndesisIntegrationGuide}#creating-connections-from-custom-connectors_connections">About creating a connection from a custom connector</a>.</p>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

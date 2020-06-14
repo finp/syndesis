@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Descriptions of user interface properties :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-descriptions-of-user-interface-properties-in-extension-definitions.html">Descriptions of user interface properties</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/customizing/ref-descriptions-of-user-interface-properties-in-extension-definitions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Descriptions of user interface properties</h1>
+<div class="paragraph">
+<p>In connector extensions and step extensions, specify user interface
+properties in the extension definition JSON file or in Java class files.
+The settings of these
+properties define the HTML form controls that {prodname} displays when a
+{prodname} user creates a connection, configures a connection action,
+or configures a step that is provided by the extension.</p>
+</div>
+<div class="paragraph">
+<p>You must specify properties for each form control that you want to appear
+in the extension&#8217;s user interface in the {prodname} console.
+For each form control, specify some or all properties in any order.</p>
+</div>
+<div class="paragraph">
+<div class="title">Example of user interface property specifications</div>
+<p>In the JSON file that is part of the IRC connector, the top level
+<code>properties</code> object defines the HTML form controls that appear after
+a {prodname} user selects the IRC connector to create a connection.
+There are three sets of property definitions for three
+form controls: <code>hostname</code>, <code>password</code>, and <code>port</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"properties": {
+   "hostname": {
+     "description": "IRC Server hostname",
+     "displayName": "Hostname",
+     "labelHint": "Hostname of the IRC server to connect to",
+     "order": "1",
+     "required": true,
+     "secret": false,
+     "type": "string"
+   },
+   "password": {
+     "description": "IRC Server password",
+     "displayName": "Password",
+     "labelHint": "Required if IRC server requires it to join",
+     "order": "3",
+     "required": false,
+     "secret": true,
+     "type": "string"
+   },
+   "port": {
+     "description": "IRC Server port",
+     "displayName": "Port",
+     "labelHint": "Port of the IRC server to connect to",
+     "order": "2",
+     "required": true,
+     "secret": false,
+     "tags": [],
+     "type": "int"
+   }
+ },</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Based on these property specifications, when a {prodname} user selects
+the IRC connector, {prodname} displays the following dialog. After
+the user enters values in the two required fields and clicks
+<strong>Next</strong>, {prodname} creates an IRC connection that is configured
+with the values that the {prodname} user enters.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/IRC-create-connection-fields.png" alt="Hostname" width="Password" height="Port"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">About <code>properties</code> objects in extension definition JSON files</div>
+<p>In a connector extension:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The toplevel <code>properties</code> object is required. It controls
+what {prodname} displays when a {prodname} user selects the connector
+to create a connection. This <code>properties</code> object contains a set
+of properties for each form control for creating a connection.</p>
+</li>
+<li>
+<p>In the <code>actions</code> object, there is a <code>properties</code> object for each
+action. In each of these <code>properties</code> objects, there is a set
+of properties for each form control for configuring that action.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In a step extension, the <code>actions</code> object contains a <code>properties</code>
+object. The <code>properties</code> object defines a set of properties for
+each form control for configuring the step. The JSON hierarchy
+looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"actions": [
+   {
+      ...
+
+      "propertyDefinitionSteps": [
+         {
+            ...
+
+            "properties":
+               {
+                  "control-ONE": {
+                     "type": "string",
+                     "displayName": "Topic Name",
+                     "order": "2",
+                     ...,
+                     }
+
+                  "control-TWO": {
+                     "type": "boolean",
+                     "displayName": "Urgent",
+                     "order": "3",
+                     ...
+                     }
+
+                  "control-THREE": {
+                     "type": "textarea",
+                     "displayName": "Comment",
+                     "order": "1",
+                     ...,
+                     }
+ } } ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">About user interface properties in Java files</div>
+<p>To define user interface form controls in Java files, import
+<code>io.syndesis.extension.api.annotations.ConfigurationProperty</code> in each class
+file that defines user configuration of a connection, action, or step.
+For each form control that you want the {prodname} console to display,
+specify the <code>@ConfigurationProperty</code> annotation, followed by a list of
+properties. For information about the properties that you can specify,
+see the user interface property reference table at the end of this section.</p>
+</div>
+<div class="paragraph">
+<p>The following code shows property definitions for one form control.
+This code is in the example of developing a Camel route with <code>RouteBuilder</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>public class LogAction extends RouteBuilder {
+    @ConfigurationProperty(
+        name = "prefix",
+        description = "The Log body prefix message",
+        displayName = "Log Prefix",
+        type = "string")</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following code shows property definitions for two controls.
+This code is from the example of using the Syndesis Step API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@Action(id = "split", name = "Split", description = "Split your exchange")
+public class SplitAction implements Step {
+
+    @ConfigurationProperty(
+        name = "language",
+        displayName = "Language",
+        description = "The language used for the expression")
+    private String language;
+
+    @ConfigurationProperty(
+        name = "expression",
+        displayName = "Expression",
+        description = "The expression used to split the exchange
+     private String language;</pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">Descriptions of control form input types</div>
+<p>In the set of properties for each HTML form control, the <code>type</code>
+property defines the input type of the form control that {prodname} displays.
+For details about HTML form input types, see
+<a href="https://www.w3schools.com/html/html_form_input_types.asp">https://www.w3schools.com/html/html_form_input_types.asp</a>.</p>
+</div>
+<div class="paragraph">
+<p>The following table lists the possible input types for {prodname} form
+controls. In the set of properties for a control, if you specify a
+<code>type</code> value that is unknown, {prodname} displays an input field that accepts
+one line of text. That is, the default is <code>"type": "text"</code>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value of <code>type</code> property</th>
+<th class="tableblock halign-left valign-top">HTML</th>
+<th class="tableblock halign-left valign-top">{prodname} displays</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;input type="checkbox"&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A checkbox that the user can select or not select.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">A custom control that lets the {prodname} user select a unit of time:
+milliseconds, seconds, minutes, hours, or days. The user also enters
+a number and {prodname} returns a number of milliseconds. For example:<br>
+<code>"properties": {<br>
+&nbsp;&nbsp;&nbsp;"period": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"type": "duration"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"defaultValue": 60000,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"description": "Period",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"displayName": "Period",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"labelHint": "Delay between integration executions.",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"required": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"secret": false,<br>
+&nbsp;&nbsp;&nbsp;} <br>
+}</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hidden</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;input type="hidden"&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This field does not appear in the {prodname} console. You can use
+other properties to specify data that is associated with this field,
+for example, textual data of some kind.
+While {prodname} users cannot see or modify this data,
+if a user selects
+<strong>View Source</strong> for a {prodname} page, hidden fields are visible
+in the source display. Therefore, do not use hidden fields for
+security purposes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code>, <code>integer</code>, <code>long</code>, <code>number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;input type="number"&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An input field that accepts a number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;input type="password"&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An input field in which {prodname} masks the characters
+that the user enters, typically with asterisks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>select</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A <code>&lt;select&gt;</code> element, for example:<br>
+<code>&lt;select name="targets"&gt;<br>
+&nbsp;&nbsp;&lt;option value="queue"&gt;Queue&lt;/option&gt;<br>
+&nbsp;&nbsp;&lt;option value="topic"&gt;Topic&lt;/option&gt;<br>
+&lt;/select&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A drop-down list with an entry for each label/value pair
+that you specify in the form control’s <code>enum</code> property.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>text</code>, <code>string</code>, or any unknown value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;input type="text"&gt;`</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An input field that accepts one line of text.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>textarea</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;input type="textarea"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A textarea element is used</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<div class="title">Descriptions of control form user interface properties</div>
+<p>In a connector or step extension, for each HTML form control that
+appears in the {prodname} console, you can specify one or more of the
+properties described in the following table.
+For details about HTML form input types, see
+<a href="https://www.w3schools.com/html/html_form_input_types.asp">https://www.w3schools.com/html/html_form_input_types.asp</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Controls the kind of form control that {prodname} displays. See
+the previous table for details.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cols</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set for a <code>textarea</code> field, controls the number of columns initially
+displayed for the textarea control.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>controlHint</code> or <code>controlTooltip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set, the value is mapped to the HTML <code>title</code> attribute of the form
+control element. Just like other elements that have a <code>title</code> attribute,
+when the cursor hovers over the control, a tooltip appears. The content
+of the tooltip comes from the value of the <code>controlHint</code>
+or <code>controlTooltip</code> property.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dataList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">array</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the value of the <code>type</code> property is <code>text</code>, {prodname} uses
+the value of the <code>dataList</code> property to add typeahead support. Specify
+an array of strings.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defaultValue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Varies according to the value of the <code>type</code> property.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{prodname} initially displays this value in the form field.
+The type of the setting of the <code>defaultValue</code> property should match the
+value of the <code>type</code> property. For example, when the <code>type</code> property is
+set to <code>number</code>, the <code>defaultValue</code> setting should be a number.
+If the user does not change this initial field value,
+{prodname} uses <code>defaultValue</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set, {prodname} displays this value below the form control.
+Typically, this is a short, useful message about the control.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>displayName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{prodname} displays this value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enum</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">array</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set, {prodname} overrides any setting for the <code>type</code> property
+and implements a <code>select</code> control. Specify the array as a set of
+<code>label</code> and <code>value</code> attributes. The <code>label</code> attribute appears
+in the user interface as the select item&#8217;s label. The <code>value</code>
+attribute becomes the value for the corresponding select item.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>labelHint</code> or <code>labelTooltip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set, a <code>?</code> icon appears next to the display name. When the
+{prodname} user clicks the <code>?</code> icon, the value of the <code>labelHint</code>
+property displays.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>max</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set for a <code>number</code> field, defines the highest acceptable value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>min</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set for a <code>number</code> field, defines the lowest acceptable value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>multiple</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set to <code>true</code> for a <code>select</code> field or for a field that has
+the <code>enum</code> property set, {prodname} displays a multi-select control
+instead of a select drop-down.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Determines the order of controls in the {prodname} console.
+{prodname} applies ascending order, that is, the control that
+has <code>"order": "1"</code> appears first.
+Without specification of the <code>order</code> property, {prodname} displays
+controls in the order in which the JSON file defines them.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>placeholder</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set, {prodname} displays this value in a hazed font in an
+input field to help the user understand the expected input.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>required</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Controls whether or not the <code>required</code> attribute is set on the control.
+If true, then the {prodname} user must enter a value for this control.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rows</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the value of the <code>type</code> property is <code>textarea</code>,
+the value of the <code>rows</code> property controls the number of rows
+initially displayed in the textarea control.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>secret</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If specified, {prodname} changes the setting of the control&#8217;s <code>type</code> property
+to <code>password</code> if that is not already the setting.</p></td>
+</tr>
+</tbody>
+</table>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

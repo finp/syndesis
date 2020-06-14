@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating integrations :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-creating-integrations.html">Creating integrations</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/assemblies/integrating-applications/assembly-creating-integrations.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating integrations</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>After some planning and preparation, you are ready to create an
+integration. In the {prodname} web interface, when you
+click <strong>Create Integration</strong>, {prodname} guides you
+through the procedure to create an integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#plan_ready">Considerations for planning your integrations</a></p>
+</li>
+<li>
+<p>According to the kind of integration that you want to create:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>An understanding of the <a href="{LinkSyndesisIntegrationGuide}#workflow-overview_ready">general workflow for creating a simple integration</a></p>
+</li>
+<li>
+<p>An understanding of the <a href="{LinkSyndesisIntegrationGuide}#overview-benefit-api-provider-integrations_api-provider">general workflow for creating an API provider integration</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following topics provide information and instructions for creating
+an integration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#preparing-to-create-an-integration_create">Preparation for creating an integration</a></p>
+</li>
+<li>
+<p><a href="#alternatives-for-triggering-integration-execution_create">Alternatives for triggering integration execution</a></p>
+</li>
+<li>
+<p><a href="#procedure-for-creating-an-integration_create">General procedure for creating a simple integration</a></p>
+</li>
+<li>
+<p><a href="#add-timer-connection_create">Adding a timer connection to trigger integration execution</a></p>
+</li>
+<li>
+<p><a href="#how-to-process-a-collection-in-a-flow_create">Integration behavior when the data is in a collection</a></p>
+</li>
+<li>
+<p><a href="#about-adding-steps_create">About adding steps between connections</a></p>
+</li>
+<li>
+<p><a href="#evaluating-integration-data-to-determine-execution-flow_create">Evaluating integration data to determine the execution flow</a></p>
+</li>
+<li>
+<p><a href="#add-data-mapping-step_create">Adding a data mapper step</a></p>
+</li>
+<li>
+<p><a href="#add-basic-filter-step_create">Adding a basic filter step</a></p>
+</li>
+<li>
+<p><a href="#add-advanced-filter-step_create">Adding an advanced filter step</a></p>
+</li>
+<li>
+<p><a href="#add-template-step_create">Adding a template step</a></p>
+</li>
+<li>
+<p><a href="#add-custom-step_create">Adding a custom step</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="preparing-to-create-an-integration_create"><a class="anchor" href="#preparing-to-create-an-integration_create"></a>Preparation for creating an integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Preparation for creating an integration starts with answers to the
+questions listed in
+<a href="{LinkSyndesisIntegrationGuide}#plan_ready">Considerations for planning your integrations</a>.
+After you have a plan for the
+integration, you need to do the following before you can create the
+integration:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Determine whether an application that you want to connect to uses the
+OAuth protocol. For each application that uses OAuth, register
+{prodname} as a client that is authorized to access that application.
+Applications that use the OAuth protocol include:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Dropbox</p>
+</li>
+<li>
+<p>Google applications (Gmail, Calendar, Sheets)</p>
+</li>
+<li>
+<p>Salesforce</p>
+</li>
+<li>
+<p>SAP Concur</p>
+</li>
+<li>
+<p>Twitter</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Determine whether an application that you want to connect to uses
+HTTP basic authentication. For each application that does, identify
+the user name and password for accessing that application.
+You need to provide this information when you
+create the connection.</p>
+</li>
+<li>
+<p>For each application that you want to integrate, create a connection.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#general-procedure-for-obtaining-authorization_connections">General procedure for obtaining authorization</a></p>
+</li>
+<li>
+<p><a href="{LinkSyndesisIntegrationGuide}#about-creating-connections_connections">About creating connections</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="alternatives-for-triggering-integration-execution_create"><a class="anchor" href="#alternatives-for-triggering-integration-execution_create"></a>Alternatives for triggering integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you create an integration, the first step in the integration
+determines how execution of the integration is triggered.
+The first step in an integration can be one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><a href="{LinkSyndesisIntegrationGuide}#connecting-to-applications_ug">Connection to an application or service</a></strong>.
+You configure the connection
+for the particular application or service. Examples:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A connection to Twitter can monitor tweets and trigger
+execution of a simple integration when a tweet contains text that you specified.</p>
+</li>
+<li>
+<p>A connection to Salesforce can trigger execution of a simple integration when
+anyone creates a new lead.</p>
+</li>
+<li>
+<p>A connection to AWS S3 can periodically poll a particular bucket
+and trigger execution of a simple integration when the bucket contains files.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong><a href="{LinkSyndesisIntegrationGuide}#add-timer-connection_create">Timer</a></strong>. {prodname} triggers execution of a simple integration at the interval that
+you specify. This can be a simple timer or a <code>cron</code> job.</p>
+</li>
+<li>
+<p><strong><a href="{LinkSyndesisIntegrationGuide}#triggering-integrations-with-http-requests_ug">Webhook</a></strong>. A client can send an HTTP <code>GET</code> or <code>POST</code>
+request to an HTTP endpoint that {prodname} exposes. The request triggers
+execution of the simple integration.</p>
+</li>
+<li>
+<p><strong><a href="{LinkSyndesisIntegrationGuide}#trigger-integrations-with-api-calls_ug">API Provider</a></strong>. An API provider integration starts with a REST API service.
+This REST API service is defined by an OpenAPI 3 (or 2)
+document that you provide when you create an API provider integration.
+After you publish an API provider integration,
+{prodname} deploys the REST API service on OpenShift.
+Any client with network access to the integration endpoints can trigger execution of
+the integration.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="procedure-for-creating-an-integration_create"><a class="anchor" href="#procedure-for-creating-an-integration_create"></a>General procedure for creating a simple integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>{prodname} guides you through the procedure for creating a simple integration.
+It prompts you to choose the start connection, the finish connection,
+optional middle connections, and other steps. When your integration is
+complete, you can publish it so that it is running or you can save
+it for publication at a later time.</p>
+</div>
+<div class="paragraph">
+<p>To learn about the procedure for creating an API provider integration, see
+<a href="#create-api-provider-integration_api-provider">[create-api-provider-integration_api-provider]</a>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have a plan for what the steps in the integration will be.</p>
+</li>
+<li>
+<p>You created a connection to each application or service that you
+want to connect to in this integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the left panel in {prodname}, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>Choose and configure the start connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the connection that you want
+to use to start the integration. When this integration is running,
+{prodname} will connect to this application and obtain data that you want
+the integration to operate on.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the action you want this connection
+to perform. The available actions vary for each connection.</p>
+</li>
+<li>
+<p>On the page for configuring the action, enter values in the fields.</p>
+</li>
+<li>
+<p>Optionally, if the connection requires data type specification,
+{prodname} prompts you to click
+<strong>Next</strong> to specify the input and/or output type of the action.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the start connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>As an alternative to connecting to an application, a start connection can
+be a timer that triggers integration execution at intervals that you specify
+or it can be a webhook that accepts HTTP requests.</p>
+</div>
+<div class="paragraph">
+<p>+
+After you choose and configure the start connection, {prodname}
+prompts you to choose the finish connection.</p>
+</div>
+</li>
+<li>
+<p>Choose and configure the finish connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the connection you want
+to use to complete the integration. When this integration is running,
+{prodname} will connect to this application with the data that the integration
+has been operating on.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select the action you want this connection
+to perform. The available actions vary for each connection.</p>
+</li>
+<li>
+<p>On the page for configuring the action, enter values in the fields.</p>
+</li>
+<li>
+<p>Optionally, if the connection requires data type specification,
+{prodname} prompts you to click
+<strong>Next</strong> to specify the input and/or output type of the action.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the finish connection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>As an alternative to connecting to an application, a finish connection can
+send information to the integration&#8217;s log about the messages that the
+integration processed. To do this, select <strong>Log</strong> when {prodname} prompts
+you to choose the finish connection.</p>
+</div>
+</li>
+<li>
+<p>Optionally, add one or more connections between the start connection and
+the finish connection. For each connection, choose its action and enter
+any required configuration details.</p>
+</li>
+<li>
+<p>Optionally, add one or more steps that operate on integration
+data between connections. See
+<a href="{LinkSyndesisIntegrationGuide}#about-adding-steps_create">About adding steps between connections</a>.</p>
+</li>
+<li>
+<p>In the integration visualization, look for any
+<span class="image"><img src="../../../_images/images/tutorials/WarningIcon.png" alt="Warning"></span> icons. These
+warnings indicate that a data mapper step is needed before
+this connection. Add the required data mapper steps.</p>
+</li>
+<li>
+<p>When the integration contains all needed steps,
+click <strong>Save</strong> or <strong>Publish</strong> according to whether you want
+to start running the integration.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter a name that distinguishes this
+integration from any other integrations.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Description</strong> field, enter a description, for example, you can
+indicate what this integration does.</p>
+</li>
+<li>
+<p>Optionally, from the list of library extensions that you have imported, you can select one or more library extensions to associate with the integration. Note that you must have already imported a library <code>.jar</code> file as a {prodname} extension if you want it to appear in this list so that you can select it.</p>
+<div class="paragraph">
+<p>For more information about library extensions, see <a href="{LinkSyndesisIntegrationGuide}#develop-library-extensions_extensions">How to develop library extensions</a>.</p>
+</div>
+</li>
+<li>
+<p>If you are ready to start running the integration, click <strong>Save and publish</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the integration summary. You
+can see that {prodname} is in the process of publishing it. It may take
+a few moments for the status of the integration to become <strong>Running</strong>.</p>
+</div>
+<div class="paragraph">
+<p>If you do not want to publish the integration, click <strong>Save</strong>. {prodname}
+saves the integration and displays its flow visualization. You can
+continue editing it. Or, in the breadcrumbs at the top of the page,
+click <strong>Integrations</strong> to display the list of integrations.
+If you saved but did not publish the integration, then
+<strong>Stopped</strong> appears on the integration&#8217;s entry.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-timer-connection_create"><a class="anchor" href="#add-timer-connection_create"></a>Adding a timer connection to trigger integration execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To trigger execution of an integration according to a schedule that
+you specify, add a timer connection as a simple integration&#8217;s start
+connection. A timer connection cannot be in the middle of a
+flow nor at the end of a flow.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, on the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click <strong>Timer</strong>.</p>
+<div class="paragraph">
+<p>{prodname} provides a <strong>Timer</strong> connection; you do not need to create a timer
+connection.</p>
+</div>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Cron</strong> or <strong>Simple</strong>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A <code>cron</code> timer requires a <code>cron</code> expression that specifies the
+schedule for triggering integration execution.</p>
+</li>
+<li>
+<p>A simple timer prompts you to specify a period and its time unit,
+for example, <code>5 seconds</code>, <code>1 hour</code>. Available units are
+milliseconds, seconds, minutes, hours, days.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>According the type of timer that you are adding, enter a <code>cron</code> expression
+or a period with a selected time unit.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the <strong>Timer</strong> connection as the integration&#8217;s
+start connection.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-process-a-collection-in-a-flow_create"><a class="anchor" href="#how-to-process-a-collection-in-a-flow_create"></a>Integration behavior when the data is in a collection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes, a connection returns a collection, which contains
+multiple values that are all the same type.
+When a connection returns a collection, the flow can
+operate on the collection in a number of ways, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Execute each step once for the collection.</p>
+</li>
+<li>
+<p>Execute each step once for each element in the collection.</p>
+</li>
+<li>
+<p>Execute some steps once for the collection and execute other
+steps once for each element in the collection.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To decide how to operate on a collection in a flow, you need to
+know which applications the flow connects to, whether they can
+handle collections, and what you want the flow to accomplish.
+You can then use the information in the
+following topics to add steps to a flow that processes a collection:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#about-processing-collections_collection">About processing collections</a></p>
+</li>
+<li>
+<p><a href="#using-data-mapper-to-process-collections_collection">Using the data mapper to process collections</a></p>
+</li>
+<li>
+<p><a href="#add-split-step_collection">Adding a split step</a></p>
+</li>
+<li>
+<p><a href="#add-aggregate-step_collection">Adding an aggregate step</a></p>
+</li>
+<li>
+<p><a href="#example-processing-collection_collection">Example of processing a collection in a flow</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="about-processing-collections_collection"><a class="anchor" href="#about-processing-collections_collection"></a>About processing collections</h3>
+<div class="paragraph">
+<p>The easiest way for a flow to process a collection is to
+use the data mapper to map fields that are in a source collection
+to fields that are in a target collection. For many
+flows, this is all that is required. For example, a flow
+might obtain a collection of employee records from a
+database and then insert those records into a spreadsheet.
+Between the database connection and the Google Sheets
+connection, a data mapper step maps the database fields
+to the Google Sheets fields. Since both the
+source and the target are collections, when {prodname}
+executes the flow, it calls the Google Sheets connection once.
+In that call, {prodname} iterates
+through the records and correctly populates the spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>In some flows, you might need to split a collection into
+individual objects. For example, consider a flow that
+connects to a database and obtains
+a collection of employees who will lose allotted time off
+if they do not use it before a certain date.
+The flow then needs to send an email notification to each
+of these employees. In this flow, you would add a split
+step after the database connection. You would then add a
+data mapper step that maps the source fields for an employee
+record to target fields in a Gmail connection that sends a message.
+When {prodname} executes the flow, it executes the data mapper
+step and the Gmail connection once for each employee.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, after you split a collection in a flow, and after
+the flow executes some steps once for each element that was in the collection,
+you want the flow to operate on the collection again. Consider the
+example in the previous paragraph. Suppose that after a Gmail
+connection sends a message to each employee, you want to add
+a list of the employees who were notified to a spreadsheet.
+In this scenario, after the Gmail connection, add an aggregate
+step to create a collection of employee names. Then add a
+data mapper step that maps fields in the source collection
+to fields in the target Google Sheets connection. When
+{prodname} executes the flow, it executes the new data mapper
+step and the Google Sheets connection once for the collection.</p>
+</div>
+<div class="paragraph">
+<p>These are the most common scenarios for processing a collection
+in a flow. However, much more complex processing is also possible.
+For example, when the elements in a collection are themselves collections,
+you can nest split and aggregate steps inside other split and
+aggregate steps.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-data-mapper-to-process-collections_collection"><a class="anchor" href="#using-data-mapper-to-process-collections_collection"></a>Using the data mapper to process collections</h3>
+<div class="paragraph">
+<p>In a flow, when a step outputs a collection and when a
+subsequent connection that is in the flow expects a collection as the input, you can
+use the data mapper to specify how you want the flow to
+process the collection.</p>
+</div>
+<div class="paragraph">
+<p>When a step outputs a collection, the flow visualization
+displays <strong>Collection</strong> in the details about the step. For example:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/data-type-collection.png" alt="Data Type: SQL Result (Collection)"></span></p>
+</div>
+<div class="paragraph">
+<p>Add a data mapper step after the step that provides the collection and
+before the step that needs the mappings. Exactly where in the flow this
+data mapper step needs to be depends on the other steps in the flow.
+The following image shows mappings from source collection fields
+to target collection fields:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/map-collections.png" alt="mapping collection"></span></p>
+</div>
+<div class="paragraph">
+<p>In the source and target panels, the data mapper displays
+<span class="image"><img src="../../../_images/images/integrating-applications/collection-icon.png" alt="this icon"></span> to indicate
+a collection. When a source collection or a target
+collection contain only primitive types, the data mapper does not
+display collection fields because there is no need to. You can map
+from/to the collection itself.</p>
+</div>
+<div class="paragraph">
+<p>When a collection contains more
+than one kind of primitive type or when it contains at least one complex
+type then the data mapper displays the collection’s child fields.
+You can map from/to each field.</p>
+</div>
+<div class="paragraph">
+<p>When a source field is nested in a number of collections you can map
+it to a target field that meets one of these conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The target field is nested in the same number of collections as the source
+field. For example, these mappings are allowed:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /D&lt;&gt;/E&lt;&gt;/F</p>
+</li>
+<li>
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /G&lt;&gt;/H/I&lt;&gt;/J</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The target field is nested in only one collection. For example, this mapping is allowed:</p>
+<div class="paragraph">
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /K&lt;&gt;/L</p>
+</div>
+<div class="paragraph">
+<p>In this case, the data mapper uses a depth-first algorithm to iterate over
+all values in the source. In order of occurrence, the data mapper puts the
+source values into a single target collection.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following mapping is not allowed:</p>
+</div>
+<div class="paragraph">
+<p>/A&lt;&gt;/B&lt;&gt;/C  cannot-map-to  /M&lt;&gt;/N/O&lt;&gt;/P&lt;&gt;/Q</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} executes the flow, it iterates over the source
+collection elements to populate the target collection elements.
+If you map one or more source collection fields to a target
+collection or to target collection
+fields, the target collection elements contain values for only
+the mapped fields.</p>
+</div>
+<div class="paragraph">
+<p>If you map a source collection or a field in a source collection
+to a target field that is not in a collection, then when {prodname}
+executes the flow, it assigns the value from only the last element
+in the source collection. Any other elements in the collection are
+ignored in that mapping step. However, any subsequent mapping steps
+can access all elements in the source collection.</p>
+</div>
+<div class="paragraph">
+<p>When a connection returns a collection that is defined in a
+JSON or Java document, the data mapper can usually process
+the source document as a collection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="add-split-step_collection"><a class="anchor" href="#add-split-step_collection"></a>Adding a split step</h3>
+<div class="paragraph">
+<p>During execution of a flow, when a connection returns a collection of objects,
+{prodname} executes subsequent steps once for the collection.
+If you want to execute subsequent steps once for each object
+that is in the collection, add a split step. For example, a
+Google Sheets connection returns a collection of row objects.
+To execute subsequent steps once for each row, add a
+split step after the Google Sheets connection.</p>
+</div>
+<div class="paragraph">
+<p>Ensure that the input to a split step is always a collection.
+If a split step gets a source document that is not a collection type,
+the step splits the input at each space. For example, {prodname} splits
+“Hello world!” input into two elements: “Hello” and “world!”, and
+passes those two elements to the next step in the flow. In particular,
+XML data is not a collection type.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>The flow already has all the connections that it requires.</p>
+</li>
+<li>
+<p>In the flow visualization, the connection that obtains the source data
+indicates that the data is a <strong>(Collection)</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>
+at the location where you want to add the split step.</p>
+</li>
+<li>
+<p>Click <strong>Split</strong>. This step does not require any configuration.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional information</div>
+<p>Typically, you want to add any split steps and aggregate steps
+before you add data mapper steps. This is because
+whether the data is a collection or individual objects affects
+the mappings. If you add a data mapper step and then add a split
+step, you usually need to redo the mappings. Likewise, if you
+remove a split or aggregate step, then you would need to redo
+any mappings.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="add-aggregate-step_collection"><a class="anchor" href="#add-aggregate-step_collection"></a>Adding an aggregate step</h3>
+<div class="paragraph">
+<p>In a flow, add an aggregate step where you want {prodname}
+to create a collection from individual objects.
+During execution, after an aggregate step,
+instead of executing subsequent steps once for each object, {prodname}
+executes subsequent steps once for the collection.</p>
+</div>
+<div class="paragraph">
+<p>When deciding whether to add an aggregate step to a flow, consider the
+connections in the flow. After a split step, for each subsequent
+connection, {prodname} connects to that application once for each element
+in the flow’s data. For some connections, it might be preferable to
+connect once rather than multiple times.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>The flow already has all the connections that it requires.</p>
+</li>
+<li>
+<p>A previous step split a collection into individual objects.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, where you want to
+add an aggregate step to the flow, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Aggregate</strong>. This step does not require any configuration.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional information</div>
+<p>Typically, you want to add any split and aggregate steps
+before you add data mapper steps. This is because
+whether the data is a collection or individual objects affects
+the mappings. If you add a data mapper step and then add an
+aggregate step, you usually need to redo the mappings. Likewise, if you
+remove an aggregate step, then you would need to redo
+any mappings.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="example-processing-collection_collection"><a class="anchor" href="#example-processing-collection_collection"></a>Example of processing a collection in a flow</h3>
+<div class="paragraph">
+<p>This simple integration obtains a collection of tasks from the sample
+database provided with {prodname}. The flow splits the
+collection into individual task objects and then filters
+these objects to find the tasks that have been done.
+The flow then aggregates the completed tasks in a
+collection, maps the fields in that collection to fields
+in a spreadsheet, and finishes by adding a list of completed
+tasks to a spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>The procedure below provides instructions for creating
+this simple integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection.</p>
+</li>
+<li>
+<p>In the account that the Google Sheets connection accesses, there is
+a spreadsheet for receiving the database records.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>Add the start connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click <strong>PostgresDB</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Periodic SQL Invocation</strong>.</p>
+</li>
+<li>
+<p>In the <strong>SQL Statement</strong> field, enter <code><strong>select * from todo</strong></code> and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This connection returns a collection of task objects.</p>
+</div>
+</li>
+<li>
+<p>Add the finish connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click your Google Sheets connection.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Append values to a sheet</strong>.</p>
+</li>
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, enter the ID of the spreadsheet
+to add the list of tasks to.</p>
+</li>
+<li>
+<p>In the <strong>Range</strong> field, enter <code><strong>A:B</strong></code> as the target columns that
+you want to append values to. The first column, <strong>A</strong>, is for the task IDs.
+The second column, <strong>B</strong>, is for the task names.</p>
+</li>
+<li>
+<p>Accept the defaults for <strong>Major Dimension</strong> and for <strong>Value Input Option</strong>,
+and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The Google Sheets connection finishes the flow by adding each element
+in a collection to a spreadsheet.</p>
+</div>
+</li>
+<li>
+<p>Add a split step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Split</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>After the flow executes the split step, the result is a
+set of individual task objects. {prodname} executes the subsequent
+steps in the flow once for each individual task object.</p>
+</div>
+</li>
+<li>
+<p>Add a filter step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the split step, click
+the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Basic Filter</strong> and configure the filter as follows:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Click in the first field and select <code><strong>completed</strong></code>, which is the name of the
+field that contains the data that you want to evaluate.</p>
+</li>
+<li>
+<p>In the second field, select <strong>equals</strong> as the condition that
+the <strong>completed</strong> field value must satisfy.</p>
+</li>
+<li>
+<p>In the third field, specify <code><strong>1</strong></code> as the value that must be in
+the <strong>completed</strong> field. <code>1</code> indicates that the task has been completed.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>During execution, the flow executes the filter step once for each task
+object. The result is a set of individual, completed task objects.</p>
+</div>
+</li>
+<li>
+<p>Add an aggregate step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the filter step, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Aggregate</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now the result set contains one collection, which contains an
+element for each completed task.</p>
+</div>
+</li>
+<li>
+<p>Add a data mapper step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the aggregate step, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> and map the following fields from the SQL
+result source collection to the Google Sheets target collection:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>id</strong> to <strong>A</strong></p>
+</li>
+<li>
+<p><strong>task</strong> to <strong>B</strong></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Publish</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>When the integration is running, it obtains tasks from the sample database
+every minute and then adds the completed tasks to the first sheet in the spreadsheet.
+The integration maps the task ID to the first column, <strong>A</strong>, and it maps the task name
+to the second column, <strong>B</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="about-adding-steps_create"><a class="anchor" href="#about-adding-steps_create"></a>About adding steps between connections</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Although it is not a requirement, the recommendation is to add all
+needed connections to a primary flow and then, according to the processing
+that you want the flow to execute, add additional steps between
+connections. In a flow, each step operates on data obtained from the
+previous connection(s) and any previous steps. The resulting data is
+available to the next step in the flow.</p>
+</div>
+<div class="paragraph">
+<p>Often, you must map data fields that are received from a
+connection to data fields that the next connection in the flow
+can operate on. After you add all connections to a flow,
+check the flow visualization.
+For each connection that requires data mapping before
+it can operate on the input data,
+{prodname} displays
+<span class="image"><img src="../../../_images/images/integrating-applications/DataTypeMismatchWarning.png" alt="DataTypeMismatchWarning" title="a warning"></span>. Click this
+icon to see <strong>Data Type Mismatch: Add a data
+mapper step before this connection to resolve the difference.</strong></p>
+</div>
+<div class="paragraph">
+<p>You can click the link in the message to display the <strong>Configure Mapper</strong>
+page in which you add and specify a data mapper step. However,
+the recommendation is to add other needed steps, and then add
+data mapper steps last.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="evaluating-integration-data-to-determine-execution-flow_create"><a class="anchor" href="#evaluating-integration-data-to-determine-execution-flow_create"></a>Evaluating integration data to determine the execution flow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a flow, a <strong>Conditional Flows</strong> step evaluates integration data
+against conditions that you specify. For each specified condition,
+you add connections and other steps to the flow associated with
+that condition. During execution, a <strong>Conditional Flows</strong> step
+evaluates incoming data to determine which flow to execute.</p>
+</div>
+<div class="paragraph">
+<p>The following topics provide details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#behavior-of-conditional-flows-step_condition">Behavior of a <strong>Conditional Flows</strong> step</a></p>
+</li>
+<li>
+<p><a href="#example-of-a-conditional-flows-step_condition">Example of a <strong>Conditional Flows</strong> step</a></p>
+</li>
+<li>
+<p><a href="#general-procedure-for-configuring-conditional-flows-step_condition">General procedure for configuring a <strong>Conditional Flows</strong> step</a></p>
+</li>
+<li>
+<p><a href="#using-basic-expression-builder_condition">Using the basic expression builder to specify conditions</a></p>
+</li>
+<li>
+<p><a href="#using-advanced-expression-builder_condition">Using the advanced expression builder to specify conditions</a></p>
+</li>
+<li>
+<p><a href="#adding-steps-to-conditional-flows_condition">Adding steps to conditional flows</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="behavior-of-conditional-flows-step_condition"><a class="anchor" href="#behavior-of-conditional-flows-step_condition"></a>Behavior of a <strong>Conditional Flows</strong> step</h3>
+<div class="paragraph">
+<p>During integration development, you can add a <strong>Conditional Flows</strong> step to
+a flow and define one or more conditions. For each condition, you add steps
+to a conditional flow that is associated with only that condition.
+During integration execution, for each message that the previous
+integration step passes to a <strong>Conditional Flows</strong> step, the <strong>Conditional Flows</strong>
+step evaluates the message content against the specified conditions in
+the order in which you define them in the {prodname} page for specifying
+conditions.</p>
+</div>
+<div class="paragraph">
+<p>In a <strong>Conditional Flows</strong> step, the behavior is one of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For the first condition that evaluates to true, the integration executes
+the conditional flow that is associated with that condition.</p>
+</li>
+<li>
+<p>If no conditions evaluate to true, and there is a default conditional flow,
+the integration executes that flow.</p>
+</li>
+<li>
+<p>If no conditions evaluate to true and there is no default conditional flow,
+the integration does not execute a conditional flow.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After executing a conditional flow, or after no conditions evaluate
+to true and there is no default conditional flow, the integration
+executes the next step in the primary flow.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="example-of-a-conditional-flows-step_condition"><a class="anchor" href="#example-of-a-conditional-flows-step_condition"></a>Example of a <strong>Conditional Flows</strong> step</h3>
+<div class="paragraph">
+<p>Suppose that an integration connects to a SQL database to
+obtain information about how much paid-time-off (PTO) each
+employee has. The returned data indicates:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some employees might lose PTO if they do not use it by a certain date.</p>
+</li>
+<li>
+<p>Other employees already used more PTO than they earned.</p>
+</li>
+<li>
+<p>The rest of the employees have PTO that they can use without time restrictions.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In a <strong>Conditional Flows</strong> step, this example integration can define two
+conditions, an execution flow for each condition, and a default
+execution flow:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When PTO is greater than some number, it indicates that some PTO
+might be lost if not used by a certain date. When this condition
+evaluates to true, the integration executes
+a flow that sends email to affected employees. The email contains the
+amount of PTO that must be used and the date by which it must
+be used.</p>
+</li>
+<li>
+<p>When PTO is a negative number, it indicates that some PTO has been
+used but not earned. When this condition evaluates to true, the
+integration executes a flow that sends
+an email to affected employees. The email contains the amount of PTO that the
+employee has overdrawn and specifies the date on which the employee begins
+to accrue PTO again.</p>
+</li>
+<li>
+<p>When neither of the two conditions evaluates to true, the integration
+executes the default flow. This example integration executes the default conditional flow for
+employees whose PTO is neither a negative number nor above some specified number.
+The default flow sends an email to those employees with a statement of the
+amount of PTO that the employee has.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="general-procedure-for-configuring-conditional-flows-step_condition"><a class="anchor" href="#general-procedure-for-configuring-conditional-flows-step_condition"></a>General procedure for configuring a <strong>Conditional Flows</strong> step</h3>
+<div class="paragraph">
+<p>After you add a <strong>Conditional Flows</strong> step to a flow, the workflow
+for configuring the step is as shown in the following image:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/WorkflowForConfiguringConditionalFlowsStep.png" alt="Workflow for configuring Conditional Flows step"></span></p>
+</div>
+<div class="ulist">
+<div class="title">More about the workflow</div>
+<ul>
+<li>
+<p>The basic expression builder prompts you for the property that contains the
+content that you want to evaluate, and the condition and value that you want
+to test for. The basic expression builder is suitable for most <strong>Conditional Flows</strong> steps.</p>
+</li>
+<li>
+<p>The advanced expression builder lets you specify a conditional
+expression in Camel Simple Language.</p>
+</li>
+<li>
+<p>You must use the same expression builder for all conditions.
+In other words, to configure a <strong>Conditional Flows</strong> step, you must use the
+basic expression builder or the advanced expression builder. You cannot use both.</p>
+</li>
+<li>
+<p>In a conditional flow, you cannot add a <strong>Conditional Flows</strong> step.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-basic-expression-builder_condition"><a class="anchor" href="#using-basic-expression-builder_condition"></a>Using the basic expression builder to specify conditions</h3>
+<div class="paragraph">
+<p>In a flow, add a <strong>Conditional Flows</strong> step when you want to evaluate
+incoming data to determine the integration&#8217;s execution path. The procedure
+described here shows how to use the basic expression builder to
+specify conditions.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a primary flow. If this is a simple integration,
+the start and finish connections have been added.</p>
+</li>
+<li>
+<p>Input to a <strong>Conditional Flows</strong> step
+must be an individual message. In the integration visualization,
+if the previous step&#8217;s <strong>Data Type</strong> shows <strong>(Collection)</strong>, add a <strong>Split</strong> step
+after the previous step and before this <strong>Conditional Flows</strong> step.</p>
+</li>
+<li>
+<p>You are familiar with the fields that will be in the messages that the
+integration passes to the <strong>Conditional Flows</strong> step you are about to add.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the integration visualization, where you want to add a <strong>Conditional Flows</strong> step,
+click <span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Conditional Flows</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Select</strong> in the <strong>Basic expression builder</strong> entry.</p>
+</li>
+<li>
+<p>In the <strong>Configure Conditional Flows</strong> page, define one or more conditions:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click in the initial <strong>When</strong> field.</p>
+</li>
+<li>
+<p>In the list of properties, click the property that contains the
+content that you want the <strong>Conditional Flows</strong> step to evaluate.</p>
+</li>
+<li>
+<p>In the next field, accept <strong>Contains</strong> as the condition for which
+the step evaluates the data or select another condition.
+The condition that you select in this field must evaluate to
+true for the value that you enter in the next field.</p>
+</li>
+<li>
+<p>In the third field, specify the value that the condition tests for.</p>
+</li>
+<li>
+<p>Optional. Click <strong>Add another condition</strong> to specify another condition.</p>
+</li>
+<li>
+<p>Repeat this set of steps for each additional condition that you want to define.</p>
+</li>
+<li>
+<p>Optional. Change the order in which the integration evaluates
+the defined conditions by clicking the up or down arrow to the right of a
+condition.</p>
+</li>
+<li>
+<p>Optional. Click <strong>Execute default flow</strong> if you want there to be a
+default conditional flow.</p>
+<div class="paragraph">
+<p>If you select <strong>Execute default flow</strong>, during execution,
+if none of the conditions that you specified evaluates
+to true, the integration executes the default conditional flow. If you do
+not select <strong>Execute default flow</strong>, during execution, if none of the
+conditions that you specified evaluates to true, the integration continues
+execution with the step that follows this <strong>Conditional Flows</strong> step.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>Optional. Specify the output data type if {prodname} prompts for it.
+All conditional flows that are part of this <strong>Conditional Flows</strong> step
+must have the same output type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the flow visualization. Below the <strong>Conditional Flows</strong> step
+that you are adding, there is an entry for each condition that you specified,
+as well as an entry for an <strong>Otherwise</strong> default flow if you indicated that the
+<strong>Conditional Flows</strong> step has a default flow.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>For each condition, add steps to its associated flow. If there is a default flow,
+add steps to the default flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>For details about the conditions that you can select in the middle field
+for each condition, see
+<a href="https://camel.apache.org/manual/latest/simple-language.html#_operator_support">Camel Simple Language operators</a>.
+Note that the <strong>matches</strong> condition corresponds to the Simple Language
+<strong>regex</strong> operator.</p>
+</li>
+<li>
+<p>If you cannot define the conditions that you need by using the basic expression builder,
+see <a href="{LinkSyndesisIntegrationGuide}#using-advanced-expression-builder_condition">Using the advanced expression builder to specify conditions</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-advanced-expression-builder_condition"><a class="anchor" href="#using-advanced-expression-builder_condition"></a>Using the advanced expression builder to specify conditions</h3>
+<div class="paragraph">
+<p>In a flow, add a <strong>Conditional Flows</strong> step when you want to evaluate
+incoming data to determine the integration&#8217;s execution path. The procedure
+described here shows how to use the advanced expression builder to
+specify conditional expressions in Camel Simple Language.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a primary flow. If this is a simple integration,
+the start and finish connections have been added.</p>
+</li>
+<li>
+<p>Input to a <strong>Conditional Flows</strong> step
+must be an individual message. In the integration visualization,
+if the previous step&#8217;s <strong>Data Type</strong> shows <strong>(Collection)</strong>, add a <strong>Split</strong> step.</p>
+</li>
+<li>
+<p>You are familiar with the fields that will be in the messages that the
+integration passes to the <strong>Conditional Flows</strong> step you are about to add.</p>
+</li>
+<li>
+<p>You are familiar with the
+<a href="http://camel.apache.org/simple.html">Camel Simple Expression</a> language
+or you have expressions for the conditions that you want to evaluate.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the integration visualization, where you want to add a <strong>Conditional Flows</strong> step,
+click <span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Conditional Flows</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Select</strong> in the <strong>Advanced expression builder</strong> entry.</p>
+</li>
+<li>
+<p>In the <strong>Configure Conditional Flows</strong> page, define one or more conditions:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the initial <strong>When</strong> field, enter a Camel Simple Language conditional expression. For example,
+the following expression evaluates to true when the body of the message
+contains a <code>pto</code> field that is greater than <code>160</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>${body.pto} &gt; 160</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When this expression evaluates to true, the integration executes the
+conditional flow that you create and associate with this condition.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In an expression, an additional property specification is required when
+the <strong>Conditional Flows</strong> step is in one of the following kinds of flows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An API provider integration operation flow</p>
+</li>
+<li>
+<p>A simple integration that starts with a webhook connection</p>
+</li>
+<li>
+<p>A simple integration that starts with a custom REST API connection</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In these flows, {prodname} wraps the actual message content inside a <code>body</code>
+property. This means that the input to a <strong>Conditional Flows</strong> step contains a
+<code>body</code> property that contains another <code>body</code> property that contains
+the actual message content. Consequently, in an expression that is in a
+<strong>Conditional Flows</strong> step that is in one of these kinds of flows,
+you must specify two instances of <code>body</code>. For example, suppose you want
+to evaluate content that is in the <code>pto</code> field of the input message.
+Specify the expression like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>${body.body.pto} &gt; 160</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Optional. Click <strong>Add another condition</strong>, and repeat the previous
+step. Do this for each additional condition that you want to define.</p>
+</li>
+<li>
+<p>Optional. Change the order in which the <strong>Conditional Flows</strong> step evaluates
+the defined conditions by clicking the up or down arrow to the right of a
+condition field.</p>
+</li>
+<li>
+<p>Optional. Click <strong>Execute default flow</strong> if you want there to be a
+default conditional flow.</p>
+<div class="paragraph">
+<p>If you select <strong>Execute default flow</strong>, during execution,
+if none of the conditions that you specified evaluates
+to true, the integration executes the default conditional flow. If you do
+not select <strong>Execute default flow</strong>, during execution, if none of the
+conditions that you specified evaluates to true, the integration continues
+execution with the step that follows this <strong>Conditional Flows</strong> step.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+<li>
+<p>Optional. Specify the output data type if {prodname} prompts for it.
+All conditional flows that are part of this <strong>Conditional Flows</strong> step
+must have the same output type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays the flow visualization. Below the <strong>Conditional Flows</strong> step
+that you are adding, there is an entry for each condition that you specified,
+as well as an entry for an <strong>Otherwise</strong> default flow if you indicated that the
+<strong>Conditional Flows</strong> step has a default flow.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>For each condition, add steps to its associated flow. If there is a default flow,
+add steps to the default flow.</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resources</div>
+<p><a href="https://camel.apache.org/manual/latest/simple-language.html#_operator_support">Camel Simple Language operators</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="adding-steps-to-conditional-flows_condition"><a class="anchor" href="#adding-steps-to-conditional-flows_condition"></a>Adding steps to conditional flows</h3>
+<div class="paragraph">
+<p>In a <strong>Conditional Flows</strong> step, after you define conditions, for
+each condition, add steps to the flow that is associated with that
+condition. During execution, when the <strong>Conditional Flows</strong> step
+evaluates a condition as true, it executes the flow that is associated
+with that condition.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You defined the conditions for this <strong>Conditional Flows</strong> step.</p>
+</li>
+<li>
+<p>You are familiar with the fields that will be in the messages that the
+integration passes to this <strong>Conditional Flows</strong> step.</p>
+</li>
+<li>
+<p>You created each connection that you want to add to a conditional flow.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the integration visualization, for the condition whose flow
+you want to add to, click <strong>Open Flow</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays that condition near the top of the page.
+The conditional flow visualization shows the <strong>Flow Start</strong> and
+<strong>Flow End</strong> steps that all conditional flows have.</p>
+</div>
+</li>
+<li>
+<p>In the flow visualization, click
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>
+where you want to add a step to this conditional flow.</p>
+</li>
+<li>
+<p>Click the step that you want to add. You can add any connection or
+step that you can add to a primary flow.</p>
+<div class="paragraph">
+<p>The output from the <strong>Flow Start</strong> step is always the same as the
+output from the primary flow step that is before this <strong>Conditional Flows</strong> step.
+For example, if you add a filter step or a data mapper step to this
+conditional flow, the available fields are the same fields
+that would be available in the primary flow.</p>
+</div>
+</li>
+<li>
+<p>Configure the step as needed.</p>
+</li>
+<li>
+<p>Repeat the previous three instructions for each step that you
+want to add to this conditional flow.</p>
+</li>
+<li>
+<p>At the top of the page, in the <strong>Flow</strong> field,
+click the down carat and click <strong>Back to primary flow</strong>, which saves
+this conditional flow and displays the primary flow.</p>
+</li>
+<li>
+<p>For each conditional flow that you want to add to,
+repeat this procedure.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>The primary flow has a conditional flow for each condition that you
+defined in the <strong>Conditional Flows</strong> step. If you selected the
+<strong>Execute default flow</strong> option, the primary flow also has a default
+conditional flow.</p>
+</div>
+<div class="paragraph">
+<p>During execution, the <strong>Conditional Flows</strong> step executes the conditional
+flow that is associated with the first condition that evaluates to true.
+The integration then executes the step that follows the <strong>Conditional Flows</strong>
+step.</p>
+</div>
+<div class="paragraph">
+<p>If no condition evaluates to true then the <strong>Conditional Flows</strong> step
+executes the default conditional flow. The integration then executes the
+step that follows the <strong>Conditional Flows</strong> step.</p>
+</div>
+<div class="paragraph">
+<p>If both of the following are true:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No condition evaluates to true.</p>
+</li>
+<li>
+<p>There is no default conditional flow.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then the integration executes the step that follows
+the <strong>Conditional Flows</strong> step.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-data-mapping-step_create"><a class="anchor" href="#add-data-mapping-step_create"></a>Adding a data mapper step</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Almost all integrations require data mapping. A data mapper step
+maps data fields from the previous
+connection(s) and any other steps to data fields that the
+next connection in the flow
+can operate on. For example,
+suppose the integration data contains a <code>Name</code> field and the next
+connection in the flow has a <code>CustomerName</code> field. You need to
+map the source <code>Name</code> field to the target <code>CustomerName</code> field.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The data mapper displays the largest possible set of source fields that can
+be provided by the previous integration step. However, not all connections
+provide data in each displayed source field. For example, a change to a
+third-party application might discontinue providing data in a particular field.
+As you create an integration, if you notice that data mapping is not behaving
+as you expect, ensure that a source field that you want to map contains the
+data that you expect.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You are creating or editing a flow.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, where you want to add a data mapper step,
+click the <span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> to display source
+and target fields in the data mapper canvas.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>See  <a href="{LinkSyndesisIntegrationGuide}#mapping-data_ug">Mapping integration data to fields for the next connection</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-basic-filter-step_create"><a class="anchor" href="#add-basic-filter-step_create"></a>Adding a basic filter step</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can add a step to a flow to filter the data that the
+flow operates on. In a filter step, {prodname} inspects the
+data and continues only if the content meets
+criteria that you define. For example, in a flow that
+obtains data from Twitter, you can specify that you want to
+continue execution by operating only on tweets that contain "Red Hat".</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The flow contains all connections that it needs to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, where you want to add a filter step, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Basic Filter</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Configure Basic Filter Step</strong> page, in
+the <strong>Continue only if incoming data match</strong> field:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Accept the default that all defined rules must be satisfied.</p>
+</li>
+<li>
+<p>Or, select <strong>ANY of the following</strong> to indicate that only
+one rule must be satisfied.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Define the filter rule:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Property Name</strong> field, enter or select the name of the field that contains the
+content you want the filter to evaluate. For example, suppose the data
+coming in to the step consists of tweets that mention your Twitter handle.
+You want to continue execution only when the tweet contains
+certain content. The tweet is in a field named <code>text</code> so you enter or
+select <code>text</code> as the value in the property name field.</p>
+<div class="paragraph">
+<p>You can define the property name in the following ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Start typing. The field has a typeahead feature that
+provides a list of possible completions for you in a pop-up box.
+Select the correct one from the box.</p>
+</li>
+<li>
+<p>Click in the field. A dropdown box appears with a list of
+available properties. Select the property of interest from the list.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Operator</strong> field, select an operator from the dropdown box.
+The setting defaults to <strong>Contains</strong>. For execution to continue,
+the condition that you select in this field must evaluate to
+true for the value that you enter in the <strong>Keywords</strong> field.</p>
+</li>
+<li>
+<p>In the <strong>Keywords</strong> field, enter a value to filter on. For example,
+suppose that you accept the default <strong>Contains</strong> operator and
+you want to continue integration execution only when the
+incoming text mentions a certain product.
+You would enter the product name here.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Optionally, click <strong>+ Add another rule</strong> and define another rule.</p>
+<div class="paragraph">
+<p>You can delete a rule by clicking the trash can icon in the top
+right of the rule entry.</p>
+</div>
+</li>
+<li>
+<p>When the filter step is complete, click <strong>Done</strong> to add it to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p>For details about the operators and for examples of specifying text
+to evaluate, see
+<a href="https://camel.apache.org/manual/latest/simple-language.html#_operator_support">Camel Simple Language operators</a>.
+Note that the basic filter step <strong>matches</strong> operator corresponds to the Simple Language
+<strong>regex</strong> operator.</p>
+</li>
+<li>
+<p>If you cannot define the filter you need in a basic filter step,
+see <a href="{LinkSyndesisIntegrationGuide}#add-advanced-filter-step_create">Adding an advanced filter step</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-advanced-filter-step_create"><a class="anchor" href="#add-advanced-filter-step_create"></a>Adding an advanced filter step</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a filter step, {prodname} inspects the
+data and continues executing the flow only if the content meets
+criteria that you define.
+If the basic filter step does not let you
+define the exact filter that you need, then add an advanced filter step.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The flow contains all connections that it needs to.</p>
+</li>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>You are familiar with the Camel Simple Language, or
+you have been provided with a filter expression.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, where you want to add an advanced filter step to
+the flow, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Advanced Filter</strong>.</p>
+</li>
+<li>
+<p>In the edit box, use the
+<a href="http://camel.apache.org/simple.html">Camel Simple Language</a>
+to specify a filter
+expression. For example, the following expression evaluates to true
+when the message header&#8217;s <code>type</code> field is set to <code>widget</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>${in.header.type} == 'widget'</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the following example, the expression evaluates to true when the
+body of the message contains a <code>title</code> field:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>${in.body.title}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong> to add the advanced filter step to the flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional property specification in some kinds of flows</div>
+<p>In an expression, an additional property specification is required when
+the advanced filter step is in one of the following kinds of flows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An API provider integration operation flow</p>
+</li>
+<li>
+<p>A simple integration that starts with a webhook connection</p>
+</li>
+<li>
+<p>A simple integration that starts with a custom REST API connection</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In these flows, {prodname} wraps the actual message content inside a <code>body</code>
+property. This means that the input to the advanced filter contains a
+<code>body</code> property that contains another <code>body</code> property that contains
+the actual message content. Consequently, in an advanced filter expression
+that is in one of these kinds of flows,
+you must specify two instances of <code>body</code>. For example, suppose you want
+to evaluate content that is in the <code>completed</code> field of the input message.
+Specify the expression like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>${body.body.completed} = 1</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-template-step_create"><a class="anchor" href="#add-template-step_create"></a>Adding a template step</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a flow, a template step takes data from a source and
+inserts it into the format that is defined in a template that you upload to {prodname}.
+The benefit of a template step is that it provides data output in a
+consistent format that you specify.</p>
+</div>
+<div class="paragraph">
+<p>In the template, you define placeholders and specify static text.
+When you create the flow, you add a template step, map source fields
+to the template placeholders, and then map template content to the next step
+in the flow. When {prodname} executes the flow, it
+inserts the values that are in the mapped source fields into an
+instance of the template and makes the result available to the next step
+in the flow.</p>
+</div>
+<div class="paragraph">
+<p>If a flow includes a template step then it is most likely the only
+template step in that flow. However, more than one template step in a
+flow is allowed.</p>
+</div>
+<div class="paragraph">
+<p>{prodname} supports the following kinds of templates:
+<a href="https://freemarker.apache.org">Freemarker</a>,
+<a href="https://mustache.github.io">Mustache</a>,
+<a href="https://velocity.apache.org">Velocity</a>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You must be creating or editing a flow.</p>
+</li>
+<li>
+<p>If you are creating a simple
+integration then it must already have its start and finish connections.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="Plus Sign"></span>
+where you want to add a template step.</p>
+</li>
+<li>
+<p>Click <strong>Template</strong>. The
+<strong>Upload Template</strong> page opens.</p>
+</li>
+<li>
+<p>Specify the template type, which is Freemarker, Mustache, or Velocity.</p>
+</li>
+<li>
+<p>To define the template, do one of the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Drag and drop a template file or a file that contains text that you
+want to modify to create a template, into the template editor.</p>
+</li>
+<li>
+<p>Click <strong>browse to upload</strong>, navigate to a file, and upload it.</p>
+</li>
+<li>
+<p>In the template editor, start typing to define a template.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the template editor, ensure that the template
+is valid for use with {prodname}. Examples of valid templates are
+after this procedure. {prodname} displays
+<span class="image"><img src="../../../_images/images/integrating-applications/RedCircleXError.png" alt="a red error indicator"></span> to the left of
+a line that contains a syntax error. Hovering over a syntax error
+indicator displays hints about how to resolve the error.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the template step to the flow.</p>
+<div class="paragraph">
+<p>If the <strong>Done</strong> button is not enabled then there is at least one syntax error
+that you must correct.</p>
+</div>
+<div class="paragraph">
+<p>Input to a template step must be in the form of a JSON object. Consequently,
+you must add
+a data mapping step before a template step.</p>
+</div>
+</li>
+<li>
+<p>To add a data mapper step before the template step:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="Plus Sign"></span> that is
+immediately before the template step that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>In the data mapper, map a source field to each template placeholder field.</p>
+<div class="paragraph">
+<p>For example, using the example templates that are after this procedure,
+map a source field to each of these template fields:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>time</code></p>
+</li>
+<li>
+<p><code>name</code></p>
+</li>
+<li>
+<p><code>text</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong> to add the data mapper step to the
+flow.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Output from a template step is always a JSON object. Consequently, you must
+add a data mapper step after a template step.</p>
+</div>
+</li>
+<li>
+<p>To add a data mapper step after the template step:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="Plus Sign"></span> that is
+immediately after the template step that you just added.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong>.</p>
+</li>
+<li>
+<p>In the data mapper, map the template&#8217;s <strong>message</strong> field, which
+always contains the result of inserting source fields into the
+template, to a target field. For example, suppose that a Gmail connection is
+next in the flow and you want to send the result of the template step
+as the content of a Gmail message. To do this, you would map the <strong>message</strong>
+source field to the <strong>text</strong> target field.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Examples of templates</div>
+<p>Example of a Mustache template:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>At {{time}}, {{name}} tweeted:
+{{text}}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Freemarker and Velocity support this example template:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>At ${time}, ${name} tweeted:
+${text}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Velocity also supports syntax without braces, as shown in this example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>At $time, $name tweeted:
+$text</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A placeholder cannot contain a <code>.</code> (period).</p>
+</div>
+<div class="paragraph">
+<div class="title">Additional resources</div>
+<p>For details about mapping fields, see <a href="{LinkSyndesisIntegrationGuide}#mapping-data_ug">Mapping integration data to fields for the next connection</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-custom-step_create"><a class="anchor" href="#add-custom-step_create"></a>Adding a custom step</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If {prodname} does not provide a step that you need in a flow,
+a developer can define one or more custom steps in an extension. A custom
+step operates on data between connections in a flow.</p>
+</div>
+<div class="paragraph">
+<p>You add a custom step to a flow in the same way that you add
+a built-in step. For a simple integration, choose the start and finish
+connections, add other connections as needed and then add additional steps.
+For an API provider integration, select the operation whose flow executes
+the custom step, add connections as needed to the flow, and then add other steps.
+When you add a step, {prodname} operates on the data it receives from the
+previous step(s) in the flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You uploaded the custom step extension to {prodname}. See
+<a href="{LinkSyndesisIntegrationGuide}#making-extensions-available_add-extension">Making custom features available</a>.</p>
+</li>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>The flow already has all the connections that it requires.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, where you want to add a custom step, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click the custom step that you want to add.</p>
+<div class="paragraph">
+<p>The available steps includes any
+custom steps that are defined in extensions that were uploaded to
+your {prodname} environment.</p>
+</div>
+</li>
+<li>
+<p>Respond to prompts for any information that is required to perform the step.
+This information varies for each custom step.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

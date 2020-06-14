@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Updating extensions :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-updating-extensions.html">Updating extensions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/proc-updating-extensions.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Updating extensions</h1>
+<div class="paragraph">
+<p>When a developer updates an extension, you can upload the updated <code>.jar</code>
+file to implement the updates in your integrations.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>A developer has provided you with an updated <code>.jar</code> file for an extension
+that you previously uploaded.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Customizations</strong> &gt; <strong>Extensions</strong>.</p>
+</li>
+<li>
+<p>At the right of the entry for the extension that you want to update,
+click <strong>Update</strong>.</p>
+</li>
+<li>
+<p>Click in the dotted-line box to navigate to and select the
+updated <code>.jar</code> file, and click <strong>Open</strong>.</p>
+</li>
+<li>
+<p>Confirm that the extension details are correct and click <strong>Import Extension</strong>.</p>
+</li>
+<li>
+<p>In the details page for the updated extension, determine which integrations
+use the connector or custom step(s) defined in the extension.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>It is up to you to
+know exactly what is required to update each integration that uses a
+custom connector or a
+custom step from the updated extension.  At the very least, you must
+republish each
+integration that uses a customization defined in the updated extension.</p>
+</div>
+<div class="paragraph">
+<p>In some cases, you might need to edit the integration to change
+or add configuration details for a customization. You must communicate
+with the extension developer to understand how to update integrations.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

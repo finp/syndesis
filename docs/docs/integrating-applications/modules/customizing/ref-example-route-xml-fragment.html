@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Example of developing a Camel route with XML fragments :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-example-route-xml-fragment.html">Example of developing a Camel route with XML fragments</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/customizing/ref-example-route-xml-fragment.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Example of developing a Camel route with XML fragments</h1>
+<div class="paragraph">
+<p>To develop a custom step, you can implement the action as an XML fragment that
+is a Camel route that has an input such as <code>direct</code>. The Syndesis runtime
+invokes this route in the same way that it invokes any other Camel route.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose that you want to create a step that logs the body of a
+message with an optional prefix. The following XML defines a Camel route
+that does this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;routes xmlns="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      http://camel.apache.org/schema/spring
+      http://camel.apache.org/schema/spring/camel-spring.xsd"&gt;
+
+  &lt;route id="log-body-with-prefix"&gt;
+    &lt;from uri="direct:log"/&gt;
+    &lt;choice&gt;
+      &lt;when&gt;
+        &lt;simple&gt;${header.prefix} != ''&lt;/simple&gt;
+        &lt;log message="${header.prefix} ${body}"/&gt;
+      &lt;/when&gt;
+      &lt;otherwise&gt;
+        &lt;log message="Output ${body}"/&gt;
+      &lt;/otherwise&gt;
+    &lt;/choice&gt;
+  &lt;/route&gt;
+
+&lt;/routes&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you develop an extension in XML, you must create the extension
+definition JSON file yourself. For this XML fragment, the
+<code>src/main/resources/META-INF/syndesis/syndesis-extension-definition.json</code>
+file could define the action as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "actionType": "step",
+  "id": "log-body-with-prefix",
+  "name": "Log body with prefix",
+  "description": "A simple body log with a prefix",
+  "descriptor": {
+    "kind": "ENDPOINT", <i class="conum" data-value="1"></i><b>(1)</b>
+    "entrypoint": "direct:log", <i class="conum" data-value="2"></i><b>(2)</b>
+    "resource": "classpath:log-body-action.xml", <i class="conum" data-value="3"></i><b>(3)</b>
+    "inputDataShape": {
+      "kind": "none"
+    },
+    "outputDataShape": {
+      "kind": "none"
+    },
+  "propertyDefinitionSteps": [ {
+    "description": "extension-properties",
+    "name": "extension-properties",
+    "properties": { <i class="conum" data-value="4"></i><b>(4)</b>
+      "prefix": {
+        "componentProperty": false,
+        "deprecated": false,
+        "description": "The Log body prefix message",
+        "displayName": "Log Prefix",
+        "javaType": "String",
+        "kind": "parameter",
+        "required": false,
+        "secret": false,
+        "type": "string"
+      }
+    }
+  } ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The type of the action is set to <code>ENDPOINT</code>. The runtime invokes a
+Camel endpoint to execute the action provided by this custom step.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The Camel endpoint to invoke is <code>direct:log</code>. This is the <code>from</code> specification
+in the route.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is the location of the XML  fragment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>These are the properties that the action defined in this custom step
+exposes to the integrator who will be adding this step to an integration. In
+{prodname}, each value that the integrator specifies in the user interface
+gets mapped to a message header that has the same name as the property.
+In this example, the integrator will see one input field, with the
+<strong>Log Prefix</strong> display name. For more details, see
+<a href="{LinkSyndesisIntegrationGuide}#descriptions-of-user-interface-properties-in-extension-definitions_extensions">Descriptions of user interface properties</a>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Syndesis does not support full Camel XML configuration. Syndesis supports
+only the &lt;routes&gt; tag.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

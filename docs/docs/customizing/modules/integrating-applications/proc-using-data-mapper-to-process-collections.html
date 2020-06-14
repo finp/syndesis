@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Using the data mapper to process collections :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-using-data-mapper-to-process-collections.html">Using the data mapper to process collections</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/proc-using-data-mapper-to-process-collections.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Using the data mapper to process collections</h1>
+<div class="paragraph">
+<p>In a flow, when a step outputs a collection and when a
+subsequent connection that is in the flow expects a collection as the input, you can
+use the data mapper to specify how you want the flow to
+process the collection.</p>
+</div>
+<div class="paragraph">
+<p>When a step outputs a collection, the flow visualization
+displays <strong>Collection</strong> in the details about the step. For example:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/data-type-collection.png" alt="Data Type: SQL Result (Collection)"></span></p>
+</div>
+<div class="paragraph">
+<p>Add a data mapper step after the step that provides the collection and
+before the step that needs the mappings. Exactly where in the flow this
+data mapper step needs to be depends on the other steps in the flow.
+The following image shows mappings from source collection fields
+to target collection fields:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/map-collections.png" alt="mapping collection"></span></p>
+</div>
+<div class="paragraph">
+<p>In the source and target panels, the data mapper displays
+<span class="image"><img src="../../../_images/images/integrating-applications/collection-icon.png" alt="this icon"></span> to indicate
+a collection. When a source collection or a target
+collection contain only primitive types, the data mapper does not
+display collection fields because there is no need to. You can map
+from/to the collection itself.</p>
+</div>
+<div class="paragraph">
+<p>When a collection contains more
+than one kind of primitive type or when it contains at least one complex
+type then the data mapper displays the collection’s child fields.
+You can map from/to each field.</p>
+</div>
+<div class="paragraph">
+<p>When a source field is nested in a number of collections you can map
+it to a target field that meets one of these conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The target field is nested in the same number of collections as the source
+field. For example, these mappings are allowed:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /D&lt;&gt;/E&lt;&gt;/F</p>
+</li>
+<li>
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /G&lt;&gt;/H/I&lt;&gt;/J</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The target field is nested in only one collection. For example, this mapping is allowed:</p>
+<div class="paragraph">
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /K&lt;&gt;/L</p>
+</div>
+<div class="paragraph">
+<p>In this case, the data mapper uses a depth-first algorithm to iterate over
+all values in the source. In order of occurrence, the data mapper puts the
+source values into a single target collection.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following mapping is not allowed:</p>
+</div>
+<div class="paragraph">
+<p>/A&lt;&gt;/B&lt;&gt;/C  cannot-map-to  /M&lt;&gt;/N/O&lt;&gt;/P&lt;&gt;/Q</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} executes the flow, it iterates over the source
+collection elements to populate the target collection elements.
+If you map one or more source collection fields to a target
+collection or to target collection
+fields, the target collection elements contain values for only
+the mapped fields.</p>
+</div>
+<div class="paragraph">
+<p>If you map a source collection or a field in a source collection
+to a target field that is not in a collection, then when {prodname}
+executes the flow, it assigns the value from only the last element
+in the source collection. Any other elements in the collection are
+ignored in that mapping step. However, any subsequent mapping steps
+can access all elements in the source collection.</p>
+</div>
+<div class="paragraph">
+<p>When a connection returns a collection that is defined in a
+JSON or Java document, the data mapper can usually process
+the source document as a collection.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

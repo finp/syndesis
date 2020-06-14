@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding steps to conditional flows :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-steps-to-conditional-flows.html">Adding steps to conditional flows</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/proc-adding-steps-to-conditional-flows.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding steps to conditional flows</h1>
+<div class="paragraph">
+<p>In a <strong>Conditional Flows</strong> step, after you define conditions, for
+each condition, add steps to the flow that is associated with that
+condition. During execution, when the <strong>Conditional Flows</strong> step
+evaluates a condition as true, it executes the flow that is associated
+with that condition.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You defined the conditions for this <strong>Conditional Flows</strong> step.</p>
+</li>
+<li>
+<p>You are familiar with the fields that will be in the messages that the
+integration passes to this <strong>Conditional Flows</strong> step.</p>
+</li>
+<li>
+<p>You created each connection that you want to add to a conditional flow.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the integration visualization, for the condition whose flow
+you want to add to, click <strong>Open Flow</strong>.</p>
+<div class="paragraph">
+<p>{prodname} displays that condition near the top of the page.
+The conditional flow visualization shows the <strong>Flow Start</strong> and
+<strong>Flow End</strong> steps that all conditional flows have.</p>
+</div>
+</li>
+<li>
+<p>In the flow visualization, click
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>
+where you want to add a step to this conditional flow.</p>
+</li>
+<li>
+<p>Click the step that you want to add. You can add any connection or
+step that you can add to a primary flow.</p>
+<div class="paragraph">
+<p>The output from the <strong>Flow Start</strong> step is always the same as the
+output from the primary flow step that is before this <strong>Conditional Flows</strong> step.
+For example, if you add a filter step or a data mapper step to this
+conditional flow, the available fields are the same fields
+that would be available in the primary flow.</p>
+</div>
+</li>
+<li>
+<p>Configure the step as needed.</p>
+</li>
+<li>
+<p>Repeat the previous three instructions for each step that you
+want to add to this conditional flow.</p>
+</li>
+<li>
+<p>At the top of the page, in the <strong>Flow</strong> field,
+click the down carat and click <strong>Back to primary flow</strong>, which saves
+this conditional flow and displays the primary flow.</p>
+</li>
+<li>
+<p>For each conditional flow that you want to add to,
+repeat this procedure.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>The primary flow has a conditional flow for each condition that you
+defined in the <strong>Conditional Flows</strong> step. If you selected the
+<strong>Execute default flow</strong> option, the primary flow also has a default
+conditional flow.</p>
+</div>
+<div class="paragraph">
+<p>During execution, the <strong>Conditional Flows</strong> step executes the conditional
+flow that is associated with the first condition that evaluates to true.
+The integration then executes the step that follows the <strong>Conditional Flows</strong>
+step.</p>
+</div>
+<div class="paragraph">
+<p>If no condition evaluates to true then the <strong>Conditional Flows</strong> step
+executes the default conditional flow. The integration then executes the
+step that follows the <strong>Conditional Flows</strong> step.</p>
+</div>
+<div class="paragraph">
+<p>If both of the following are true:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No condition evaluates to true.</p>
+</li>
+<li>
+<p>There is no default conditional flow.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then the integration executes the step that follows
+the <strong>Conditional Flows</strong> step.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Adding data to Amazon S3 in the middle of an integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-s3-connection-middle.html">Adding data to Amazon S3 in the middle of an integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-s3-connection-middle.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Adding data to Amazon S3 in the middle of an integration</h1>
+<div class="paragraph">
+<p>In the middle of an integration, to add data to Amazon S3,
+add an Amazon S3 connection to the middle of a flow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisite</div>
+<ul>
+<li>
+<p>You created an Amazon S3 connection.</p>
+</li>
+<li>
+<p>You are creating or editing a flow and {prodname} is prompting you
+to add to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the plus sign where you want
+to add an Amazon S3 connection.</p>
+</li>
+<li>
+<p>Click the Amazon S3 connection that you want to use in the middle
+of a flow.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Copy Object</strong> adds one or more objects to the bucket.</p>
+<div class="paragraph">
+<p>To add one file to the bucket, you can enter its name in the <strong>File Name</strong> field.</p>
+</div>
+<div class="paragraph">
+<p>To add multiple files to the bucket, do not specify a file name.
+In this case, the action adds all objects that it
+obtains from the previous integration step(s).</p>
+</div>
+<div class="paragraph">
+<p>If you used the poll action
+to obtain multiple files and you specify a file name then the <strong>Copy Object</strong>
+action adds only the last file that was received from the poll action.</p>
+</div>
+</li>
+<li>
+<p><strong>Delete Object</strong> deletes an object from the bucket. In the
+<strong>File Name</strong> field, specify the name of the object that you want to delete.
+If the specified file is not in the bucket, the integration continues
+with no error.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>After you configure the chosen action, click <strong>Next</strong> to specify
+the action&#8217;s input type.</p>
+</li>
+<li>
+<p>In the <strong>Select Type</strong> field, if the data type does not need to be known,
+accept <strong>Type specification not required</strong>
+and click <strong>Next</strong>. You do not need to follow the rest of these
+instructions.</p>
+<div class="paragraph">
+<p>However, a structured data type is recommended. For example, if you want
+to map the connection input in a data mapper step then you must specify
+the data type. The data mapper cannot display fields for unstructured data.</p>
+</div>
+<div class="paragraph">
+<p>To specify the data type, click in the <strong>Select Type</strong> field and select one of the following as the schema type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>JSON schema</strong> is a document that describes the structure of JSON data.
+The document&#8217;s media type is <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p><strong>JSON instance</strong> is a document that contains JSON data. The document&#8217;s
+media type is <code>application/json</code>.</p>
+</li>
+<li>
+<p><strong>XML schema</strong> is a document that describes the structure of XML data.
+The document&#8217;s file extension is <code>.xsd</code>.</p>
+</li>
+<li>
+<p><strong>XML instance</strong> is a document that contains XML data. The
+document&#8217;s file extension is <code>.xml</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Definition</strong> input box, paste a definition that conforms to the
+schema type you selected.
+For example, if you select <strong>JSON schema</strong> then you would paste the content of
+a JSON schema file, which has a media type of <code>application/schema+json</code>.</p>
+</li>
+<li>
+<p>In the <strong>Data Type Name</strong> field, enter a name that you choose for the
+data type. For example, if you are specifying a JSON schema for
+vendors then you might specify <code><strong>Vendor</strong></code> as the data type name.</p>
+<div class="paragraph">
+<p>You will see this data type name when you are creating
+or editing an integration that uses the connection
+for which you are specifying this type. {prodname} displays the type name
+in the integration visualization and in the data mapper.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Data Type Description</strong> field, provide information that helps you
+distinguish this type. This description appears in the data mapper when
+you hover over the step that processes this type.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the flow visualization
+where you added it.</p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

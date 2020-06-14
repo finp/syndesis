@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Integration behavior when the data is in a collection :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-how-to-process-a-collection-in-a-flow.html">Integration behavior when the data is in a collection</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/assemblies/integrating-applications/assembly-how-to-process-a-collection-in-a-flow.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Integration behavior when the data is in a collection</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes, a connection returns a collection, which contains
+multiple values that are all the same type.
+When a connection returns a collection, the flow can
+operate on the collection in a number of ways, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Execute each step once for the collection.</p>
+</li>
+<li>
+<p>Execute each step once for each element in the collection.</p>
+</li>
+<li>
+<p>Execute some steps once for the collection and execute other
+steps once for each element in the collection.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To decide how to operate on a collection in a flow, you need to
+know which applications the flow connects to, whether they can
+handle collections, and what you want the flow to accomplish.
+You can then use the information in the
+following topics to add steps to a flow that processes a collection:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#about-processing-collections_collection">About processing collections</a></p>
+</li>
+<li>
+<p><a href="#using-data-mapper-to-process-collections_collection">Using the data mapper to process collections</a></p>
+</li>
+<li>
+<p><a href="#add-split-step_collection">Adding a split step</a></p>
+</li>
+<li>
+<p><a href="#add-aggregate-step_collection">Adding an aggregate step</a></p>
+</li>
+<li>
+<p><a href="#example-processing-collection_collection">Example of processing a collection in a flow</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="about-processing-collections_collection"><a class="anchor" href="#about-processing-collections_collection"></a>About processing collections</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The easiest way for a flow to process a collection is to
+use the data mapper to map fields that are in a source collection
+to fields that are in a target collection. For many
+flows, this is all that is required. For example, a flow
+might obtain a collection of employee records from a
+database and then insert those records into a spreadsheet.
+Between the database connection and the Google Sheets
+connection, a data mapper step maps the database fields
+to the Google Sheets fields. Since both the
+source and the target are collections, when {prodname}
+executes the flow, it calls the Google Sheets connection once.
+In that call, {prodname} iterates
+through the records and correctly populates the spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>In some flows, you might need to split a collection into
+individual objects. For example, consider a flow that
+connects to a database and obtains
+a collection of employees who will lose allotted time off
+if they do not use it before a certain date.
+The flow then needs to send an email notification to each
+of these employees. In this flow, you would add a split
+step after the database connection. You would then add a
+data mapper step that maps the source fields for an employee
+record to target fields in a Gmail connection that sends a message.
+When {prodname} executes the flow, it executes the data mapper
+step and the Gmail connection once for each employee.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, after you split a collection in a flow, and after
+the flow executes some steps once for each element that was in the collection,
+you want the flow to operate on the collection again. Consider the
+example in the previous paragraph. Suppose that after a Gmail
+connection sends a message to each employee, you want to add
+a list of the employees who were notified to a spreadsheet.
+In this scenario, after the Gmail connection, add an aggregate
+step to create a collection of employee names. Then add a
+data mapper step that maps fields in the source collection
+to fields in the target Google Sheets connection. When
+{prodname} executes the flow, it executes the new data mapper
+step and the Google Sheets connection once for the collection.</p>
+</div>
+<div class="paragraph">
+<p>These are the most common scenarios for processing a collection
+in a flow. However, much more complex processing is also possible.
+For example, when the elements in a collection are themselves collections,
+you can nest split and aggregate steps inside other split and
+aggregate steps.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-data-mapper-to-process-collections_collection"><a class="anchor" href="#using-data-mapper-to-process-collections_collection"></a>Using the data mapper to process collections</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a flow, when a step outputs a collection and when a
+subsequent connection that is in the flow expects a collection as the input, you can
+use the data mapper to specify how you want the flow to
+process the collection.</p>
+</div>
+<div class="paragraph">
+<p>When a step outputs a collection, the flow visualization
+displays <strong>Collection</strong> in the details about the step. For example:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/data-type-collection.png" alt="Data Type: SQL Result (Collection)"></span></p>
+</div>
+<div class="paragraph">
+<p>Add a data mapper step after the step that provides the collection and
+before the step that needs the mappings. Exactly where in the flow this
+data mapper step needs to be depends on the other steps in the flow.
+The following image shows mappings from source collection fields
+to target collection fields:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/map-collections.png" alt="mapping collection"></span></p>
+</div>
+<div class="paragraph">
+<p>In the source and target panels, the data mapper displays
+<span class="image"><img src="../../../_images/images/integrating-applications/collection-icon.png" alt="this icon"></span> to indicate
+a collection. When a source collection or a target
+collection contain only primitive types, the data mapper does not
+display collection fields because there is no need to. You can map
+from/to the collection itself.</p>
+</div>
+<div class="paragraph">
+<p>When a collection contains more
+than one kind of primitive type or when it contains at least one complex
+type then the data mapper displays the collection’s child fields.
+You can map from/to each field.</p>
+</div>
+<div class="paragraph">
+<p>When a source field is nested in a number of collections you can map
+it to a target field that meets one of these conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The target field is nested in the same number of collections as the source
+field. For example, these mappings are allowed:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /D&lt;&gt;/E&lt;&gt;/F</p>
+</li>
+<li>
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /G&lt;&gt;/H/I&lt;&gt;/J</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The target field is nested in only one collection. For example, this mapping is allowed:</p>
+<div class="paragraph">
+<p>/A&lt;&gt;/B&lt;&gt;/C  &#8594;  /K&lt;&gt;/L</p>
+</div>
+<div class="paragraph">
+<p>In this case, the data mapper uses a depth-first algorithm to iterate over
+all values in the source. In order of occurrence, the data mapper puts the
+source values into a single target collection.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following mapping is not allowed:</p>
+</div>
+<div class="paragraph">
+<p>/A&lt;&gt;/B&lt;&gt;/C  cannot-map-to  /M&lt;&gt;/N/O&lt;&gt;/P&lt;&gt;/Q</p>
+</div>
+<div class="paragraph">
+<p>When {prodname} executes the flow, it iterates over the source
+collection elements to populate the target collection elements.
+If you map one or more source collection fields to a target
+collection or to target collection
+fields, the target collection elements contain values for only
+the mapped fields.</p>
+</div>
+<div class="paragraph">
+<p>If you map a source collection or a field in a source collection
+to a target field that is not in a collection, then when {prodname}
+executes the flow, it assigns the value from only the last element
+in the source collection. Any other elements in the collection are
+ignored in that mapping step. However, any subsequent mapping steps
+can access all elements in the source collection.</p>
+</div>
+<div class="paragraph">
+<p>When a connection returns a collection that is defined in a
+JSON or Java document, the data mapper can usually process
+the source document as a collection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-split-step_collection"><a class="anchor" href="#add-split-step_collection"></a>Adding a split step</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>During execution of a flow, when a connection returns a collection of objects,
+{prodname} executes subsequent steps once for the collection.
+If you want to execute subsequent steps once for each object
+that is in the collection, add a split step. For example, a
+Google Sheets connection returns a collection of row objects.
+To execute subsequent steps once for each row, add a
+split step after the Google Sheets connection.</p>
+</div>
+<div class="paragraph">
+<p>Ensure that the input to a split step is always a collection.
+If a split step gets a source document that is not a collection type,
+the step splits the input at each space. For example, {prodname} splits
+“Hello world!” input into two elements: “Hello” and “world!”, and
+passes those two elements to the next step in the flow. In particular,
+XML data is not a collection type.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>The flow already has all the connections that it requires.</p>
+</li>
+<li>
+<p>In the flow visualization, the connection that obtains the source data
+indicates that the data is a <strong>(Collection)</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>
+at the location where you want to add the split step.</p>
+</li>
+<li>
+<p>Click <strong>Split</strong>. This step does not require any configuration.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional information</div>
+<p>Typically, you want to add any split steps and aggregate steps
+before you add data mapper steps. This is because
+whether the data is a collection or individual objects affects
+the mappings. If you add a data mapper step and then add a split
+step, you usually need to redo the mappings. Likewise, if you
+remove a split or aggregate step, then you would need to redo
+any mappings.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="add-aggregate-step_collection"><a class="anchor" href="#add-aggregate-step_collection"></a>Adding an aggregate step</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a flow, add an aggregate step where you want {prodname}
+to create a collection from individual objects.
+During execution, after an aggregate step,
+instead of executing subsequent steps once for each object, {prodname}
+executes subsequent steps once for the collection.</p>
+</div>
+<div class="paragraph">
+<p>When deciding whether to add an aggregate step to a flow, consider the
+connections in the flow. After a split step, for each subsequent
+connection, {prodname} connects to that application once for each element
+in the flow’s data. For some connections, it might be preferable to
+connect once rather than multiple times.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are creating or editing a flow.</p>
+</li>
+<li>
+<p>The flow already has all the connections that it requires.</p>
+</li>
+<li>
+<p>A previous step split a collection into individual objects.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the flow visualization, where you want to
+add an aggregate step to the flow, click the
+<span class="image"><img src="../../../_images/images/integrating-applications/PlusSignToAddStepOrConnection.png" alt="PlusSignToAddStepOrConnection" title="plus sign"></span>.</p>
+</li>
+<li>
+<p>Click <strong>Aggregate</strong>. This step does not require any configuration.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional information</div>
+<p>Typically, you want to add any split and aggregate steps
+before you add data mapper steps. This is because
+whether the data is a collection or individual objects affects
+the mappings. If you add a data mapper step and then add an
+aggregate step, you usually need to redo the mappings. Likewise, if you
+remove an aggregate step, then you would need to redo
+any mappings.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-processing-collection_collection"><a class="anchor" href="#example-processing-collection_collection"></a>Example of processing a collection in a flow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This simple integration obtains a collection of tasks from the sample
+database provided with {prodname}. The flow splits the
+collection into individual task objects and then filters
+these objects to find the tasks that have been done.
+The flow then aggregates the completed tasks in a
+collection, maps the fields in that collection to fields
+in a spreadsheet, and finishes by adding a list of completed
+tasks to a spreadsheet.</p>
+</div>
+<div class="paragraph">
+<p>The procedure below provides instructions for creating
+this simple integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Google Sheets connection.</p>
+</li>
+<li>
+<p>In the account that the Google Sheets connection accesses, there is
+a spreadsheet for receiving the database records.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>Add the start connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click <strong>PostgresDB</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Periodic SQL Invocation</strong>.</p>
+</li>
+<li>
+<p>In the <strong>SQL Statement</strong> field, enter <code><strong>select * from todo</strong></code> and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This connection returns a collection of task objects.</p>
+</div>
+</li>
+<li>
+<p>Add the finish connection:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click your Google Sheets connection.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, select <strong>Append values to a sheet</strong>.</p>
+</li>
+<li>
+<p>In the <strong>SpreadsheetId</strong> field, enter the ID of the spreadsheet
+to add the list of tasks to.</p>
+</li>
+<li>
+<p>In the <strong>Range</strong> field, enter <code><strong>A:B</strong></code> as the target columns that
+you want to append values to. The first column, <strong>A</strong>, is for the task IDs.
+The second column, <strong>B</strong>, is for the task names.</p>
+</li>
+<li>
+<p>Accept the defaults for <strong>Major Dimension</strong> and for <strong>Value Input Option</strong>,
+and click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The Google Sheets connection finishes the flow by adding each element
+in a collection to a spreadsheet.</p>
+</div>
+</li>
+<li>
+<p>Add a split step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Split</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>After the flow executes the split step, the result is a
+set of individual task objects. {prodname} executes the subsequent
+steps in the flow once for each individual task object.</p>
+</div>
+</li>
+<li>
+<p>Add a filter step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the split step, click
+the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Basic Filter</strong> and configure the filter as follows:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Click in the first field and select <code><strong>completed</strong></code>, which is the name of the
+field that contains the data that you want to evaluate.</p>
+</li>
+<li>
+<p>In the second field, select <strong>equals</strong> as the condition that
+the <strong>completed</strong> field value must satisfy.</p>
+</li>
+<li>
+<p>In the third field, specify <code><strong>1</strong></code> as the value that must be in
+the <strong>completed</strong> field. <code>1</code> indicates that the task has been completed.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>During execution, the flow executes the filter step once for each task
+object. The result is a set of individual, completed task objects.</p>
+</div>
+</li>
+<li>
+<p>Add an aggregate step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the filter step, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Aggregate</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now the result set contains one collection, which contains an
+element for each completed task.</p>
+</div>
+</li>
+<li>
+<p>Add a data mapper step to the flow:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the flow visualization, after the aggregate step, click the plus sign.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> and map the following fields from the SQL
+result source collection to the Google Sheets target collection:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>id</strong> to <strong>A</strong></p>
+</li>
+<li>
+<p><strong>task</strong> to <strong>B</strong></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Publish</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Results</div>
+<p>When the integration is running, it obtains tasks from the sample database
+every minute and then adds the completed tasks to the first sheet in the spreadsheet.
+The integration maps the task ID to the first column, <strong>A</strong>, and it maps the task name
+to the second column, <strong>B</strong>.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

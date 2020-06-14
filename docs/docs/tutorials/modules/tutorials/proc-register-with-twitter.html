@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Registering {prodname} as a Twitter client application :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-register-with-twitter.html">Registering {prodname} as a Twitter client application</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/tutorials/modules/tutorials/proc-register-with-twitter.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Registering {prodname} as a Twitter client application</h1>
+<div class="paragraph">
+<p>In an integration, to connect to Twitter, the first thing you must do is
+register your {prodname} environment as a client application
+that can access Twitter.
+This lets you create any number of integrations that connect
+to Twitter. In other words, you need to register a particular
+{prodname} environment with Twitter only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Twitter client application. However, while each Twitter
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You are logged in to {prodname}.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL, click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your installation of {prodname} to the clipboard.
+You will need this URL later in this procedure.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> entry
+to display the <strong>Consumer API Key</strong> and <strong>Consumer API Secret Key</strong> fields.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, go to your
+<a href="https://developer.twitter.com/apps">Twitter developer account</a>, sign in if you
+need to, and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the upper right, next to the name of your developer project, click the
+down caret and click <strong>Apps</strong>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Create an app</strong>.</p>
+</li>
+<li>
+<p>In the <strong>App name</strong> field, enter a name such as <strong>My {prodname} Client</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Application description</strong> field, enter a tip such as
+<strong>For leveraging tweets</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Website URL</strong> field, paste the URL that you copied at the beginning
+of this procedure and remove <code>api/v1/credentials/callback</code> from the end
+of the URL.</p>
+</li>
+<li>
+<p>Select <strong>Enable Sign in with Twitter</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Callback URLs</strong> field, paste the URL again. It should be
+something like this:
+<code>https://app-proj912876.7b63.{prodnameinurl}.openshiftapps.com/api/v1/credentials/callback</code>.</p>
+<div class="paragraph">
+<p>You can skip the next few fields.</p>
+</div>
+</li>
+<li>
+<p><strong>Tell us how this app will be used</strong> requires a 100-character description.
+For convenience, you can copy and paste:
+<code>This is a demo application so that I can evaluate how to integrate Twitter
+with my enterprise applications.</code></p>
+</li>
+<li>
+<p>Click <strong>Create</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create</strong> again to confirm that you reviewed the developer terms.</p>
+</li>
+<li>
+<p>At the top of the page for the app you just created, click
+the <strong>Keys and tokens</strong> tab.</p>
+</li>
+<li>
+<p>Copy the consumer API key.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the Twitter
+consumer API key into the {prodname} Twitter <strong>Consumer API Key</strong> field.</p>
+</li>
+<li>
+<p>Return to the Twitter <strong>Keys and tokens</strong> tab and copy the consumer API secret key.</p>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the Twitter
+consumer API secret key into the {prodname} Twitter
+<strong>Consumer API Secret Key</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> entry to collapse it.</p>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

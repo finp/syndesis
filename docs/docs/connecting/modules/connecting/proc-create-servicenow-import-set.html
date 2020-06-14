@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating an import set in ServiceNow :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-create-servicenow-import-set.html">Creating an import set in ServiceNow</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-create-servicenow-import-set.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Creating an import set in ServiceNow</h1>
+<div class="paragraph">
+<p>In a {prodname} integration, a ServiceNow connection cannot directly
+update a ServiceNow table. To update ServiceNow data in an integration,
+a prerequisite is an import set that stages updates for a ServiceNow table.</p>
+</div>
+<div class="paragraph">
+<p>Often, the easiest way to create an import set is for
+a ServiceNow administrator to create a ServiceNow
+inbound web service. This implicitly creates a ServiceNow import set. The
+import set is based on the ServiceNow target table that the administrator
+selects when creating the web service. A ServiceNow connection updates
+this import set, and ServiceNow uses the import set to update the
+corresponding ServiceNow table.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites</div>
+<p>You must have ServiceNow administrative privileges.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure in ServiceNow</div>
+<ol class="arabic">
+<li>
+<p>In ServiceNow, search for <code>web services</code>.</p>
+</li>
+<li>
+<p>In the results, under <strong>System Web Services</strong> &gt; <strong>Inbound</strong>, click <strong>Create New</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Create Web Service</strong> page:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Label</strong> field, specify the display name for the web service.
+The web service&#8217;s import set will also have this name.</p>
+</li>
+<li>
+<p>In the <strong>Target table</strong> field, select the ServiceNow table that this service updates.</p>
+</li>
+<li>
+<p>Select <strong>Copy fields from target table</strong>. This creates an import set that has
+the same schema as the target table. The import set is a staging area for
+updating the target table.</p>
+</li>
+<li>
+<p>Select <strong>Create transform map</strong>. This map enables ServiceNow to copy and
+transform data from the import set to the target table.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Click <strong>Create</strong>.</p>
+</li>
+<li>
+<p>In the next display, under <strong>Related Links</strong>, click <strong>Auto Map Matching Fields</strong> to
+display a list of fields in the target table that you selected.</p>
+</li>
+<li>
+<p>Select one target table field to be the correlation (or coalesce) field.</p>
+<div class="paragraph">
+<p>When the value of the correlation field in a record in the import set
+matches the value of a correlation field in the target table,
+ServiceNow updates that record in the target table rather than creating a new record.</p>
+</div>
+</li>
+<li>
+<p>Select <strong>Coalesce</strong> to identify the field that you just selected
+as the correlation field. Without a correlation field, ServiceNow adds each
+record in the import set to the target table.</p>
+</li>
+<li>
+<p>Click <strong>Update</strong>.</p>
+</li>
+<li>
+<p>Confirm that the transform map was created:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In ServiceNow, search for <code>transform map</code>.</p>
+</li>
+<li>
+<p>Under <strong>System Import Sets</strong>, click <strong>Transform Maps</strong> to display a list of transform maps.</p>
+</li>
+<li>
+<p>In this list, confirm that there is a transform map whose name is
+the value that you specified for the label of the web service that you created.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Additional resource</div>
+<p><a href="https://docs.servicenow.com/bundle/london-platform-administration/page/administer/import-sets/reference/import-sets-landing-page.html">ServiceNow documentation for import sets</a></p>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

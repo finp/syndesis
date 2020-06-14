@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Testing the example API provider quickstart integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-try-api-provider-quickstart.html">Testing the example API provider quickstart integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/customizing/modules/integrating-applications/proc-try-api-provider-quickstart.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Testing the example API provider quickstart integration</h1>
+<div class="paragraph">
+<p>When the {prodname} <strong>TaskAPI</strong> quickstart integration is running, you can
+invoke <code>curl</code> utility commands that send HTTP requests to the Task API service.
+How you specify the HTTP request determines the flow that the call
+triggers.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>{prodname} indicates that the <strong>TaskAPI</strong> integration is <strong>Running</strong>.</p>
+</li>
+<li>
+<p>If your {prodname} environment is running on OCP,
+{prodname} is not configured to expose APIs to 3scale or
+you disabled discovery for the <strong>TaskAPI</strong> integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left navigation panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the <strong>TaskAPI</strong> integration entry, click <strong>View</strong> to display the
+integration&#8217;s summary.</p>
+</li>
+<li>
+<p>Copy the integration&#8217;s external URL.</p>
+</li>
+<li>
+<p>In a terminal, invoke a command such as the following to assign the
+integration&#8217;s external URL to the <code>externalURL</code> environment variable.
+Be sure to replace the URL in this sample command with the URL that you copied.</p>
+<div class="listingblock">
+<div class="content">
+<pre>export externalURL="https://i-task-api-proj319352.6a63.fuse-ignite.openshiftapps.com/api"</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Invoke a <code>curl</code> command that triggers execution of the
+flow for the <strong>Create new task</strong> operation:</p>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k --header "Content-Type: application/json" --request POST --data '{ "task":"my new task!"}' $externalURL/todo</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-k</code> allows <code>curl</code> to proceed and operate even for server connections
+that are otherwise considered insecure.</p>
+</li>
+<li>
+<p><code>--header</code> indicates that the command is sending JSON format data.</p>
+</li>
+<li>
+<p><code>--request</code> specifies the HTTP <code>POST</code> command, which stores data.</p>
+</li>
+<li>
+<p><code>--data</code> specifies the JSON format content to be stored. In this example the
+content is <code>{ "task":"my new task!"}</code>.</p>
+</li>
+<li>
+<p><code>$externalURL/todo</code> is the URL to invoke.</p>
+<div class="paragraph">
+<p>This command sends an HTTP <code>POST</code> request to the Task API service, which
+triggers execution of the <strong>Create new task</strong> operation&#8217;s flow. Flow
+execution adds a new task to the sample database and returns a message
+such as the following to indicate what it did:</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{"completed":false,"id":1,"task":"my new task!"}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Invoke a <code>curl</code> command that triggers execution of the
+flow for the <strong>Fetch task</strong> by ID operation:</p>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k $externalURL/todo/1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To obtain a task, the <code>curl</code> command needs to specify only the URL. The
+HTTP <code>GET</code> command is the default request. The last part of the URL
+specifies the ID of the task to get.</p>
+</div>
+</li>
+<li>
+<p>Invoke a <code>curl</code> command that triggers execution of the
+flow for the <strong>Delete task</strong> for ID operation:</p>
+<div class="listingblock">
+<div class="content">
+<pre>curl -k -X DELETE $externalURL/todo/1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command invokes the HTTP <code>DELETE</code> command with the same URL as the
+command that obtained a task by its ID.</p>
+</div>
+</li>
+</ol>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

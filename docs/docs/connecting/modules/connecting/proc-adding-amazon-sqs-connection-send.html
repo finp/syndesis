@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Sending messages to an Amazon SQS queue :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="proc-adding-amazon-sqs-connection-send.html">Sending messages to an Amazon SQS queue</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/connecting/modules/connecting/proc-adding-amazon-sqs-connection-send.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Sending messages to an Amazon SQS queue</h1>
+<div class="paragraph">
+<p>In the middle of a flow, or to finish a simple integration,
+you can send messages to an Amazon SQS queue.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created an Amazon SQS connection that is configured to access
+the queue that you want to send messages to.</p>
+</li>
+<li>
+<p>You know the name of the SQS queue that you want the connection to
+send messages to.</p>
+</li>
+<li>
+<p>{prodname} is prompting you to add to the integration, or to choose the finish
+connection for a simple integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Add to Integration</strong> page, click the plus sign where you
+want to add the connection. Skip this step if {prodname} is
+prompting you to choose the finish connection.</p>
+</li>
+<li>
+<p>Click the Amazon SQS connection that you want to use to send messages.</p>
+</li>
+<li>
+<p>Select the action that you want the connection to perform:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Send Object</strong> sends one message to the queue.</p>
+</li>
+<li>
+<p><strong>Send Batch Object</strong> sends a batch of messages to the queue.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Message group ID strategy</strong> field, for a first-in, first-out (FIFO)
+queue, accept <code>ConstantMessageGroupIdStrategy</code> or click in the field and
+select a different strategy.</p>
+<div class="paragraph">
+<p>The setting of this parameter has no effect on simple queues.
+The message group ID identifies the group that a message belongs to.
+Messages that belong to the same message group are always processed
+one by one, in a strict order relative to the message group. The
+message group ID strategy determines how the connection assigns
+a group ID to a message. The options are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ConstantMessageGroupIdStrategy</code>&#8201;&#8212;&#8201;The connection uses a constant
+to group messages.</p>
+</li>
+<li>
+<p><code>ExchangeIdMessageGroupIdStrategy</code>&#8201;&#8212;&#8201;The connection uses the
+exchange ID, which is in each message, to group messages.</p>
+</li>
+<li>
+<p><code>PropertyValueMessageGroupIdStrategy</code>&#8201;&#8212;&#8201;The connection uses the
+value of an internal property to group messages.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>FIFO queues are designed to ensure that the order in which messages
+are sent and received is strictly preserved and that each message
+is processed exactly once. A FIFO queue name has <code>.fifo</code> as a suffix.</p>
+</div>
+</li>
+<li>
+<p>In the <strong>Message deduplication ID strategy</strong> field, for a FIFO queue,
+accept <code>NullMessageDeduplicationIdStrategy</code> or click in the field
+to select <code>ExchangeIdMessageDeduplicationIdStrategy</code>.</p>
+<div class="paragraph">
+<p>The setting of this parameter has no effect on simple queues. For a FIFO queue,
+the connection uses the selected strategy to ensure that it does not send
+duplicate messages to the queue.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NullMessageDeduplicationIdStrategy</code> uses the message body as the
+deduplication element. In other words, the connection compares message
+bodies to identify duplicate messages.</p>
+</li>
+<li>
+<p><code>ExchangeIdMessageDeduplicationIdStrategy</code> uses the message&#8217;s exchange
+ID as the deduplication element. In other words, the connection compares
+exchange IDs to identify duplicate messages.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the <strong>Queue Name or Amazon Resource Name</strong> field, enter the
+name of the queue to send messages to. If the queue does not exist,
+the connection creates it.</p>
+</li>
+<li>
+<p>In the <strong>Delay</strong> field, accept the default, which is 0 for no delay.
+Or, to add a delay, specify a number. The integration waits this number
+of seconds before sending messages. This is useful when the message
+consumers might not be immediately ready for the messages that the
+connection is sending.</p>
+</li>
+<li>
+<p>Click <strong>Next</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Result</div>
+<p>The connection appears in the integration flow where you added it.</p>
+</div>
+<div class="ulist">
+<div class="title">Additional resources</div>
+<ul>
+<li>
+<p><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagededuplicationid-property.html">Using the Amazon Message Deduplication ID</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagegroupid-property.html">Using the Amazon SQS Message Group ID</a></p>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

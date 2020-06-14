@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Implementing the Twitter to Salesforce sample integration :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="assembly-t2sf-intro.html">Implementing the Twitter to Salesforce sample integration</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/tutorials/assemblies/tutorials/assembly-t2sf-intro.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Implementing the Twitter to Salesforce sample integration</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This sample integration watches Twitter for tweets that mention
+a particular Twitter user. When the integration finds such tweets,
+it filters
+them so that only those tweets that contain the text that you specify cause
+the integration to continue.</p>
+</div>
+<div class="paragraph">
+<p>For tweets that contain the specified text, the integration passes
+data related to the tweet, including the Twitter user name, to Salesforce
+and Salesforce creates a new contact.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You need a Twitter developer account. If you do not already have one,
+go to <a href="https://apps.twitter.com" class="bare">https://apps.twitter.com</a>, sign in to Twitter, and click
+<strong>Apply for a developer account</strong>. Obtaining the developer account is
+quick when you provide a professional email address,
+such as <code>me@redhat.com</code> rather than a personal address such as <code>you@gmail.com</code>.</p>
+</li>
+<li>
+<p>You need an account in a Salesforce installation that is used for development.
+This account must have Salesforce API access, which is available in a
+Salesforce Enterprise account or a Salesforce Developer account. To obtain
+a free developer account, visit <a href="https://developer.salesforce.com/signup" class="bare">https://developer.salesforce.com/signup</a>.
+It takes less than two minutes to obtain a Salesforce account.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To implement, deploy, and test this sample integration, the main steps are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#register-with-twitter_t2sf">Registering {prodname} as a Twitter client application</a></p>
+</li>
+<li>
+<p><a href="#create-twitter-connection_t2sf">Creating a Twitter connection</a></p>
+</li>
+<li>
+<p><a href="#register-with-salesforce_t2sf">Registering {prodname} as a Salesforce client application</a></p>
+</li>
+<li>
+<p><a href="#create-salesforce-connection_t2sf">Creating a Salesforce connection</a></p>
+</li>
+<li>
+<p><a href="#create-twitter-sf-integration_t2sf">Creating and deploying the Twitter to Salesforce sample integration</a></p>
+</li>
+<li>
+<p><a href="#t2sf-confirm-working_t2sf">Confirming that the Twitter to Salesforce integration works</a></p>
+</li>
+<li>
+<p><a href="#cleanup_t2sf">Cleaning up your integration</a></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="register-with-twitter_t2sf"><a class="anchor" href="#register-with-twitter_t2sf"></a>Registering {prodname} as a Twitter client application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to connect to Twitter, the first thing you must do is
+register your {prodname} environment as a client application
+that can access Twitter.
+This lets you create any number of integrations that connect
+to Twitter. In other words, you need to register a particular
+{prodname} environment with Twitter only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Twitter client application. However, while each Twitter
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You are logged in to {prodname}.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL, click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your installation of {prodname} to the clipboard.
+You will need this URL later in this procedure.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> entry
+to display the <strong>Consumer API Key</strong> and <strong>Consumer API Secret Key</strong> fields.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, go to your
+<a href="https://developer.twitter.com/apps">Twitter developer account</a>, sign in if you
+need to, and do the following:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the upper right, next to the name of your developer project, click the
+down caret and click <strong>Apps</strong>.</p>
+</li>
+<li>
+<p>In the upper right, click <strong>Create an app</strong>.</p>
+</li>
+<li>
+<p>In the <strong>App name</strong> field, enter a name such as <strong>My {prodname} Client</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Application description</strong> field, enter a tip such as
+<strong>For leveraging tweets</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Website URL</strong> field, paste the URL that you copied at the beginning
+of this procedure and remove <code>api/v1/credentials/callback</code> from the end
+of the URL.</p>
+</li>
+<li>
+<p>Select <strong>Enable Sign in with Twitter</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Callback URLs</strong> field, paste the URL again. It should be
+something like this:
+<code>https://app-proj912876.7b63.{prodnameinurl}.openshiftapps.com/api/v1/credentials/callback</code>.</p>
+<div class="paragraph">
+<p>You can skip the next few fields.</p>
+</div>
+</li>
+<li>
+<p><strong>Tell us how this app will be used</strong> requires a 100-character description.
+For convenience, you can copy and paste:
+<code>This is a demo application so that I can evaluate how to integrate Twitter
+with my enterprise applications.</code></p>
+</li>
+<li>
+<p>Click <strong>Create</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create</strong> again to confirm that you reviewed the developer terms.</p>
+</li>
+<li>
+<p>At the top of the page for the app you just created, click
+the <strong>Keys and tokens</strong> tab.</p>
+</li>
+<li>
+<p>Copy the consumer API key.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the Twitter
+consumer API key into the {prodname} Twitter <strong>Consumer API Key</strong> field.</p>
+</li>
+<li>
+<p>Return to the Twitter <strong>Keys and tokens</strong> tab and copy the consumer API secret key.</p>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the Twitter
+consumer API secret key into the {prodname} Twitter
+<strong>Consumer API Secret Key</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> entry to collapse it.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-twitter-connection_t2sf"><a class="anchor" href="#create-twitter-connection_t2sf"></a>Creating a Twitter connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create an integration that obtains data from Twitter, you
+must first create a Twitter connection.
+After you create a Twitter connection, you can use it in any number of
+integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are logged in to {prodname}.</p>
+</li>
+<li>
+<p>{prodname} is open in a web browser.</p>
+</li>
+<li>
+<p>You registered your {prodname} environment as an application
+that can access Twitter.</p>
+</li>
+<li>
+<p>You added the Twitter consumer API key and consumer API secret key that you received
+after registration to the {prodname} <strong>Settings</strong> page.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to
+display any available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors. A connector is a template that
+you use to create one or more connections.</p>
+</li>
+<li>
+<p>Click the <strong>Twitter</strong> connector.</p>
+</li>
+<li>
+<p>Click <strong>Connect Twitter</strong> to display a Twitter authorization page.
+You might need to log in to Twitter before you see the authorization page.</p>
+<div class="paragraph">
+<p>If <strong>Connect Twitter</strong> does not appear, then your {prodname} environment
+is not registered as a Twitter client application. See
+<a href="{LinkSyndesisConnectorGuide}#register-with-twitter_twitter">Registering {prodname} as a Twitter client application</a>.
+When you try to create a Twitter connection and your {prodname} environment
+is not registered as a Twitter client application, then {prodname} displays
+multiple fields that prompt for authorization information. While you can
+create a Twitter connection by entering values in these fields,
+it is not recommended.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Authorize app</strong> to return to {prodname}.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>Twitter Connect 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Twitter connection
+that uses my Twitter login credentials.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>Twitter Connect 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="register-with-salesforce_t2sf"><a class="anchor" href="#register-with-salesforce_t2sf"></a>Registering {prodname} as a Salesforce client application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an integration, to connect to Salesforce, the first thing you must do is
+register your {prodname} environment as a client application
+that can access Salesforce.
+This lets you create any number of integrations that connect
+to Salesforce. In other words, you need to register a particular
+{prodname} environment with Salesforce only once.</p>
+</div>
+<div class="paragraph">
+<p>In each {prodname} environment, there can be only one registration
+of {prodname} as a Salesforce client application. However, while each Salesforce
+connection uses the same registration, it can use different user
+credentials.</p>
+</div>
+<div class="paragraph">
+<p>If you already registered {prodname} as a Salesforce
+client and created a Salesforce connection, skip to
+<a href="{LinkSyndesisTutorials}#create-twitter-sf-integration_t2sf">Creating and deploying the Twitter to Salesforce integration</a>.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisite</div>
+<p>You are logged in to {prodname}.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Settings</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Settings</strong> page, near the top, to the right of the callback URL,
+click
+<span class="image"><img src="../../../_images/images/tutorials/CopyCallback.png" alt="Copy Callback URL"></span> to
+copy the callback URL for your {prodname} environment to the clipboard.
+You will need this URL toward the end of this procedure.</p>
+</li>
+<li>
+<p>Click the <strong>Salesforce</strong> entry
+to display the <strong>Client ID</strong> and <strong>Client Secret</strong> fields.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In another browser tab, log in to your Salesforce account and
+follow the steps below to create a connected app.
+These instructions assume that you are
+using the Salesforce Classic user interface. To switch from the
+Salesforce Lightning Experience interface, click your profile icon and select
+<strong>Switch to Salesforce Classic</strong>.
+For additional information, see the Salesforce documentation for
+<a href="https://help.salesforce.com/articleView?id=connected_app_create.htm">Create a Connected App</a>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In Salesforce, in the upper right, click <strong>Setup</strong>.</p>
+</li>
+<li>
+<p>In the left panel, select <strong>Build</strong> &gt; <strong>Create</strong> &gt; <strong>Apps</strong>.</p>
+</li>
+<li>
+<p>Scroll down to <strong>Connected Apps</strong> and click <strong>New</strong>.</p>
+</li>
+<li>
+<p>Enter the required information and then select <strong>Enable OAuth Settings</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Callback URL</strong> field, paste your
+{prodname} URL, which you copied at the beginning of this procedure.
+For example:
+<code>https://app-proj912876.7b63.{prodnameinurl}.openshiftapps.com/api/v1/credentials/callback</code>.</p>
+</li>
+<li>
+<p>For <strong>OAuth Scopes</strong>, add:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Access and manage your data (api)</strong></p>
+</li>
+<li>
+<p><strong>Allow access to your unique identifier (openid)</strong></p>
+</li>
+<li>
+<p><strong>Perform requests on your behalf at any time (refresh_token, offline_accesss)</strong></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Select <strong>Configure ID token</strong> and then <strong>Include Standard Claims</strong>.</p>
+</li>
+<li>
+<p>Scroll down and click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Scroll up to see that Salesforce indicates a short wait:
+<span class="image"><img src="../../../_images/images/tutorials/SF-message-to-wait-a-few-minutes.png" alt="SF message to wait a few minutes" title="Short Wait"></span></p>
+</li>
+<li>
+<p>Click <strong>Continue</strong>.</p>
+</li>
+<li>
+<p>Copy the consumer key that Salesforce provides.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the
+Salesforce-provided
+consumer key into the {prodname} Salesforce <strong>Client ID</strong> field.</p>
+</li>
+<li>
+<p>Return to Salesforce and copy the consumer secret that Salesforce provides.</p>
+</li>
+<li>
+<p>Return to your {prodname} <strong>Settings</strong> page and paste the
+Salesforce-provided consumer secret into the {prodname} Salesforce
+<strong>Client Secret</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Click the <strong>Salesforce</strong> entry to collapse it.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-salesforce-connection_t2sf"><a class="anchor" href="#create-salesforce-connection_t2sf"></a>Creating a Salesforce connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create an integration that accesses data in Salesforce, you
+must first create a Salesforce connection.
+After you create a Salesforce connection, you can use it in multiple
+integrations.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are logged in to {prodname}.</p>
+</li>
+<li>
+<p>{prodname} is open in a web browser.</p>
+</li>
+<li>
+<p>You must have already registered your {prodname} environment as an
+application that can access Salesforce.</p>
+</li>
+<li>
+<p>You added the Salesforce client ID and client secret that you received
+after registration to the {prodname} <strong>Settings</strong> page.</p>
+<div class="paragraph">
+<p>If you did not already register {prodname}, see
+<a href="{LinkSyndesisTutorials}#register-with-salesforce_t2sf">Registering {prodname} as a Salesforce client application</a>.</p>
+</div>
+<div class="paragraph">
+<p>Be sure to wait 2 - 10 minutes after registering your {prodname}
+installation as a Salesforce client before you try to create a
+Salesforce connection.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Connections</strong> to display available connections.</p>
+</li>
+<li>
+<p>Click <strong>Create Connection</strong> to display
+the available connectors. A connector is a template for creating one
+or more connections.</p>
+</li>
+<li>
+<p>Click the <strong>Salesforce</strong> connector.</p>
+</li>
+<li>
+<p>Click <strong>Connect Salesforce</strong> to display a Salesforce authorization page.
+You might need to log in to Salesforce before you see the authorization page.</p>
+<div class="paragraph">
+<p>If <strong>Connect Salesforce</strong> does not appear, then your {prodname} environment
+is not registered as a Salesforce client application. See
+<a href="{LinkSyndesisConnectorGuide}#register-with-sf_salesforce">Registering {prodname} as a Salesforce client application</a>.
+When you try to create a Salesforce connection and your {prodname} environment
+is not registered as a Salesforce client application, then {prodname} displays
+multiple fields that prompt for authorization information. While you can
+create a Salesforce connection by entering values in these fields,
+it is not recommended.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The following error indicates that Salesforce does not have the
+correct {prodname} callback URL:</p>
+</div>
+<div class="paragraph">
+<p><code>error=redirect_uri_mismatch&amp;error_description=redirect_uri%20must%20match%20configuration</code></p>
+</div>
+<div class="paragraph">
+<p>If you get this error message, then in Salesforce, ensure that the {prodname}
+callback URL is specified according to the instructions in
+<a href="{LinkSyndesisConnectorGuide}#register-with-salesforce_salesforce">Registering {prodname} as a Salesforce client application</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Click <strong>Allow</strong> to return to {prodname}.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field, enter your choice of a name that
+helps you distinguish this connection from any other connections.
+For example, enter <code><strong>SF Connect 1</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter any information that
+is helpful to know about this connection. For example,
+enter <code><strong>Sample Salesforce connection
+that uses my Salesforce login credentials.</strong></code></p>
+</li>
+<li>
+<p>Click <strong>Save</strong> to see that the connection you
+created is now available. If you entered the example name, you would
+see that <strong>SF Connect 1</strong> appears as a connection that you can
+choose to add to an integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-twitter-sf-integration_t2sf"><a class="anchor" href="#create-twitter-sf-integration_t2sf"></a>Creating and deploying the Twitter to Salesforce sample integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create and deploy an integration that uses the
+Twitter and Salesforce connections that
+you created, the main steps are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#t2sf-choose-start-connection_t2sf-create">Choosing the start connection</a></p>
+</li>
+<li>
+<p><a href="#t2sf-choose-finish-connection_t2sf-create">Choosing the finish connection</a></p>
+</li>
+<li>
+<p><a href="#t2sf-add-basic-filter-step_t2sf-create">Adding a basic filter step</a></p>
+</li>
+<li>
+<p><a href="#t2sf-add-data-mapping-step_t2sf-create">Adding a data mapping step</a></p>
+</li>
+<li>
+<p><a href="#t2sf-name-and-publish_t2sf-create">Giving the integration a name and deploying it</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You registered your {prodname} environment as a Twitter client and
+created a {prodname} Twitter connection.</p>
+</li>
+<li>
+<p>You registered your {prodname} environment as a Salesforce client and
+created a {prodname} Salesforce connection.</p>
+</li>
+<li>
+<p>{prodname} is open and you are logged in.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="t2sf-choose-start-connection_t2sf-create"><a class="anchor" href="#t2sf-choose-start-connection_t2sf-create"></a>Choosing the start connection</h3>
+<div class="paragraph">
+<p>In {prodname}, to create the sample Twitter to Salesforce integration,
+the first task is to choose the start connection.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You created a Twitter connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the left, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Create Integration</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Twitter connection
+that you created. If you gave it the example name, you would
+click <strong>Twitter Connect 1</strong>.
+When the integration starts, it uses the credentials defined in
+this connection to connect to Twitter.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, to the right of the <strong>Mention</strong>
+action entry, click <strong>Select</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Configure the action</strong> page, click <strong>Next</strong>. No configuration is required.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<div class="title">Next step</div>
+<p>When the integration is running, after
+connecting to Twitter, the integration monitors Twitter for mentions
+that include your Twitter screen name. A match triggers the
+next step in the integration. However, before you add steps that operate
+on data between connections,
+you choose the connection that the integration uses to finish its work.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="t2sf-choose-finish-connection_t2sf-create"><a class="anchor" href="#t2sf-choose-finish-connection_t2sf-create"></a>Choosing the finish connection</h3>
+<div class="paragraph">
+<p>In {prodname}, to continue creating the Twitter to Salesforce sample
+integration, after you add the start connection, you add the finish connection
+ to the integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You added the Twitter connection to the integration as the start connection.</p>
+</li>
+<li>
+<p>{prodname} is prompting you to add the finish connection.</p>
+</li>
+<li>
+<p>You created a Salesforce connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>On the <strong>Choose a connection</strong> page, click the Salesforce
+connection that you created. If you gave it the example name, you
+would click <strong>SF Connect 1</strong>.
+This integration finishes by using the credentials
+defined in this connection to connect to Salesforce.</p>
+</li>
+<li>
+<p>On the <strong>Choose an action</strong> page, to the right of the <strong>New record</strong> entry,
+click <strong>Select</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Configure the action</strong> page, click in the <strong>Object name</strong> field
+and select <strong>Contact</strong> as the
+Salesforce record to create.</p>
+</li>
+<li>
+<p>Click  <strong>Next</strong> to add the finish
+connection to the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="t2sf-add-basic-filter-step_t2sf-create"><a class="anchor" href="#t2sf-add-basic-filter-step_t2sf-create"></a>Adding a basic filter step</h3>
+<div class="paragraph">
+<p>In {prodname}, to continue creating the Twitter to Salesforce sample
+integration, add a basic filter step that checks tweets that mention you
+for particular content. At integration execution time, processing
+continues only if that content is present.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You added the Twitter connection as the integration&#8217;s start connection.</p>
+</li>
+<li>
+<p>You just added the Salesforce connection as the integration&#8217;s finish connection.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the integration visualization, click the plus sign, which
+displays the steps that you can add to the integration.</p>
+</li>
+<li>
+<p>Click <strong>Basic Filter</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Property Name</strong> field, start to enter
+<code><strong>text</strong></code> and when <code>text</code>
+appears below the field, click it.
+The Twitter <code>text</code> field, which contains a tweet,
+is the data that you want the filter to evaluate.</p>
+</li>
+<li>
+<p>In the <strong>Operator</strong> field, accept <strong>contains</strong> as the condition to be met for the integration to
+continue.</p>
+</li>
+<li>
+<p>In the <strong>Keywords</strong> field, enter <code><strong>#RedHatIsGreat</strong></code> or some other text
+that you choose for the value to check for.
+A tweet that mentions you must contain the text you enter here for
+the integration to continue operating on this data.</p>
+</li>
+<li>
+<p>Click <strong>Done</strong> to add the basic filter step to the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="t2sf-add-data-mapping-step_t2sf-create"><a class="anchor" href="#t2sf-add-data-mapping-step_t2sf-create"></a>Adding a data mapping step</h3>
+<div class="paragraph">
+<p>To continue creating the Twitter to Salesforce sample integration,
+add a data mapping step that correlates Twitter mention fields to
+Salesforce contact fields.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The integration&#8217;s start connection is to Twitter.</p>
+</li>
+<li>
+<p>The integration&#8217;s finish connection is to Salesforce.</p>
+</li>
+<li>
+<p>You just added the filter step between the two connections.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the integration visualization, click the plus sign that is between the filter
+step and the finish connection.</p>
+</li>
+<li>
+<p>Click <strong>Data Mapper</strong> and wait a few moments. When the data fields
+appear, the <strong>Sources</strong> panel on the left displays the Twitter fields
+and the <strong>Target</strong> panel on the right displays the Salesforce fields.</p>
+</li>
+<li>
+<p>Map the Twitter <code>name</code> field to the Salesforce
+<code>FirstName</code> and <code>LastName</code> fields:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Sources</strong> panel, click the magnifying
+glass <span class="image"><img src="../../../_images/images/tutorials/magnifying-glass.png" alt="magnifying glass" title="Magnifying Glass"></span>
+to display the search field and enter <code><strong>name</strong></code>.</p>
+</li>
+<li>
+<p>Under the <code>user</code> folder, click the <code>name</code> field.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> panel, scroll down and click <strong>FirstName</strong>. The
+data mapper displays a line from the source <strong>name</strong> field to the
+target <strong>FirstName</strong> field.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> panel, scroll down, hover over <strong>LastName</strong>, press
+<strong>CTRL-Mouse1</strong> (<strong>CMD-Mouse1</strong> on MacOS) and select <strong>LastName</strong>.
+The data mapper displays another line from the Twitter
+<strong>name</strong> field, but this time it goes to the Salesforce <strong>LastName</strong> field.
+The blue lines indicate the current focus.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you accidentally map the wrong fields then delete the incorrect mapping by
+selecting one of its fields to make it the current
+mapping. Then click the trash can icon in the top right of the data mapper&#8217;s
+<strong>Mapping Details</strong> panel.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Map the Twitter <code>screenName</code> field to the Salesforce
+<code>Title</code> field:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Sources</strong> panel, click
+the <strong>screenName</strong> field.</p>
+</li>
+<li>
+<p>On the right, at the top of the <strong>Target</strong> panel,
+click the magnifying
+glass <span class="image"><img src="../../../_images/images/tutorials/magnifying-glass.png" alt="magnifying glass" title="Magnifying Glass"></span>
+to display the search field and enter <code><strong>Title</strong></code>.</p>
+</li>
+<li>
+<p>Click the <strong>Title</strong> field. The data mapper displays a line
+from the Twitter <strong>screenName</strong> field to the Salesforce <strong>Title</strong> field.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Map the Twitter <code>text</code> field to the Salesforce
+<code>Description</code> field:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Sources</strong> search field, enter <code><strong>text</strong></code> and click the
+<strong>text</strong> field.
+Be sure to click the toplevel <strong>text</strong> field. Do not click one of
+the <strong>text</strong> fields that is contained in the <strong>user</strong> field.</p>
+</li>
+<li>
+<p>In the <strong>Target</strong> search field, enter <code><strong>description</strong></code>.</p>
+</li>
+<li>
+<p>Click the
+Salesforce <strong>Description</strong> field to create the mapping.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In the upper right, click
+the grid icon <span class="image"><img src="../../../_images/images/tutorials/grid.png" alt="grid" title="Grid"></span> to
+display the list of mappings, which should look like this:
+<span class="image"><img src="../../../_images/images/tutorials/t2sf-mappings.png" alt="Data Mappings"></span></p>
+</li>
+<li>
+<p>In the upper right, click <strong>Done</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="t2sf-name-and-publish_t2sf-create"><a class="anchor" href="#t2sf-name-and-publish_t2sf-create"></a>Giving the integration a name and deploying it</h3>
+<div class="paragraph">
+<p>When the Twitter to Salesforce sample integration is complete then you
+can deploy it and see how it works.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>The integration&#8217;s start connection is Twitter.</p>
+</li>
+<li>
+<p>The integration&#8217;s finish connection is Salesforce.</p>
+</li>
+<li>
+<p>The integration has a filter step.</p>
+</li>
+<li>
+<p>You just added a data mapping step to the integration.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In the upper right corner, click <strong>Publish</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Name</strong> field,
+enter a name of your choice that distinguishes this integration
+from any other integrations. For
+example: <code><strong>Twitter to Salesforce Sample Integration</strong></code>.</p>
+</li>
+<li>
+<p>In the <strong>Description</strong> field, optionally enter some information
+about the integration.</p>
+</li>
+<li>
+<p>Click <strong>Save and publish</strong>.</p>
+<div class="paragraph">
+<p>{prodname} starts to deploy the integration and then displays the
+integration summary. Near the top, you can see a progress
+indicator that shows the publishing stages.
+{prodname} is generating the runtime for the integration and
+will start it when the runtime is ready. This takes a few minutes.</p>
+</div>
+<div class="paragraph">
+<p>A {prodname} account is limited to a specific number of
+integrations that can be running at one time. For details,
+see the pricing plan. If you are already running the maximum
+number of integrations, then you must stop an integration
+before you can start running another one.</p>
+</div>
+<div class="paragraph">
+<p>If you are using a {prodname} evaluation
+account, then only one integration at a time can be running.
+If you already created one of the other sample integrations and that
+integration is running then this integration is automatically in the
+<strong>Stopped</strong> state. You must stop the running integration and
+then you can publish this integration.</p>
+</div>
+</li>
+<li>
+<p>If you are already running the maximum number of integrations, follow
+these steps to stop an integration:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the entry for the integration that you want to stop, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="ThreeVerticalDotsKebab" title="the three vertical dots"></span>
+on the far right.</p>
+</li>
+<li>
+<p>In the popup, click <strong>Stop</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>After stopping an integration, start another integration as follows:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the entry for the integration that you want to start, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="ThreeVerticalDotsKebab" title="the three vertical dots"></span>
+on the far right.</p>
+</li>
+<li>
+<p>In the popup, click <strong>Start</strong>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="t2sf-confirm-working_t2sf"><a class="anchor" href="#t2sf-confirm-working_t2sf"></a>Confirming that the Twitter to Salesforce integration works</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To confirm that the Twitter to Salesforce sample integration is working,
+create some tweets and check for results in Salesforce.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>In {prodname}, <strong>Running</strong> appears next to the name that you specified
+for the Twitter to Salesforce sample integration when you published it.</p>
+</li>
+<li>
+<p>You can access your Twitter and Salesforce accounts.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname} in the panel on the left, click <strong>Integrations</strong> to see that the integration you
+created is a <strong>Running</strong> integration. If you entered the example name, you
+would see that <strong>Twitter to Salesforce Sample Integration</strong> is running.</p>
+</li>
+<li>
+<p>Confirm that the integration does not create a contact record when a
+tweet does not contain the text you specified in the basic filter
+step:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In Twitter, send a tweet that:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mentions your Twitter handle</p>
+</li>
+<li>
+<p>Does not contain the text that you specified in the basic filter step</p>
+<div class="paragraph">
+<p>For example: <code><strong>@Aslan #likesRedHat.</strong></code></p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Wait for the polling interval to elapse, which can be 30 - 60 seconds.</p>
+</li>
+<li>
+<p>In Salesforce, confirm that there is <strong>not</strong> a new contact record for the
+name that is associated with the Twitter account that you used to tweet.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Confirm that the integration creates a new contact record when it should:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In Twitter, send a tweet that:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mentions your Twitter handle</p>
+</li>
+<li>
+<p>Contains the text that you specified in the basic filter step</p>
+<div class="paragraph">
+<p>For example: <code><strong>@Aslan knows #RedHatIsGreat.</strong></code></p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Wait for the polling interval to elapse.</p>
+</li>
+<li>
+<p>In Salesforce, do the following:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Log in to your regular Salesforce account, not your Salesforce developer
+account.</p>
+</li>
+<li>
+<p>On your home page, under <strong>Recent Items</strong> you should see your new contact.</p>
+</li>
+<li>
+<p>Click on it to view the details.</p>
+<div class="paragraph">
+<p>The new contact record should have the name that is associated with the
+Twitter account that you used to tweet. The text of your tweet should be in the
+<strong>Description</strong> field, and your Twitter screen name should be in the <strong>Title</strong> field.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Optionally, view the integration log to troubleshoot an
+unexpected result or to learn more about integration execution:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>View your Twitter to Salesforce integration.</p>
+</li>
+<li>
+<p>In the integration&#8217;s summary page, click the <strong>Activity</strong> tab.</p>
+</li>
+<li>
+<p>Click the integration execution for which you want to view activity information.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cleanup_t2sf"><a class="anchor" href="#cleanup_t2sf"></a>Cleaning up your integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you are done working with a sample integration, you should stop it and
+delete it so that you can use the resources for another integration.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You are finished working with a sample integration that you published.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In {prodname}, in the left panel, click <strong>Integrations</strong>.</p>
+</li>
+<li>
+<p>In the main panel, identify the entry for the sample integration that
+you want to stop.</p>
+</li>
+<li>
+<p>In that entry, to the right, click
+<span class="image"><img src="../../../_images/images/tutorials/ThreeVerticalDotsKebab.png" alt="Kebab Menu"></span> and then
+click <strong>Stop</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Stop</strong> to confirm that you want to stop running the integration.</p>
+</li>
+<li>
+<p>In the entry for the integration that you just stopped, to the right, click
+<span class="image"><img src="../../../_images/images/tutorials//ThreeVerticalDotsKebab.png" alt="Kebab Menu"></span> and then
+click <strong>Delete</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Delete</strong> to confirm that you want to delete the integration.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

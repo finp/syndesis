@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>How OpenAPI operations relate to API provider integration flows :: Docs</title>
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+         
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="is-primary" href="#"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="docs" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../index.html">Docs</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../index.html"> Home</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Docs</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Docs</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../index.html">Docs</a></li>
+    <li><a href="ref-requirements-for-api-provider-integrations.html">How OpenAPI operations relate to API provider integration flows</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/pwright/repos/doc-test/syndesis/antora/modules/ROOT/pages/integrating-applications/modules/integrating-applications/ref-requirements-for-api-provider-integrations.adoc"></a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">How OpenAPI operations relate to API provider integration flows</h1>
+<div class="paragraph">
+<p>An API provider integration&#8217;s OpenAPI document defines the
+operations that REST API clients can call.
+Each OpenAPI operation has its own API provider integration flow.
+Consequently, each operation can also have its own
+REST API service URL. Each URL is defined by the API service&#8217;s base URL
+and optionally by a subpath. REST API calls specify an operation&#8217;s
+URL to trigger execution of the flow for that operation.</p>
+</div>
+<div class="paragraph">
+<p>Your OpenAPI document determines which HTTP verbs (such as
+<code>GET</code>, <code>POST</code>, <code>DELETE</code> and so on) you can specify
+in calls to your REST API service URLs. Examples of calls to
+API provider URLs are in the
+<a href="{LinkSyndesisIntegrationGuide}#try-api-provider-quickstart_api-provider">instructions for trying out the API provider quickstart example</a>.</p>
+</div>
+<div class="paragraph">
+<p>Your OpenAPI document also determines the possible HTTP status codes
+that an operation can return. An operation’s return path can handle
+only the responses that the OpenAPI document defines.
+For example, an operation that deletes an
+object based on its ID might define these possible responses:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"responses": {
+  "204": {
+           "description": "Task deleted"
+         },
+  "404": {
+           "description": "No Record found with this ID"
+         },
+  "500": {
+            "description": "Server Error"
+        }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">Illustration of an API provider integration example</div>
+<p>The following diagram shows an API provider integration that processes data
+about people. An external REST API client invokes the REST API URLs that are
+deployed by the API provider integration. Invocation of a URL triggers
+execution of the
+flow for one REST operation. This API provider integration has 3 flows.
+Each flow can use any connection or step that
+is available in {prodname}. The REST API along with its flows
+is one {prodname} API provider integration, which is deployed in one OpenShift pod.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../../../_images/images/integrating-applications/api-provider.png" alt="API provider integration with 3 flows"></span></p>
+</div>
+<div class="paragraph">
+<div class="title">Editing the OpenAPI document while creating an API provider integration</div>
+<p>After you specify an OpenAPI document for your API provider
+integration, you can update the document as needed while you define
+the execution flows for the API operations. To do this, click
+<strong>View/Edit API Definition</strong> in the upper right of a page in
+which you are editing the API provider integration. This displays
+your OpenAPI document in the API Designer editor. Edit and
+save the document to make changes that are reflected in
+{prodname}.</p>
+</div>
+<div class="paragraph">
+<p>Considerations while editing the OpenAPI document:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><code>operationId</code> properties for synchronization</strong></p>
+<div class="paragraph">
+<p>Synchronization between the versions of the OpenAPI document in the API Designer
+editor and in the {prodname} integration editor depend on a unique <code>operationId</code>
+property that is assigned to each operation that is defined in the document.
+You can assign a specific <code>operationId</code> property value to each operation,
+or use the one that {prodname} generates automatically.</p>
+</div>
+</li>
+<li>
+<p><strong>Request and response definitions</strong></p>
+<div class="paragraph">
+<p>In each operation&#8217;s definition, you can supply a JSON schema that
+defines the operation&#8217;s request and response.
+{prodname} uses the JSON schema:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>As the basis for the operation&#8217;s input and output data shapes</p>
+</li>
+<li>
+<p>To display operation fields in the data mapper</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>No cyclic schema references</strong></p>
+<div class="paragraph">
+<p>A JSON schema for an API provider integration operation cannot have cyclic
+schema references.
+For example, a JSON schema that specifies a request or response
+body cannot reference itself as a whole nor reference any part
+of itself through intermediate JSON schemas.</p>
+</div>
+</li>
+</ul>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
